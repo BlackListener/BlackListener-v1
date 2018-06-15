@@ -1,0 +1,8 @@
+# Node modules
+/node_modules/
+
+# Bot tokens, invite links file.
+/secret.json
+
+# Data folder.
+/data/
