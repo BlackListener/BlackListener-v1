@@ -178,8 +178,8 @@ function writeSettings(settingsFile, wsettings, channel, config) {
 client.on("guildMemberAdd", member => {
   for (var i=0; i<=bans.length; i++) {
     if (member.id == bans[i]) {
-      member.kick("You are banned(Global Ban).");
-      console.log(`Auto kicked user: ${member.user.tag} (${member.user.id})`);
+      member.guild.ban(member);
+      console.log(`Auto banned user: ${member.user.tag} (${member.user.id}) in ${member.guild.name}(${member.guild.id})`);
     }
   }
 });
