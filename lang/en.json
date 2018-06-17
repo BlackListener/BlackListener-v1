@@ -21,5 +21,8 @@
   "notfound_user": "That user is not banned.",
   "guild_unavailable": "Not found guild, or offline.",
   "banned": "Banned.",
-  "unbanned": "Unbanned."
+  "unbanned": "Unbanned.",
+  "no_args": ":x: Missing an arguments.",
+  "invalid_args": ":x: Invalid arguments.",
+  "autobanned": "Auto banned user: {0} ({1}) from {2}({3})"
 }

@@ -8,18 +8,27 @@ const f = require('string-format'), // Load & Initialize string-format
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
+    notifyRep: c.notifyRep,
+    banRep: c.banRep,
   }, // Default settings, by config.json.
-  defaultBans = []; // Default settings for bans.json, blank.
+  defaultBans = [], // Default settings for bans.json, blank.
+  defaultUser = {
+    rep: 0,
+  }
 var guildSettings,
   settings,
   lang,
   bansFile,
-  bans;
-
+  bans,
+  userFile,
+  user;
 
 client.on('ready', () => {
   if (!fs.existsSync(`./data/servers`)) {
     mkdirp(`./data/servers`);
+  }
+  if (!fs.existsSync(`./data/users`)) {
+    mkdirp(`./data/users`);
   }
   bansFile = `./data/bans.json`;
   if (!fs.existsSync(bansFile)) {
@@ -33,12 +42,18 @@ client.on('ready', () => {
 client.on('message', msg => {
  bans = require(bansFile);
  if (!msg.author.bot) {
+  userFile = `./data/users/${msg.author.id}.json`;
   if (!msg.guild) return msg.channel.send("Not supported DM or GroupDM");
   guildSettings = `./data/servers/${msg.guild.id}.json`;
   if (!fs.existsSync(guildSettings)) {
     console.log(`Creating ${guildSettings}`);
     fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
+  if (!fs.existsSync(userFile)) {
+    console.log(`Creating ${userFile}`);
+    fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  user = require(userFile);
   settings = require(guildSettings);
   lang = require(`./lang/${settings.language}.json`);
   if (msg.content.startsWith(settings.prefix)) {
@@ -64,7 +79,7 @@ client.on('message', msg => {
         console.log(f(lang.failednotmatch, msg.content));
       }
     } else if (msg.content === settings.prefix + "token") {
-      if (msg.author == "<@254794124744458241>") {
+      if (msg.author.id === "254794124744458241") {
         msg.author.send(f(lang.mytoken, client.token));
         msg.reply(lang.senttodm);
         console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -80,9 +95,9 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const args = msg.content.slice(settings.prefix + "ban".length).trim().split(/ +/g);
       if(!args[1] || args[1] === ``) {
-        msg.channel.send(":x: Arguments are missing.");
+        msg.channel.send(lang.no_args);
       } else {
-        if(msg.guild && msg.guild.available) {
+        if(msg.guild && msg.guild.available && !msg.author.bot) {
           var user;
           if (/[0-9]................./.test(args[1])) {
             user = client.users.get(args[1]);
@@ -90,10 +105,17 @@ client.on('message', msg => {
             user = client.users.find("name", args[1]);
           }
           if (!user) return msg.channel.send(lang.invalid_user);
-          let ban = bans;
+          let ban = bans,
+            localUser = user;
           ban.push(user.id);
-          msg.guild.ban(user);
-          writeSettings(bansFile, ban, msg.channel, "bans");
+          localUser.rep = ++localUser.rep;
+          for (var i=0; i<=client.guilds.length; i++) {
+            client.guilds[i].ban(user)
+              .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
+              .catch(console.error);
+          }
+          writeSettings(bansFile, ban, msg.channel, null, false);
+          writeSettings(userFile, localUser, msg.channel, null, false);
           msg.channel.send(lang.banned);
         }
       }
@@ -101,9 +123,9 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const args = msg.content.slice(settings.prefix + "unban".length).trim().split(/ +/g);
       if(!args[1] || args[1] === ``) {
-        msg.channel.send(":x: Arguments are missing.");
+        msg.channel.send(lang.no_args);
       } else {
-        if(msg.guild && msg.guild.available) {
+        if(msg.guild && msg.guild.available && !msg.author.bot) {
           var user;
           if (/[0-9]................./.test(args[1])) {
             user = client.users.get(args[1]);
@@ -111,7 +133,8 @@ client.on('message', msg => {
             user = client.users.find("name", args[1]);
           }
           if (!user) return msg.channel.send(lang.invalid_user);
-          let ban = bans;
+          let ban = bans,
+            localUser = user;
           var exe = false;
           for (var i=0; i<=bans.length; i++) {
             if (bans[i] == user.id) {
@@ -120,8 +143,14 @@ client.on('message', msg => {
             }
           }
           if (!exe) return msg.channel.send(lang.notfound_user);
-          msg.guild.unban(user);
-          writeSettings(bansFile, ban, msg.channel, "bans");
+          for (var i=0; i<=client.guilds.length; i++) {
+            client.guilds[i].unban(user)
+              .then(user2 => console.log(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
+              .catch(console.error);
+          }
+          localUser.rep = --localUser.rep;
+          writeSettings(bansFile, ban, msg.channel, null, false);
+          writeSettings(userFile, localUser, msg.channel, null, false);
           msg.channel.send(lang.unbanned);
         } else {
           msg.channel.send(lang.guild_unavailable);
@@ -140,6 +169,34 @@ client.on('message', msg => {
       } else {
         set.prefix = args[1];
         writeSettings(guildSettings, set, msg.channel, "prefix");
+      }
+    } else if (msg.content.startsWith(settings.prefix + "setnotifyrep")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      const args = msg.content.slice(settings.prefix + "setnotifyrep".length).trim().split(/ +/g);
+      let set = settings;
+      let n = parseInt(args[1], 10);
+      let min = 0;
+      let max = 10;
+      let status = n >= min && n <= max;
+      if (!status || args[1] == null) {
+        msg.channel.send(lang.invalid_args);
+      } else {
+        set.notifyRep = parseInt(args[1], 10);
+        writeSettings(guildSettings, set, msg.channel, "notifyRep");
+      }
+    } else if (msg.content.startsWith(settings.prefix + "setbanrep")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      const args = msg.content.slice(settings.prefix + "setbanrep".length).trim().split(/ +/g);
+      let set = settings;
+      let n = parseInt(args[1], 10);
+      let min = 0;
+      let max = 10;
+      let status = n >= min && n <= max;
+      if (!status || args[1] == null) {
+        msg.channel.send(lang.invalid_args);
+      } else {
+        set.banRep = parseInt(args[1], 10);
+        writeSettings(guildSettings, set, msg.channel, "banRep");
       }
     } else if (msg.content.startsWith(settings.prefix + "language")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -170,17 +227,43 @@ process.on('SIGINT', function() {
   client.destroy();
 });
 
-function writeSettings(settingsFile, wsettings, channel, config) {
+function writeSettings(settingsFile, wsettings, channel, config, message = true) {
   fs.writeFileSync(settingsFile, JSON.stringify(wsettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-  channel.send(f(lang.setconfig, config));
+  if (message) {
+    channel.send(f(lang.setconfig, config));
+  }
 }
 
 client.on("guildMemberAdd", member => {
-  for (var i=0; i<=bans.length; i++) {
-    if (member.id == bans[i]) {
-      member.guild.ban(member);
-      console.log(`Auto banned user: ${member.user.tag} (${member.user.id}) in ${member.guild.name}(${member.guild.id})`);
-    }
+  userFile = `./data/users/${member.user.id}.json`;
+  if (!fs.existsSync(userFile)) {
+    console.log(`Creating ${userFile}`);
+    fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  var serverFile = `./data/servers/${member.guild.id}.json`;
+  if (!fs.existsSync(serverFile)) {
+    console.log(`Creating ${serverFile}`);
+    fs.writeFileSync(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  let serverSetting = require(serverFile);
+  let userSetting = require(userFile);
+  if (serverSetting.banRep <= userSetting.rep) {
+//  for (var i=0; i<=bans.length; i++) {
+//    if (member.id == bans[i]) {
+//      for (var i=0; i<=client.guilds.array.length; i++) {
+//        console.log(`${member.user.tag} will be banned from ${client.guilds.get( Array.from( client.guilds.keys() )[i] )}`);
+//        client.guilds.get(Array.from(client.guilds.keys())[i]).ban(member)
+//          .then(user => console.log(`Auto banned user(${i}): ${user.tag} (${user.id}) from ${client.guilds.get(Array.from(client.guilds.keys())[i])}`))
+//          .catch(console.error);
+          member.guild.ban(member)
+//          .then(user => console.log(`Auto banned user: ${member.user.tag} (${user.id}) from ${member.guild.name}(${member.guild.id})`))
+            .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+            .catch(console.error);
+//      }
+//    } else { continue; }
+//  }
+  } else if (serverSetting.notifyRep <= userSetting.rep) {
+    member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
   }
 });
 

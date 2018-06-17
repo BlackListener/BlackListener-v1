@@ -21,5 +21,8 @@
   "notfound_user": "指定されたユーザーはBANされていません。",
   "guild_unavailable": "このギルドは存在しないか、現在オフラインです。",
   "banned": "BANしました。",
-  "unbanned": "BANを解除しました。"
+  "unbanned": "BANを解除しました。",
+  "no_args": ":x: 引数が足りません。",
+  "invalid_args": ":x: 引数が正しくありません。",
+  "autobanned": "サーバー {2} ({3})から自動BANしました: {0} ({1})"
 }
