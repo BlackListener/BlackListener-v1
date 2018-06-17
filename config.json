@@ -1,5 +1,7 @@
 {
   "prefix": "b:",
   "githuburl": "https://github.com/rht0910/BlackListener/",
-  "lang": "ja"
+  "lang": "ja",
+  "notifyRep": 3,
+  "banRep": 5
 }
