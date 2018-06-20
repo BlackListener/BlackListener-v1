@@ -35,11 +35,12 @@ client.on('ready', () => {
     console.log(`Creating ${bans}`);
     fs.writeFileSync(bansFile, JSON.stringify(defaultBans, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  client.user.setActivity(c.prefix + "help");
+  client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
   console.log(`Bot has Fully startup.`);
 });
 
 client.on('message', msg => {
+ client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
  bans = require(bansFile);
  if (!msg.author.bot) {
   userFile = `./data/users/${msg.author.id}.json`;
@@ -101,6 +102,7 @@ client.on('message', msg => {
           var user;
           if (/[0-9]................./.test(args[1])) {
             user = client.users.get(args[1]);
+            console.log(`Caught user id: ${args[1]}(${user})`);
           } else {
             user = client.users.find("name", args[1]);
           }
