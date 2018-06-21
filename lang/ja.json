@@ -1,5 +1,5 @@
 {
-  "adminhelp": "現在はこれらのコマンドがあります: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (非推奨)` `{0}language` `{0}log`",
+  "adminhelp": "現在はこれらのコマンドがあります: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (非推奨)` `{0}language` `{0}log` `{0}setnotifyrep <0...10>` `{0}setbanrep <0...10>` `{0}antispam`",
   "senttodm": "DMへ送りました。DMを見てください！",
   "mytoken": "トークンは {0} です。",
   "youdonthavear": ":no_good: Adminロールを持っていません。",
@@ -24,5 +24,20 @@
   "unbanned": "BANを解除しました。",
   "no_args": ":x: 引数が足りません。",
   "invalid_args": ":x: 引数が正しくありません。",
-  "autobanned": "サーバー {2} ({3})から自動BANしました: {0} ({1})"
+  "autobanned": "サーバー {2} ({3})から自動BANしました: {0} ({1})",
+  "antispam": {
+    "description": "アンチスパムの設定(BETA) [現在: {0}]",
+    "toggle": "アンチスパムをトグルします。",
+    "toggled": "トグルしました。",
+    "disable": "アンチスパムを無効化します。",
+    "disabled": "アンチスパムを無効化しました。",
+    "enable": "アンチスパムを有効化します。",
+    "enabled": "アンチスパムを有効化しました。",
+    "ignore": "チャンネルのアンチスパムの切り替えをします。",
+    "ignore_disabled": "指定されたチャンネルのアンチスパムを無効化しました。",
+    "ignore_enabled": "指定されたチャンネルのアンチスパムを有効化しました。",
+    "status": "ステータスを表示します。",
+    "status2": "ステータス: {0}"
+  },
+  "contains_spam": ":x: スパムを検出しました。"
 }
