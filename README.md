@@ -16,7 +16,9 @@ Public Bot: [Invite](https://discordapp.com/api/oauth2/authorize?client_id=45696
 | unban <UserID/Name> | Attempt UnBAN | Unbanします |
 | language <./lang/*.json> | Change language | 言語を変更します |
 | log | Send all logs to DM(Not working) | すべてのログをDMに送信します(動作しません) |
-
+| setnotifyrep | Set notify reputation | 通知する評価値を設定します |
+| setbanrep | Set auto ban reputation | 自動BANする評価値を設定します |
+| antispam | Seeing is believing. Try it. | 百聞は一見に如かず。試してみよう。 |
 ---
 
 User has 0 rep, if you're banned a 1 time, you'll added 1 rep.

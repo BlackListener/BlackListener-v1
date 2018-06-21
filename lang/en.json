@@ -1,5 +1,5 @@
 {
-  "adminhelp": "Currently found that commands: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (Not recommended)` `{0}language` `{0}log`",
+  "adminhelp": "Currently found that commands: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (Not recommended)` `{0}language` `{0}log` `{0}setnotifyrep <0...10>` `{0}setbanrep <0...10>` `{0}antispam`",
   "senttodm": "Sent to DM!",
   "mytoken": "Token is {0}.",
   "youdonthavear": ":no_good: You don't have a admin permission.",
@@ -25,4 +25,18 @@
   "no_args": ":x: Missing an arguments.",
   "invalid_args": ":x: Invalid arguments.",
   "autobanned": "Auto banned user: {0} ({1}) from {2}({3})"
+  "antispam": {
+    "description": "AntiSpam Settings(BETA) [Current: {0}]",
+    "toggle": "Toggles Anti-spam.",
+    "disable": "Disables Anti-spam.",
+    "disabled": "Disabled Anti-spam.",
+    "enable": "Enables Anti-spam.",
+    "enabled": "Enabled Anti-spam.",
+    "ignore": "Toggles Anti-spam of channel.",
+    "ignore_disabled": "Disabled Anti-spam of selected channel.",
+    "ignore_enabled": "Enabled Anti-spam of selected channel.",
+    "status": "Displays status.",
+    "status2": "Status: {0}"
+  },
+  "contains_spam": ":x: Detected spamming."
 }

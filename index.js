@@ -10,6 +10,8 @@ const f = require('string-format'), // Load & Initialize string-format
     language: c.lang,
     notifyRep: c.notifyRep,
     banRep: c.banRep,
+    antispam: true,
+    ignoredChannels: [],
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
@@ -21,7 +23,9 @@ var guildSettings,
   bansFile,
   bans,
   userFile,
-  user;
+  user,
+  serverMessagesFile,
+  userMessagesFile;
 
 client.on('ready', () => {
   if (!fs.existsSync(`./data/servers`)) {
@@ -43,9 +47,17 @@ client.on('message', msg => {
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
  bans = require(bansFile);
  if (!msg.author.bot) {
-  userFile = `./data/users/${msg.author.id}.json`;
   if (!msg.guild) return msg.channel.send("Not supported DM or GroupDM");
-  guildSettings = `./data/servers/${msg.guild.id}.json`;
+  userFile = `./data/users/${msg.author.id}/config.json`;
+  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
+  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
+  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
+  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
+    mkdirp(`./data/users/${msg.author.id}`);
+  }
+  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
+    mkdirp(`./data/servers/${msg.guild.id}`);
+  }
   if (!fs.existsSync(guildSettings)) {
     console.log(`Creating ${guildSettings}`);
     fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
@@ -54,9 +66,27 @@ client.on('message', msg => {
     console.log(`Creating ${userFile}`);
     fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
+  let parentName;
+  if (msg.channel.parent) {
+    parentName = msg.channel.parent.name;
+  }
+  fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.name}:${msg.author.id}] ${msg.content}\n`);
+  fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.name}:${msg.author.id}] ${msg.content}\n`)
   user = require(userFile);
   settings = require(guildSettings);
-  lang = require(`./lang/${settings.language}.json`);
+  lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
+
+  // --- Begin of Anti-spam
+  if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id)) {
+    var status = false;
+    if (/(.)\1{15,}/gm.test(msg.content)) status = true;
+    if (status) {
+      msg.delete(0);
+      msg.channel.send(lang.contains_spam);
+    }
+  }
+  // --- End of Anti-spam
+
   if (msg.content.startsWith(settings.prefix)) {
     if (!msg.member.hasPermission(8) || msg.author != "<@254794124744458241>") return msg.channel.send(lang.udonthaveperm);
     if (msg.content === settings.prefix + "help") {
@@ -151,8 +181,8 @@ client.on('message', msg => {
               .catch(console.error);
           }
           localUser.rep = --localUser.rep;
-          writeSettings(bansFile, ban, msg.channel, null, false);
-          writeSettings(userFile, localUser, msg.channel, null, false);
+          writeSettings(bansFile, ban, null, null, false);
+          writeSettings(userFile, localUser, null, null, false);
           msg.channel.send(lang.unbanned);
         } else {
           msg.channel.send(lang.guild_unavailable);
@@ -166,7 +196,7 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const args = msg.content.slice(settings.prefix + "setprefix".length).trim().split(/ +/g);
       let set = settings;
-      if (/\s/gm.test(args[1]) || args[1] == null) {
+      if (/\s/gm.test(args[1]) || !args[1]) {
         msg.channel.send(lang.cannotspace);
       } else {
         set.prefix = args[1];
@@ -175,11 +205,11 @@ client.on('message', msg => {
     } else if (msg.content.startsWith(settings.prefix + "setnotifyrep")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const args = msg.content.slice(settings.prefix + "setnotifyrep".length).trim().split(/ +/g);
-      let set = settings;
-      let n = parseInt(args[1], 10);
-      let min = 0;
-      let max = 10;
-      let status = n >= min && n <= max;
+      let set = settings,
+        n = parseInt(args[1], 10),
+        min = 0,
+        max = 10,
+        status = n >= min && n <= max;
       if (!status || args[1] == null) {
         msg.channel.send(lang.invalid_args);
       } else {
@@ -189,28 +219,96 @@ client.on('message', msg => {
     } else if (msg.content.startsWith(settings.prefix + "setbanrep")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const args = msg.content.slice(settings.prefix + "setbanrep".length).trim().split(/ +/g);
-      let set = settings;
-      let n = parseInt(args[1], 10);
-      let min = 0;
-      let max = 10;
-      let status = n >= min && n <= max;
+      let set = settings,
+        n = parseInt(args[1], 10),
+        min = 0,
+        max = 10,
+        status = n >= min && n <= max;
       if (!status || args[1] == null) {
         msg.channel.send(lang.invalid_args);
       } else {
         set.banRep = parseInt(args[1], 10);
         writeSettings(guildSettings, set, msg.channel, "banRep");
       }
-    } else if (msg.content.startsWith(settings.prefix + "language")) {
+    } else if (msg.content.startsWith(settings.prefix + "antispam")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "language".length).trim().split(/ +/g);
-      if (!args[1]) {
+      const args = msg.content.slice(settings.prefix + "antispam".length).trim().split(/ +/g),
+        command = `${settings.prefix}antispam`,
+        off = `無効`,
+        on = `有効`;
+      if (!args[1] || args[1] === "help") {
+        var status;
+        if (settings.antispam) {
+          status = on;
+        } else {
+          status = off;
+        }
+        let embed = new discord.RichEmbed()
+          .setTitle(` - AntiSpam - `)
+          .setDescription(f(lang.antispam.description, status))
+          .addField(`${command} toggle`, lang.antispam.toggle)
+          .addField(`${command} disable`, lang.antispam.disable)
+          .addField(`${command} enable`, lang.antispam.enable)
+          .addField(`${command} ignore <#Channel>`, lang.antispam.ignore)
+          .addField(`${command} status <#Channel>`, lang.antispam.status)
+          .setTimestamp();
+        msg.channel.send(embed);
+      } else if (args[1] === "toggle") {
+        if (settings.antispam) {
+          let localSettings = settings;
+          localSettings.antispam = false;
+          writeSettings(guildSettings, localSettings, null, null, false);
+          msg.channel.send(lang.antispam.disabled);
+        } else {
+          let localSettings = settings;
+          localSettings.antispam = true;
+          writeSettings(guildSettings, localSettings, null, null, false);
+          msg.channel.send(lang.antispam.enabled);
+        }
+      } else if (args[1] === "disable") {
+        let localSettings = settings;
+        localSettings.antispam = false;
+        writeSettings(guildSettings, localSettings, null, null, false);
+        msg.channel.send(lang.antispam.disabled);
+      } else if (args[1] === "enable") {
+        let localSettings = settings;
+        localSettings.antispam = true;
+        writeSettings(guildSettings, localSettings, null, null, false);
+        msg.channel.send(lang.antispam.enabled);
+      } else if (args[1] === "ignore") {
+        if (!msg.mentions.channels.first()) return msg.channel.send(lang.invalid_args);
+        if (/\s/.test(args[2]) || !args[2]) return msg.channel.send(lang.cannotspace);
+        let localSettings = settings,
+          id = msg.mentions.channels.first().id;
+        if (~localSettings.ignoredChannels.indexOf(id)) {
+          delete localSettings.ignoredChannels[localSettings.ignoredChannels.indexOf(id)];
+          writeSettings(guildSettings, localSettings, null, null, false);
+          msg.channel.send(lang.antispam.ignore_enabled);
+        } else {
+          localSettings.ignoredChannels.push(id);
+          writeSettings(guildSettings, localSettings, null, null, false);
+          msg.channel.send(lang.antispam.ignore_disabled);
+        }
+      } else if (args[1] === "status") {
+        if (!msg.mentions.channels.first()) return msg.channel.send(lang.invalid_args);
+        let localSettings = settings,
+          id = msg.mentions.channels.first().id;
+        if (/\s/.test(args[2]) || !args[2]) return msg.channel.send(lang.cannotspace);
+        if (~settings.ignoredChannels.indexOf(id)) {
+          msg.channel.send(f(lang.antispam.status2, off));
+        } else {
+          msg.channel.send(f(lang.antispam.status2, on));
+        }
+      }
+    } else if (msg.content.startsWith(settings.prefix + "language")) {
+      if (!args[1] || args[1] === "help") {
         let embed = new discord.RichEmbed()
           .setTitle(lang.langnotsupported)
           .setDescription(lang.availablelang)
           .addField("日本語", "ja")
           .addField("English", "en");
         msg.channel.send(embed);
-      } else if (~args[1].indexOf("en") || ~args[1].indexOf("ja")) {
+      } else if (args[1] === "en" || args[1] === "ja") {
         let set = settings;
         set.language = args[1];
         writeSettings(guildSettings, set, msg.channel, "language");
@@ -225,7 +323,7 @@ client.on('message', msg => {
 });
 
 process.on('SIGINT', function() {
-  console.log("Caught interrupt signal, shutdown.");
+  console.log("Caught INT signal, shutdown.");
   client.destroy();
 });
 
@@ -249,24 +347,23 @@ client.on("guildMemberAdd", member => {
   }
   let serverSetting = require(serverFile);
   let userSetting = require(userFile);
-  if (serverSetting.banRep <= userSetting.rep) {
-//  for (var i=0; i<=bans.length; i++) {
-//    if (member.id == bans[i]) {
-//      for (var i=0; i<=client.guilds.array.length; i++) {
-//        console.log(`${member.user.tag} will be banned from ${client.guilds.get( Array.from( client.guilds.keys() )[i] )}`);
-//        client.guilds.get(Array.from(client.guilds.keys())[i]).ban(member)
-//          .then(user => console.log(`Auto banned user(${i}): ${user.tag} (${user.id}) from ${client.guilds.get(Array.from(client.guilds.keys())[i])}`))
-//          .catch(console.error);
-          member.guild.ban(member)
-//          .then(user => console.log(`Auto banned user: ${member.user.tag} (${user.id}) from ${member.guild.name}(${member.guild.id})`))
-            .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
-            .catch(console.error);
-//      }
-//    } else { continue; }
-//  }
-  } else if (serverSetting.notifyRep <= userSetting.rep) {
+  if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
+    member.guild.ban(member)
+      .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+      .catch(console.error);
+  } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
     member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
   }
 });
+
+function getDateTime()
+{
+    var date = new Date();
+    return [
+      date.getFullYear(),
+      date.getMonth() + 1,
+      date.getDate()
+    ].join( '/' ) + ' ' + date.toLocaleTimeString();
+}
 
 client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`));
