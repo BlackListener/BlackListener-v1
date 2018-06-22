@@ -113,7 +113,7 @@ client.on('message', msg => {
     if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       msg.channel.send(f(lang.adminhelp, settings.prefix, settings.prefix));
-    } else if (msg.content.startsWith(settings.prefix + "shutdown")) {
+    } else if (msg.content.startsWith(settings.prefix + "shutdown ")) {
       console.log(f(lang.processing_cmd, msg.content, msg.author, msg.author.tag));
       if(msg.author == "<@254794124744458241>") {
         if(args[1] == "-f") {
@@ -129,7 +129,7 @@ client.on('message', msg => {
         msg.reply(lang.noperm);
         console.log(f(lang.failednotmatch, msg.content));
       }
-    } else if (msg.content === settings.prefix + "token") {
+    } else if (msg.content === settings.prefix + "token ") {
       if (msg.author.id === "254794124744458241") {
         msg.author.send(f(lang.mytoken, client.token));
         msg.reply(lang.senttodm);
@@ -142,7 +142,7 @@ client.on('message', msg => {
         msg.reply(lang.youdonthavear);
         console.log(f(lang.issuedfailadmin, msg.author.tag, msg.content, "Doesn't have Admin Role"));
       }
-    } else if (msg.content.startsWith(settings.prefix + "ban")) {
+    } else if (msg.content.startsWith(settings.prefix + "ban ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if(!args[1] || args[1] === ``) {
         msg.channel.send(lang.no_args);
@@ -171,7 +171,7 @@ client.on('message', msg => {
           msg.channel.send(lang.banned);
         }
       }
-    } else if (msg.content.startsWith(settings.prefix + "unban")) {
+    } else if (msg.content.startsWith(settings.prefix + "unban ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if(!args[1] || args[1] === ``) {
         msg.channel.send(lang.no_args);
@@ -208,11 +208,11 @@ client.on('message', msg => {
           msg.channel.send(lang.guild_unavailable);
         }
       }
-    } else if (msg.content.startsWith(settings.prefix + "fixactivity")) {
+    } else if (msg.content.startsWith(settings.prefix + "fixactivity ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       client.user.setActivity(settings.prefix + "help | ${client.guilds.size}サーバー");
       msg.channel.send(":ok_hand:");
-    } else if (msg.content.startsWith(settings.prefix + "setprefix")) {
+    } else if (msg.content.startsWith(settings.prefix + "setprefix ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let set = settings;
       if (/\s/gm.test(args[1]) || !args[1]) {
@@ -221,7 +221,7 @@ client.on('message', msg => {
         set.prefix = args[1];
         writeSettings(guildSettings, set, msg.channel, "prefix");
       }
-    } else if (msg.content.startsWith(settings.prefix + "setnotifyrep")) {
+    } else if (msg.content.startsWith(settings.prefix + "setnotifyrep ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let set = settings,
         n = parseInt(args[1], 10),
@@ -234,7 +234,7 @@ client.on('message', msg => {
         set.notifyRep = parseInt(args[1], 10);
         writeSettings(guildSettings, set, msg.channel, "notifyRep");
       }
-    } else if (msg.content.startsWith(settings.prefix + "setbanrep")) {
+    } else if (msg.content.startsWith(settings.prefix + "setbanrep ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let set = settings,
         n = parseInt(args[1], 10),
@@ -247,7 +247,7 @@ client.on('message', msg => {
         set.banRep = parseInt(args[1], 10);
         writeSettings(guildSettings, set, msg.channel, "banRep");
       }
-    } else if (msg.content.startsWith(settings.prefix + "antispam")) {
+    } else if (msg.content.startsWith(settings.prefix + "antispam ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const command = `${settings.prefix}antispam`,
         off = `無効`,
@@ -316,7 +316,7 @@ client.on('message', msg => {
           msg.channel.send(f(lang.antispam.status2, on));
         }
       }
-    } else if (msg.content.startsWith(settings.prefix + "language")) {
+    } else if (msg.content.startsWith(settings.prefix + "language ")) {
       if (!args[1] || args[1] === "help") {
         let embed = new discord.RichEmbed()
           .setTitle(lang.langnotsupported)
@@ -329,7 +329,7 @@ client.on('message', msg => {
         set.language = args[1];
         writeSettings(guildSettings, set, msg.channel, "language");
       }
-    } else if (msg.content.startsWith(settings.prefix + "log")) {
+    } else if (msg.content.startsWith(settings.prefix + "log ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
