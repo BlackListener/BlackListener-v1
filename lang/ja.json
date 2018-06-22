@@ -1,5 +1,5 @@
 {
-  "adminhelp": "現在はこれらのコマンドがあります: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (非推奨)` `{0}language` `{0}log` `{0}setnotifyrep <0...10>` `{0}setbanrep <0...10>` `{0}antispam`",
+  "adminhelp": "現在はこれらのコマンドがあります: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (非推奨)` `{0}language` `{0}log` `{0}setnotifyrep <0...10>` `{0}setbanrep <0...10>` `{0}antispam` `{0}purge [数値/all, gdel, gdel-msg]`",
   "senttodm": "DMへ送りました。DMを見てください！",
   "mytoken": "トークンは {0} です。",
   "youdonthavear": ":no_good: Adminロールを持っていません。",
@@ -44,6 +44,7 @@
   "didyoumean": "これはもしかして？ {0}",
   "error": "処理を行おうとしましたが、エラーが発生したため実行できませんでした。エラーコード: {0}",
   "errors": {
-    "server_banned": "k52j"
+    "server_banned": "k52j",
+    "permission_denied": "bu93"
   }
 }

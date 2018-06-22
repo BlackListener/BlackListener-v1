@@ -26,7 +26,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `token`, "args": ``},
     {"body": `setprefix`, "args": ` <Prefix>`},
     {"body": `ban`, "args": ` <ID/Mentions/Name>`},
-    {"body": `unban`, "args": ` <ID/Mentions/Name> __Not recommended__`},
+    {"body": `unban`, "args": ` <ID/Mentions/Name> *Not recommended*`},
     {"body": `language`, "args": ` <ja/en>`},
     {"body": `log`, "args": ``},
     {"body": `setnotifyrep`, "args": ` <0...10>`},
@@ -38,6 +38,12 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `antispam ignore`, "args": ` <チャンネル>`},
     {"body": `antispam status`, "args": ` <チャンネル>`},
     {"body": `reload`, "args": ``},
+    {"body": `setnick`, "args": ` <NewName>`},
+    {"body": `setnickname`, "args": ` <NewName>`},
+    {"body": `purge`, "args": ` [数値/all]`},
+    {"body": `purge gdel`, "args": ``},
+    {"body": `purge gdel-msg`, "args": ``},
+    {"body": `purge gdel-really`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -97,6 +103,15 @@ client.on('message', msg => {
   user = require(userFile);
   settings = require(guildSettings);
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
+
+  if (!settings.banned) {
+    if (settings.banRep <= user.rep && settings.banRep != 0) {
+      member.guild.ban(member)
+        .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+        .catch(console.error);
+    }
+  }
+
 
   // --- Begin of Anti-spam
   if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id) && !msg.author.bot) {
@@ -175,6 +190,39 @@ client.on('message', msg => {
           msg.channel.send(lang.banned);
         }
       }
+    } else if (msg.content.startsWith(settings.prefix + "purge ") || msg.content === settings.prefix + "purge") {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      var messages;
+      if (args[1] === `` || !args[1] || args[1] === `all`) {
+        msg.channel.fetchMessages()
+          .then((messages) => {
+            messages.forEach((message) => {
+              message.delete();
+            })
+          });
+      } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-msg`) {
+        msg.guild.channels.forEach((channel) => {
+          channel.fetchMessages()
+            .then((messages) => {
+              messages.forEach((message) => {
+                message.delete();
+              })
+            })
+        });
+      } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel`) {
+        msg.guild.channels.forEach((channel) => { channel.delete(); });
+        msg.guild.createChannel("general", "text");
+      } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-really`) {
+        msg.guild.channels.forEach((channel) => {
+          channel.delete()
+            .catch(msg.channel.send(f(lang.unknown_error, lang.errors.permission_denied)));
+        });
+      } else if (/[0-9]/.test(args[1])) {
+        msg.channel.send(`:ok_hand:`);
+        msg.channel.bulkDelete(parseInt(args[1]));
+      } else {
+        msg.channel.send(lang.invalid_args);
+      }
     } else if (msg.content.startsWith(settings.prefix + "unban ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if(!args[1] || args[1] === ``) {
@@ -224,6 +272,14 @@ client.on('message', msg => {
       } else {
         set.prefix = args[1];
         writeSettings(guildSettings, set, msg.channel, "prefix");
+      }
+    } else if (msg.content.startsWith(settings.prefix + "setnick") || msg.content.startsWith(settings.prefix + "setnickname ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      if (/\s/gm.test(args[1]) || !args[1]) {
+        msg.channel.send(lang.cannotspace);
+      } else {
+        msg.guild.me.setNickname(args[1]);
+        msg.channel.send(`:ok_hand:`);
       }
     } else if (msg.content.startsWith(settings.prefix + "setnotifyrep ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
