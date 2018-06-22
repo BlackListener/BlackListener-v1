@@ -12,6 +12,7 @@ const f = require('string-format'), // Load & Initialize string-format
     notifyRep: c.notifyRep,
     banRep: c.banRep,
     antispam: true,
+    banned: false,
     ignoredChannels: [],
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
@@ -36,6 +37,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `antispam enable`, "args": ``},
     {"body": `antispam ignore`, "args": ` <チャンネル>`},
     {"body": `antispam status`, "args": ` <チャンネル>`},
+    {"body": `reload`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -97,10 +99,11 @@ client.on('message', msg => {
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Anti-spam
-  if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id)) {
+  if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id) && !msg.author.bot) {
     var status = false;
     if (/(.)\1{15,}/gm.test(msg.content)) status = true;
     if (status) {
+      if (settings.banned) { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
       msg.delete(0);
       msg.channel.send(lang.contains_spam);
     }
@@ -108,6 +111,7 @@ client.on('message', msg => {
   // --- End of Anti-spam
 
   if (msg.content.startsWith(settings.prefix)) {
+    if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
     if (!msg.member.hasPermission(8) || msg.author != "<@254794124744458241>") return msg.channel.send(lang.udonthaveperm);
     if (msg.content === settings.prefix + "help") {
@@ -129,7 +133,7 @@ client.on('message', msg => {
         msg.reply(lang.noperm);
         console.log(f(lang.failednotmatch, msg.content));
       }
-    } else if (msg.content === settings.prefix + "token ") {
+    } else if (msg.content === settings.prefix + "token") {
       if (msg.author.id === "254794124744458241") {
         msg.author.send(f(lang.mytoken, client.token));
         msg.reply(lang.senttodm);
@@ -156,7 +160,7 @@ client.on('message', msg => {
             user = client.users.find("name", args[1]);
           }
           if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
-          if (!user) return msg.channel.send(lang.invalid_user);
+          if (!user) { settings = null; return msg.channel.send(lang.invalid_user); }
           let ban = bans,
             localUser = user;
           ban.push(user.id);
@@ -184,7 +188,7 @@ client.on('message', msg => {
             user = client.users.find("name", args[1]);
           }
           if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
-          if (!user) return msg.channel.send(lang.invalid_user);
+          if (!user) { settings = null; return msg.channel.send(lang.invalid_user); }
           let ban = bans,
             localUser = user;
           var exe = false;
@@ -194,7 +198,7 @@ client.on('message', msg => {
               delete ban[i];
             }
           }
-          if (!exe) return msg.channel.send(lang.notfound_user);
+          if (!exe) { settings = null; return msg.channel.send(lang.notfound_user); }
           for (var i=0; i<=client.guilds.length; i++) {
             client.guilds[i].unban(user)
               .then(user2 => console.log(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
@@ -208,7 +212,7 @@ client.on('message', msg => {
           msg.channel.send(lang.guild_unavailable);
         }
       }
-    } else if (msg.content.startsWith(settings.prefix + "fixactivity ")) {
+    } else if (msg.content === settings.prefix + "fixactivity") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       client.user.setActivity(settings.prefix + "help | ${client.guilds.size}サーバー");
       msg.channel.send(":ok_hand:");
@@ -247,7 +251,7 @@ client.on('message', msg => {
         set.banRep = parseInt(args[1], 10);
         writeSettings(guildSettings, set, msg.channel, "banRep");
       }
-    } else if (msg.content.startsWith(settings.prefix + "antispam ")) {
+    } else if (msg.content.startsWith(settings.prefix + "antispam ") || msg.content === settings.prefix + "antispam") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const command = `${settings.prefix}antispam`,
         off = `無効`,
@@ -292,8 +296,8 @@ client.on('message', msg => {
         writeSettings(guildSettings, localSettings, null, null, false);
         msg.channel.send(lang.antispam.enabled);
       } else if (args[1] === "ignore") {
-        if (!msg.mentions.channels.first()) return msg.channel.send(lang.invalid_args);
-        if (/\s/.test(args[2]) || !args[2]) return msg.channel.send(lang.cannotspace);
+        if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args); }
+        if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
         let localSettings = settings,
           id = msg.mentions.channels.first().id;
         if (~localSettings.ignoredChannels.indexOf(id)) {
@@ -306,10 +310,10 @@ client.on('message', msg => {
           msg.channel.send(lang.antispam.ignore_disabled);
         }
       } else if (args[1] === "status") {
-        if (!msg.mentions.channels.first()) return msg.channel.send(lang.invalid_args);
+        if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args); }
         let localSettings = settings,
           id = msg.mentions.channels.first().id;
-        if (/\s/.test(args[2]) || !args[2]) return msg.channel.send(lang.cannotspace);
+        if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
         if (~settings.ignoredChannels.indexOf(id)) {
           msg.channel.send(f(lang.antispam.status2, off));
         } else {
@@ -329,10 +333,18 @@ client.on('message', msg => {
         set.language = args[1];
         writeSettings(guildSettings, set, msg.channel, "language");
       }
-    } else if (msg.content.startsWith(settings.prefix + "log ")) {
+    } else if (msg.content === settings.prefix + "log") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
+    } else if (msg.content === settings.prefix + "reload") {
+      if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      console.log("Reloading!");
+      delete require.cache[require.resolve(guildSettings)];
+      delete require.cache[require.resolve(userFile)];
+      delete require.cache[require.resolve(bansFile)];
+      msg.channel.send(`:ok_hand:`);
     } else {
       let sb = new StringBuilder(``),
       cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
@@ -354,6 +366,7 @@ client.on('message', msg => {
     }
   }
  }
+ settings = null;
 });
 
 process.on('SIGINT', function() {
@@ -381,12 +394,16 @@ client.on("guildMemberAdd", member => {
   }
   let serverSetting = require(serverFile);
   let userSetting = require(userFile);
-  if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
-    member.guild.ban(member)
-      .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
-      .catch(console.error);
-  } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
-    member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
+  if (!serverSetting.banned) {
+    if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
+      member.guild.ban(member)
+        .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+        .catch(console.error);
+    } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
+      member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
+    }
+  } else {
+    msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
 });
 
