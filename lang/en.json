@@ -1,5 +1,5 @@
 {
-  "adminhelp": "Currently found that commands: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (Not recommended)` `{0}language` `{0}log` `{0}setnotifyrep <0...10>` `{0}setbanrep <0...10>` `{0}antispam`",
+  "adminhelp": "Currently found that commands: `{0}shutdown` `{0}token` `{0}fixactivity` `{0}setprefix` `{0}ban` `{0}unban (Not recommended)` `{0}language` `{0}log` `{0}setnotifyrep <0...10>` `{0}setbanrep <0...10>` `{0}antispam` `{0}purge [number/all, gdel, gdel-msg]`",
   "senttodm": "Sent to DM!",
   "mytoken": "Token is {0}.",
   "youdonthavear": ":no_good: You don't have a admin permission.",
