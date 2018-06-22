@@ -38,5 +38,7 @@
     "status": "Displays status.",
     "status2": "Status: {0}"
   },
-  "contains_spam": ":x: Detected spamming."
+  "contains_spam": ":x: Detected spamming.",
+  "no_command": "`{0}` is not BlackListener command.",
+  "didyoumean": "Did you mean? {0}"
 }

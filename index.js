@@ -5,6 +5,7 @@ const f = require('string-format'), // Load & Initialize string-format
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
   fs = require('fs'), // File System
+  StringBuilder = require('node-stringbuilder'), // String Builder
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -16,7 +17,26 @@ const f = require('string-format'), // Load & Initialize string-format
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
     rep: 0,
-  }
+  },
+  levenshtein = function (s1, s2) {if (s1 == s2) {return 0;}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len;}if (s2_len === 0) {return s1_len;}let split = false; try{split = !(`0`)[0];}catch(e){split = true;}if (split) {s1 = s1.split(``); s2 = s2.split(``);}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0, s2_idx = 0, cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx;}let char_s1 = ``, char_s2 = ``; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b;}if (c < m_min) {m_min = c;}v1[s1_idx + 1] = m_min;}const v_tmp = v0; v0 = v1; v1 = v_tmp;}return v0[s1_len];},
+  commandList = [
+    {"body": `help`, "args": ``},
+    {"body": `shutdown`, "args": ` [-f]`},
+    {"body": `token`, "args": ``},
+    {"body": `setprefix`, "args": ` <Prefix>`},
+    {"body": `ban`, "args": ` <ID/Mentions/Name>`},
+    {"body": `unban`, "args": ` <ID/Mentions/Name> __Not recommended__`},
+    {"body": `language`, "args": ` <ja/en>`},
+    {"body": `log`, "args": ``},
+    {"body": `setnotifyrep`, "args": ` <0...10>`},
+    {"body": `setbanrep`, "args": ` <0...10>`},
+    {"body": `antispam`, "args": ``},
+    {"body": `antispam toggle`, "args": ``},
+    {"body": `antispam disable`, "args": ``},
+    {"body": `antispam enable`, "args": ``},
+    {"body": `antispam ignore`, "args": ` <チャンネル>`},
+    {"body": `antispam status`, "args": ` <チャンネル>`},
+  ];
 var guildSettings,
   settings,
   lang,
@@ -88,6 +108,7 @@ client.on('message', msg => {
   // --- End of Anti-spam
 
   if (msg.content.startsWith(settings.prefix)) {
+    const args = msg.content.replace(settings.prefix, "").split(` `);
     if (!msg.member.hasPermission(8) || msg.author != "<@254794124744458241>") return msg.channel.send(lang.udonthaveperm);
     if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -95,7 +116,6 @@ client.on('message', msg => {
     } else if (msg.content.startsWith(settings.prefix + "shutdown")) {
       console.log(f(lang.processing_cmd, msg.content, msg.author, msg.author.tag));
       if(msg.author == "<@254794124744458241>") {
-        const args = msg.content.slice(settings.prefix + "shutdown".length).trim().split(/ +/g);
         if(args[1] == "-f") {
           console.log(f(lang.atmpfs, msg.author.tag));
           msg.channel.send(lang.bye);
@@ -124,7 +144,6 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "ban")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "ban".length).trim().split(/ +/g);
       if(!args[1] || args[1] === ``) {
         msg.channel.send(lang.no_args);
       } else {
@@ -136,6 +155,7 @@ client.on('message', msg => {
           } else {
             user = client.users.find("name", args[1]);
           }
+          if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
           if (!user) return msg.channel.send(lang.invalid_user);
           let ban = bans,
             localUser = user;
@@ -153,7 +173,6 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "unban")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "unban".length).trim().split(/ +/g);
       if(!args[1] || args[1] === ``) {
         msg.channel.send(lang.no_args);
       } else {
@@ -164,6 +183,7 @@ client.on('message', msg => {
           } else {
             user = client.users.find("name", args[1]);
           }
+          if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
           if (!user) return msg.channel.send(lang.invalid_user);
           let ban = bans,
             localUser = user;
@@ -190,11 +210,10 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "fixactivity")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      client.user.setActivity(settings.prefix + "help");
+      client.user.setActivity(settings.prefix + "help | ${client.guilds.size}サーバー");
       msg.channel.send(":ok_hand:");
     } else if (msg.content.startsWith(settings.prefix + "setprefix")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "setprefix".length).trim().split(/ +/g);
       let set = settings;
       if (/\s/gm.test(args[1]) || !args[1]) {
         msg.channel.send(lang.cannotspace);
@@ -204,7 +223,6 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "setnotifyrep")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "setnotifyrep".length).trim().split(/ +/g);
       let set = settings,
         n = parseInt(args[1], 10),
         min = 0,
@@ -218,7 +236,6 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "setbanrep")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "setbanrep".length).trim().split(/ +/g);
       let set = settings,
         n = parseInt(args[1], 10),
         min = 0,
@@ -232,8 +249,7 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "antispam")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const args = msg.content.slice(settings.prefix + "antispam".length).trim().split(/ +/g),
-        command = `${settings.prefix}antispam`,
+      const command = `${settings.prefix}antispam`,
         off = `無効`,
         on = `有効`;
       if (!args[1] || args[1] === "help") {
@@ -317,6 +333,24 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
+    } else {
+      let sb = new StringBuilder(``),
+      cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
+      for(var i = 0; i < commandList.length; i++) {
+        commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
+      }
+      commandList.sort((a, b) => {
+        return a.no - b.no;
+      });
+      for (var i = 0; i < commandList.length; i++) {
+        if (commandList[i].no <= 2) {
+          sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
+        }
+      }
+      msg.channel.send(f(lang.no_command, cmd));
+      if (sb.toString() != ``) {
+        msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
+      }
     }
   }
  }

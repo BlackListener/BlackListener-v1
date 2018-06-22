@@ -39,5 +39,7 @@
     "status": "ステータスを表示します。",
     "status2": "ステータス: {0}"
   },
-  "contains_spam": ":x: スパムを検出しました。"
+  "contains_spam": ":x: スパムを検出しました。",
+  "no_command": "`{0}` はBlackListenerコマンドではありません。",
+  "didyoumean": "これはもしかして？ {0}"
 }
