@@ -66,20 +66,26 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
+ if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
+  mkdirp(`./data/users/${msg.author.id}`);
+ }
+ if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
+  mkdirp(`./data/servers/${msg.guild.id}`);
+ }
+ userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
+ serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
+ let parentName;
+ if (msg.channel.parent) {
+  parentName = msg.channel.parent.name;
+ }
+ fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+ fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
  bans = require(bansFile);
  if (!msg.author.bot) {
   if (!msg.guild) return msg.channel.send("Not supported DM or GroupDM");
   userFile = `./data/users/${msg.author.id}/config.json`;
-  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
   guildSettings = `./data/servers/${msg.guild.id}/config.json`;
-  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
-  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
-    mkdirp(`./data/users/${msg.author.id}`);
-  }
-  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
-    mkdirp(`./data/servers/${msg.guild.id}`);
-  }
   if (!fs.existsSync(guildSettings)) {
     console.log(`Creating ${guildSettings}`);
     fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
@@ -88,12 +94,6 @@ client.on('message', msg => {
     console.log(`Creating ${userFile}`);
     fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  let parentName;
-  if (msg.channel.parent) {
-    parentName = msg.channel.parent.name;
-  }
-  fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
-  fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
   user = require(userFile);
   settings = require(guildSettings);
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
