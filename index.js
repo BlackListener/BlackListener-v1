@@ -90,8 +90,8 @@ client.on('message', msg => {
   if (msg.channel.parent) {
     parentName = msg.channel.parent.name;
   }
-  fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.name}:${msg.author.id}] ${msg.content}\n`);
-  fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.name}:${msg.author.id}] ${msg.content}\n`)
+  fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+  fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
   user = require(userFile);
   settings = require(guildSettings);
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
