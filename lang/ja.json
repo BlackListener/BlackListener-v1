@@ -41,5 +41,9 @@
   },
   "contains_spam": ":x: スパムを検出しました。",
   "no_command": "`{0}` はBlackListenerコマンドではありません。",
-  "didyoumean": "これはもしかして？ {0}"
+  "didyoumean": "これはもしかして？ {0}",
+  "error": "処理を行おうとしましたが、エラーが発生したため実行できませんでした。エラーコード: {0}",
+  "errors": {
+    "server_banned": "k52j"
+  }
 }
