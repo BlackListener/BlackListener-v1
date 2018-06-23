@@ -6,6 +6,7 @@ const f = require('string-format'), // Load & Initialize string-format
   mkdirp = require('mkdirp'), // Make Directory
   fs = require('fs'), // File System
   StringBuilder = require('node-stringbuilder'), // String Builder
+  messages = require('./messages.json'), // Used for vote command
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -13,6 +14,7 @@ const f = require('string-format'), // Load & Initialize string-format
     banRep: c.banRep,
     antispam: true,
     banned: false,
+    disable_dangercommands: true,
     ignoredChannels: [],
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
@@ -44,6 +46,14 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `purge gdel`, "args": ``},
     {"body": `purge gdel-msg`, "args": ``},
     {"body": `purge gdel-really`, "args": ``},
+    {"body": `vote`, "args": ` [引数]`},
+    {"body": `vote create`, "args": ` <問題> <回答1...回答10>`},
+    {"body": `vote start`, "args": ` <問題> <回答1...回答10>`},
+    {"body": `vote list`, "args": ``},
+    {"body": `vote info`, "args": ` <ID>`},
+    {"body": `vote end`, "args": ` <ID>`},
+    {"body": `vote close`, "args": ` <ID>`},
+    {"body": `vote vote`, "args": ` <ID> <投票先番号>`},
   ];
 var guildSettings,
   settings,
@@ -53,7 +63,243 @@ var guildSettings,
   userFile,
   user,
   serverMessagesFile,
-  userMessagesFile;
+  userMessagesFile,
+  voteCmd = (msg, split, settings) => {
+  if (split[1] === `create` || split[1] === `start`) {
+    if (!(/.*?\|.*?/gm).test(split[3])) return msg.channel.send(messages.votes.invalid_usage);
+    if (split[3].split(`|`).length > 10) return msg.channel.send(format(messages.votes.too_many_args, split[3].split(`|`).length - 1));
+    let voteId = Math.random().toString(36).substr(2, 3);
+    const guildId = msg.guild.id;
+    while (true) {
+      if (fs.existsSync(`./data/votes/${guildId}/${voteId}.json`)) {
+        voteId = Math.random().toString(36).substr(2, 5);
+        continue;
+      } else {
+        break;
+      }
+    }
+    const args2 = split[3].split(`|`),
+      voteFile = `./data/votes/${guildId}/${voteId}.json`,
+      voteData = {
+      "title": `${split[2]}`,
+      "data1": `${args2[0]}`,
+      "data2": `${args2[1]}`,
+      "data3": `${args2[2]}`,
+      "data4": `${args2[3]}`,
+      "data5": `${args2[4]}`,
+      "data6": `${args2[5]}`,
+      "data7": `${args2[6]}`,
+      "data8": `${args2[7]}`,
+      "data9": `${args2[8]}`,
+      "data10": `${args2[9]}`,
+      "closed": false,
+      "votes1": 0,
+      "votes2": 0,
+      "votes3": 0,
+      "votes4": 0,
+      "votes5": 0,
+      "votes6": 0,
+      "votes7": 0,
+      "votes8": 0,
+      "votes9": 0,
+      "votes10": 0,
+      "creator": `${msg.author.id}`
+    };
+    fs.writeFileSync(voteFile, JSON.stringify(voteData, null, 4), `utf8`, (err) => {
+  console.error(err);
+});
+   const vote = require(voteFile);
+   msg.channel.send(`\`${voteId}\`を作成しました。\n投票には、\`${settings.PREFIX}vote vote <ID> <数値>\`を入力してください。`);
+    const voteEmbed = new discord.RichEmbed().
+      setTitle(`投票`).
+      addField(vote.data1, vote.votes1).
+      addField(vote.data2, vote.votes2);
+      if (vote.data3.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data3, vote.votes3);
+      }
+      if (vote.data4.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data4, vote.votes4);
+      }
+      if (vote.data5.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data5, vote.votes5);
+      }
+      if (vote.data6.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data6, vote.votes6);
+      }
+      if (vote.data7.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data7, vote.votes7);
+      }
+      if (vote.data8.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data8, vote.votes8);
+      }
+      if (vote.data9.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data9, vote.votes9);
+      }
+      if (vote.data10.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data10, vote.votes10);
+      }
+      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
+      setFooter(`閉じられているか: ${vote.closed}`);
+    msg.channel.send(voteEmbed);
+  } else if (split[1] === `close` || split[1] === `end`) {
+    if (!split[2]) return msg.channel.send(messages.wrong_args);
+    const voteId = split[2],
+      guildId = msg.guild.id,
+      voteFile = `./data/votes/${guildId}/${voteId}.json`;
+    if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
+    let vote = require(voteFile);
+    if (vote.creator === msg.author.id) {
+      vote.closed = true;
+      writeSettings(voteFile, vote, msg.channel);
+      vote = require(voteFile);
+      msg.channel.send(messages.votes.close);
+      const voteEmbed = new discord.RichEmbed().
+        setTitle(`投票`).
+        addField(vote.data1, vote.votes1).
+        addField(vote.data2, vote.votes2);
+      if (vote.data3.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data3, vote.votes3);
+      }
+      if (vote.data4.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data4, vote.votes4);
+      }
+      if (vote.data5.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data5, vote.votes5);
+      }
+      if (vote.data6.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data6, vote.votes6);
+      }
+      if (vote.data7.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data7, vote.votes7);
+      }
+      if (vote.data8.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data8, vote.votes8);
+      }
+      if (vote.data9.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data9, vote.votes9);
+      }
+      if (vote.data10.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data10, vote.votes10);
+      }
+      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
+        setFooter(`閉じられているか: ${vote.closed}`);
+      msg.channel.send(voteEmbed);
+    } else {
+      msg.channel.send(messages.no_permission);
+    }
+  } else if (split[1] === `vote`) {
+    if (!split[3]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.PREFIX}vote list\`で見れます。`);
+    const voteId = split[2],
+      guildId = msg.guild.id,
+      voteFile = `./data/votes/${guildId}/${voteId}.json`;
+    if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
+    let vote = require(voteFile);
+    if (vote[`closed`] === true) return msg.channel.send(messages.votes.closed);
+    vote[`votes${split[3]}`] = ++vote[`votes${split[3]}`];
+    writeSettings(voteFile, vote, msg.channel);
+    vote = require(voteFile);
+    msg.channel.send(messages.votes.voted);
+    const voteEmbed = new discord.RichEmbed().
+      setTitle(`投票`).
+      addField(vote.data1, vote.votes1).
+      addField(vote.data2, vote.votes2);
+      if (vote.data3.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data3, vote.votes3);
+      }
+      if (vote.data4.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data4, vote.votes4);
+      }
+      if (vote.data5.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data5, vote.votes5);
+      }
+      if (vote.data6.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data6, vote.votes6);
+      }
+      if (vote.data7.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data7, vote.votes7);
+      }
+      if (vote.data8.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data8, vote.votes8);
+      }
+      if (vote.data9.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data9, vote.votes9);
+      }
+      if (vote.data10.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data10, vote.votes10);
+      }
+      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
+      setFooter(`閉じられているか: ${vote.closed}`);
+    msg.channel.send(voteEmbed);
+  } else if (split[1] === `list`) {
+    const embed = new discord.RichEmbed().
+      setTitle(`投票ID一覧`).
+      setTimestamp(),
+      sb = new StringBuilder(``),
+      items = fs.readdirSync(`./data/votes/${msg.guild.id}/`);
+    for (let i = 0; i < items.length; i++) {
+      sb.append(`${items[i].replace(`.json`, ``)}\n`);
+    }
+    embed.setDescription(sb.toString());
+    msg.channel.send(embed);
+  } else if (split[1] === `info`) {
+    if (!split[2]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.PREFIX}vote list\`で見れます。`);
+    const voteId = split[2],
+      guildId = msg.guild.id,
+      voteFile = `./data/votes/${guildId}/${voteId}.json`;
+    if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
+    const vote = require(voteFile);
+    const voteEmbed = new discord.RichEmbed().
+      setTimestamp().
+      setTitle(`投票`).
+      addField(vote.data1, vote.votes1).
+      addField(vote.data2, vote.votes2);
+      if (vote.data3.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data3, vote.votes3);
+      }
+      if (vote.data4.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data4, vote.votes4);
+      }
+      if (vote.data5.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data5, vote.votes5);
+      }
+      if (vote.data6.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data6, vote.votes6);
+      }
+      if (vote.data7.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data7, vote.votes7);
+      }
+      if (vote.data8.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data8, vote.votes8);
+      }
+      if (vote.data9.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data9, vote.votes9);
+      }
+      if (vote.data10.toString() !== `undefined`) {
+        voteEmbed.addField(vote.data10, vote.votes10);
+      }
+      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
+      setFooter(`閉じられているか: ${vote.closed}`);
+    msg.channel.send(voteEmbed);
+  } else {
+      let sb = new StringBuilder(``),
+      cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
+      for(var i = 0; i < commandList.length; i++) {
+        commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
+      }
+      commandList.sort((a, b) => {
+        return a.no - b.no;
+      });
+      for (var i = 0; i < commandList.length; i++) {
+        if (commandList[i].no <= 2) {
+          sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
+        }
+      }
+      msg.channel.send(f(lang.no_command, cmd));
+      if (sb.toString() != ``) {
+        msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
+      }
+  }
+};
 
 client.on('ready', () => {
   if (!fs.existsSync(`./data/servers`)) {
@@ -77,6 +323,9 @@ client.on('message', msg => {
  }
  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
   mkdirp(`./data/servers/${msg.guild.id}`);
+ }
+ if (!fs.existsSync(`./data/votes/${msg.guild.id}`)) {
+  mkdirp(`./data/votes/${msg.guild.id}`);
  }
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
@@ -128,7 +377,8 @@ client.on('message', msg => {
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
-    if (!msg.member.hasPermission(8) || msg.author != "<@254794124744458241>") return msg.channel.send(lang.udonthaveperm);
+    if (msg.content.startsWith(`${settings.prefix}vote `) || msg.content === `${settings.prefix}vote`) return voteCmd(msg, args, settings);
+    if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       msg.channel.send(f(lang.adminhelp, settings.prefix, settings.prefix));
@@ -154,7 +404,7 @@ client.on('message', msg => {
         msg.reply(lang.senttodm);
         console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
         var embed = new discord.RichEmbed();
-        embed.description = "You'll need to add permission - 'Manage Messages' => 'Save Changes'";
+        embed.description = "You'll need to set - add permission - 'Manage Messages' => 'Save Changes'";
         embed.setColor([255, 0, 0]);
         msg.delete(5000).catch(function (error) { msg.channel.send(":no_good: Missing permission: 'manage message'", embed); console.error("Error: missing 'manage message' permission.");});
       } else {
@@ -191,35 +441,50 @@ client.on('message', msg => {
         }
       }
     } else if (msg.content.startsWith(settings.prefix + "purge ") || msg.content === settings.prefix + "purge") {
+      if (msg.author.id === "254794124744458241") {
+        if (!msg.member.hasPermission(8)) return msg.channel.send(lang.no_perm);
+      }
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       var messages;
       if (args[1] === `` || !args[1] || args[1] === `all`) {
-        msg.channel.fetchMessages()
-          .then((messages) => {
-            messages.forEach((message) => {
-              message.delete();
-            })
-          });
+        let clear = () => {
+          msg.channel.fetchMessages()
+            .then((messages) => {
+              msg.channel.bulkDelete(messages);
+              if (messages.length >= 100) {
+                clear();
+              }
+            });
+        }
+        clear();
       } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-msg`) {
         msg.guild.channels.forEach((channel) => {
-          channel.fetchMessages()
-            .then((messages) => {
-              messages.forEach((message) => {
-                message.delete();
-              })
-            })
+          var clear = () => {
+            channel.fetchMessages()
+              .then((messages) => {
+                channel.bulkDelete(messages);
+                if (messages.length >= 100) {
+                  clear();
+                }
+              });
+          }
+          clear();
         });
       } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel`) {
         msg.guild.channels.forEach((channel) => { channel.delete(); });
         msg.guild.createChannel("general", "text");
       } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-really`) {
-        msg.guild.channels.forEach((channel) => {
-          channel.delete()
-            .catch(msg.channel.send(f(lang.unknown_error, lang.errors.permission_denied)));
-        });
+        msg.guild.channels.forEach((channel) => { channel.delete(); });
       } else if (/[0-9]/.test(args[1])) {
-        msg.channel.send(`:ok_hand:`);
-        msg.channel.bulkDelete(parseInt(args[1]));
+        if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
+          msg.channel.send(lang.outofrange);
+        }
+        async function clear() {
+          messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1});
+          msg.channel.bulkDelete(messages)
+            .catch(console.error);
+        }
+        clear();
       } else {
         msg.channel.send(lang.invalid_args);
       }
@@ -419,6 +684,9 @@ client.on('message', msg => {
       if (sb.toString() != ``) {
         msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
       }
+    }
+    } else {
+      return msg.channel.send(lang.udonthaveperm);
     }
   }
  }
