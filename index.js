@@ -320,6 +320,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
+ if (!msg.guild) return msg.channel.send("Not supported DM or GroupDM");
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
   mkdirp(`./data/users/${msg.author.id}`);
  }
@@ -340,7 +341,6 @@ client.on('message', msg => {
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
  bans = require(bansFile);
  if (!msg.author.bot) {
-  if (!msg.guild) return msg.channel.send("Not supported DM or GroupDM");
   userFile = `./data/users/${msg.author.id}/config.json`;
   guildSettings = `./data/servers/${msg.guild.id}/config.json`;
   if (!fs.existsSync(guildSettings)) {
