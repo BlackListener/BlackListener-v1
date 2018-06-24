@@ -14,7 +14,7 @@ const f = require('string-format'), // Load & Initialize string-format
     banRep: c.banRep,
     antispam: true,
     banned: false,
-    disable_dangercommands: true,
+    disable_purge: true,
     ignoredChannels: [],
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
@@ -54,6 +54,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `vote end`, "args": ` <ID>`},
     {"body": `vote close`, "args": ` <ID>`},
     {"body": `vote vote`, "args": ` <ID> <投票先番号>`},
+    {"body": `togglepurge`, "args": ` [enable/disable]`},
   ];
 var guildSettings,
   settings,
@@ -408,12 +409,27 @@ client.on('message', msg => {
         .addField(`${prefix}vote end <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote close <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
+        .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
         .addField(lang.commands.warning, lang.commands.asterisk);
       msg.channel.send(embed);
+    } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      let unsavedSettings = settings;
+      if (args[1] === "enable") { // enable purge command
+        unsavedSettings.disable_purge = false;
+      } else if (args[1] === "disable") { // disable purge command
+        unsavedSettings.disable_purge = true;
+      } else {
+        if (settings.disable_purge) {
+          unsavedSettings.disable_purge = false;
+        } else if (!settings.disable_purge) {
+          unsavedSettings.disable_purge = true;
+        }
+      }
+      writeSettings(guildSettings, set, msg.channel, "disable_purge");
     } else if (msg.content.startsWith(settings.prefix + "shutdown ")) {
-      console.log(f(lang.processing_cmd, msg.content, msg.author, msg.author.tag));
-      if(msg.author == "<@254794124744458241>") {
-        if(args[1] == "-f") {
+      if (msg.author == "<@254794124744458241>") {
+        if (args[1] == "-f") {
           console.log(f(lang.atmpfs, msg.author.tag));
           msg.channel.send(lang.bye);
           client.destroy();
@@ -469,10 +485,11 @@ client.on('message', msg => {
         }
       }
     } else if (msg.content.startsWith(settings.prefix + "purge ") || msg.content === settings.prefix + "purge") {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author.id === "254794124744458241") {
         if (!msg.member.hasPermission(8)) return msg.channel.send(lang.no_perm);
       }
-      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      if (settings.disable_purge) return msg.channel.send(lang.disabled_purge);
       var messages;
       if (args[1] === `` || !args[1] || args[1] === `all`) {
         let clear = () => {
@@ -734,12 +751,12 @@ function writeSettings(settingsFile, wsettings, channel, config, message = true)
 }
 
 client.on("guildMemberAdd", member => {
-  userFile = `./data/users/${member.user.id}.json`;
+  userFile = `./data/users/${member.user.id}/config.json`;
   if (!fs.existsSync(userFile)) {
     console.log(`Creating ${userFile}`);
     fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  var serverFile = `./data/servers/${member.guild.id}.json`;
+  var serverFile = `./data/servers/${member.guild.id}/config.json`;
   if (!fs.existsSync(serverFile)) {
     console.log(`Creating ${serverFile}`);
     fs.writeFileSync(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});

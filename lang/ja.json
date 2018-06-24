@@ -21,6 +21,7 @@
     "vote_info": "投票情報を表示します。",
     "vote_close": "投票を閉じます。投票を作成した人だけが実行できます。",
     "vote_vote": "投票します。",
+    "togglepurge": "`purge`コマンドを使えるようにするかの設定です。引数なしでトグル",
     "warning": "::注意::",
     "asterisk": "`[*]` がついているコマンドは実行する前に設定の変更が必要な可能性があります。"
   },
@@ -71,5 +72,6 @@
     "server_banned": "k52j",
     "permission_denied": "bu93"
   },
-  "outofrange": "数値が範囲外です。[1-99]"
+  "outofrange": "数値が範囲外です。[1-99]",
+  "disabled_purge": ":x: `purge`コマンドは現在無効化されています。"
 }

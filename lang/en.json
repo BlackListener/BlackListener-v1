@@ -21,6 +21,7 @@
     "vote_info": "Displays information of specific vote.",
     "vote_close": "Close the vote. Can only use vote owner.",
     "vote_vote": "Vote.",
+    "togglepurge": "It is a setting as to whether you can use the `purge` command. Toggle without argument."
     "warning": "::Warning::",
     "asterisk": "Commands marked with `[*]` may need to be changed settings."
   },
@@ -69,5 +70,6 @@
   "errors": {
     "server_banned": "k52j"
   },
-  "outofrange": "Out of Range. [1-99]"
+  "outofrange": "Out of Range. [1-99]",
+  "disabled_purge": "Disabled `purge` command, can't working."
 }
