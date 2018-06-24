@@ -423,7 +423,7 @@ client.on('message', msg => {
         .addField(`${prefix}purge gdel`, lang.commands.purge_gdel)
         .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg)
         .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
-        .addField(`${prefix}purge remake`, lang.commands.purge_remake)
+        .addField(`${prefix}purge remake <Channel>`, lang.commands.purge_remake)
         .addField(`${prefix}vote create <Q> <A1...A10>`, lang.commands.vote_create)
         .addField(`${prefix}vote start <Q> <A1...A10>`, lang.commands.vote_create)
         .addField(`${prefix}vote list`, lang.commands.vote_list)
@@ -542,13 +542,23 @@ client.on('message', msg => {
         msg.guild.createChannel("general", "text");
       } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-really`) {
         msg.guild.channels.forEach((channel) => { channel.delete(); });
-      } else if (args[1] === `gdel-remake`) {
+      } else if (args[1] === `remake`) {
         if (!msg.mentions.channels.first()) return msg.channel.send(lang.no_args);
-        let channel = msg.mentions.channels.first();
-        let name = channel.name;
-        msg.channel.send(`:ok_hand:`);
-        channel.delete(`Remake of Channel`);
-        msg.guild.createChannel(name, `text`);
+        try {
+          async function asyncProcess() {
+            let channel = msg.mentions.channels.first();
+            msg.channel.send(`:ok_hand:`);
+            channel.delete(`Remake of Channel`);
+            let created_channel = await msg.guild.createChannel(channel.name, channel.type);
+            if (channel.parent) {
+              created_channel.setParent(channel.parentID);
+            }
+            created_channel.setPosition(channel.position);
+          }
+          asyncProcess();
+        } catch (e) {
+          console.error(e);
+        }
       } else if (/[0-9]/.test(args[1])) {
         if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
           msg.channel.send(lang.outofrange);
