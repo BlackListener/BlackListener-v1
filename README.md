@@ -19,6 +19,16 @@ Public Bot: [Invite](https://discordapp.com/api/oauth2/authorize?client_id=45696
 | setnotifyrep | Set notify reputation | 通知する評価値を設定します |
 | setbanrep | Set auto ban reputation | 自動BANする評価値を設定します |
 | antispam | Seeing is believing. Try it. | 百聞は一見に如かず。試してみよう。 |
+| vote <args> | It's too much to write everything here. See help. | ここですべてを書くのは多すぎる。ヘルプを参照。 |
+| info | Displays Bot environments | ボットの環境を表示します。 |
+| reload | Reload the guild config. | ギルドの設定をリロードします。 |
+| purge [all] | Delete 100 messages. | 100のメッセージを削除します。 |
+| purge <number> | Delete messages of specified numbers | 指定された数メッセージを削除します |
+| purge gdel | guildDelete[0]. Remove all channels, and create only one channel. | guildDelete[0]。 すべてのチャンネルを削除します、そして1つだけチャンネルを作成します。 |
+| purge gdel-msg | guildDelete[1]. Remove messages of all channels. | guildDelete[1]。すべてのチャンネルからメッセージを削除します。 |
+| purge gdel-really | guildDelete[2]. Remove all channels, and **not** creating any channels. | guildDelete[2]。すべてのチャンネルを削除します。そして、チャンネルは作成しません。 |
+| purge remake <Channel> | Remake specified channel. | 指定されたチャンネルを再作成します。 |
+| togglepurge | The `purge` command can not be used as it is, so use it for use. | `purge`コマンドはこのままでは使用できないのでこれを使用して使えるようにします。 |
 ---
 
 User has 0 rep, if you're banned a 1 time, you'll added 1 rep.
