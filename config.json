@@ -3,5 +3,6 @@
   "githuburl": "https://github.com/rht0910/BlackListener/",
   "lang": "ja",
   "notifyRep": 3,
-  "banRep": 5
+  "banRep": 5,
+  "version": "0.5"
 }

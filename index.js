@@ -109,7 +109,7 @@ var guildSettings,
   console.error(err);
 });
    const vote = require(voteFile);
-   msg.channel.send(`\`${voteId}\`を作成しました。\n投票には、\`${settings.PREFIX}vote vote <ID> <数値>\`を入力してください。`);
+   msg.channel.send(`\`${voteId}\`を作成しました。\n投票には、\`${settings.prefix}vote vote <ID> <数値>\`を入力してください。`);
     const voteEmbed = new discord.RichEmbed().
       setTitle(`投票`).
       addField(vote.data1, vote.votes1).
@@ -188,7 +188,7 @@ var guildSettings,
       msg.channel.send(messages.no_permission);
     }
   } else if (split[1] === `vote`) {
-    if (!split[3]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.PREFIX}vote list\`で見れます。`);
+    if (!split[3]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.prefix}vote list\`で見れます。`);
     const voteId = split[2],
       guildId = msg.guild.id,
       voteFile = `./data/votes/${guildId}/${voteId}.json`;
@@ -242,7 +242,7 @@ var guildSettings,
     embed.setDescription(sb.toString());
     msg.channel.send(embed);
   } else if (split[1] === `info`) {
-    if (!split[2]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.PREFIX}vote list\`で見れます。`);
+    if (!split[2]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.prefix}vote list\`で見れます。`);
     const voteId = split[2],
       guildId = msg.guild.id,
       voteFile = `./data/votes/${guildId}/${voteId}.json`;
@@ -282,7 +282,7 @@ var guildSettings,
     msg.channel.send(voteEmbed);
   } else {
       let sb = new StringBuilder(``),
-      cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
+      cmd = `${split[0]} ${split[1]}`.replace(` undefined`, ``);
       for(var i = 0; i < commandList.length; i++) {
         commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
       }
@@ -290,7 +290,7 @@ var guildSettings,
         return a.no - b.no;
       });
       for (var i = 0; i < commandList.length; i++) {
-        if (commandList[i].no <= 2) {
+        if (commandList[i].no <= 3) { // Max. Levenshtein length: 3
           sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
         }
       }
@@ -381,7 +381,35 @@ client.on('message', msg => {
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      msg.channel.send(f(lang.adminhelp, settings.prefix, settings.prefix));
+      let prefix = settings.prefix,
+        embed = new discord.RichEmbed()
+        .setTitle(f(lang.commands.title, c.version))
+        .setTimestamp()
+        .setColor([0,255,0])
+        .addField(`${prefix}shutdown`, lang.commands.shutdown)
+        .addField(`${prefix}token`, lang.commands.token)
+        .addField(`${prefix}setprefix`, lang.commands.setprefix)
+        .addField(`${prefix}ban`, lang.commands.ban)
+        .addField(`${prefix}unban`, lang.commands.unban)
+        .addField(`${prefix}language`, lang.commands.language)
+        .addField(`${prefix}log`, lang.commands.log)
+        .addField(`${prefix}setnotifyrep`, lang.commands.setnotifyrep)
+        .addField(`${prefix}setbanrep`, lang.commands.setbanrep)
+        .addField(`${prefix}antispam`, lang.commands.antispam)
+        .addField(`${prefix}purge`, lang.commands.purge)
+        .addField(`${prefix}purge <1-99>`, lang.commands.purge_number)
+        .addField(`${prefix}purge gdel`, lang.commands.purge_gdel)
+        .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg)
+        .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
+        .addField(`${prefix}vote create <Q> <A1...A10>`, lang.commands.vote_create)
+        .addField(`${prefix}vote start <Q> <A1...A10>`, lang.commands.vote_create)
+        .addField(`${prefix}vote list`, lang.commands.vote_list)
+        .addField(`${prefix}vote info <ID>`, lang.commands.vote_info)
+        .addField(`${prefix}vote end <ID>`, lang.commands.vote_close)
+        .addField(`${prefix}vote close <ID>`, lang.commands.vote_close)
+        .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
+        .addField(lang.commands.warning, lang.commands.asterisk);
+      msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "shutdown ")) {
       console.log(f(lang.processing_cmd, msg.content, msg.author, msg.author.tag));
       if(msg.author == "<@254794124744458241>") {
