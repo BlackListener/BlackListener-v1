@@ -426,7 +426,7 @@ client.on('message', msg => {
           unsavedSettings.disable_purge = true;
         }
       }
-      writeSettings(guildSettings, set, msg.channel, "disable_purge");
+      writeSettings(guildSettings, unsavedSettings, msg.channel, "disable_purge");
     } else if (msg.content.startsWith(settings.prefix + "shutdown ")) {
       if (msg.author == "<@254794124744458241>") {
         if (args[1] == "-f") {
