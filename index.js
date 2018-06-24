@@ -4,9 +4,13 @@ const f = require('string-format'), // Load & Initialize string-format
   s = require('./secret.json'), // Tokens, and invite link.
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
+  util = require('util');
+  os = require('os'),
   fs = require('fs'), // File System
+  exec = util.promisify(require('child_process').exec),
   StringBuilder = require('node-stringbuilder'), // String Builder
   messages = require('./messages.json'), // Used for vote command
+  isWindows = process.platform === "win32", // windows: true, other: false
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -725,6 +729,26 @@ client.on('message', msg => {
           msg.channel.send(f(lang.antispam.status2, on));
         }
       }
+    } else if (msg.content.startsWith(settings.prefix + "info ") || msg.content === settings.prefix + "info") {
+     async function diskinfo() {
+        var o1 = `利用不可`,
+          o2 = ``;
+        if (!isWindows) {
+          var { stdout, stderr } = await exec("df -h | grep /dev/sdb");
+          o1 = stdout;
+          var { stdout, stderr } = await exec("df -h | grep /dev/sda");
+          o2 = stdout;
+        }
+        let embed = new discord.RichEmbed()
+          .setTitle("Bot info")
+          .setColor([0,255,0])
+          .addField(lang.info.memory, `${lang.info.memory_max}: ${Math.round(os.totalmem() / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_usage}: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_free}: ${Math.round(os.freemem() / 1024 / 1024 * 100) / 100}MB`)
+          .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}`)
+          .addField(lang.info.disk, `${o1}${o2}`)
+          .addField(lang.info.platform, `${os.platform}`);
+        msg.channel.send(embed);
+      }
+      diskinfo();
     } else if (msg.content.startsWith(settings.prefix + "language ")) {
       if (!args[1] || args[1] === "help") {
         let embed = new discord.RichEmbed()

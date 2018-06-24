@@ -74,5 +74,15 @@
     "permission_denied": "bu93"
   },
   "outofrange": "数値が範囲外です。[1-99]",
-  "disabled_purge": ":x: `purge`コマンドは現在無効化されています。"
+  "disabled_purge": ":x: `purge`コマンドは現在無効化されています。",
+  "info": {
+    "memory": "メモリ",
+    "memory_max": "最大メモリ",
+    "memory_usage": "Botで使用中のメモリ",
+    "memory_free": "未使用のメモリ(利用可能メモリではありません)",
+    "cpu": "CPU",
+    "threads": "スレッド数",
+    "disk": "ディスク",
+    "platform": "環境"
+  }
 }
