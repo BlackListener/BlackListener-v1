@@ -46,6 +46,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `purge gdel`, "args": ``},
     {"body": `purge gdel-msg`, "args": ``},
     {"body": `purge gdel-really`, "args": ``},
+    {"body": `purge remake`, "args": ` <チャンネル>`},
     {"body": `vote`, "args": ` [引数]`},
     {"body": `vote create`, "args": ` <問題> <回答1...回答10>`},
     {"body": `vote start`, "args": ` <問題> <回答1...回答10>`},
@@ -379,6 +380,26 @@ client.on('message', msg => {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
     if (msg.content.startsWith(`${settings.prefix}vote `) || msg.content === `${settings.prefix}vote`) return voteCmd(msg, args, settings);
+    if (msg.content.startsWith(c.prefix + "say ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+          var commandcut = msg.content.substr("!sayd ".length); //cut "!bot " off of the start of the command
+          var message = ""; //create message variable
+          var argumentarray = commandcut.split(" "); // split array by "," characters
+          argumentarray.forEach(function(element) { // foreach argument given
+              message += element + " "; // add argument and space to message
+          }, this);
+          return msg.channel.send(message);
+    } else if (msg.content.startsWith(c.prefix + "sayd ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+          var commandcut = msg.content.substr("!sayd ".length); //cut "!bot " off of the start of the command
+          var message = ""; //create message variable
+          var argumentarray = commandcut.split(" "); // split array by "," characters
+          argumentarray.forEach(function(element) { // foreach argument given
+              message += element + " "; // add argument and space to message
+          }, this);
+          msg.delete(0).catch(console.error);
+          return msg.channel.send(message);
+    }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -402,6 +423,7 @@ client.on('message', msg => {
         .addField(`${prefix}purge gdel`, lang.commands.purge_gdel)
         .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg)
         .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
+        .addField(`${prefix}purge remake`, lang.commands.purge_remake)
         .addField(`${prefix}vote create <Q> <A1...A10>`, lang.commands.vote_create)
         .addField(`${prefix}vote start <Q> <A1...A10>`, lang.commands.vote_create)
         .addField(`${prefix}vote list`, lang.commands.vote_list)
@@ -520,6 +542,13 @@ client.on('message', msg => {
         msg.guild.createChannel("general", "text");
       } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-really`) {
         msg.guild.channels.forEach((channel) => { channel.delete(); });
+      } else if (args[1] === `gdel-remake`) {
+        if (!msg.mentions.channels.first()) return msg.channel.send(lang.no_args);
+        let channel = msg.mentions.channels.first();
+        let name = channel.name;
+        msg.channel.send(`:ok_hand:`);
+        channel.delete(`Remake of Channel`);
+        msg.guild.createChannel(name, `text`);
       } else if (/[0-9]/.test(args[1])) {
         if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
           msg.channel.send(lang.outofrange);
