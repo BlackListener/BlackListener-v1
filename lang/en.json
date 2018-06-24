@@ -73,4 +73,14 @@
   },
   "outofrange": "Out of Range. [1-99]",
   "disabled_purge": "Disabled `purge` command, can't working."
+  "info": {
+    "memory": "Memory",
+    "memory_max": "Maximum Memory",
+    "memory_usage": "Used Memory by Bot",
+    "memory_free": "Unused memory(Not available memory)",
+    "cpu": "CPU",
+    "threads": "Threads",
+    "disk": "Disks",
+    "platform": "Environments"
+  }
 }
