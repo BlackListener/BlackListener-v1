@@ -16,7 +16,7 @@
     "purge_gdel": "Remove all channels and categories, And create `#general` channel. [*]",
     "purge_gdel-msg": "Remove all messages from Any channels. [*]",
     "purge_gdel-really": "Remove All Channels and Categories, And does not create any channels. __**It's an pretty dangerous command.**__ [*]",
-    "purge-remake": "Remake the channel. [*]"
+    "purge-remake": "Remake the channel. [*]",
     "vote_create": "Create(Start) a voting.",
     "vote_list": "Displays votes.",
     "vote_info": "Displays information of specific vote.",
