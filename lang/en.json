@@ -22,7 +22,10 @@
     "vote_info": "Displays information of specific vote.",
     "vote_close": "Close the vote. Can only use vote owner.",
     "vote_vote": "Vote.",
-    "togglepurge": "It is a setting as to whether you can use the `purge` command. Toggle without argument."
+    "togglepurge": "It is a setting as to whether you can use the `purge` command. Toggle without argument.",
+    "dump": "Write all guilds (<= default) to file.",
+    "listemojis": "Send all emojis. `escape` to emojis will be escaped.",
+    "invite": "Create invite link at specified server.",
     "warning": "::Warning::",
     "asterisk": "Commands marked with `[*]` may need to be changed settings."
   },
@@ -50,7 +53,7 @@
   "unbanned": "Unbanned.",
   "no_args": ":x: Missing an arguments.",
   "invalid_args": ":x: Invalid arguments.",
-  "autobanned": "Auto banned user: {0} ({1}) from {2}({3})"
+  "autobanned": "Auto banned user: {0} ({1}) from {2}({3})",
   "antispam": {
     "description": "AntiSpam Settings(BETA) [Current: {0}]",
     "toggle": "Toggles Anti-spam.",
@@ -72,7 +75,7 @@
     "server_banned": "k52j"
   },
   "outofrange": "Out of Range. [1-99]",
-  "disabled_purge": "Disabled `purge` command, can't working."
+  "disabled_purge": ":x: Disabled `purge` command.",
   "info": {
     "memory": "Memory",
     "memory_max": "Maximum Memory",
@@ -80,7 +83,15 @@
     "memory_free": "Unused memory(Not available memory)",
     "cpu": "CPU",
     "threads": "Threads",
+    "cpu_speed": "Clock(Speed) of first 1 thread",
+    "cpu_model": "Model(first 1 thread)",
     "disk": "Disks",
-    "platform": "Environments"
-  }
+    "platform": "Environments",
+    "loadavg": "Load Average",
+    "invite": "Invite",
+    "servers": "Servers",
+    "users": "Users"
+  },
+  "dumped": "Wrote file",
+  "invites": "Currently valid invite links"
 }

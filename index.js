@@ -41,25 +41,28 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `antispam toggle`, "args": ``},
     {"body": `antispam disable`, "args": ``},
     {"body": `antispam enable`, "args": ``},
-    {"body": `antispam ignore`, "args": ` <チャンネル>`},
-    {"body": `antispam status`, "args": ` <チャンネル>`},
+    {"body": `antispam ignore`, "args": ` <Channel>`},
+    {"body": `antispam status`, "args": ` <Channel>`},
     {"body": `reload`, "args": ``},
     {"body": `setnick`, "args": ` <NewName>`},
     {"body": `setnickname`, "args": ` <NewName>`},
-    {"body": `purge`, "args": ` [数値/all]`},
+    {"body": `purge`, "args": ` [number/all]`},
     {"body": `purge gdel`, "args": ``},
     {"body": `purge gdel-msg`, "args": ``},
     {"body": `purge gdel-really`, "args": ``},
-    {"body": `purge remake`, "args": ` <チャンネル>`},
-    {"body": `vote`, "args": ` [引数]`},
-    {"body": `vote create`, "args": ` <問題> <回答1...回答10>`},
-    {"body": `vote start`, "args": ` <問題> <回答1...回答10>`},
+    {"body": `purge remake`, "args": ` <Channel>`},
+    {"body": `vote`, "args": ` [args]`},
+    {"body": `vote create`, "args": ` <Q> <A1...A10>`},
+    {"body": `vote start`, "args": ` <Q> <A1...A10>`},
     {"body": `vote list`, "args": ``},
     {"body": `vote info`, "args": ` <ID>`},
     {"body": `vote end`, "args": ` <ID>`},
     {"body": `vote close`, "args": ` <ID>`},
-    {"body": `vote vote`, "args": ` <ID> <投票先番号>`},
+    {"body": `vote vote`, "args": ` <ID> <Number>`},
     {"body": `togglepurge`, "args": ` [enable/disable]`},
+    {"body": `dump`, "args": ` [users|channels]`},
+    {"body": `listemojis`, "args": ` [escape]`},
+    {"body": `invite`, "args": ` <GuildID>`},
   ];
 var guildSettings,
   settings,
@@ -156,7 +159,7 @@ var guildSettings,
     let vote = require(voteFile);
     if (vote.creator === msg.author.id) {
       vote.closed = true;
-      writeSettings(voteFile, vote, msg.channel);
+      writeSettings(voteFile, vote, msg.channel, false);
       vote = require(voteFile);
       msg.channel.send(messages.votes.close);
       const voteEmbed = new discord.RichEmbed().
@@ -202,7 +205,7 @@ var guildSettings,
     let vote = require(voteFile);
     if (vote[`closed`] === true) return msg.channel.send(messages.votes.closed);
     vote[`votes${split[3]}`] = ++vote[`votes${split[3]}`];
-    writeSettings(voteFile, vote, msg.channel);
+    writeSettings(voteFile, vote, msg.channel, false);
     vote = require(voteFile);
     msg.channel.send(messages.votes.voted);
     const voteEmbed = new discord.RichEmbed().
@@ -404,7 +407,6 @@ client.on('message', msg => {
           msg.delete(0).catch(console.error);
           return msg.channel.send(message);
     }
-    if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let prefix = settings.prefix,
@@ -412,13 +414,10 @@ client.on('message', msg => {
         .setTitle(f(lang.commands.title, c.version))
         .setTimestamp()
         .setColor([0,255,0])
-        .addField(`${prefix}shutdown`, lang.commands.shutdown)
-        .addField(`${prefix}token`, lang.commands.token)
+        .addField(`${prefix}shutdown\n${prefix}token\n${prefix}log`, `${lang.commands.shutdown}\n${lang.commands.token}\n${lang.commands.log}`)
         .addField(`${prefix}setprefix`, lang.commands.setprefix)
-        .addField(`${prefix}ban`, lang.commands.ban)
-        .addField(`${prefix}unban`, lang.commands.unban)
+        .addField(`${prefix}ban | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
         .addField(`${prefix}language`, lang.commands.language)
-        .addField(`${prefix}log`, lang.commands.log)
         .addField(`${prefix}setnotifyrep`, lang.commands.setnotifyrep)
         .addField(`${prefix}setbanrep`, lang.commands.setbanrep)
         .addField(`${prefix}antispam`, lang.commands.antispam)
@@ -428,17 +427,20 @@ client.on('message', msg => {
         .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg)
         .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
         .addField(`${prefix}purge remake <Channel>`, lang.commands.purge_remake)
-        .addField(`${prefix}vote create <Q> <A1...A10>`, lang.commands.vote_create)
-        .addField(`${prefix}vote start <Q> <A1...A10>`, lang.commands.vote_create)
+        .addField(`${prefix}vote create|start <Q> <A1...A10>`, lang.commands.vote_create)
         .addField(`${prefix}vote list`, lang.commands.vote_list)
         .addField(`${prefix}vote info <ID>`, lang.commands.vote_info)
-        .addField(`${prefix}vote end <ID>`, lang.commands.vote_close)
-        .addField(`${prefix}vote close <ID>`, lang.commands.vote_close)
+        .addField(`${prefix}vote close|end <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
+        .addField(`${prefix}dump [users|channels]`, lang.commands.dump)
+        .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis)
+        .addField(`${prefix}invite <GuildID>`, lang.commands.invite)
         .addField(lang.commands.warning, lang.commands.asterisk);
       msg.channel.send(embed);
-    } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
+    }
+    if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
+    if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let unsavedSettings = settings;
       if (args[1] === "enable") { // enable purge command
@@ -453,6 +455,28 @@ client.on('message', msg => {
         }
       }
       writeSettings(guildSettings, unsavedSettings, msg.channel, "disable_purge");
+    } else if (msg.content.startsWith(settings.prefix + "invite ")) {
+      async function process() {
+        if (!/\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/.test(args[1])) return msg.channel.send(lang.invalid_args);
+        var sb = new StringBuilder(``);
+        try {
+          if (args[2] === `create`) {
+            let invite = await client.guilds.get(args[1]).channels.first().createInvite();
+            sb.append(invite.toString());
+          } else {
+            await client.guilds.get(args[1]).fetchInvites()
+              .then((string, invite) => {
+                sb.append(`${invite.toString()}\n`);
+              })
+              .catch(console.error);
+          }
+          msg.channel.send(`${lang.invites}\n${sb.toString()}`);
+        } catch (e) {
+          console.error(e);
+          console.error(e.stack);
+        }
+      }
+      process();
     } else if (msg.content.startsWith(settings.prefix + "shutdown ")) {
       if (msg.author == "<@254794124744458241>") {
         if (args[1] == "-f") {
@@ -731,24 +755,69 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "info ") || msg.content === settings.prefix + "info") {
      async function diskinfo() {
+        const graph = `Device          Total  Used Avail Use% Mounted on\n`;
         var o1 = `利用不可`,
-          o2 = ``;
+          o2 = ``,
+          loadavg = `利用不可`,
+          invite = s.inviteme;
         if (!isWindows) {
           var { stdout, stderr } = await exec("df -h | grep /dev/sdb");
           o1 = stdout;
           var { stdout, stderr } = await exec("df -h | grep /dev/sda");
           o2 = stdout;
+          loadavg = Math.floor(os.loadavg()[1] * 100) / 100;
         }
         let embed = new discord.RichEmbed()
           .setTitle("Bot info")
+          .setTimestamp()
           .setColor([0,255,0])
           .addField(lang.info.memory, `${lang.info.memory_max}: ${Math.round(os.totalmem() / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_usage}: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_free}: ${Math.round(os.freemem() / 1024 / 1024 * 100) / 100}MB`)
-          .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}`)
-          .addField(lang.info.disk, `${o1}${o2}`)
-          .addField(lang.info.platform, `${os.platform}`);
+          .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}\n${lang.info.cpu_model}: ${os.cpus()[0].model}\n${lang.info.cpu_speed}: ${os.cpus()[0].speed}`)
+          .addField(lang.info.disk, `${graph}${o1}${o2}`)
+          .addField(lang.info.platform, `${os.platform}`)
+          .addField(lang.info.loadavg, `${loadavg}`)
+          .addField(lang.info.servers, `${client.guilds.size}`)
+          .addField(lang.info.users, `${client.users.size}`)
+          .setDescription(`[${lang.info.invite}](${invite})`)
+          .setFooter(`Sent by ${msg.author.tag}`);
         msg.channel.send(embed);
       }
       diskinfo();
+    } else if (msg.content === settings.prefix + "dump" || msg.content.startsWith(settings.prefix + "dump ")) {
+      const url = c.dump_url;
+      var sb = new StringBuilder(``),
+        link;
+      if (args[1] === `users`) {
+        client.users.forEach((user) => {
+          sb.append(`${user.tag} (${user.id})\n`);
+        });
+      } else if (args[1] === `channels`) {
+        client.channels.forEach((channel) => {
+          sb.append(`<${channel.guild.name}><${channel.guild.id}> ${channel.name} (${channel.id}) [${channel.type}]\n`);
+        });
+      } else {
+        client.guilds.forEach((guild) => {
+          sb.append(`${guild.name} (${guild.id})\n`);
+        });
+      }
+      if (url == `` || !url) {
+        link = ``;
+      } else {
+        link = `URL: ${url}`;
+      }
+      let embed = new discord.RichEmbed()
+        .setTitle(lang.dumped)
+        .setDescription(link)
+        .setTimestamp();
+      msg.channel.send(embed);
+      fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
+    } else if (msg.content.startsWith(settings.prefix + "listemojis ") || msg.content === settings.prefix + "listemojis") {
+      const emojiList = msg.guild.emojis.map(e=>e.toString()).join(" ");
+      if (args[1] === `escape`) {
+        msg.channel.send(`\`\`\`${emojiList}\`\`\``);
+      } else {
+        msg.channel.send(`${emojiList}`);
+      }
     } else if (msg.content.startsWith(settings.prefix + "language ")) {
       if (!args[1] || args[1] === "help") {
         let embed = new discord.RichEmbed()
