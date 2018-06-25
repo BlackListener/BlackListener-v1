@@ -92,7 +92,7 @@
     "loadavg": "ロードアベレージ(サーバーの負荷)",
     "invite": "招待",
     "servers": "サーバー数",
-    "users": ":bust_in_silhouette: ユーザー数",
+    "users": ":bust_in_silhouette: ユーザー数"
   },
   "dumped": ":pencil: ファイルに書き込みました。",
   "invites": ":paperclip:  現在有効な招待リンク",
