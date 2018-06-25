@@ -62,7 +62,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `togglepurge`, "args": ` [enable/disable]`},
     {"body": `dump`, "args": ` [users|channels]`},
     {"body": `listemojis`, "args": ` [escape]`},
-    {"body": `invite`, "args": ` <GuildID>`},
+    {"body": `invite`, "args": ` <GuildID> [create]`},
   ];
 var guildSettings,
   settings,
@@ -435,12 +435,14 @@ client.on('message', msg => {
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
         .addField(`${prefix}dump [users|channels]`, lang.commands.dump)
         .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis)
-        .addField(`${prefix}invite <GuildID>`, lang.commands.invite)
+        .addField(`${prefix}invite <GuildID> [create]`, lang.commands.invite)
         .addField(lang.commands.warning, lang.commands.asterisk);
       msg.channel.send(embed);
     }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
-    if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
+    if (msg.content === settings.prefix + "help") {
+      /* Nothing. Dummy. */
+    } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let unsavedSettings = settings;
       if (args[1] === "enable") { // enable purge command
@@ -466,14 +468,16 @@ client.on('message', msg => {
           } else {
             await client.guilds.get(args[1]).fetchInvites()
               .then((string, invite) => {
-                sb.append(`${invite.toString()}\n`);
+                string.forEach((data) => {
+                  sb.append(`https://discord.gg/${data.code}\n`);
+                });
               })
               .catch(console.error);
           }
           msg.channel.send(`${lang.invites}\n${sb.toString()}`);
         } catch (e) {
           console.error(e);
-          console.error(e.stack);
+          if (e.toString() === `TypeError: Cannot read property 'fetchInvites' of undefined`) return msg.channel.send(lang.noguild);
         }
       }
       process();

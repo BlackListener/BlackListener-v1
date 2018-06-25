@@ -92,6 +92,7 @@
     "servers": "Servers",
     "users": "Users"
   },
-  "dumped": "Wrote file",
-  "invites": "Currently valid invite links"
+  "dumped": ":pencil: Wrote file",
+  "invites": ":paperclip: Currently valid invite links",
+  "noguild": ":x: Not found guild, or cannot fetch because bot is not joined."
 }
