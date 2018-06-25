@@ -92,8 +92,9 @@
     "loadavg": "ロードアベレージ(サーバーの負荷)",
     "invite": "招待",
     "servers": "サーバー数",
-    "users": "ユーザー数"
+    "users": ":bust_in_silhouette: ユーザー数",
   },
-  "dumped": "ファイルに書き込みました。",
-  "invites": "現在有効な招待リンク"
+  "dumped": ":pencil: ファイルに書き込みました。",
+  "invites": ":paperclip:  現在有効な招待リンク",
+  "noguild": ":x: ギルドは存在しないか、ボットが参加していないので取得できません。"
 }
