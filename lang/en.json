@@ -26,6 +26,9 @@
     "dump": "Write all guilds (<= default) to file.",
     "listemojis": "Send all emojis. `escape` to emojis will be escaped.",
     "invite": "Create invite link at specified server.",
+    "role": "Set role and unset role from user.",
+    "autorole": "Set up to automatically assign a position at the time of participation.",
+    "image": "Displays NSFW images.",
     "warning": "::Warning::",
     "asterisk": "Commands marked with `[*]` may need to be changed settings."
   },
@@ -90,9 +93,14 @@
     "loadavg": "Load Average",
     "invite": "Invite",
     "servers": "Servers",
-    "users": ":bust_in_silhouette: Users"
+    "users": ":bust_in_silhouette: Users",
+    "source": "Source code"
   },
   "dumped": ":pencil: Wrote file",
   "invites": ":paperclip: Currently valid invite links",
-  "noguild": ":x: Not found guild, or cannot fetch because bot is not joined."
+  "noguild": ":x: Not found guild, or cannot fetch because bot is not joined.",
+  "role_error": ":x: Errors while setting role. May not be found specified role.",
+  "searching": ":mag: Searching... If don't show up image in 15 seconds, please again.",
+  "autorole_enabled": "Auto role is enabled. ({0})",
+  "autorole_disabled": "Auto role is disabled."
 }
