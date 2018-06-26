@@ -6,6 +6,8 @@ const f = require('string-format'), // Load & Initialize string-format
   mkdirp = require('mkdirp'), // Make Directory
   util = require('util');
   os = require('os'),
+  request = require("snekfetch"),
+  randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
   exec = util.promisify(require('child_process').exec),
   StringBuilder = require('node-stringbuilder'), // String Builder
@@ -42,7 +44,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `antispam disable`, "args": ``},
     {"body": `antispam enable`, "args": ``},
     {"body": `antispam ignore`, "args": ` <Channel>`},
-    {"body": `antispam status`, "args": ` <Channel>`},
+    {"body": `antispam status`, "args": ` [Channel]`},
     {"body": `reload`, "args": ``},
     {"body": `setnick`, "args": ` <NewName>`},
     {"body": `setnickname`, "args": ` <NewName>`},
@@ -60,9 +62,19 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `vote close`, "args": ` <ID>`},
     {"body": `vote vote`, "args": ` <ID> <Number>`},
     {"body": `togglepurge`, "args": ` [enable/disable]`},
-    {"body": `dump`, "args": ` [users|channels]`},
+    {"body": `dump`, "args": ` [users|channels|emojis]`},
     {"body": `listemojis`, "args": ` [escape]`},
     {"body": `invite`, "args": ` <GuildID> [create]`},
+    {"body": `role`, "args": ` <role> [user]`},
+    {"body": `autorole`, "args": ` [add/remove] <role>`},
+    {"body": `say`, "args": ` <Message>`},
+    {"body": `sayd`, "args": ` <Message>`},
+    {"body": `info`, "args": ``},
+    {"body": `image`, "args": ``},
+    {"body": `image anime`, "args": ``},
+    {"body": `image nsfw|閲覧注意`, "args": ``},
+    {"body": `image nsfw|閲覧注意 confirm`, "args": ``},
+    {"body": `image custom <subreddit>`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -299,7 +311,7 @@ var guildSettings,
         return a.no - b.no;
       });
       for (var i = 0; i < commandList.length; i++) {
-        if (commandList[i].no <= 3) { // Max. Levenshtein length: 3
+        if (commandList[i].no <= 2) {
           sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
         }
       }
@@ -309,6 +321,35 @@ var guildSettings,
       }
   }
 };
+
+function addRole(msg, rolename, isCommand = true, guildmember = null) {
+      var role = null;
+      var member = null;
+      try {
+        role = msg.guild.roles.find("name", rolename);
+        if (!guildmember) {
+          member = msg.guild.members.get(msg.author.id);
+        } else {
+          member = msg.guild.members.get(guildmember.id); // Expected GuildMember
+        }
+        if (isCommand) {
+          if (member.roles.has(role.id)) {
+            member.removeRole(role).catch(console.error);
+            let embed = new discord.RichEmbed().setTitle(":wastebasket: ロールから削除").setColor([255,0,0]).setDescription("ロール[" + rolename + "] から削除しました。");
+            msg.channel.send(embed);
+          } else {
+            member.addRole(role).catch(console.error);
+            let embed = new discord.RichEmbed().setTitle(":heavy_plus_sign: ロールへ追加").setColor([0,255,0]).setDescription("ロール[" + rolename + "] へ追加しました。");
+            msg.channel.send(embed);
+          }
+        } else {
+            member.addRole(role).catch(console.error);
+        }
+      } catch (e) {
+        msg.channel.send(lang.role_error);
+        console.error(e);
+      }
+}
 
 client.on('ready', () => {
   if (!fs.existsSync(`./data/servers`)) {
@@ -327,7 +368,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
- if (!msg.guild) return msg.channel.send("Not supported DM or GroupDM");
+ if (!msg.guild && !msg.author.bot) return msg.channel.send("Not supported DM or GroupDM");
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
   mkdirp(`./data/users/${msg.author.id}`);
  }
@@ -383,6 +424,18 @@ client.on('message', msg => {
   }
   // --- End of Anti-spam
 
+  // Disboard Fucking Message
+  //
+
+  if (msg.content === "!disboard bump") {
+    let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png")
+      .setTitle("ディスボード: Discordサーバー掲示板").setURL("https://disboard.org/")
+      .setColor([140,190,210]).setDescription("下げました :thumbsdown:\nディスボードでチェックしてね: https://disboard.org");
+    msg.channel.send(embed);
+  }
+
+  //
+
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
@@ -414,7 +467,7 @@ client.on('message', msg => {
         .setTitle(f(lang.commands.title, c.version))
         .setTimestamp()
         .setColor([0,255,0])
-        .addField(`${prefix}shutdown\n${prefix}token\n${prefix}log`, `${lang.commands.shutdown}\n${lang.commands.token}\n${lang.commands.log}`)
+        .addField(`${prefix}shutdown __/__ ${prefix}token __/__ ${prefix}log`, `${lang.commands.shutdown}\n${lang.commands.token}\n${lang.commands.log}`)
         .addField(`${prefix}setprefix`, lang.commands.setprefix)
         .addField(`${prefix}ban | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
         .addField(`${prefix}language`, lang.commands.language)
@@ -423,7 +476,7 @@ client.on('message', msg => {
         .addField(`${prefix}antispam`, lang.commands.antispam)
         .addField(`${prefix}purge`, lang.commands.purge)
         .addField(`${prefix}purge <1-99>`, lang.commands.purge_number)
-        .addField(`${prefix}purge gdel`, lang.commands.purge_gdel)
+        .addField(`${prefix}purge gdel`, lang.commands.purge_gdel) /* 10 */
         .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg)
         .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
         .addField(`${prefix}purge remake <Channel>`, lang.commands.purge_remake)
@@ -433,10 +486,12 @@ client.on('message', msg => {
         .addField(`${prefix}vote close|end <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
-        .addField(`${prefix}dump [users|channels]`, lang.commands.dump)
+        .addField(`${prefix}dump [users|channels|emojis]`, lang.commands.dump) /* 20 */
         .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis)
         .addField(`${prefix}invite <GuildID> [create]`, lang.commands.invite)
-        .addField(lang.commands.warning, lang.commands.asterisk);
+        .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
+        .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
+        .addField(lang.commands.warning, lang.commands.asterisk); /* 25 */
       msg.channel.send(embed);
     }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
@@ -459,7 +514,7 @@ client.on('message', msg => {
       writeSettings(guildSettings, unsavedSettings, msg.channel, "disable_purge");
     } else if (msg.content.startsWith(settings.prefix + "invite ")) {
       async function process() {
-        if (!/\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/.test(args[1])) return msg.channel.send(lang.invalid_args);
+        if (!/\d{18}/.test(args[1])) return msg.channel.send(lang.invalid_args);
         var sb = new StringBuilder(``);
         try {
           if (args[2] === `create`) {
@@ -541,7 +596,7 @@ client.on('message', msg => {
     } else if (msg.content.startsWith(settings.prefix + "purge ") || msg.content === settings.prefix + "purge") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author.id === "254794124744458241") {
-        if (!msg.member.hasPermission(8)) return msg.channel.send(lang.no_perm);
+        if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
       }
       if (settings.disable_purge) return msg.channel.send(lang.disabled_purge);
       var messages;
@@ -747,7 +802,15 @@ client.on('message', msg => {
           msg.channel.send(lang.antispam.ignore_disabled);
         }
       } else if (args[1] === "status") {
-        if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args); }
+        if (!msg.mentions.channels.first()) {
+          var sb = new StringBuilder(``);
+          settings.ignoredChannels.forEach((channel) => {
+            if (channel != null) {
+              sb.append(`<#${channel}>\n`);
+            }
+          });
+          return msg.channel.send(f(lang.antispam.disabled_channels, sb.toString()));
+        }
         let localSettings = settings,
           id = msg.mentions.channels.first().id;
         if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
@@ -756,6 +819,16 @@ client.on('message', msg => {
         } else {
           msg.channel.send(f(lang.antispam.status2, on));
         }
+      }
+    } else if (msg.content.startsWith(settings.prefix + "role ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      if (msg.author.id === "254794124744458241") {
+        if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
+      }
+      if (!msg.mentions.members.first()) {
+        addRole(msg, args[1], true);
+      } else {
+        addRole(msg, args[1], true, msg.mentions.members.first());
       }
     } else if (msg.content.startsWith(settings.prefix + "info ") || msg.content === settings.prefix + "info") {
      async function diskinfo() {
@@ -782,11 +855,42 @@ client.on('message', msg => {
           .addField(lang.info.loadavg, `${loadavg}`)
           .addField(lang.info.servers, `${client.guilds.size}`)
           .addField(lang.info.users, `${client.users.size}`)
-          .setDescription(`[${lang.info.invite}](${invite})`)
+          .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})`)
           .setFooter(`Sent by ${msg.author.tag}`);
         msg.channel.send(embed);
       }
       diskinfo();
+    } else if (msg.content === settings.prefix + "autorole" || msg.content.startsWith(settings.prefix + "autorole ")) {
+      if (args[1] === `remove`) {
+        let localSettings = settings;
+        localSettings.autorole = null;
+        writeSettings(guildSettings, localSettings, msg.channel, "autorole");
+      } else if (args[1] === `add`) {
+        let localSettings = settings;
+        if (/\d{18,}/.test(args[2])) {
+          localSettings.autorole = args[2];
+        } else {
+          try {
+            let role = msg.mentions.roles.first().id.toString();
+            localSettings.autorole = role;
+          } catch (e) {
+            try {
+              let role = msg.guild.roles.find("name", args[2]).id;
+              localSettings.autorole = role;
+            } catch (e) {
+              msg.channel.send(lang.invalid_args);
+              console.error(e);
+            }
+          }
+        }
+        writeSettings(guildSettings, localSettings, msg.channel, "autorole");
+      } else {
+        if (settings.autorole != null) {
+          msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name));
+        } else if (!settings.autorole) {
+          msg.channel.send(lang.autorole_disabled);
+        }
+      }
     } else if (msg.content === settings.prefix + "dump" || msg.content.startsWith(settings.prefix + "dump ")) {
       const url = c.dump_url;
       var sb = new StringBuilder(``),
@@ -798,6 +902,10 @@ client.on('message', msg => {
       } else if (args[1] === `channels`) {
         client.channels.forEach((channel) => {
           sb.append(`<${channel.guild.name}><${channel.guild.id}> ${channel.name} (${channel.id}) [${channel.type}]\n`);
+        });
+      } else if (args[1] === `emojis`) {
+        client.emojis.forEach((emoji) => {
+          sb.append(`<${emoji.guild.name}><${emoji.guild.id}> ${emoji.name} (${emoji.id}) [isAnimated:${emoji.animated}] [ ${emoji.url} ]\n`);
         });
       } else {
         client.guilds.forEach((guild) => {
@@ -839,6 +947,125 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
+    } else if (msg.content.startsWith(settings.prefix + "image")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      // const args = msg.content.slice(settings.prefix + "image".length).trim().split(/ +/g);
+      if (msg.content.startsWith(settings.prefix + "image custom")) {
+        if(/\s/gm.test(args[2])) {
+          msg.channel.send(lang.cannotspace);
+        } else {
+          msg.channel.send(lang.searching);
+          /* Normal NSFW */
+          if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+          var subreddits = [
+            args[2]
+          ]
+          var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+          randomPuppy(sub)
+              .then(url => {
+                  request.get(url).then(r => {
+                      fs.writeFile(`hentai.jpg`, r.body);
+                      let embed = new discord.RichEmbed().attachFile(r.body);
+                      msg.channel.send(embed).catch(msg.channel.send);
+                      fs.unlink(`./hentai.jpg`);
+                })
+            })
+        }
+      } else if (msg.content == settings.prefix + "image anime") {
+        msg.channel.send(lang.searching);
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        var subreddits = [
+            'awwnime',
+            'Gunime',
+            'anime',
+            'animemes',
+            'anikyar_ja',
+            'PopTeamEpic',
+            'GJbu',
+            'touhou',
+            'anime_irl',
+            'animegifs',
+            'AnimeFigures'
+        ];
+        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+        randomPuppy(sub)
+            .then(url => {
+                request.get(url).then(r => {
+                    fs.writeFile(`hentai.jpg`, r.body);
+                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    msg.channel.send(embed).catch(msg.channel.send);
+                    fs.unlink(`./hentai.jpg`);
+                })
+            })
+      } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意") {
+        msg.channel.send(lang.searching);
+        /* Normal NSFW */
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        var subreddits = [
+            'HENTAI_GIF',
+            'hentai_irl',
+            'NSFW_Wallpapers',
+            'SexyWallpapers',
+            'HighResNSFW',
+            'nsfw_hd',
+            'UHDnsfw'
+        ];
+        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+        randomPuppy(sub)
+            .then(url => {
+                request.get(url).then(r => {
+                    fs.writeFile(`hentai.jpg`, r.body);
+                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    msg.channel.send(embed).catch(msg.channel.send);
+                    fs.unlink(`./hentai.jpg`);
+                    msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
+                })
+            })
+      } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
+        msg.channel.send(lang.searching);
+        /* Confirm command! */
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        var subreddits = [
+            'HENTAI_GIF',
+            'hentai_irl',
+            'diskpic',
+            'cum',
+            'cumshot',
+            'anal',
+            'oral',
+            'teen',
+            'tits',
+            'milf',
+            'creampie',
+            'NSFW_Wallpapers',
+            'SexyWallpapers',
+            'HighResNSFW',
+            'nsfw_hd',
+            'UHDnsfw',
+            'NSFW_GIF',
+            'nsfw_gifs',
+            'porninfifteenseconds',
+            '60FPSPorn',
+            'porn_gifs',
+            'nsfw_Best_Porn_Gif',
+            'LipsThatFrip',
+            'adultgifs'
+        ];
+        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+        randomPuppy(sub)
+            .then(url => {
+                request.get(url).then(r => {
+                    fs.writeFile(`hentai.jpg`, r.body)
+                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    msg.channel.send(embed).catch(msg.channel.send);
+                    fs.unlink(`./hentai.jpg`)
+                })
+            })
+      } else {
+        let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
+        .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
+        msg.channel.send(embed).catch(console.error);
+      }
     } else if (msg.content === settings.prefix + "reload") {
       if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -846,6 +1073,8 @@ client.on('message', msg => {
       delete require.cache[require.resolve(guildSettings)];
       delete require.cache[require.resolve(userFile)];
       delete require.cache[require.resolve(bansFile)];
+      delete require.cache[require.resolve(`./lang/ja.json`)];
+      delete require.cache[require.resolve(`./lang/en.json`)];
       msg.channel.send(`:ok_hand:`);
     } else {
       let sb = new StringBuilder(``),
@@ -909,6 +1138,14 @@ client.on("guildMemberAdd", member => {
     }
   } else {
     msg.channel.send(f(lang.error, lang.errors.server_banned));
+  }
+  if (serverSetting.autorole != null) {
+    async function process() {
+      let role = await member.guild.roles.get(serverSetting.autorole);
+      member.addRole(role);
+      console.log(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
+    }
+    process();
   }
 });
 
