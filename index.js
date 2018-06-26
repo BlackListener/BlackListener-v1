@@ -62,7 +62,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `vote close`, "args": ` <ID>`},
     {"body": `vote vote`, "args": ` <ID> <Number>`},
     {"body": `togglepurge`, "args": ` [enable/disable]`},
-    {"body": `dump`, "args": ` [users|channels|emojis]`},
+    {"body": `dump`, "args": ` [users|channels|emojis|messages]`},
     {"body": `listemojis`, "args": ` [escape]`},
     {"body": `invite`, "args": ` <GuildID> [create]`},
     {"body": `role`, "args": ` <role> [user]`},
@@ -459,8 +459,126 @@ client.on('message', msg => {
           }, this);
           msg.delete(0).catch(console.error);
           return msg.channel.send(message);
-    }
-    if (msg.content === settings.prefix + "help") {
+    } else if (msg.content.startsWith(settings.prefix + "image")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      // const args = msg.content.slice(settings.prefix + "image".length).trim().split(/ +/g);
+      if (msg.content.startsWith(settings.prefix + "image custom")) {
+        if(/\s/gm.test(args[2])) {
+          msg.channel.send(lang.cannotspace);
+        } else {
+          msg.channel.send(lang.searching);
+          /* Normal NSFW */
+          if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+          var subreddits = [
+            args[2]
+          ]
+          var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+          randomPuppy(sub)
+              .then(url => {
+                  request.get(url).then(r => {
+                      fs.writeFile(`hentai.jpg`, r.body);
+                      let embed = new discord.RichEmbed().attachFile(r.body);
+                      msg.channel.send(embed).catch(msg.channel.send);
+                      fs.unlink(`./hentai.jpg`);
+                })
+            })
+        }
+      } else if (msg.content == settings.prefix + "image anime") {
+        msg.channel.send(lang.searching);
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        var subreddits = [
+            'awwnime',
+            'Gunime',
+            'anime',
+            'animemes',
+            'anikyar_ja',
+            'PopTeamEpic',
+            'GJbu',
+            'touhou',
+            'anime_irl',
+            'animegifs',
+            'AnimeFigures'
+        ];
+        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+        randomPuppy(sub)
+            .then(url => {
+                request.get(url).then(r => {
+                    fs.writeFile(`hentai.jpg`, r.body);
+                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    msg.channel.send(embed).catch(msg.channel.send);
+                    fs.unlink(`./hentai.jpg`);
+                })
+            })
+      } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意") {
+        msg.channel.send(lang.searching);
+        /* Normal NSFW */
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        var subreddits = [
+            'HENTAI_GIF',
+            'hentai_irl',
+            'NSFW_Wallpapers',
+            'SexyWallpapers',
+            'HighResNSFW',
+            'nsfw_hd',
+            'UHDnsfw'
+        ];
+        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+        randomPuppy(sub)
+            .then(url => {
+                request.get(url).then(r => {
+                    fs.writeFile(`hentai.jpg`, r.body);
+                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    msg.channel.send(embed).catch(msg.channel.send);
+                    fs.unlink(`./hentai.jpg`);
+                    msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
+                })
+            })
+      } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
+        msg.channel.send(lang.searching);
+        /* Confirm command! */
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        var subreddits = [
+            'HENTAI_GIF',
+            'hentai_irl',
+            'diskpic',
+            'cum',
+            'cumshot',
+            'anal',
+            'oral',
+            'teen',
+            'tits',
+            'milf',
+            'creampie',
+            'NSFW_Wallpapers',
+            'SexyWallpapers',
+            'HighResNSFW',
+            'nsfw_hd',
+            'UHDnsfw',
+            'NSFW_GIF',
+            'nsfw_gifs',
+            'porninfifteenseconds',
+            '60FPSPorn',
+            'porn_gifs',
+            'nsfw_Best_Porn_Gif',
+            'LipsThatFrip',
+            'adultgifs'
+        ];
+        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
+        randomPuppy(sub)
+            .then(url => {
+                request.get(url).then(r => {
+                    fs.writeFile(`hentai.jpg`, r.body)
+                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    msg.channel.send(embed).catch(msg.channel.send);
+                    fs.unlink(`./hentai.jpg`)
+                })
+            })
+      } else {
+        let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
+        .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
+        msg.channel.send(embed).catch(console.error);
+      }
+    } else if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let prefix = settings.prefix,
         embed = new discord.RichEmbed()
@@ -486,7 +604,7 @@ client.on('message', msg => {
         .addField(`${prefix}vote close|end <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
-        .addField(`${prefix}dump [users|channels|emojis]`, lang.commands.dump) /* 20 */
+        .addField(`${prefix}dump [users|channels|emojis|messages]`, lang.commands.dump) /* 20 */
         .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis)
         .addField(`${prefix}invite <GuildID> [create]`, lang.commands.invite)
         .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
@@ -496,6 +614,12 @@ client.on('message', msg => {
     }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
+      /* Nothing. Dummy. */
+    } else if (msg.content.startsWith(settings.prefix + "image")) {
+      /* Nothing. Dummy. */
+    } else if (msg.content.startsWith(settings.prefix + "say")) {
+      /* Nothing. Dummy. */
+    } else if (msg.content.startsWith(settings.prefix + "sayd")) {
       /* Nothing. Dummy. */
     } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -513,6 +637,7 @@ client.on('message', msg => {
       }
       writeSettings(guildSettings, unsavedSettings, msg.channel, "disable_purge");
     } else if (msg.content.startsWith(settings.prefix + "invite ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       async function process() {
         if (!/\d{18}/.test(args[1])) return msg.channel.send(lang.invalid_args);
         var sb = new StringBuilder(``);
@@ -537,6 +662,7 @@ client.on('message', msg => {
       }
       process();
     } else if (msg.content.startsWith(settings.prefix + "shutdown ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author == "<@254794124744458241>") {
         if (args[1] == "-f") {
           console.log(f(lang.atmpfs, msg.author.tag));
@@ -566,10 +692,10 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "ban ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if(!args[1] || args[1] === ``) {
+      if (!args[1] || args[1] === ``) {
         msg.channel.send(lang.no_args);
       } else {
-        if(msg.guild && msg.guild.available && !msg.author.bot) {
+        if (msg.guild && msg.guild.available && !msg.author.bot) {
           var user;
           if (/[0-9]................./.test(args[1])) {
             user = client.users.get(args[1]);
@@ -661,10 +787,10 @@ client.on('message', msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "unban ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if(!args[1] || args[1] === ``) {
+      if (!args[1] || args[1] === ``) {
         msg.channel.send(lang.no_args);
       } else {
-        if(msg.guild && msg.guild.available && !msg.author.bot) {
+        if (msg.guild && msg.guild.available && !msg.author.bot) {
           var user;
           if (/[0-9]................./.test(args[1])) {
             user = client.users.get(args[1]);
@@ -709,7 +835,7 @@ client.on('message', msg => {
         set.prefix = args[1];
         writeSettings(guildSettings, set, msg.channel, "prefix");
       }
-    } else if (msg.content.startsWith(settings.prefix + "setnick") || msg.content.startsWith(settings.prefix + "setnickname ")) {
+    } else if (msg.content.startsWith(settings.prefix + "setnick ") || msg.content.startsWith(settings.prefix + "setnickname ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (/\s/gm.test(args[1]) || !args[1]) {
         msg.channel.send(lang.cannotspace);
@@ -861,6 +987,7 @@ client.on('message', msg => {
       }
       diskinfo();
     } else if (msg.content === settings.prefix + "autorole" || msg.content.startsWith(settings.prefix + "autorole ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (args[1] === `remove`) {
         let localSettings = settings;
         localSettings.autorole = null;
@@ -892,9 +1019,11 @@ client.on('message', msg => {
         }
       }
     } else if (msg.content === settings.prefix + "dump" || msg.content.startsWith(settings.prefix + "dump ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const url = c.dump_url;
       var sb = new StringBuilder(``),
-        link;
+        link,
+        nowrite;
       if (args[1] === `users`) {
         client.users.forEach((user) => {
           sb.append(`${user.tag} (${user.id})\n`);
@@ -903,6 +1032,13 @@ client.on('message', msg => {
         client.channels.forEach((channel) => {
           sb.append(`<${channel.guild.name}><${channel.guild.id}> ${channel.name} (${channel.id}) [${channel.type}]\n`);
         });
+      } else if (args[1] === `messages`) {
+        nowrite = true;
+        if (c.data_baseurl == "" || !c.data_baseurl) {
+          link = `利用不可`;
+        } else {
+          link = `${c.data_baseurl}/servers/${msg.guild.id}/messages.log`;
+        }
       } else if (args[1] === `emojis`) {
         client.emojis.forEach((emoji) => {
           sb.append(`<${emoji.guild.name}><${emoji.guild.id}> ${emoji.name} (${emoji.id}) [isAnimated:${emoji.animated}] [ ${emoji.url} ]\n`);
@@ -914,7 +1050,7 @@ client.on('message', msg => {
       }
       if (url == `` || !url) {
         link = ``;
-      } else {
+      } else if (url != `` && url != null && link == ``) {
         link = `URL: ${url}`;
       }
       let embed = new discord.RichEmbed()
@@ -922,7 +1058,9 @@ client.on('message', msg => {
         .setDescription(link)
         .setTimestamp();
       msg.channel.send(embed);
-      fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
+      if (!nowrite) {
+        fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
+      }
     } else if (msg.content.startsWith(settings.prefix + "listemojis ") || msg.content === settings.prefix + "listemojis") {
       const emojiList = msg.guild.emojis.map(e=>e.toString()).join(" ");
       if (args[1] === `escape`) {
@@ -931,6 +1069,7 @@ client.on('message', msg => {
         msg.channel.send(`${emojiList}`);
       }
     } else if (msg.content.startsWith(settings.prefix + "language ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === "help") {
         let embed = new discord.RichEmbed()
           .setTitle(lang.langnotsupported)
@@ -947,125 +1086,6 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
-    } else if (msg.content.startsWith(settings.prefix + "image")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      // const args = msg.content.slice(settings.prefix + "image".length).trim().split(/ +/g);
-      if (msg.content.startsWith(settings.prefix + "image custom")) {
-        if(/\s/gm.test(args[2])) {
-          msg.channel.send(lang.cannotspace);
-        } else {
-          msg.channel.send(lang.searching);
-          /* Normal NSFW */
-          if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
-          var subreddits = [
-            args[2]
-          ]
-          var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-          randomPuppy(sub)
-              .then(url => {
-                  request.get(url).then(r => {
-                      fs.writeFile(`hentai.jpg`, r.body);
-                      let embed = new discord.RichEmbed().attachFile(r.body);
-                      msg.channel.send(embed).catch(msg.channel.send);
-                      fs.unlink(`./hentai.jpg`);
-                })
-            })
-        }
-      } else if (msg.content == settings.prefix + "image anime") {
-        msg.channel.send(lang.searching);
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
-        var subreddits = [
-            'awwnime',
-            'Gunime',
-            'anime',
-            'animemes',
-            'anikyar_ja',
-            'PopTeamEpic',
-            'GJbu',
-            'touhou',
-            'anime_irl',
-            'animegifs',
-            'AnimeFigures'
-        ];
-        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`);
-                })
-            })
-      } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意") {
-        msg.channel.send(lang.searching);
-        /* Normal NSFW */
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
-        var subreddits = [
-            'HENTAI_GIF',
-            'hentai_irl',
-            'NSFW_Wallpapers',
-            'SexyWallpapers',
-            'HighResNSFW',
-            'nsfw_hd',
-            'UHDnsfw'
-        ];
-        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`);
-                    msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
-                })
-            })
-      } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
-        msg.channel.send(lang.searching);
-        /* Confirm command! */
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
-        var subreddits = [
-            'HENTAI_GIF',
-            'hentai_irl',
-            'diskpic',
-            'cum',
-            'cumshot',
-            'anal',
-            'oral',
-            'teen',
-            'tits',
-            'milf',
-            'creampie',
-            'NSFW_Wallpapers',
-            'SexyWallpapers',
-            'HighResNSFW',
-            'nsfw_hd',
-            'UHDnsfw',
-            'NSFW_GIF',
-            'nsfw_gifs',
-            'porninfifteenseconds',
-            '60FPSPorn',
-            'porn_gifs',
-            'nsfw_Best_Porn_Gif',
-            'LipsThatFrip',
-            'adultgifs'
-        ];
-        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body)
-                    let embed = new discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`)
-                })
-            })
-      } else {
-        let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
-        .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
-        msg.channel.send(embed).catch(console.error);
-      }
     } else if (msg.content === settings.prefix + "reload") {
       if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));

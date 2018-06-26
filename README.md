@@ -29,6 +29,8 @@ Public Bot: [Invite](https://discordapp.com/api/oauth2/authorize?client_id=45696
 | purge gdel-really | guildDelete[2]. Remove all channels, and **not** creating any channels. | guildDelete[2]。すべてのチャンネルを削除します。そして、チャンネルは作成しません。 |
 | purge remake <Channel> | Remake specified channel. | 指定されたチャンネルを再作成します。 |
 | togglepurge | The `purge` command can not be used as it is, so use it for use. | `purge`コマンドはこのままでは使用できないのでこれを使用して使えるようにします。 |
+| role <Role> [user] | Add/Remove role from [user], default [user] is sender. | [ユーザー]から役職を追加/削除します。[ユーザー] はデフォルトでは実行者です。
+| autorole [add <role>/remove] | Settings for autorole | 自動役職の設定 |
 ---
 
 User has 0 rep, if you're banned a 1 time, you'll added 1 rep.
