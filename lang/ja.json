@@ -105,5 +105,9 @@
   "role_error": ":x: 役職の設定中にエラーが発生しました。\n役職が存在しない可能性があります。",
   "searching": ":mag: 検索中... 15秒以内に画像が出ない場合は、やり直してください。",
   "autorole_enabled": "自動役職付与は有効です。 ({0})",
-  "autorole_disabled": "自動役職付与は無効です。"
+  "autorole_disabled": "自動役職付与は無効です。",
+  "global_enabled": "グローバルチャットは有効です。 ({0})",
+  "global_disabled": "グローバルチャットは無効です。",
+  "invite_create": "招待の作成をしたい場合は、引数に`create`を追加してください",
+  "invite_bot": "ボットをサーバーに招待: {0}"
 }

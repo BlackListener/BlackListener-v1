@@ -102,5 +102,9 @@
   "role_error": ":x: Errors while setting role. May not be found specified role.",
   "searching": ":mag: Searching... If don't show up image in 15 seconds, please again.",
   "autorole_enabled": "Auto role is enabled. ({0})",
-  "autorole_disabled": "Auto role is disabled."
+  "autorole_disabled": "Auto role is disabled.",
+  "global_enabled": "Global chat is enabled. ({0})",
+  "global_disabled": "Global chat is disabled.",
+  "invite_create": "If you want create a invite, please add argument: `create`",
+  "invite_bot": "Invite bot for your server: {0}"
 }
