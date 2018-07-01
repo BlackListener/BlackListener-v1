@@ -542,6 +542,7 @@ client.on('message', msg => {
                       fs.unlink(`./hentai.jpg`);
                 })
             })
+          return;
         }
       } else if (msg.content == settings.prefix + "image anime") {
         msg.channel.send(lang.searching);
@@ -569,6 +570,7 @@ client.on('message', msg => {
                     fs.unlink(`./hentai.jpg`);
                 })
             })
+        return;
       } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意" || msg.content === settings.prefix + "image r18") {
         msg.channel.send(lang.searching);
         /* Normal NSFW */
@@ -593,6 +595,7 @@ client.on('message', msg => {
                     msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
                 })
             })
+        return;
       } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
         msg.channel.send(lang.searching);
         /* Confirm command! */
@@ -633,6 +636,7 @@ client.on('message', msg => {
                     fs.unlink(`./hentai.jpg`)
                 })
             })
+        return;
       } else {
         let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
@@ -680,7 +684,7 @@ client.on('message', msg => {
         .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
         .addField(lang.commands.warning, lang.commands.asterisk); /* 25 */
-      msg.channel.send(embed);
+      return msg.channel.send(embed);
     }/* else if (msg.content === settings.prefix + "status minecraft")
       msg.channel.send(lang.status.checking);
       var status = ["undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined"];
