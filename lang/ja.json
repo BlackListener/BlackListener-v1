@@ -32,6 +32,25 @@
     "warning": "::注意::",
     "asterisk": "`[*]` がついているコマンドは実行する前に設定の変更が必要な可能性があります。"
   },
+  "status": {
+    "servers": {
+      "minecraft": "Minecraft.net",
+      "sessionminecraft": "マルチプレイヤーセッションサービス(Minecraft)",
+      "accountmojang": "Mojangアカウントウェブサイト",
+      "authservermojang": "認証サービス",
+      "sessionservermojang": "セッションサーバー(Mojang)",
+      "apimojang": "パブリックAPI",
+      "texturesminecraft": "Minecraftスキン",
+      "mojang": "Mojang.com"
+    },
+    "checking": "ステータスをチェック中...",
+    "title": "Minecraftサービスステータス",
+    "time": "処理時間: {0}ミリ秒",
+    "ok": "正常",
+    "unstable": "不安定",
+    "down": "ダウン",
+    "unknown": "ステータス情報の利用不可"
+  },
   "senttodm": "DMへ送りました。DMを見てください！",
   "mytoken": "トークンは {0} です。",
   "youdonthavear": ":no_good: Adminロールを持っていません。",
@@ -109,5 +128,10 @@
   "global_enabled": "グローバルチャットは有効です。 ({0})",
   "global_disabled": "グローバルチャットは無効です。",
   "invite_create": "招待の作成をしたい場合は、引数に`create`を追加してください",
-  "invite_bot": "ボットをサーバーに招待: {0}"
+  "invite_bot": "ボットをサーバーに招待: {0}",
+  "rebooting": "再起動中",
+  "already_banned": "指定されたユーザーはすでにBANされています！",
+  "known": "ユーザーを見つけました: {0}",
+  "unknown": "指定されたユーザーはいないみたいです: {0}",
+  "already_set_group": "そのサーバーはすでにグループに追加されています。"
 }

@@ -32,6 +32,25 @@
     "warning": "::Warning::",
     "asterisk": "Commands marked with `[*]` may need to be changed settings."
   },
+  "status": {
+    "servers": {
+      "minecraft": "Minecraft.net",
+      "sessionminecraft": "Multiplayer Session Service(Minecraft)",
+      "accountmojang": "Mojang Account Website",
+      "authservermojang": "Authentication Service",
+      "sessionservermojang": "Session Server(Mojang)",
+      "apimojang": "Public API",
+      "texturesminecraft": "Minecraft Skins",
+      "mojang": "Mojang.com"
+    },
+    "checking": "Checking status...",
+    "title": "Minecraft Service Status",
+    "time": "Processing Time: {0}ms",
+    "ok": "OK",
+    "unstable": "Unstable",
+    "down": "Down",
+    "unknown": "Unavailable status information"
+  },
   "senttodm": "Sent to DM!",
   "mytoken": "Token is {0}.",
   "youdonthavear": ":no_good: You don't have a admin permission.",
@@ -106,5 +125,10 @@
   "global_enabled": "Global chat is enabled. ({0})",
   "global_disabled": "Global chat is disabled.",
   "invite_create": "If you want create a invite, please add argument: `create`",
-  "invite_bot": "Invite bot for your server: {0}"
+  "invite_bot": "Invite bot for your server: {0}",
+  "rebooting": "Restarting!",
+  "already_banned": "Already banned specific user!",
+  "known": "I know specific user: {0}",
+  "unknown": "I can't find specific user: {0}",
+  "already_set_group": "Already set that server."
 }

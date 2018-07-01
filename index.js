@@ -1,10 +1,12 @@
 const f = require('string-format'), // Load & Initialize string-format
+  now = require("performance-now"),
   discord = require('discord.js'), // Load discord.js
   client = new discord.Client(), // Initialize Client.
   s = require('./secret.json'), // Tokens, and invite link.
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
-  util = require('util');
+  XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
+  util = require('util'),
   os = require('os'),
   request = require("snekfetch"),
   randomPuppy = require("random-puppy"),
@@ -24,10 +26,15 @@ const f = require('string-format'), // Load & Initialize string-format
     ignoredChannels: [],
     autorole: null,
     global: null,
+    group: [],
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
     rep: 0,
+    bannedFromServer: [],
+    bannedFromServerOwner: [],
+    bannedFromUser: [],
+    probes: [],
   },
   global = [],
   levenshtein = function (s1, s2) {if (s1 == s2) {return 0;}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len;}if (s2_len === 0) {return s1_len;}let split = false; try{split = !(`0`)[0];}catch(e){split = true;}if (split) {s1 = s1.split(``); s2 = s2.split(``);}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0, s2_idx = 0, cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx;}let char_s1 = ``, char_s2 = ``; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b;}if (c < m_min) {m_min = c;}v1[s1_idx + 1] = m_min;}const v_tmp = v0; v0 = v1; v1 = v_tmp;}return v0[s1_len];},
@@ -36,7 +43,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `shutdown`, "args": ` [-f]`},
     {"body": `token`, "args": ``},
     {"body": `setprefix`, "args": ` <Prefix>`},
-    {"body": `ban`, "args": ` <ID/Mentions/Name>`},
+    {"body": `ban`, "args": ` [<ID/Mentions/Name> <Reason> <Probe>]`},
     {"body": `unban`, "args": ` <ID/Mentions/Name> *Not recommended*`},
     {"body": `language`, "args": ` <ja/en>`},
     {"body": `log`, "args": ``},
@@ -75,9 +82,13 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
-    {"body": `image nsfw|閲覧注意`, "args": ``},
-    {"body": `image nsfw|閲覧注意 confirm`, "args": ``},
-    {"body": `image custom <subreddit>`, "args": ``},
+    {"body": `image nsfw`, "args": ` confirm`},
+    {"body": `image r18`, "args": ` confirm`},
+    {"body": `image 閲覧注意`, "args": ` confirm`},
+    {"body": `image`, "args": ` nsfw|r18|閲覧注意 confirm`},
+    {"body": `image custom`, "args": ` <subreddit>`},
+    {"body": `didyouknow`, "args": ` <User>`},
+    {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
   ];
 var guildSettings,
   settings,
@@ -410,6 +421,26 @@ client.on('message', msg => {
   }
   user = require(userFile);
   settings = require(guildSettings);
+  if (!user.bannedFromServer) {
+    user.bannedFromServer = [];
+    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  if (!user.bannedFromServerOwner) {
+    user.bannedFromServerOwner = [];
+    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  if (!user.bannedFromUser) {
+    user.bannedFromUser = [];
+    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  if (!user.probes) {
+    user.probes = [];
+    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  if (!settings.group) {
+    settings.group = [];
+    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Auto-ban
@@ -420,18 +451,25 @@ client.on('message', msg => {
         .catch(console.error);
     }
   }
-  // --- End of Auto-ban
+  // --- End of Auto-ban [Don't remove this]
 
   // --- Begin of Global chat
-  /*if (settings.global != null) {
+  /*
+  if (settings.global != null && !msg.content.startsWith(settings.prefix)) {
     let g_servers = require('./data/global_servers.json');
     let g_channels = require('./data/global_channels.json');
     for (var i=0;i<=g_servers.length;i++) {
-      if (g_servers[i] != msg.guild.id.toString()) {
-        client.guilds.get(g_servers[i]).channels.get(g_channels[i]).send(`<@${msg.author.id}> ${msg.content}`);
-      }
+      try {
+        if (msg.channel.id == client.guilds.get(g_servers[i]).channels.get(g_channels[i]).id) return;
+        if (g_servers[i] != msg.guild.id.toString() && g_servers[i] !== void 0) {
+          if (msg.channel.id != g_channels[i]) {
+            client.guilds.get(g_servers[i]).channels.get(g_channels[i]).send(`<${msg.author.tag}> ${msg.content}`);
+          }
+        }
+      } catch(e) {/* Dummy *//*}
     }
-  }*/
+  }
+  */
   // --- End of Global chat
 
   // --- Begin of Anti-spam
@@ -531,7 +569,7 @@ client.on('message', msg => {
                     fs.unlink(`./hentai.jpg`);
                 })
             })
-      } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意") {
+      } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意" || msg.content === settings.prefix + "image r18") {
         msg.channel.send(lang.searching);
         /* Normal NSFW */
         if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
@@ -598,10 +636,20 @@ client.on('message', msg => {
       } else {
         let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
-        msg.channel.send(embed).catch(console.error);
+        return msg.channel.send(embed).catch(console.error);
+      }
+    } else if (msg.content.startsWith(settings.prefix + "didyouknow ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      let know = client.users.find("username", args[1]);
+      if (!know) know = msg.mentions.users.first();
+      if (!know) know = client.users.get(args[1]);
+      if (!know) {
+        return msg.channel.send(f(lang.unknown, args[1]));
+      } else {
+        return msg.channel.send(f(lang.known, `${know.tag} (${know.id})`));
       }
     } else if (msg.content === settings.prefix + "help") {
-      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let prefix = settings.prefix,
         embed = new discord.RichEmbed()
         .setTitle(f(lang.commands.title, c.version))
@@ -609,7 +657,7 @@ client.on('message', msg => {
         .setColor([0,255,0])
         .addField(`${prefix}shutdown __/__ ${prefix}token __/__ ${prefix}log`, `${lang.commands.shutdown}\n${lang.commands.token}\n${lang.commands.log}`)
         .addField(`${prefix}setprefix`, lang.commands.setprefix)
-        .addField(`${prefix}ban | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
+        .addField(`${prefix}ban [<User> <Reason> <Probe>] | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
         .addField(`${prefix}language`, lang.commands.language)
         .addField(`${prefix}setnotifyrep`, lang.commands.setnotifyrep)
         .addField(`${prefix}setbanrep`, lang.commands.setbanrep)
@@ -633,7 +681,54 @@ client.on('message', msg => {
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
         .addField(lang.commands.warning, lang.commands.asterisk); /* 25 */
       msg.channel.send(embed);
-    }
+    }/* else if (msg.content === settings.prefix + "status minecraft")
+      msg.channel.send(lang.status.checking);
+      var status = ["undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined"];
+      var key,leng,data,time;
+      var i = 0;
+      const startTime = now();
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (req.readyState == 4 && req.status == 200){
+          data = JSON.parse(req.responseText);
+          for (leng = data.length; i < data.length; i ++) {
+            for (key in data[i]){
+              switch (data[i][key]){
+                case 'green':
+                  status[i] = lang.status.ok;
+                  break;
+                case 'red':
+                  status[i] = lang.status.down;
+                  break;
+                case 'yellow':
+                  status[i] = lang.status.unstable;
+                  break;
+                default:
+                  status[i] = lang.status.unknown;
+                  break;
+              }
+            }
+          }
+          const endTime = now();
+          time = endTime - startTime;
+          let embed = new discord.RichEmbed()
+            .setTitle(lang.status.title)
+            .setURL("https://help.mojang.com")
+            .setColor([0,255,0])
+            .setFooter(f(lang.status.time, Math.floor(time)))
+            .setTimestamp()
+            .addField(lang.status.servers.minecraft, status[0])
+            .addField(lang.status.servers.sessionminecraft, status[1])
+            .addField(lang.status.servers.accountmojang, status[2])
+            .addField(lang.status.servers.authservermojang, status[3])
+            .addField(lang.status.servers.sessionservermojang, status[4])
+            .addField(lang.status.servers.apimojang, status[5])
+            .addField(lang.status.servers.texturesminecraft, status[6])
+            .addField(lang.status.servers.mojang, status[7]);
+          msg.channel.send(embed);
+        }
+      }
+    }*/
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
       /* Nothing. Dummy. */
@@ -699,6 +794,13 @@ client.on('message', msg => {
           console.log(f(lang.atmpfs, msg.author.tag));
           msg.channel.send(lang.bye);
           client.destroy();
+        } else if (args[1] == "-r") {
+          async function process() {
+            console.log(f(lang.rebooting));
+            await msg.channel.send(lang.rebooting);
+            process.kill(process.pid, 'SIGKILL');
+          }
+          process();
         } else {
           console.log(f(lang.success, msg.content));
           msg.channel.send(lang.bye);
@@ -728,32 +830,44 @@ client.on('message', msg => {
       } else {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
           async function process() {
-            var user,
-              fetchedBans;
+            if (!args[2]) return msg.channel.send(lang.invalid_args);
+            reason = args[2];
+            if (user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && user.bannedFromServer.indexOf(msg.guild.id) && user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned);
+            var user2,
+              fetchedBans,
+              attach,
+              reason;
             if (/\d{18}/.test(args[1])) {
               args[1] = args[1].replace("<@", "").replace(">", "");
               fetchedBans = await msg.guild.fetchBans();
               if (fetchedBans.get(args[1])) {
-              user = client.users.get(args[1]);
+              user2 = client.users.get(args[1]);
               } else {
-                user = fetchedBans.get(args[1]);
+                user2 = fetchedBans.get(args[1]);
               }
-              console.log(`Caught user id: ${args[1]}(${user.tag})`);
             } else {
               // msg.guild.fetchMembers(args[1]);
-              user = client.users.find("name", args[1]);
+              user2 = client.users.find("username", args[1]);
+            }
+            if (!msg.attachments.first()) {
+              return msg.channel.send(lang.invalid_args);
+            } else {
+              attach = msg.attachments.first().url;
             }
             if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
             if (!user) { settings = null; return msg.channel.send(lang.invalid_user); }
-            let ban = bans,
-              localUser = user;
+            let ban = bans;
+            user.bannedFromServerOwner.push(msg.guild.ownerID);
+            user.bannedFromServer.push(msg.guild.id);
+            user.bannedFromUser.push(msg.author.id);
+            user.probes.push(attach);
             ban.push(user.id);
-            localUser.rep = ++localUser.rep;
-            //.ban(user) can't find how to get guild member from banned from guild.
-            //  .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
-            //  .catch(console.error);
+            user.rep = ++user.rep;
+            msg.guild.ban(user, { "reason": reason })
+              .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
+              .catch(console.error);
             fs.writeFileSync(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            fs.writeFileSync(userFile, JSON.stringify(localUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
             msg.channel.send(lang.banned);
           }
           process();
@@ -835,7 +949,7 @@ client.on('message', msg => {
           if (/[0-9]................./.test(args[1])) {
             user = client.users.get(args[1]);
           } else {
-            user = client.users.find("name", args[1]);
+            user = client.users.find("username", args[1]);
           }
           if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
           if (!user) { settings = null; return msg.channel.send(lang.invalid_user); }
@@ -875,6 +989,26 @@ client.on('message', msg => {
         set.prefix = args[1];
         writeSettings(guildSettings, set, msg.channel, "prefix");
       }
+    /*} else if (msg.content.startsWith(settings.prefix + "group ") || msg.content === settings.prefix + "group") {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      if (!args[1]) {
+        return msg.channel.send(lang.invalid_args);
+      } else if (args[1] === "add") {
+        if (/\D/gm.test(args[1])) return msg.channel.send(lang.invalid_args);
+        if (!~settings.group.indexOf(args[1])) {
+          settings.group.push(args[1]);
+          writeSettings(guildSettings, settings, msg.channel, "group");
+        } else {
+          msg.channel.send(lang.already_set_group);
+        }
+      } else if (args[1] === "remove") {
+        settings.group.forEach({
+          if (settings.group[i] === args[1]) {
+            delete settings.group[i];
+          }
+        });
+        writeSettings(guildSettings, settings, msg.channel, "group");
+      }*/ // under construction
     } else if (msg.content.startsWith(settings.prefix + "setnick ") || msg.content.startsWith(settings.prefix + "setnickname ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (/\s/gm.test(args[1]) || !args[1]) {
@@ -1072,8 +1206,8 @@ client.on('message', msg => {
         writeSettings(guildSettings, localSettings, msg.channel, "global");
       } else if (args[1] === `add`) {
         var id;
-        console.log(msg.mentions.channels.first().id);
-        if (!msg.mentions.channels.first()) {} else {
+        if (!msg.mentions.channels.first()) { /* Dummy */} else {
+          console.log(msg.mentions.channels.first().id);
           id = msg.mentions.channels.first().id;
         }
         console.log(id);
@@ -1083,6 +1217,7 @@ client.on('message', msg => {
         if (/\d{18,}/.test(args[2])) {
           localSettings.global = args[2];
         } else {
+          return msg.channel.send(`:x: :bow: まだ使えません - You cannot use this :bow`);
           try {
             console.log(id);
             localSettings.global = id;
