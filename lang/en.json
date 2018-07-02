@@ -115,7 +115,7 @@
     "users": ":bust_in_silhouette: Users",
     "source": "Source code"
   },
-  "dumped": ":pencil: Wrote file",
+  "dumped": "Wrote file :thumbsup:\nCheck it out on URL: {0}",
   "invites": ":paperclip: Currently valid invite links",
   "noguild": ":x: Not found guild, or cannot fetch because bot is not joined.",
   "role_error": ":x: Errors while setting role. May not be found specified role.",
@@ -129,6 +129,23 @@
   "rebooting": "Restarting!",
   "already_banned": "Already banned specific user!",
   "known": "I know specific user: {0}",
-  "unknown": "I can't find specific user: {0}",
-  "already_set_group": "Already set that server."
+  "unknown": "I can't find specific user(or is a bot?): {0}",
+  "already_set_group": "Already set that server.",
+  "dumpmessage": "BlackListener: Global Banning System"
+  "lookup": {
+    "desc": "Search specificed user.",
+    "title": "Result",
+    "rep": "Reputation",
+    "probe": "Probes",
+    "bannedFromServer": "Banned from following servers (Owner)",
+    "bannedFromUser": "Executed from following users",
+    "tag": "User Tag",
+    "id": "User ID",
+    "bot": "Is bot",
+    "createdAt": "Created at"
+  },
+  "no": "No",
+  "yes": "Yes",
+  "banned_users": "Banned users(Excluding banned from file editing.)",
+  "failed_to_get": "Failed to get user"
 }

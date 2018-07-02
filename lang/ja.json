@@ -118,7 +118,7 @@
     "users": ":bust_in_silhouette: ユーザー数",
     "source": "ソースコード"
   },
-  "dumped": ":pencil: ファイルに書き込みました。",
+  "dumped": "ファイルに書き込みました :thumbsup:\nURLからチェックしてね: {0}",
   "invites": ":paperclip:  現在有効な招待リンク",
   "noguild": ":x: ギルドは存在しないか、ボットが参加していないので取得できません。",
   "role_error": ":x: 役職の設定中にエラーが発生しました。\n役職が存在しない可能性があります。",
@@ -132,6 +132,23 @@
   "rebooting": "再起動中",
   "already_banned": "指定されたユーザーはすでにBANされています！",
   "known": "ユーザーを見つけました: {0}",
-  "unknown": "指定されたユーザーはいないみたいです: {0}",
-  "already_set_group": "そのサーバーはすでにグループに追加されています。"
+  "unknown": "指定されたユーザーはいない、もしくはボットみたいです: {0}",
+  "already_set_group": "そのサーバーはすでにグループに追加されています。",
+  "dumpmessage": "BlackListener：グローバルBANシステム",
+  "lookup": {
+    "desc": "指定したユーザーの情報を検索します。",
+    "title": "検索結果",
+    "rep": "評価値",
+    "probe": "証拠一覧",
+    "bannedFromServer": "これらのサーバーからBANされています(オーナー)",
+    "bannedFromUser": "これらのユーザーがBANを実行しました",
+    "tag": "ユーザータグ",
+    "id": "ユーザーID",
+    "bot": "ボットかどうか",
+    "createdAt": "作成日時"
+  },
+  "no": "いいえ",
+  "yes": "はい",
+  "banned_users": "BANされた人たち(ファイル編集でBANした人を除きます)",
+  "failed_to_get": "ユーザーの取得に失敗しました"
 }
