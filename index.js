@@ -12,6 +12,7 @@ const f = require('string-format'), // Load & Initialize string-format
   randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
   exec = util.promisify(require('child_process').exec),
+  crypto = require("crypto");
   StringBuilder = require('node-stringbuilder'), // String Builder
   messages = require('./messages.json'), // Used for vote command
   isWindows = process.platform === "win32", // windows: true, other: false
@@ -92,6 +93,10 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
     {"body": `lookup`, "args": ` <User>`},
     {"body": `status minecraft`, "args": ``},
+    {"body": `encode`, "args": ` <String>`},
+    {"body": `decode`, "args": ` <Base64String>`},
+    {"body": `encrypt`, "args": ` <Text> <Password>`},
+    {"body": `decrypt`, "args": ` <EncryptedText> <Password>`},
   ];
 var guildSettings,
   settings,
@@ -646,6 +651,30 @@ client.on('message', msg => {
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
         return msg.channel.send(embed).catch(console.error);
       }
+    } else if (msg.content.startsWith(settings.prefix + "encode ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      let cmd = settings.prefix + "encode ";
+      return msg.channel.send(new Buffer.from(msg.content.slice(cmd.length)).toString(`base64`));
+    } else if (msg.content.startsWith(settings.prefix + "decode ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      return msg.channel.send(new Buffer.from(args[1], `base64`).toString(`ascii`));
+    } else if (msg.content.startsWith(settings.prefix + "encrypt ")) {
+      if (!args[2]) return msg.channel.send(lang.invalid_args);
+      var cipher = crypto.createCipher('aes192', args[2]);
+      cipher.update(args[1], 'utf8', 'hex');
+      var encryptedText = cipher.final('hex');
+      return msg.channel.send(f(lang.encrypted, args[1], args[2], encryptedText));
+    } else if (msg.content.startsWith(settings.prefix + "decrypt ")) {
+      if (!args[2]) return msg.channel.send(lang.invalid_args);
+      var decipher,dec;
+      try {
+        decipher = crypto.createDecipher('aes192', args[2]);
+        decipher.update(args[1], 'hex', 'utf8');
+        dec = decipher.final('utf8');
+      } catch (e) {
+        return msg.channel.send(f(lang.invalid_password, args[2]));
+      }
+      return msg.channel.send(f(lang.decrypted, args[1], args[2], dec));
     } else if (msg.content.startsWith(settings.prefix + "didyouknow ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let know = client.users.find("username", args[1]);
@@ -681,7 +710,7 @@ client.on('message', msg => {
         .addField(`${prefix}vote close|end <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
-        .addField(`${prefix}dump [guilds|users|channels|emojis|messages]`, lang.commands.dump)
+        .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
         .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis) /* 20 */
         .addField(`${prefix}invite [GuildID] [create]`, lang.commands.invite)
         .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
@@ -1386,6 +1415,11 @@ client.on('message', msg => {
           sb.append(`<${channel.guild.name}><${channel.guild.id}> ${channel.name} (${channel.id}) [${channel.type}]\n`);
         });
       } else if (args[1] === `messages`) {
+        if (args[2] === `size`) {
+          msg.channel.send(f(lang.logsize, fs.statSync(`./data/servers/${msg.guild.id}/messages.log`).size / 1000000.0));
+        } else if (args[2] === `delete`) {
+          fs.writeFileSync(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+        }
         nowrite = true;
         if (c.data_baseurl == "" || !c.data_baseurl) {
           link = `利用不可`;

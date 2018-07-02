@@ -148,5 +148,9 @@
   "no": "No",
   "yes": "Yes",
   "banned_users": "Banned users(Excluding banned from file editing.)",
-  "failed_to_get": "Failed to get user"
+  "failed_to_get": "Failed to get user",
+  "logfilesize": "Log file size: {0}MB",
+  "encrypted": "Encrypted Text: `{0}`, Encrypt Key: `{1}`\nResult: `{2}`",
+  "decrypted": "Decrypted Text: `{0}`, Decrypt Key: `{1}`\nResult: `{2}`",
+  "invalid_password": "Incorrect password. (`{0}`)"
 }
