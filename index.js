@@ -15,6 +15,7 @@ const f = require('string-format'), // Load & Initialize string-format
   StringBuilder = require('node-stringbuilder'), // String Builder
   messages = require('./messages.json'), // Used for vote command
   isWindows = process.platform === "win32", // windows: true, other: false
+  FormData = require('form-data');
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -90,6 +91,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `didyouknow`, "args": ` <User>`},
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
     {"body": `lookup`, "args": ` <User>`},
+    {"body": `status minecraft`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -687,7 +689,8 @@ client.on('message', msg => {
         .addField(`${prefix}lookup <User>`, lang.lookup.desc)
         .addField(lang.commands.warning, lang.commands.asterisk); /* 25 */
       return msg.channel.send(embed);
-    }/* else if (msg.content === settings.prefix + "status minecraft")
+    } else if (msg.content === settings.prefix + "status minecraft") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.channel.send(lang.status.checking);
       var status = ["undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined"];
       var key,leng,data,time;
@@ -695,7 +698,7 @@ client.on('message', msg => {
       const startTime = now();
       var req = new XMLHttpRequest();
       req.onreadystatechange = function() {
-        if (req.readyState == 4 && req.status == 200){
+        if(req.readyState == 4 && req.status == 200){
           data = JSON.parse(req.responseText);
           for (leng = data.length; i < data.length; i ++) {
             for (key in data[i]){
@@ -731,10 +734,46 @@ client.on('message', msg => {
             .addField(lang.status.servers.apimojang, status[5])
             .addField(lang.status.servers.texturesminecraft, status[6])
             .addField(lang.status.servers.mojang, status[7]);
-          msg.channel.send(embed);
+          return msg.channel.send(embed);
         }
-      }
-    }*/
+      };
+      req.open("GET", "https://status.mojang.com/check", false);
+      req.send(null);
+    } else if (msg.content === settings.prefix + "status fortnite") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      msg.channel.send(lang.status.checking);
+      var status = "Unknown";
+      var key,leng,data,time;
+      var i = 0;
+      const startTime = now();
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if(req.readyState == 4 && req.status == 200){
+          data = JSON.parse(req.responseText);
+          if (data.status === "UP") {
+            status = lang.status.ok;
+          } else if (data.status === "DOWN") {
+            status = lang.status.down;
+          } else {
+            status = lang.status.unknown;
+          }
+          const endTime = now();
+          time = endTime - startTime;
+          let embed = new discord.RichEmbed()
+            .setTitle(lang.status.title)
+            .setURL("https://status.epicgames.com")
+            .setColor([0,255,0])
+            .setFooter(f(lang.status.time, Math.floor(time)))
+            .setTimestamp()
+            .addField(lang.status.servers.fortnite, status)
+          return msg.channel.send(embed);
+        }
+      };
+      req.open("POST", "https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status", false);
+      req.setRequestHeader("Authorization", "87be2f95e863a8c9e3dfd9e48873fe82");
+      req.setRequestHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+      req.send(new FormData().append("username", "username"));
+    }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
       /* Nothing. Dummy. */
@@ -744,6 +783,8 @@ client.on('message', msg => {
       /* Nothing. Dummy. */
     } else if (msg.content.startsWith(settings.prefix + "sayd")) {
       /* Nothing. Dummy. */
+    } else if (msg.content.startsWith(settings.prefix + "status")) {
+      /* Dummy */
     } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let unsavedSettings = settings;
