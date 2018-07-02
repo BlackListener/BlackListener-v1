@@ -34,6 +34,7 @@
   },
   "status": {
     "servers": {
+      "fortnite": "Fortnite",
       "minecraft": "Minecraft.net",
       "sessionminecraft": "Multiplayer Session Service(Minecraft)",
       "accountmojang": "Mojang Account Website",
@@ -44,7 +45,7 @@
       "mojang": "Mojang.com"
     },
     "checking": "Checking status...",
-    "title": "Minecraft Service Status",
+    "title": "Service Status",
     "time": "Processing Time: {0}ms",
     "ok": "OK",
     "unstable": "Unstable",

@@ -34,6 +34,7 @@
   },
   "status": {
     "servers": {
+      "fortnite": "フォートナイト",
       "minecraft": "Minecraft.net",
       "sessionminecraft": "マルチプレイヤーセッションサービス(Minecraft)",
       "accountmojang": "Mojangアカウントウェブサイト",
@@ -44,7 +45,7 @@
       "mojang": "Mojang.com"
     },
     "checking": "ステータスをチェック中...",
-    "title": "Minecraftサービスステータス",
+    "title": "サービスステータス",
     "time": "処理時間: {0}ミリ秒",
     "ok": "正常",
     "unstable": "不安定",
