@@ -31,6 +31,9 @@ Public Bot: [Invite](https://discordapp.com/api/oauth2/authorize?client_id=45696
 | togglepurge | The `purge` command can not be used as it is, so use it for use. | `purge`コマンドはこのままでは使用できないのでこれを使用して使えるようにします。 |
 | role <Role> [user] | Add/Remove role from [user], default [user] is sender. | [ユーザー]から役職を追加/削除します。[ユーザー] はデフォルトでは実行者です。
 | autorole [add <role>/remove] | Settings for autorole | 自動役職の設定 |
+| status <fortnite|minecraft> | Displays service status | サービスのステータスを表示します。(権限なしで実行可能) |
+| lookup <User> | Displays User information. Cannot display bot information. | ユーザー情報を表示します。ボットの情報は表示できません。 |
+| didyouknow <User> | Tests if bot know specificed user | ボットが指定されたユーザーを知っているかテストします |
 ---
 
 User has 0 rep, if you're banned a 1 time, you'll added 1 rep.
