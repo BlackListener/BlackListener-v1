@@ -72,7 +72,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `vote close`, "args": ` <ID>`},
     {"body": `vote vote`, "args": ` <ID> <Number>`},
     {"body": `togglepurge`, "args": ` [enable/disable]`},
-    {"body": `dump`, "args": ` [users|channels|emojis|messages]`},
+    {"body": `dump`, "args": ` [guilds|users|channels|emojis|messages]`},
     {"body": `listemojis`, "args": ` [escape]`},
     {"body": `invite`, "args": ` [GuildID] [create]`},
     {"body": `role`, "args": ` <role> [user]`},
@@ -89,6 +89,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `image custom`, "args": ` <subreddit>`},
     {"body": `didyouknow`, "args": ` <User>`},
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
+    {"body": `lookup`, "args": ` <User>`},
   ];
 var guildSettings,
   settings,
@@ -548,6 +549,7 @@ client.on('message', msg => {
         msg.channel.send(lang.searching);
         if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
         var subreddits = [
+            'Undertale',
             'awwnime',
             'Gunime',
             'anime',
@@ -663,13 +665,12 @@ client.on('message', msg => {
         .addField(`${prefix}setprefix`, lang.commands.setprefix)
         .addField(`${prefix}ban [<User> <Reason> <Probe>] | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
         .addField(`${prefix}language`, lang.commands.language)
-        .addField(`${prefix}setnotifyrep`, lang.commands.setnotifyrep)
-        .addField(`${prefix}setbanrep`, lang.commands.setbanrep)
+        .addField(`${prefix}setnotifyrep | ${prefix}setbanrep`, `${lang.commands.setnotifyrep} | ${lang.commands.setbanrep}`)
         .addField(`${prefix}antispam`, lang.commands.antispam)
         .addField(`${prefix}purge`, lang.commands.purge)
         .addField(`${prefix}purge <1-99>`, lang.commands.purge_number)
-        .addField(`${prefix}purge gdel`, lang.commands.purge_gdel) /* 10 */
-        .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg)
+        .addField(`${prefix}purge gdel`, lang.commands.purge_gdel)
+        .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg) /* 10 */
         .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
         .addField(`${prefix}purge remake <Channel>`, lang.commands.purge_remake)
         .addField(`${prefix}vote create|start <Q> <A1...A10>`, lang.commands.vote_create)
@@ -678,11 +679,12 @@ client.on('message', msg => {
         .addField(`${prefix}vote close|end <ID>`, lang.commands.vote_close)
         .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
-        .addField(`${prefix}dump [users|channels|emojis|messages]`, lang.commands.dump) /* 20 */
-        .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis)
+        .addField(`${prefix}dump [guilds|users|channels|emojis|messages]`, lang.commands.dump)
+        .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis) /* 20 */
         .addField(`${prefix}invite [GuildID] [create]`, lang.commands.invite)
         .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
+        .addField(`${prefix}lookup <User>`, lang.lookup.desc)
         .addField(lang.commands.warning, lang.commands.asterisk); /* 25 */
       return msg.channel.send(embed);
     }/* else if (msg.content === settings.prefix + "status minecraft")
@@ -827,10 +829,87 @@ client.on('message', msg => {
         msg.reply(lang.youdonthavear);
         console.log(f(lang.issuedfailadmin, msg.author.tag, msg.content, "Doesn't have Admin Role"));
       }
-    } else if (msg.content.startsWith(settings.prefix + "ban ")) {
+    } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      var id;
+      if (!!msg.mentions.users.first()) {
+        id = msg.mentions.users.first().id;
+      } else {
+        if (/\D/gm.test(args[1])) { // True if including any 'not digits'
+          try {
+            id = client.users.find("username", args[1]).id; // Find user
+          } catch (e) {
+            console.error(e);
+            return msg.channel.send(f(lang.unknown, args[1]));
+          }
+        } else if (/\d{18}/.test(args[1])) {
+          try {
+            id = client.users.get(args[1]).id;
+          } catch (e) {
+            // do not use {e}
+            id = client.users.find("username", args[1]).id;
+          }
+        } else {
+          try {
+            id = client.users.find("username", args[1]).id;
+          } catch (e) {
+            console.error(e);
+            return msg.channel.send(f(lang.unknown, args[1]));
+          }
+        }
+      }
+      var userConfig,
+        user2,
+        sb = new StringBuilder(`BANされていません`),
+        sb2 = new StringBuilder(`BANされていません`),
+        isBot = lang.no;
+      try {
+        userConfig = require(`./data/users/${id}/config.json`);
+        user2 = client.users.get(id);
+      } catch (e) {
+        console.error(e);
+        return msg.channel.send(f(lang.unknown, args[1]));
+      }
+      if (user2.bot) isBot = lang.yes;
+      for (let i=0;i<=userConfig.bannedFromServer.length;i++) {
+        if (userConfig.bannedFromServer[i] != null) {
+          sb.clear();
+          sb2.clear();
+          sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
+        }
+        sb2.append(userConfig.bannedFromUser[i])
+      }
+      let embed = new discord.RichEmbed()
+        .setTitle(lang.lookup.title)
+        .setColor([0,255,0])
+        .setFooter(lang.lookup.desc)
+        .addField(lang.lookup.rep, userConfig.rep)
+        .addField(lang.lookup.bannedFromServer, sb.toString())
+        .addField(lang.lookup.bannedFromUser, sb2.toString())
+        .addField(lang.lookup.tag, user2.tag)
+        .addField(lang.lookup.id, user2.id)
+        .addField(lang.lookup.bot, isBot)
+        .addField(lang.lookup.createdAt, user2.createdAt);
+      msg.channel.send(embed);
+    } else if (msg.content.startsWith(settings.prefix + "ban ") || msg.content === settings.prefix + "ban") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === ``) {
-        msg.channel.send(lang.no_args);
+        var sb = new StringBuilder(`まだ誰もBANしていません`);
+        require(`./data/bans.json`).forEach((data) => {
+          if (!!data) { // Doesn'tn't has data => process (translated: does has data => process)
+            sb.clear();
+            try {
+              sb.append(`${client.users.find("id", data).tag} (${client.users.find("id", data).tag})`);
+            } catch (e) {
+              sb.append(`${data} (${lang.failed_to_get})`)
+            }
+          }
+        });
+        let embed = new discord.RichEmbed()
+          .setTitle(lang.banned_users)
+          .setColor([0,255,0])
+          .setDescription(sb.toString());
+        msg.channel.send(embed);
       } else {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
           async function process() {
@@ -845,7 +924,7 @@ client.on('message', msg => {
               args[1] = args[1].replace("<@", "").replace(">", "");
               fetchedBans = await msg.guild.fetchBans();
               if (fetchedBans.get(args[1])) {
-              user2 = client.users.get(args[1]);
+                user2 = client.users.get(args[1]);
               } else {
                 user2 = fetchedBans.get(args[1]);
               }
@@ -1255,7 +1334,7 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const url = c.dump_url;
       var sb = new StringBuilder(``),
-        link,
+        link = `${url}`,
         nowrite;
       if (args[1] === `users`) {
         client.users.forEach((user) => {
@@ -1276,16 +1355,24 @@ client.on('message', msg => {
         client.emojis.forEach((emoji) => {
           sb.append(`<${emoji.guild.name}><${emoji.guild.id}> ${emoji.name} (${emoji.id}) [isAnimated:${emoji.animated}] [ ${emoji.url} ]\n`);
         });
-      } else {
+      } else if (!args[1] || args[1] === `guilds`) {
         client.guilds.forEach((guild) => {
           sb.append(`${guild.name} (${guild.id})\n`);
         });
       }
-      link = `URL: ${url}`;
-      let embed = new discord.RichEmbed()
-        .setTitle(lang.dumped)
-        .setDescription(link)
-        .setTimestamp();
+      let image1 = `https://img.rht0910.tk/upload/2191111432/72932264/bump.png`,
+        image2 = `https://img.rht0910.tk/upload/2191111432/710894583/dump2.png`;
+      var image;
+      if (!args[2]) {
+        image = image1;
+      } else {
+        image = image2;
+      }
+      let embed = new discord.RichEmbed().setImage(image)
+        .setTitle(lang.dumpmessage)
+        .setURL(s.inviteme)
+        .setColor([140,190,210])
+        .setDescription(f(lang.dumped, link));
       msg.channel.send(embed);
       if (!nowrite) {
         fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
