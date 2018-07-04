@@ -95,7 +95,9 @@
   "didyoumean": "Did you mean? {0}",
   "error": "Errored while processing: Error code: {0}",
   "errors": {
-    "server_banned": "k52j"
+    "server_banned": "k52j",
+    "permission_denied": "bu93",
+    "types_are_not_specified": "h54a"
   },
   "outofrange": "Out of Range. [1-99]",
   "disabled_purge": ":x: Disabled `purge` command.",
@@ -152,5 +154,6 @@
   "logfilesize": "Log file size: {0}MB",
   "encrypted": "Encrypted Text: `{0}`, Encrypt Key: `{1}`\nResult: `{2}`",
   "decrypted": "Decrypted Text: `{0}`, Decrypt Key: `{1}`\nResult: `{2}`",
-  "invalid_password": "Incorrect password. (`{0}`)"
+  "invalid_password": "Incorrect password. (`{0}`)",
+  "dumped": "Deletedddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nCheck it out on URL: {0}"
 }
