@@ -16,7 +16,9 @@ const f = require('string-format'), // Load & Initialize string-format
   StringBuilder = require('node-stringbuilder'), // String Builder
   messages = require('./messages.json'), // Used for vote command
   isWindows = process.platform === "win32", // windows: true, other: false
-  FormData = require('form-data');
+  FormData = require('form-data'),
+  DBL = require("dblapi.js"),
+  dbl = new DBL(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`), client),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -685,6 +687,7 @@ client.on('message', async msg => {
           .addField(lang.info.loadavg, `${loadavg}`)
           .addField(lang.info.servers, `${client.guilds.size}`)
           .addField(lang.info.users, `${client.users.size}`)
+          .addField(lang.info.createdBy, `${client.users.get("254794124744458241").tag} (${client.users.get("254794124744458241").id})`)
           .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})`)
           .setFooter(`Sent by ${msg.author.tag}`);
         return msg.channel.send(embed);
@@ -1651,10 +1654,7 @@ function getDateTime()
 }
 
 try {
-  var token;
-  // token = s.token.replace("." + Buffer.from(process.argv[2]).toString(`base64`), "");
-  token = s.token;
-  client.login(Buffer.from(Buffer.from(Buffer.from(token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
+  client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
     .catch(error);
   function error() {
     return console.error(`incorrect password`);
