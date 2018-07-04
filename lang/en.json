@@ -115,6 +115,7 @@
     "loadavg": "Load Average",
     "invite": "Invite",
     "servers": "Servers",
+    "createdBy": "Created By",
     "users": ":bust_in_silhouette: Users",
     "source": "Source code"
   },

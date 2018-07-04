@@ -117,6 +117,7 @@
     "loadavg": "ロードアベレージ(サーバーの負荷)",
     "invite": "招待",
     "servers": "サーバー数",
+    "createdBy": "ボット作成者",
     "users": ":bust_in_silhouette: ユーザー数",
     "source": "ソースコード"
   },
