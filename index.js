@@ -32,6 +32,7 @@ const f = require('string-format'), // Load & Initialize string-format
     global: null,
     group: [],
     excludeLogging: ``,
+    invite: false,
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
@@ -79,7 +80,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `togglepurge`, "args": ` [enable/disable]`},
     {"body": `dump`, "args": ` [guilds|users|channels|emojis|messages]`},
     {"body": `listemojis`, "args": ` [escape]`},
-    {"body": `invite`, "args": ` [GuildID] [create]`},
+    {"body": `invite`, "args": ` [GuildID] [create] or [allow/deny]`},
     {"body": `role`, "args": ` <role> [user]`},
     {"body": `autorole`, "args": ` [add/remove] <role>`},
     {"body": `say`, "args": ` <Message>`},
@@ -461,6 +462,10 @@ client.on('message', async msg => {
     settings.excludeLogging = ``;
     fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
+  if (!settings.invite) {
+    settings.invite = false;
+    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Auto-ban
@@ -754,7 +759,7 @@ client.on('message', async msg => {
         .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
         .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
         .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis) /* 20 */
-        .addField(`${prefix}invite [GuildID] [create]`, lang.commands.invite)
+        .addField(`${prefix}invite [GuildID] [create] or [allow/deny]`, lang.commands.invite)
         .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
         .addField(`${prefix}lookup <User>`, lang.lookup.desc)
@@ -875,8 +880,19 @@ client.on('message', async msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       async function process() {
         if (!args[1]) return msg.channel.send(f(lang.invite_bot, s.inviteme));
-        if (!/\d{18}/.test(args[1])) return msg.channel.send(lang.invalid_args);
+        if (args[1] === `allow`) {
+          settings.invite = true;
+          return writeSettings(guildSettings, settings, msg.channel, "invite");
+        } else if (args[1] === `deny`) {
+          settings.invite = false;
+          return writeSettings(guildSettings, settings, msg.channel, "invite");
+        }
+        if (/\D/.test(args[1])) return msg.channel.send(lang.invalid_args);
+        if (/\d{19,}/.test(args[1])) return msg.channel.send(lang.invalid_args);
+        if (!client.guilds.get(args[1])) return msg.channel.send(lang.invalid_args);
         var sb = new StringBuilder(``);
+        const thatGuild = require(`./data/servers/${client.guilds.get(args[1]).id}/config.json`);
+        if (!thatGuild.invite) return msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`));
         try {
           if (args[2] === `create`) {
             var invite;

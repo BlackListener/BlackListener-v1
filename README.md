@@ -7,7 +7,7 @@ Public Bot: [Invite](https://asyn.cf/BlackListener)
 
 ## All Commands (Too long!)
 
-**Does not respond to DM anyway.**
+**If does not respond, please try Japanese. (`b:language ja`)**
 
 __Default Prefix: `b:`, Configurable with `b:setprefix`__
 

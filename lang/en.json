@@ -135,7 +135,7 @@
   "known": "I know specific user: {0}",
   "unknown": "I can't find specific user(or is a bot?): {0}",
   "already_set_group": "Already set that server.",
-  "dumpmessage": "BlackListener: Global Banning System"
+  "dumpmessage": "BlackListener: Global Banning System",
   "lookup": {
     "desc": "Search specificed user.",
     "title": "Result",
@@ -156,5 +156,6 @@
   "encrypted": "Encrypted Text: `{0}`, Encrypt Key: `{1}`\nResult: `{2}`",
   "decrypted": "Decrypted Text: `{0}`, Decrypt Key: `{1}`\nResult: `{2}`",
   "invalid_password": "Incorrect password. (`{0}`)",
-  "dumped": "Deletedddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nCheck it out on URL: {0}"
+  "dumped": "Deletedddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nCheck it out on URL: {0}",
+  "disallowed_invite": ":x: Not allowed invite show / creation in that guild. Please contact to server owner({0})."
 }
