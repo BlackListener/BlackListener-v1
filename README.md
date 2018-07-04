@@ -1,9 +1,18 @@
 # BlackListener
 Global Banning System for Discord.
 
-Public Bot: [Invite](https://discordapp.com/api/oauth2/authorize?client_id=456966161079205899&permissions=8&scope=bot)
+Public Bot: [Invite](https://asyn.cf/BlackListener)
 
-公開ボット: [招待](https://discordapp.com/api/oauth2/authorize?client_id=456966161079205899&permissions=8&scope=bot)
+公開ボット: [招待](https://asyn.cf/BlackListener)
+
+## How to start bot (Currently disabled)
+ - `node index.js <Password>`
+
+## How to configure `secret.json`
+| Config | How to configure | 設定方法 |
+| ------ | ---------------- | -------- |
+| inviteme | `YOUR_CLIENT_ID_HERE` for your client id | `YOUR_CLIENT_ID_HERE` にクライアントIDを指定します |
+| token | Base64 x3 encoding  | Base64で3重エンコードされたトークン |
 
 ## Commands
 | Command | How does it work | どのように動くか |
@@ -34,6 +43,7 @@ Public Bot: [Invite](https://discordapp.com/api/oauth2/authorize?client_id=45696
 | status <fortnite|minecraft> | Displays service status | サービスのステータスを表示します。(権限なしで実行可能) |
 | lookup <User> | Displays User information. Cannot display bot information. | ユーザー情報を表示します。ボットの情報は表示できません。 |
 | didyouknow <User> | Tests if bot know specificed user | ボットが指定されたユーザーを知っているかテストします |
+| deletemsg [User] | Delete Messages in data folder. |
 ---
 
 User has 0 rep, if you're banned a 1 time, you'll added 1 rep.

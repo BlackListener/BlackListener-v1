@@ -29,6 +29,7 @@ const f = require('string-format'), // Load & Initialize string-format
     autorole: null,
     global: null,
     group: [],
+    excludeLogging: ``,
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
@@ -93,10 +94,13 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
     {"body": `lookup`, "args": ` <User>`},
     {"body": `status minecraft`, "args": ``},
+    {"body": `status fortnite`, "args": ``},
     {"body": `encode`, "args": ` <String>`},
     {"body": `decode`, "args": ` <Base64String>`},
     {"body": `encrypt`, "args": ` <Text> <Password>`},
     {"body": `decrypt`, "args": ` <EncryptedText> <Password>`},
+    {"body": `deletemsg`, "args": ` [User]`},
+    {"body": `setignore`, "args": ` <Channel>`},
   ];
 var guildSettings,
   settings,
@@ -395,13 +399,18 @@ client.on('ready', () => {
   console.log(`Bot has Fully startup.`);
 });
 
-client.on('message', msg => {
+client.on('message', async msg => {
  if (!msg.guild && !msg.author.bot) return msg.channel.send("Not supported DM or GroupDM");
+ guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
   mkdirp(`./data/users/${msg.author.id}`);
  }
  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
   mkdirp(`./data/servers/${msg.guild.id}`);
+ }
+ if (!fs.existsSync(guildSettings)) {
+  console.log(`Creating ${guildSettings}`);
+  fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
  }
  if (!fs.existsSync(`./data/votes/${msg.guild.id}`)) {
   mkdirp(`./data/votes/${msg.guild.id}`);
@@ -412,23 +421,20 @@ client.on('message', msg => {
  if (msg.channel.parent) {
   parentName = msg.channel.parent.name;
  }
- fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
- fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}::${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
+ settings = require(guildSettings);
+ if (msg.channel.id !== settings.excludeLogging) {
+  fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+  fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
+ }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
  bans = require(bansFile);
  if (!msg.author.bot) {
   userFile = `./data/users/${msg.author.id}/config.json`;
-  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
-  if (!fs.existsSync(guildSettings)) {
-    console.log(`Creating ${guildSettings}`);
-    fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-  }
   if (!fs.existsSync(userFile)) {
     console.log(`Creating ${userFile}`);
     fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   user = require(userFile);
-  settings = require(guildSettings);
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
     fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
@@ -449,6 +455,10 @@ client.on('message', msg => {
     settings.group = [];
     fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
+  if (!settings.excludeLogging) {
+    settings.excludeLogging = ``;
+    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Auto-ban
@@ -459,7 +469,7 @@ client.on('message', msg => {
         .catch(console.error);
     }
   }
-  // --- End of Auto-ban [Don't remove this]
+  // --- End of Auto-ban
 
   // --- Begin of Global chat
   /*
@@ -468,9 +478,8 @@ client.on('message', msg => {
     let g_channels = require('./data/global_channels.json');
     for (var i=0;i<=g_servers.length;i++) {
       try {
-        if (msg.channel.id == client.guilds.get(g_servers[i]).channels.get(g_channels[i]).id) return;
-        if (g_servers[i] != msg.guild.id.toString() && g_servers[i] !== void 0) {
-          if (msg.channel.id != g_channels[i]) {
+        if (msg.channel.id == settings.global) {
+          if (g_servers[i] != msg.guild.id.toString() && g_servers[i] !== void 0) {
             client.guilds.get(g_servers[i]).channels.get(g_channels[i]).send(`<${msg.author.tag}> ${msg.content}`);
           }
         }
@@ -651,6 +660,36 @@ client.on('message', msg => {
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
         return msg.channel.send(embed).catch(console.error);
       }
+    } else if (msg.content === settings.prefix + "info") {
+     async function diskinfo() {
+        const graph = `Device          Total  Used Avail Use% Mounted on\n`;
+        var o1 = `利用不可`,
+          o2 = ``,
+          loadavg = `利用不可`,
+          invite = s.inviteme;
+        if (!isWindows) {
+          var { stdout, stderr } = await exec("df -h | grep /dev/sdb");
+          o1 = stdout;
+          var { stdout, stderr } = await exec("df -h | grep /dev/sda");
+          o2 = stdout;
+          loadavg = Math.floor(os.loadavg()[1] * 100) / 100;
+        }
+        let embed = new discord.RichEmbed()
+          .setTitle("Bot info")
+          .setTimestamp()
+          .setColor([0,255,0])
+          .addField(lang.info.memory, `${lang.info.memory_max}: ${Math.round(os.totalmem() / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_usage}: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_free}: ${Math.round(os.freemem() / 1024 / 1024 * 100) / 100}MB`)
+          .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}\n${lang.info.cpu_model}: ${os.cpus()[0].model}\n${lang.info.cpu_speed}: ${os.cpus()[0].speed}`)
+          .addField(lang.info.disk, `${graph}${o1}${o2}`)
+          .addField(lang.info.platform, `${os.platform}`)
+          .addField(lang.info.loadavg, `${loadavg}`)
+          .addField(lang.info.servers, `${client.guilds.size}`)
+          .addField(lang.info.users, `${client.users.size}`)
+          .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})`)
+          .setFooter(`Sent by ${msg.author.tag}`);
+        return msg.channel.send(embed);
+      }
+      diskinfo();
     } else if (msg.content.startsWith(settings.prefix + "encode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let cmd = settings.prefix + "encode ";
@@ -886,6 +925,26 @@ client.on('message', msg => {
         msg.reply(lang.noperm);
         console.log(f(lang.failednotmatch, msg.content));
       }
+    } else if (msg.content.startsWith(settings.prefix + "setignore")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      var channel, id;
+      if (!!msg.mentions.channels.first()) {
+        channel = msg.mentions.channels.first();
+      } else if (/\D/.test(args[1])) {
+        channel = msg.guild.channels.find("name", args[1]);
+      } else if (/\d{18}/.test(args[1])) {
+        try {
+          channel = msg.guild.channels.get(args[1]);
+        } catch (e) {
+          channel = msg.guild.channels.find("name", args[1]);
+        }
+      } else {
+        channel = msg.guild.channels.find("name", args[1]);
+      }
+      if (!channel) return msg.channel.send(lang.invalid_args);
+      id = channel.id;
+      settings.excludeLogging = id;
+      writeSettings(guildSettings, settings, msg.channel, "excludeLogging");
     } else if (msg.content === settings.prefix + "token") {
       if (msg.author.id === "254794124744458241") {
         msg.author.send(f(lang.mytoken, client.token));
@@ -1284,35 +1343,7 @@ client.on('message', msg => {
         addRole(msg, args[1], true, msg.mentions.members.first());
       }
     } else if (msg.content.startsWith(settings.prefix + "info ") || msg.content === settings.prefix + "info") {
-     async function diskinfo() {
-        const graph = `Device          Total  Used Avail Use% Mounted on\n`;
-        var o1 = `利用不可`,
-          o2 = ``,
-          loadavg = `利用不可`,
-          invite = s.inviteme;
-        if (!isWindows) {
-          var { stdout, stderr } = await exec("df -h | grep /dev/sdb");
-          o1 = stdout;
-          var { stdout, stderr } = await exec("df -h | grep /dev/sda");
-          o2 = stdout;
-          loadavg = Math.floor(os.loadavg()[1] * 100) / 100;
-        }
-        let embed = new discord.RichEmbed()
-          .setTitle("Bot info")
-          .setTimestamp()
-          .setColor([0,255,0])
-          .addField(lang.info.memory, `${lang.info.memory_max}: ${Math.round(os.totalmem() / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_usage}: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_free}: ${Math.round(os.freemem() / 1024 / 1024 * 100) / 100}MB`)
-          .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}\n${lang.info.cpu_model}: ${os.cpus()[0].model}\n${lang.info.cpu_speed}: ${os.cpus()[0].speed}`)
-          .addField(lang.info.disk, `${graph}${o1}${o2}`)
-          .addField(lang.info.platform, `${os.platform}`)
-          .addField(lang.info.loadavg, `${loadavg}`)
-          .addField(lang.info.servers, `${client.guilds.size}`)
-          .addField(lang.info.users, `${client.users.size}`)
-          .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})`)
-          .setFooter(`Sent by ${msg.author.tag}`);
-        msg.channel.send(embed);
-      }
-      diskinfo();
+      /* Dummy */
     } else if (msg.content === settings.prefix + "autorole" || msg.content.startsWith(settings.prefix + "autorole ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (args[1] === `remove`) {
@@ -1452,6 +1483,50 @@ client.on('message', msg => {
       if (!nowrite) {
         fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
       }
+    } else if (msg.content.startsWith(settings.prefix + "deletemsg ") || msg.content === settings.prefix + "deletemsg") {
+      const url = c.dump_url,
+        types = {
+          guild: `guild`,
+          user: `user`,
+        };
+      var user2,
+        mode = types.user,
+        id,
+        link = ``;
+      if (!args[1]) {
+        mode = types.guild;
+        user2 = msg.guild;
+      } else if (!!msg.mentions.users.first()) { // true if found a mention
+        user2 = msg.mentions.users.first();
+      } else if (/\D/gm.test(args[1])) {
+        user2 = client.users.find("username", args[1]);
+      } else if (/\d{18}/.test(args[1])) {
+        try {
+          user2 = client.users.get(args[1]);
+        } catch (e) {
+          user2 = client.users.find("username", args[1]);
+        }
+      } else {
+        user2 = client.users.find("username", args[1]);
+      }
+      if (!user2) return msg.channel.send(invalid_args);
+      id = user2.id;
+      if (mode === types.guild) {
+        link = `${c.data_baseurl}/servers/${id}/messages.log`;
+        fs.writeFileSync(`./data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+      } else if (mode === types.user) {
+        link = `${c.data_baseurl}/users/${id}/messages.log`;
+        fs.writeFileSync(`./data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+      } else {
+        await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified));
+        throw new TypeError("Types are not specified or invalid type.");
+      }
+      let embed = new discord.RichEmbed()
+        .setTitle(lang.dumpmessage)
+        .setURL(s.inviteme)
+        .setColor([140,190,210])
+        .setDescription(f(lang.deleted, link));
+      msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "listemojis ") || msg.content === settings.prefix + "listemojis") {
       const emojiList = msg.guild.emojis.map(e=>e.toString()).join(" ");
       if (args[1] === `escape`) {
@@ -1477,10 +1552,11 @@ client.on('message', msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
-    } else if (msg.content === settings.prefix + "reload") {
+    } else if (msg.content === settings.prefix + "reload" || msg.content.startsWith(settings.prefix + "reload ")) {
       if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       console.log("Reloading!");
+      if (args[1] === `restart`) { await msg.channel.send(lang.rebooting); return process.kill(process.pid, 'SIGKILL'); }
       delete require.cache[require.resolve(guildSettings)];
       delete require.cache[require.resolve(userFile)];
       delete require.cache[require.resolve(bansFile)];
@@ -1574,4 +1650,16 @@ function getDateTime()
     ].join( '/' ) + ' ' + date.toLocaleTimeString();
 }
 
-client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`));
+try {
+  var token;
+  // token = s.token.replace("." + Buffer.from(process.argv[2]).toString(`base64`), "");
+  token = s.token;
+  client.login(Buffer.from(Buffer.from(Buffer.from(token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
+    .catch(error);
+  function error() {
+    return console.error(`incorrect password`);
+  }
+} catch (e) {
+  console.error(e);
+  return console.error(`incorrect password`);
+}
