@@ -9,7 +9,9 @@ Public Bot: [Invite](https://asyn.cf/BlackListener)
 
 **If does not respond, please try Japanese. (`b:language ja`)**
 
-__Default Prefix: `b:`, Configurable with `b:setprefix`__
+__Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
+
+ - Invite command is cannot be used with not allowed invite command, need to be allowed by Guild Admins.
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
 | ------- | ---------------- | ---------------- | - |
@@ -41,7 +43,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix`__
 | lookup \<User\> | Displays User information. Cannot display bot information. | ユーザー情報を表示します。ボットの情報は表示できません。 | Yes |
 | didyouknow \<User\> | Tests if bot know specificed user | ボットが指定されたユーザーを知っているかテストします | No |
 | encode/decode \<String\> | Encode / Decode message, in base64. | メッセージをBase64でエンコード/デコードします。 | No |
-| encrypt/decrypt \<String\> <Password> | Encrypt / Decrypt message. | メッセージを暗号化/復号化します。 | No |
+| encrypt/decrypt \<String\> \<Password\> | Encrypt / Decrypt message. | メッセージを暗号化/復号化します。 | No |
 | setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします。 | Yes |
 | deletemsg \[User\] | Delete messages, default is guild messages file. | メッセージを削除します。デフォルトはギルドのメッセージログです。 | Yes |
 | setgroup | __Incomplete feature__ | __未完成の機能__ | Yes |
@@ -49,7 +51,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix`__
 | image anime | Send anime images. | アニメ画像を送信します。 | No |
 | say \<Message\> | Send message by bot. | ボットからメッセージを送信します。 | No |
 | sayd \<Message\> | Send message and delete `sayd` message. | メッセージを送信、さらに送信された元のメッセージを削除します。 | No |
-| invite \[GuildID\] \[create\] | Show or creates invite, if not specified, it displays bot invite. | 招待を表示または作成します。指定されない場合は、ボットの招待を表示します。 | No |
+| invite \[GuildID\] \[create\] or \[allow\/deny\] | Show or creates invite, if not specified, it displays bot invite. | 招待を表示または作成します。指定されない場合は、ボットの招待を表示します。 | No |
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
 | setnick \| setnickname | Set nickname | ニックネームを設定します | Yes |
 | listemojis \[escape\] | Displays all custom emojis on guild. | サーバーのすべてのカスタム絵文字を表示します。 | Yes |
