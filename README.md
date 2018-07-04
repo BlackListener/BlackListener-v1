@@ -11,7 +11,7 @@ Public Bot: [Invite](https://asyn.cf/BlackListener)
 
 __Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
 
- - Invite command is cannot be used with not allowed invite command, need to be allowed by Guild Admins.
+ - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
 | ------- | ---------------- | ---------------- | - |
