@@ -478,7 +478,7 @@ client.on('message', async msg => {
   }
   // --- End of Auto-ban
 
-  // --- Begin of Global chat
+  // --- Begin of Global chat [Currently Broken, don't remove ANY comments!]
   /*
   if (settings.global != null && !msg.content.startsWith(settings.prefix)) {
     let g_servers = require('./data/global_servers.json');
@@ -508,16 +508,15 @@ client.on('message', async msg => {
   }
   // --- End of Anti-spam
 
-  // Disboard Fucking Message
-  //
-
+  // Disboard Fucking Message [Permanently Disabled, Never seeing this on Discord.]
+  /*
   if (msg.content === "!disboard bump") {
     let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png")
       .setTitle("ディスボード: Discordサーバー掲示板").setURL("https://disboard.org/")
       .setColor([140,190,210]).setDescription("下げました :thumbsdown:\nディスボードでチェックしてね: https://disboard.org");
     msg.channel.send(embed);
   }
-
+  */
   //
 
   if (msg.content.startsWith(settings.prefix)) {
@@ -552,7 +551,7 @@ client.on('message', async msg => {
         } else {
           msg.channel.send(lang.searching);
           /* Normal NSFW */
-          if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+          if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
           var subreddits = [
             args[2]
           ]
@@ -570,7 +569,7 @@ client.on('message', async msg => {
         }
       } else if (msg.content == settings.prefix + "image anime") {
         msg.channel.send(lang.searching);
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
         var subreddits = [
             'Undertale',
             'awwnime',
@@ -599,7 +598,7 @@ client.on('message', async msg => {
       } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意" || msg.content === settings.prefix + "image r18") {
         msg.channel.send(lang.searching);
         /* Normal NSFW */
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
         var subreddits = [
             'HENTAI_GIF',
             'hentai_irl',
@@ -624,7 +623,7 @@ client.on('message', async msg => {
       } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
         msg.channel.send(lang.searching);
         /* Confirm command! */
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
         var subreddits = [
             'HENTAI_GIF',
             'hentai_irl',
