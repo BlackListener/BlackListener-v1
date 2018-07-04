@@ -62,7 +62,7 @@ If you're banned 5 times, you'll added 5 rep.
 
 ---
 
-Most servers are using default settings(maybe), notify reputations is `3`, default ban reputation is `5`.
+Most servers are using default settings(maybe), notify reputations is `2`, default ban reputation is `10`.
 
 Also you can't ban that users:
  - Not cached in Bot
@@ -80,7 +80,7 @@ Also you can't ban that users:
 
 ---
 
-ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`3`で、デフォルトの自動BAN評価値は`5`です。
+ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`2`で、デフォルトの自動BAN評価値は`10`です。
 
 そしてこれらのユーザーはBANできません:
  - Botにキャッシュされていない
