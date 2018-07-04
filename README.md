@@ -5,16 +5,10 @@ Public Bot: [Invite](https://asyn.cf/BlackListener)
 
 公開ボット: [招待](https://asyn.cf/BlackListener)
 
-## How to start bot (Currently disabled)
- - `node index.js <Password>`
-
-## How to configure `secret.json`
-| Config | How to configure | 設定方法 |
-| ------ | ---------------- | -------- |
-| inviteme | `YOUR_CLIENT_ID_HERE` for your client id | `YOUR_CLIENT_ID_HERE` にクライアントIDを指定します |
-| token | Base64 x3 encoding  | Base64で3重エンコードされたトークン |
-
 ## All Commands (Too long!)
+
+**Does not respond to DM anyway.**
+
 __Default Prefix: `b:`, Configurable with `b:setprefix`__
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
