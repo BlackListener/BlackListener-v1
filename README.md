@@ -1,9 +1,7 @@
 # BlackListener
 Global Banning System for Discord.
 
-Public Bot: [Invite](https://asyn.cf/BlackListener)
-
-公開ボット: [招待](https://asyn.cf/BlackListener)
+[![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
 ## All Commands (Too long!)
 
