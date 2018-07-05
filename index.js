@@ -1216,10 +1216,6 @@ client.on('message', async msg => {
           msg.channel.send(lang.guild_unavailable);
         }
       }
-    } else if (msg.content === settings.prefix + "fixactivity") {
-      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      client.user.setActivity(settings.prefix + "help | ${client.guilds.size} guilds");
-      msg.channel.send(":ok_hand:");
     } else if (msg.content.startsWith(settings.prefix + "setprefix ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let set = settings;

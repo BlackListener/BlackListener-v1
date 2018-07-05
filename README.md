@@ -16,7 +16,6 @@ __Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
 | help | Displays Help | ヘルプを表示する | No |
 | shutdown \[-f\] | Shutdown a Bot. | シャットダウン | Yes |
 | token | Send token to your DM | トークンをDMに送る | No, bot owner only |
-| fixactivity | Don't use this! | これは使わないで！ | Yes |
 | ban \<UserID\/Name\> \<Reason\> \<Probe on __Attachment__\> | Attempt BAN | BANします | Yes |
 | unban \<UserID\/Name\> | Attempt UnBAN | Unbanします | Yes |
 | language \<ja\/en\> | Change language | 言語を変更します | Yes |
