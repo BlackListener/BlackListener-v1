@@ -18,7 +18,7 @@ const f = require('string-format'), // Load & Initialize string-format
   isWindows = process.platform === "win32", // windows: true, other: false
   FormData = require('form-data'),
   DBL = require("dblapi.js"),
-  dbl = new DBL(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`), client),
+  dbl = new DBL("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ1Njk2NjE2MTA3OTIwNTg5OSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTMwNzUwNzA4fQ.G0zKo7mDAt75sLeMTk2cnq4hAIc5QPdg0gjwiA5LcnI", client),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -104,6 +104,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `decrypt`, "args": ` <EncryptedText> <Password>`},
     {"body": `deletemsg`, "args": ` [User]`},
     {"body": `setignore`, "args": ` <Channel>`},
+    {"body": `leave`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -1545,6 +1546,9 @@ client.on('message', async msg => {
         .setColor([140,190,210])
         .setDescription(f(lang.deleted, link));
       msg.channel.send(embed);
+    } else if (msg.content === settings.prefix + "leave") {
+      await msg.channel.send(`:wave:`);
+      msg.guild.leave();
     } else if (msg.content.startsWith(settings.prefix + "listemojis ") || msg.content === settings.prefix + "listemojis") {
       const emojiList = msg.guild.emojis.map(e=>e.toString()).join(" ");
       if (args[1] === `escape`) {
@@ -1552,14 +1556,14 @@ client.on('message', async msg => {
       } else {
         msg.channel.send(`${emojiList}`);
       }
-    } else if (msg.content.startsWith(settings.prefix + "language ")) {
+    } else if (msg.content.startsWith(settings.prefix + "language ") || msg.content === settings.prefix + "language") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === "help") {
         let embed = new discord.RichEmbed()
           .setTitle(lang.langnotsupported)
           .setDescription(lang.availablelang)
-          .addField("日本語", "ja")
-          .addField("English", "en");
+          .addField(":flag_jp: Japanese - 日本語", "ja")
+          .addField(":flag_us: English - English", "en");
         msg.channel.send(embed);
       } else if (args[1] === "en" || args[1] === "ja") {
         let set = settings;
