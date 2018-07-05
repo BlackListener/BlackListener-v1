@@ -19,6 +19,7 @@ const f = require('string-format'), // Load & Initialize string-format
   FormData = require('form-data'),
   DBL = require("dblapi.js"),
   dbl = new DBL("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ1Njk2NjE2MTA3OTIwNTg5OSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTMwNzUwNzA4fQ.G0zKo7mDAt75sLeMTk2cnq4hAIc5QPdg0gjwiA5LcnI", client),
+
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -382,6 +383,9 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
 }
 
 client.on('ready', () => {
+  setInterval(() => {
+    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
+  }, 1800000);
   if (!fs.existsSync(`./data/servers`)) {
     mkdirp(`./data/servers`);
   }
