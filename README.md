@@ -53,6 +53,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
 | setnick \| setnickname | Set nickname | ニックネームを設定します | Yes |
 | listemojis \[escape\] | Displays all custom emojis on guild. | サーバーのすべてのカスタム絵文字を表示します。 | Yes |
+| leave | Leave from guild. | ギルドから抜けます。 | Yes |
  
 ---
 
