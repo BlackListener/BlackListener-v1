@@ -86,6 +86,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `autorole`, "args": ` [add/remove] <role>`},
     {"body": `say`, "args": ` <Message>`},
     {"body": `sayd`, "args": ` <Message>`},
+    {"body": `saye`, "args": ` <emoji (:name:ID)>`},
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
@@ -537,6 +538,10 @@ client.on('message', async msg => {
               message += element + " "; // add argument and space to message
           }, this);
           return msg.channel.send(message);
+    } else if (msg.content.startsWith(c.prefix + "saye ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      msg.delete(0);
+      return msg.channel.send(`<${args[1]}>`);
     } else if (msg.content.startsWith(c.prefix + "sayd ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
           var commandcut = msg.content.substr("!sayd ".length); //cut "!bot " off of the start of the command
