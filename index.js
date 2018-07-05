@@ -404,7 +404,7 @@ client.on('ready', () => {
   if (!fs.existsSync(`./data/global_channels.json`)) {
     fs.writeFileSync(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
+  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
   console.log(`Bot has Fully startup.`);
 });
 
@@ -435,7 +435,7 @@ client.on('message', async msg => {
   fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
  }
- client.user.setActivity(`${c.prefix}help | ${client.guilds.size}サーバー`);
+ client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
  bans = require(bansFile);
  if (!msg.author.bot) {
   userFile = `./data/users/${msg.author.id}/config.json`;
@@ -531,24 +531,24 @@ client.on('message', async msg => {
     if (msg.content.startsWith(`${settings.prefix}vote `) || msg.content === `${settings.prefix}vote`) return voteCmd(msg, args, settings);
     if (msg.content.startsWith(c.prefix + "say ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr("!sayd ".length); //cut "!bot " off of the start of the command
-          var message = ""; //create message variable
-          var argumentarray = commandcut.split(" "); // split array by "," characters
-          argumentarray.forEach(function(element) { // foreach argument given
-              message += element + " "; // add argument and space to message
+          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
+          var message = "";
+          var argumentarray = commandcut.split(" ");
+          argumentarray.forEach(function(element) {
+              message += element + " ";
           }, this);
           return msg.channel.send(message);
     } else if (msg.content.startsWith(c.prefix + "saye ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      msg.delete(0);
+      msg.delete(0).catch(console.error);
       return msg.channel.send(`<${args[1]}>`);
     } else if (msg.content.startsWith(c.prefix + "sayd ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr("!sayd ".length); //cut "!bot " off of the start of the command
-          var message = ""; //create message variable
-          var argumentarray = commandcut.split(" "); // split array by "," characters
-          argumentarray.forEach(function(element) { // foreach argument given
-              message += element + " "; // add argument and space to message
+          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
+          var message = "";
+          var argumentarray = commandcut.split(" ");
+          argumentarray.forEach(function(element) {
+              message += element + " ";
           }, this);
           msg.delete(0).catch(console.error);
           return msg.channel.send(message);
@@ -1072,7 +1072,7 @@ client.on('message', async msg => {
           async function process() {
             if (!args[2]) return msg.channel.send(lang.invalid_args);
             reason = args[2];
-            if (user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && user.bannedFromServer.indexOf(msg.guild.id) && user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned);
+            if (args[3] !== `--force`) { if (user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && user.bannedFromServer.indexOf(msg.guild.id) && user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned); }
             var user2,
               fetchedBans,
               attach,
@@ -1103,11 +1103,11 @@ client.on('message', async msg => {
             user.probes.push(attach);
             ban.push(user.id);
             user.rep = ++user.rep;
+            fs.writeFileSync(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
             msg.guild.ban(user, { "reason": reason })
               .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
               .catch(console.error);
-            fs.writeFileSync(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
             msg.channel.send(lang.banned);
           }
           process();
@@ -1218,7 +1218,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content === settings.prefix + "fixactivity") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      client.user.setActivity(settings.prefix + "help | ${client.guilds.size}サーバー");
+      client.user.setActivity(settings.prefix + "help | ${client.guilds.size} guilds");
       msg.channel.send(":ok_hand:");
     } else if (msg.content.startsWith(settings.prefix + "setprefix ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
