@@ -158,5 +158,7 @@
   "invalid_password": "Incorrect password. (`{0}`)",
   "dumped": "Deletedddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nCheck it out on URL: {0}",
   "disallowed_invite": ":x: Not allowed invite show / creation in that guild. Please contact to server owner({0}).",
-  "nsfw": ":x: This channel is Non-NSFW channel, but you are tried to image command, please run at NSFW channel(s)."
+  "nsfw": ":x: This channel is Non-NSFW channel, but you are tried to image command, please run at NSFW channel(s).",
+  "blocked_mention": ":x: Cannot be send mentions to other server(s).",
+  "create_global": "You can start global chat with create `global` channel."
 }
