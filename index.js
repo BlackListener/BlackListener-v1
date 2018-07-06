@@ -12,7 +12,7 @@ const f = require('string-format'), // Load & Initialize string-format
   randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
   exec = util.promisify(require('child_process').exec),
-  crypto = require("crypto");
+  crypto = require("crypto"),
   StringBuilder = require('node-stringbuilder'), // String Builder
   messages = require('./messages.json'), // Used for vote command
   isWindows = process.platform === "win32", // windows: true, other: false
@@ -484,9 +484,10 @@ client.on('message', async msg => {
   }
   // --- End of Auto-ban
 
-  // --- Begin of Global chat [Currently Broken, don't remove ANY comments!]
-  /*
-  if (settings.global != null && !msg.content.startsWith(settings.prefix)) {
+  // --- Begin of Global chat [Unstable]
+   // settings.global != null &&
+  if (!msg.content.startsWith(settings.prefix)) {
+    /*
     let g_servers = require('./data/global_servers.json');
     let g_channels = require('./data/global_channels.json');
     for (var i=0;i<=g_servers.length;i++) {
@@ -496,10 +497,35 @@ client.on('message', async msg => {
             client.guilds.get(g_servers[i]).channels.get(g_channels[i]).send(`<${msg.author.tag}> ${msg.content}`);
           }
         }
-      } catch(e) {/* Dummy *//*}
+      } catch(e) {}
+    }
+    */
+    const hasImage = msg.attachments.some(e => e.height);
+    if (hasImage && msg.channel.name === `global`) {
+      if (!!msg.mentions.users.first()) return msg.channel.send(lang.blocked_mention);
+      var Attachment = (msg.attachments).array();
+      imageURL = msg.attachments.first().url;
+      // client.channels.get("464374398699438080").send(imageURL);
+      const embed = {
+        "color": 0x48ff00,
+        "thumbnail": {
+          "url": msg.author.avatarURL,
+        },
+        "title": "[Global]",
+        "description": msg.author.tag,
+        "image": {
+          "url": Attachment[0].url,
+        },
+        "timestamp": msg.createdAt,
+        "footer": {
+          "icon_url": msg.guild.iconURL,
+          "text": msg.guild.name,
+        }
+      };
+      client.guilds.forEach((guild) => { guild.channels.forEach((channel) => { if (channel.name === "global") { channel.send({ embed }); } }); });
+      msg.delete(0);
     }
   }
-  */
   // --- End of Global chat
 
   // --- Begin of Anti-spam
@@ -1402,6 +1428,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content === settings.prefix + "global" || msg.content.startsWith(settings.prefix + "global ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      return msg.channel.send(lang.create_global);
       if (args[1] === `remove`) {
         let global_servers = require('./data/global_servers.json'),
           global_channels = require('./data/global_channels.json'),
@@ -1552,6 +1579,7 @@ client.on('message', async msg => {
         .setDescription(f(lang.deleted, link));
       msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "leave") {
+      if (!msg.author.id === "254794124744458241") return msg.channel.send(lang.no_permission);
       await msg.channel.send(`:wave:`);
       msg.guild.leave();
     } else if (msg.content.startsWith(settings.prefix + "listemojis ") || msg.content === settings.prefix + "listemojis") {
