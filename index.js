@@ -499,50 +499,7 @@ client.on('message', async msg => {
   }
   // --- End of Auto-ban
 
-  // --- Begin of Global chat [ - - - Suspended features - - - ]
-   // settings.global != null &&
-  if (!msg.content.startsWith(settings.prefix)) {
-    /*
-    let g_servers = require('./data/global_servers.json');
-    let g_channels = require('./data/global_channels.json');
-    for (var i=0;i<=g_servers.length;i++) {
-      try {
-        if (msg.channel.id == settings.global) {
-          if (g_servers[i] != msg.guild.id.toString() && g_servers[i] !== void 0) {
-            client.guilds.get(g_servers[i]).channels.get(g_channels[i]).send(`<${msg.author.tag}> ${msg.content}`);
-          }
-        }
-      } catch(e) {}
-    }
-    */
-    /*
-    var imageURL;
-    const hasImage = msg.attachments.some(e => e.height);
-    if (hasImage && msg.channel.name === `global`) {
-      if (msg.mentions.users.first()) return msg.channel.send(lang.blocked_mention);
-      var Attachment = (msg.attachments).array();
-      imageURL = msg.attachments.first().url;
-      // client.channels.get("464374398699438080").send(imageURL);
-      const embed = {
-        "color": 0x48ff00,
-        "thumbnail": {
-          "url": msg.author.avatarURL,
-        },
-        "title": "[Global]",
-        "description": msg.author.tag,
-        "image": {
-          "url": Attachment[0].url,
-        },
-        "timestamp": msg.createdAt,
-        "footer": {
-          "icon_url": msg.guild.iconURL,
-          "text": msg.guild.name,
-        }
-      };
-      client.guilds.forEach((guild) => { guild.channels.forEach((channel) => { if (channel.name === "global") { channel.send({ embed }); } }); });
-      msg.delete(0);
-    }*/
-  }
+  // --- Begin of Global chat [ - - - Removed feature, I will create new system - - - ]
   // --- End of Global chat
 
   // --- Begin of Anti-spam
