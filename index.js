@@ -484,7 +484,7 @@ client.on('message', async msg => {
   }
   // --- End of Auto-ban
 
-  // --- Begin of Global chat [Unstable]
+  // --- Begin of Global chat [ - - - Suspended features - - - ]
    // settings.global != null &&
   if (!msg.content.startsWith(settings.prefix)) {
     /*
@@ -500,9 +500,11 @@ client.on('message', async msg => {
       } catch(e) {}
     }
     */
+    /*
+    var imageURL;
     const hasImage = msg.attachments.some(e => e.height);
     if (hasImage && msg.channel.name === `global`) {
-      if (!!msg.mentions.users.first()) return msg.channel.send(lang.blocked_mention);
+      if (msg.mentions.users.first()) return msg.channel.send(lang.blocked_mention);
       var Attachment = (msg.attachments).array();
       imageURL = msg.attachments.first().url;
       // client.channels.get("464374398699438080").send(imageURL);
@@ -524,7 +526,7 @@ client.on('message', async msg => {
       };
       client.guilds.forEach((guild) => { guild.channels.forEach((channel) => { if (channel.name === "global") { channel.send({ embed }); } }); });
       msg.delete(0);
-    }
+    }*/
   }
   // --- End of Global chat
 
