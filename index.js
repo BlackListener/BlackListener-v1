@@ -63,8 +63,8 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `antispam ignore`, "args": ` <Channel>`},
     {"body": `antispam status`, "args": ` [Channel]`},
     {"body": `reload`, "args": ``},
-    {"body": `setnick`, "args": ` <NewName>`},
-    {"body": `setnickname`, "args": ` <NewName>`},
+    {"body": `setnick`, "args": ` <NewName> [User]`},
+    {"body": `setnickname`, "args": ` <NewName> [User]`},
     {"body": `purge`, "args": ` [number/all]`},
     {"body": `purge gdel`, "args": ``},
     {"body": `purge gdel-msg`, "args": ``},
@@ -107,6 +107,8 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `deletemsg`, "args": ` [User]`},
     {"body": `setignore`, "args": ` <Channel>`},
     {"body": `leave`, "args": ``},
+    {"body": `instantban`, "args": ``},
+    {"body": `instantkick`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -492,7 +494,7 @@ client.on('message', async msg => {
   // --- Begin of Auto-ban
   if (!settings.banned) {
     if (settings.banRep <= user.rep && settings.banRep != 0) {
-      member.guild.ban(member)
+      msg.guild.ban(msg.author)
         .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
         .catch(console.error);
     }
@@ -505,8 +507,8 @@ client.on('message', async msg => {
   // --- Begin of Anti-spam
   if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id) && !msg.author.bot) {
     var status = false;
-    if (/(.)\1{15,}/gm.test(msg.content)) status = true;
-    if (status) {
+    if (/(\S)\1{15,}/gm.test(msg.content)) {
+      status = true;
       if (settings.banned) { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
       msg.delete(0);
       msg.channel.send(lang.contains_spam);
@@ -531,7 +533,7 @@ client.on('message', async msg => {
     if (msg.content.startsWith(`${settings.prefix}vote `) || msg.content === `${settings.prefix}vote`) return voteCmd(msg, args, settings);
     if (msg.content.startsWith(c.prefix + "say ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
+          var commandcut = msg.content.substr(`${settings.prefix}say `.length);
           var message = "";
           var argumentarray = commandcut.split(" ");
           argumentarray.forEach(function(element) {
@@ -704,9 +706,9 @@ client.on('message', async msg => {
           .addField(lang.info.createdBy, `${client.users.get("254794124744458241").tag} (${client.users.get("254794124744458241").id})`)
           .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)`)
           .setFooter(`Sent by ${msg.author.tag}`);
-        return msg.channel.send(embed);
+        msg.channel.send(embed);
       }
-      diskinfo();
+      return diskinfo();
     } else if (msg.content.startsWith(settings.prefix + "encode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let cmd = settings.prefix + "encode ";
@@ -741,6 +743,9 @@ client.on('message', async msg => {
       } else {
         return msg.channel.send(f(lang.known, `${know.tag} (${know.id})`));
       }
+    } else if (msg.content === settings.prefix + "members") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      return msg.channel.send(msg.guild.members.size);
     } else if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let prefix = settings.prefix,
@@ -988,30 +993,38 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      var id;
+      var id, force = false;
       if (!!msg.mentions.users.first()) {
         id = msg.mentions.users.first().id;
       } else {
-        if (/\D/gm.test(args[1])) { // True if including any 'not digits'
-          try {
-            id = client.users.find("username", args[1]).id; // Find user
-          } catch (e) {
-            console.error(e);
-            return msg.channel.send(f(lang.unknown, args[1]));
-          }
-        } else if (/\d{18}/.test(args[1])) {
-          try {
-            id = client.users.get(args[1]).id;
-          } catch (e) {
-            // do not use {e}
-            id = client.users.find("username", args[1]).id;
-          }
-        } else {
-          try {
-            id = client.users.find("username", args[1]).id;
-          } catch (e) {
-            console.error(e);
-            return msg.channel.send(f(lang.unknown, args[1]));
+        if (args[2] === `--force`) { force = true; id = lang.sunknown; }
+        if (!force) {
+          if (/\D/gm.test(args[1])) { // True if including any 'not digits'
+            try {
+              id = client.users.find("username", args[1]).id; // Find user
+            } catch (e) {
+              console.error(e);
+              return msg.channel.send(f(lang.unknown, args[1]));
+            }
+          } else if (/\d{18}/.test(args[1])) {
+            try {
+              id = client.users.get(args[1]).id;
+            } catch (e) {
+              // do not use {e}
+              try {
+                id = client.users.find("username", args[1]).id;
+              } catch (e) {
+                await msg.channel.send(f(lang.unknown, args[1]));
+                return console.error(e);
+              }
+            }
+          } else {
+            try {
+              id = client.users.find("username", args[1]).id;
+            } catch (e) {
+              console.error(e);
+              return msg.channel.send(f(lang.unknown, args[1]));
+            }
           }
         }
       }
@@ -1027,23 +1040,26 @@ client.on('message', async msg => {
         console.error(e);
         return msg.channel.send(f(lang.unknown, args[1]));
       }
-      if (user2.bot) isBot = lang.yes;
+      if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
       for (let i=0;i<=userConfig.bannedFromServer.length;i++) {
         if (userConfig.bannedFromServer[i] != null) {
           sb.clear();
           sb2.clear();
           sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
         }
-        sb2.append(userConfig.bannedFromUser[i])
+        sb2.append(userConfig.bannedFromUser[i]);
       }
+      const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
+      const nick = msg.guild.members.get(user2.id).nickname ? msg.guild.members.get(user2.id).nickname : lang.nul;
       let embed = new discord.RichEmbed()
         .setTitle(lang.lookup.title)
         .setColor([0,255,0])
-        .setFooter(lang.lookup.desc)
+        .setFooter(desc)
         .addField(lang.lookup.rep, userConfig.rep)
         .addField(lang.lookup.bannedFromServer, sb.toString())
         .addField(lang.lookup.bannedFromUser, sb2.toString())
         .addField(lang.lookup.tag, user2.tag)
+        .addField(lang.lookup.nickname, nick)
         .addField(lang.lookup.id, user2.id)
         .addField(lang.lookup.bot, isBot)
         .addField(lang.lookup.createdAt, user2.createdAt);
@@ -1250,8 +1266,28 @@ client.on('message', async msg => {
       if (/\s/gm.test(args[1]) || !args[1]) {
         msg.channel.send(lang.cannotspace);
       } else {
-        msg.guild.me.setNickname(args[1]);
-        msg.channel.send(`:ok_hand:`);
+        if (args[2] != null) {
+          try {
+            msg.guild.members.get(client.users.find("username", args[2]).id).setNickname(args[1]);
+            return msg.channel.send(":ok_hand:");
+          } catch(e) {
+            try {
+              msg.guild.members.get(args[2]).setNickname(args[1]);
+              return msg.channel.send(":ok_hand:");
+            } catch (e) {
+              try {
+                msg.mentions.members.first().setNickname(args[1]);
+                return msg.channel.send(":ok_hand:");
+              } catch (e) {
+                console.error(e);
+                msg.channel.send(lang.invalid_args);
+              }
+            }
+          }
+        } else {
+          msg.guild.me.setNickname(args[1]);
+          return msg.channel.send(`:ok_hand:`);
+        }
       }
     } else if (msg.content.startsWith(settings.prefix + "setnotifyrep ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -1358,9 +1394,9 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "role ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if (msg.author.id === "254794124744458241") {
-        if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
-      }
+      //if (msg.author.id === "254794124744458241") {
+      //  if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
+      //}
       if (!msg.mentions.members.first()) {
         addRole(msg, args[1], true);
       } else {
@@ -1563,6 +1599,14 @@ client.on('message', async msg => {
       } else {
         msg.channel.send(`${emojiList}`);
       }
+    /* } else if (msg.content.startsWith(settings.prefix + "instantban ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      msg.guild.ban(client.users.get(args[1]));
+      msg.channel.send(":ok_hand:");
+    } else if (msg.content.startsWith(settings.prefix + "instantkick ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      msg.guild.members.get(args[1]).kick("Instant Kick by BlackListener");
+      msg.channel.send(":ok_hand:"); */
     } else if (msg.content.startsWith(settings.prefix + "language ") || msg.content === settings.prefix + "language") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === "help") {
