@@ -50,9 +50,13 @@ __Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
 | sayd \<Message\> | Send message and delete `sayd` message. | メッセージを送信、さらに送信された元のメッセージを削除します。 | No |
 | invite \[GuildID\] \[create\] or \[allow\/deny\] | Show or creates invite, if not specified, it displays bot invite. | 招待を表示または作成します。指定されない場合は、ボットの招待を表示します。 | No |
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
-| setnick \| setnickname | Set nickname | ニックネームを設定します | Yes |
+| setnick \| setnickname \<NewNickname\> \[User\] | Set nickname; default user is this Bot. | ニックネームを設定します、デフォルトのユーザーはこのボットです。 | Yes |
 | listemojis \[escape\] | Displays all custom emojis on guild. | サーバーのすべてのカスタム絵文字を表示します。 | Yes |
 | leave | Leave from guild. | ギルドから抜けます。 | Yes |
+| instantban | Ban from guild, not an global ban | サーバーからBANします、グローバルBANではありません | Yes |
+| instantkick | Kick from guild | サーバーからKickします | Yes |
+
+**Note: Can't use instantban and instantkick anyone, anywhere. (Disabled feature)**
 
 ---
 

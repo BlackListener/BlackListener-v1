@@ -1,7 +1,7 @@
 const f = require('string-format'), // Load & Initialize string-format
   now = require("performance-now"),
-  discord = require('discord.js'), // Load discord.js
-  client = new discord.Client(), // Initialize Client.
+  Discord = require('discord.js'), // Load discord.js
+  client = new Discord.Client(), // Initialize Client.
   s = require('./secret.json'), // Tokens, and invite link.
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
@@ -165,7 +165,7 @@ var guildSettings,
 });
    const vote = require(voteFile);
    msg.channel.send(`\`${voteId}\`を作成しました。\n投票には、\`${settings.prefix}vote vote <ID> <数値>\`を入力してください。`);
-    const voteEmbed = new discord.RichEmbed().
+    const voteEmbed = new Discord.RichEmbed().
       setTitle(`投票`).
       addField(vote.data1, vote.votes1).
       addField(vote.data2, vote.votes2);
@@ -208,7 +208,7 @@ var guildSettings,
       writeSettings(voteFile, vote, msg.channel, false);
       vote = require(voteFile);
       msg.channel.send(messages.votes.close);
-      const voteEmbed = new discord.RichEmbed().
+      const voteEmbed = new Discord.RichEmbed().
         setTitle(`投票`).
         addField(vote.data1, vote.votes1).
         addField(vote.data2, vote.votes2);
@@ -254,7 +254,7 @@ var guildSettings,
     writeSettings(voteFile, vote, msg.channel, false);
     vote = require(voteFile);
     msg.channel.send(messages.votes.voted);
-    const voteEmbed = new discord.RichEmbed().
+    const voteEmbed = new Discord.RichEmbed().
       setTitle(`投票`).
       addField(vote.data1, vote.votes1).
       addField(vote.data2, vote.votes2);
@@ -286,7 +286,7 @@ var guildSettings,
       setFooter(`閉じられているか: ${vote.closed}`);
     msg.channel.send(voteEmbed);
   } else if (split[1] === `list`) {
-    const embed = new discord.RichEmbed().
+    const embed = new Discord.RichEmbed().
       setTitle(`投票ID一覧`).
       setTimestamp(),
       sb = new StringBuilder(``),
@@ -303,7 +303,7 @@ var guildSettings,
       voteFile = `./data/votes/${guildId}/${voteId}.json`;
     if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
     const vote = require(voteFile);
-    const voteEmbed = new discord.RichEmbed().
+    const voteEmbed = new Discord.RichEmbed().
       setTimestamp().
       setTitle(`投票`).
       addField(vote.data1, vote.votes1).
@@ -369,11 +369,11 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
         if (isCommand) {
           if (member.roles.has(role.id)) {
             member.removeRole(role).catch(console.error);
-            let embed = new discord.RichEmbed().setTitle(":wastebasket: ロールから削除").setColor([255,0,0]).setDescription("ロール[" + rolename + "] から削除しました。");
+            let embed = new Discord.RichEmbed().setTitle(":wastebasket: ロールから削除").setColor([255,0,0]).setDescription("ロール[" + rolename + "] から削除しました。");
             msg.channel.send(embed);
           } else {
             member.addRole(role).catch(console.error);
-            let embed = new discord.RichEmbed().setTitle(":heavy_plus_sign: ロールへ追加").setColor([0,255,0]).setDescription("ロール[" + rolename + "] へ追加しました。");
+            let embed = new Discord.RichEmbed().setTitle(":heavy_plus_sign: ロールへ追加").setColor([0,255,0]).setDescription("ロール[" + rolename + "] へ追加しました。");
             msg.channel.send(embed);
           }
         } else {
@@ -519,7 +519,7 @@ client.on('message', async msg => {
   // Disboard Fucking Message [Permanently Disabled, Never seeing this on Discord.]
   /*
   if (msg.content === "!disboard bump") {
-    let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png")
+    let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png")
       .setTitle("ディスボード: Discordサーバー掲示板").setURL("https://disboard.org/")
       .setColor([140,190,210]).setDescription("下げました :thumbsdown:\nディスボードでチェックしてね: https://disboard.org");
     msg.channel.send(embed);
@@ -543,7 +543,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(c.prefix + "saye ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.delete(0).catch(console.error);
-      return msg.channel.send(`<${args[1]}>`);
+      return msg.channel.send(`<:${args[1]}:${args[2]}>`);
     } else if (msg.content.startsWith(c.prefix + "sayd ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
           var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
@@ -572,7 +572,7 @@ client.on('message', async msg => {
               .then(url => {
                   request.get(url).then(r => {
                       fs.writeFile(`hentai.jpg`, r.body);
-                      let embed = new discord.RichEmbed().attachFile(r.body);
+                      let embed = new Discord.RichEmbed().attachFile(r.body);
                       msg.channel.send(embed).catch(msg.channel.send);
                       fs.unlink(`./hentai.jpg`);
                 })
@@ -601,7 +601,7 @@ client.on('message', async msg => {
             .then(url => {
                 request.get(url).then(r => {
                     fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    let embed = new Discord.RichEmbed().attachFile(r.body);
                     msg.channel.send(embed).catch(msg.channel.send);
                     fs.unlink(`./hentai.jpg`);
                 })
@@ -625,7 +625,7 @@ client.on('message', async msg => {
             .then(url => {
                 request.get(url).then(r => {
                     fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    let embed = new Discord.RichEmbed().attachFile(r.body);
                     msg.channel.send(embed).catch(msg.channel.send);
                     fs.unlink(`./hentai.jpg`);
                     msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
@@ -667,14 +667,14 @@ client.on('message', async msg => {
             .then(url => {
                 request.get(url).then(r => {
                     fs.writeFile(`hentai.jpg`, r.body)
-                    let embed = new discord.RichEmbed().attachFile(r.body);
+                    let embed = new Discord.RichEmbed().attachFile(r.body);
                     msg.channel.send(embed).catch(msg.channel.send);
                     fs.unlink(`./hentai.jpg`)
                 })
             })
         return;
       } else {
-        let embed = new discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
+        let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
         return msg.channel.send(embed).catch(console.error);
       }
@@ -692,7 +692,7 @@ client.on('message', async msg => {
           o2 = stdout;
           loadavg = Math.floor(os.loadavg()[1] * 100) / 100;
         }
-        let embed = new discord.RichEmbed()
+        let embed = new Discord.RichEmbed()
           .setTitle("Bot info")
           .setTimestamp()
           .setColor([0,255,0])
@@ -749,7 +749,7 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let prefix = settings.prefix,
-        embed = new discord.RichEmbed()
+        embed = new Discord.RichEmbed()
         .setTitle(f(lang.commands.title, c.version))
         .setTimestamp()
         .setColor([0,255,0])
@@ -810,7 +810,7 @@ client.on('message', async msg => {
           }
           const endTime = now();
           time = endTime - startTime;
-          let embed = new discord.RichEmbed()
+          let embed = new Discord.RichEmbed()
             .setTitle(lang.status.title)
             .setURL("https://help.mojang.com")
             .setColor([0,255,0])
@@ -849,7 +849,7 @@ client.on('message', async msg => {
           }
           const endTime = now();
           time = endTime - startTime;
-          let embed = new discord.RichEmbed()
+          let embed = new Discord.RichEmbed()
             .setTitle(lang.status.title)
             .setURL("https://status.epicgames.com")
             .setColor([0,255,0])
@@ -923,7 +923,7 @@ client.on('message', async msg => {
               });
             })
             .catch(console.error);
-          let embed = new discord.RichEmbed()
+          let embed = new Discord.RichEmbed()
             .setTitle(lang.invites)
             .setDescription(sb.toString())
             .setFooter(lang.invite_create)
@@ -983,7 +983,7 @@ client.on('message', async msg => {
         msg.author.send(f(lang.mytoken, client.token));
         msg.reply(lang.senttodm);
         console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-        var embed = new discord.RichEmbed();
+        var embed = new Discord.RichEmbed();
         embed.description = "You'll need to set - add permission - 'Manage Messages' => 'Save Changes'";
         embed.setColor([255, 0, 0]);
         msg.delete(5000).catch(function (error) { msg.channel.send(":no_good: Missing permission: 'manage message'", embed); console.error("Error: missing 'manage message' permission.");});
@@ -1051,7 +1051,7 @@ client.on('message', async msg => {
       }
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id).nickname ? msg.guild.members.get(user2.id).nickname : lang.nul;
-      let embed = new discord.RichEmbed()
+      let embed = new Discord.RichEmbed()
         .setTitle(lang.lookup.title)
         .setColor([0,255,0])
         .setFooter(desc)
@@ -1078,7 +1078,7 @@ client.on('message', async msg => {
             }
           }
         });
-        let embed = new discord.RichEmbed()
+        let embed = new Discord.RichEmbed()
           .setTitle(lang.banned_users)
           .setColor([0,255,0])
           .setDescription(sb.toString());
@@ -1327,7 +1327,7 @@ client.on('message', async msg => {
         } else {
           status = off;
         }
-        let embed = new discord.RichEmbed()
+        let embed = new Discord.RichEmbed()
           .setTitle(` - AntiSpam - `)
           .setDescription(f(lang.antispam.description, status))
           .addField(`${command} toggle`, lang.antispam.toggle)
@@ -1535,7 +1535,7 @@ client.on('message', async msg => {
       } else {
         image = image2;
       }
-      let embed = new discord.RichEmbed().setImage(image)
+      let embed = new Discord.RichEmbed().setImage(image)
         .setTitle(lang.dumpmessage)
         .setURL(s.inviteme)
         .setColor([140,190,210])
@@ -1582,7 +1582,7 @@ client.on('message', async msg => {
         await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified));
         throw new TypeError("Types are not specified or invalid type.");
       }
-      let embed = new discord.RichEmbed()
+      let embed = new Discord.RichEmbed()
         .setTitle(lang.dumpmessage)
         .setURL(s.inviteme)
         .setColor([140,190,210])
@@ -1610,7 +1610,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "language ") || msg.content === settings.prefix + "language") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === "help") {
-        let embed = new discord.RichEmbed()
+        let embed = new Discord.RichEmbed()
           .setTitle(lang.langnotsupported)
           .setDescription(lang.availablelang)
           .addField(":flag_jp: Japanese - 日本語", "ja")
