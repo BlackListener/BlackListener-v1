@@ -36,6 +36,7 @@ const f = require('string-format'), // Load & Initialize string-format
     invite: false,
     welcome_channel: null,
     welcome_message: null,
+    mute: [],
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
@@ -97,7 +98,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `image 閲覧注意`, "args": ` confirm`},
     {"body": `image`, "args": ` nsfw|r18|閲覧注意 confirm`},
     {"body": `image custom`, "args": ` <subreddit>`},
-    {"body": `didyouknow`, "args": ` <User>`},
+    {"body": `didyouknow`, "args": ` <User:Guild> [:server]`},
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
     {"body": `lookup`, "args": ` <User>`},
     {"body": `status minecraft`, "args": ``},
@@ -113,7 +114,8 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `instantkick`, "args": ``},
     {"body": `resetnick`, "args": ` [User]`},
     {"body": `serverinfo`, "args": ``},
-    {"body": `setwelcome`, "args": ` [channel:message] [Channel:Message]`}
+    {"body": `setwelcome`, "args": ` [channel:message] [Channel:Message]`},
+    {"body": `mute`, "args": ` <User>`},
   ];
 var guildSettings,
   settings,
@@ -477,6 +479,15 @@ client.on('message', async msg => {
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
  bans = require(bansFile);
+  if (!settings.mute) {
+    settings.mute = [];
+    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  // --- Begin of Mute
+  if (~settings.mute.indexOf(msg.author.id)) {
+    msg.delete(0);
+  }
+  // --- End of Mute
  if (!msg.author.bot) {
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
@@ -760,6 +771,15 @@ client.on('message', async msg => {
       return msg.channel.send(f(lang.decrypted, args[1], args[2], dec));
     } else if (msg.content.startsWith(settings.prefix + "didyouknow ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (args[2] === "server") {
+        let know = client.guilds.find("name", args[1]);
+        if (!know) know = client.guilds.get(args[1]);
+        if (!know) {
+          return msg.channel.send(f(lang.unknown, args[1]));
+        } else {
+          return msg.channel.send(f(lang.known, `${know.name} (${know.id})`));
+        }
+      }
       let know = client.users.find("username", args[1]);
       if (!know) know = msg.mentions.users.first();
       if (!know) know = client.users.get(args[1]);
@@ -807,6 +827,7 @@ client.on('message', async msg => {
         invite = lang.disallowed,
         welcome_channel = lang.disabled,
         welcome_message = lang.disabled,
+        muteSB = new StringBuilder(lang.no),
         ignoredChannelsSB = new StringBuilder(lang.no);
       if (!!settings.prefix) prefix = `\`${settings.prefix}\``;
       if (!!settings.language) language = `\`${settings.language}\``;
@@ -822,12 +843,30 @@ client.on('message', async msg => {
       if (!!settings.invite) invite = lang.allowed;
       if (!!settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`;
       if (!!settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`;
-      if (settings.ignoredChannels != []) {
+      if (settings.ignoredChannels.length != 0) {
         ignoredChannelsSB.clear();
         settings.ignoredChannels.forEach((data) => {
-          ignoredChannelsSB.append(data);
+          if (!!data) {
+            if (!!msg.guild.channels.get(data)) {
+              ignoredChannelsSB.append(msg.guild.channels.get(data).name + "\n");
+            } else {
+              ignoredChannelsSB.append(`${data} (${lang.failed_to_get})\n`);
+            }
+          }
         });
         ignoredChannels = ignoredChannelsSB.toString();
+      }
+      if (settings.mute.length != 0) {
+        muteSB.clear();
+        settings.mute.forEach((data) => {
+          if (!!data) {
+            if (!!client.users.get(data)) {
+              muteSB.append(client.users.get(data).tag + "\n");
+            } else {
+              muteSB.append(`${data} (${lang.failed_to_get})\n`);
+            }
+          }
+        });
       }
       let embed = new Discord.RichEmbed()
         .setTitle(" - Server Information - ")
@@ -838,6 +877,7 @@ client.on('message', async msg => {
         .addField(lang.serverinfo.notifyRep, notifyRep)
         .addField(lang.serverinfo.banRep, banRep)
         .addField(lang.serverinfo.antispam, antispam)
+        .addField(lang.serverinfo.ignoredChannels, ignoredChannels)
         .addField(lang.serverinfo.banned, banned)
         .addField(lang.serverinfo.disable_purge, disable_purge)
         .addField(lang.serverinfo.autorole, autorole)
@@ -845,6 +885,7 @@ client.on('message', async msg => {
         .addField(lang.serverinfo.group, group)
         .addField(lang.serverinfo.excludeLogging, excludeLogging)
         .addField(lang.serverinfo.invite, invite)
+        .addField(lang.serverinfo.mute, muteSB.toString())
         .addField(lang.serverinfo.welcome_channel, welcome_channel)
         .addField(lang.serverinfo.welcome_message, welcome_message);
       return msg.channel.send(embed);
@@ -1301,6 +1342,36 @@ client.on('message', async msg => {
           msg.channel.send(lang.guild_unavailable);
         }
       }
+    } else if (msg.content.startsWith(settings.prefix + "mute")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      var user2;
+      try {
+        user2 = client.users.find("username", args[1]).id;
+      } catch (e) {
+        try {
+          user2 = client.users.get(args[1]).id;
+        } catch (e) {
+          try {
+            user2 = msg.mentions.users.first().id;
+          } catch (e) {
+            msg.channel.send(lang.invalid_args);
+            console.error(e);
+          }
+        }
+      }
+      if (!user2 || user2 === msg.author.id || user2 === client.user.id) return msg.channel.send(lang.invalid_args);
+      if (~settings.mute.indexOf(user2) || args[2] === `unmute`) {
+        var result = settings.mute.filter(function( item ) {
+          return item !== user2;
+        });
+        settings.mute = result;
+        // delete settings.mute[user2];
+      } else if (args[2] === `mute`) {
+        settings.mute.push(user2);
+      } else {
+        settings.mute.push(user2);
+      }
+      writeSettings(guildSettings, settings, msg.channel, "mute");
     } else if (msg.content.startsWith(settings.prefix + "setprefix ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let set = settings;
@@ -1777,7 +1848,7 @@ client.on('message', async msg => {
           sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
         }
       }
-      msg.channel.send(f(lang.no_command, cmd));
+      msg.channel.send(f(lang.no_command, `${settings.prefix}${cmd}`));
       if (sb.toString() != ``) {
         msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
       }
