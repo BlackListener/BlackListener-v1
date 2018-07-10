@@ -34,6 +34,8 @@ const f = require('string-format'), // Load & Initialize string-format
     group: [],
     excludeLogging: ``,
     invite: false,
+    welcome_channel: null,
+    welcome_message: null,
   }, // Default settings, by config.json.
   defaultBans = [], // Default settings for bans.json, blank.
   defaultUser = {
@@ -82,11 +84,11 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `dump`, "args": ` [guilds|users|channels|emojis|messages]`},
     {"body": `listemojis`, "args": ` [escape]`},
     {"body": `invite`, "args": ` [GuildID] [create] or [allow/deny]`},
-    {"body": `role`, "args": ` <role> [user]`},
-    {"body": `autorole`, "args": ` [add/remove] <role>`},
+    {"body": `role`, "args": ` <Role> [User]`},
+    {"body": `autorole`, "args": ` [add/remove] <Role>`},
     {"body": `say`, "args": ` <Message>`},
     {"body": `sayd`, "args": ` <Message>`},
-    {"body": `saye`, "args": ` <emoji (:name:ID)>`},
+    {"body": `saye`, "args": ` <<Name> <ID>>`},
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
@@ -109,6 +111,9 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `leave`, "args": ``},
     {"body": `instantban`, "args": ``},
     {"body": `instantkick`, "args": ``},
+    {"body": `resetnick`, "args": ` [User]`},
+    {"body": `serverinfo`, "args": ``},
+    {"body": `setwelcome`, "args": ` [channel:message] [Channel:Message]`}
   ];
 var guildSettings,
   settings,
@@ -385,6 +390,18 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
       }
 }
 
+client.on('warn', (warn) => {
+  console.warn(`Got Warning from Client: ${warn}`);
+});
+
+client.on('disconnect', () => {
+  console.error("Got disconnected from Websocket, and no longer attempt to reconnect.");
+});
+
+client.on('reconnecting', () => {
+  console.error("Got Disconnected from Websocket, Reconnecting!");
+});
+
 client.on('ready', () => {
   setInterval(() => {
     dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
@@ -489,6 +506,14 @@ client.on('message', async msg => {
     settings.invite = false;
     fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
+  if (!settings.welcome_channel) {
+    settings.welcome_channel = null;
+    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
+  if (!settings.welcome_message) {
+    settings.welcome_message = null;
+    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  }
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Auto-ban
@@ -509,7 +534,7 @@ client.on('message', async msg => {
     var status = false;
     if (/(\S)\1{15,}/gm.test(msg.content)) {
       status = true;
-      if (settings.banned) { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
+      if (settings.banned) return;
       msg.delete(0);
       msg.channel.send(lang.contains_spam);
     }
@@ -753,31 +778,75 @@ client.on('message', async msg => {
         .setTitle(f(lang.commands.title, c.version))
         .setTimestamp()
         .setColor([0,255,0])
-        .addField(`${prefix}shutdown __/__ ${prefix}token __/__ ${prefix}log`, `${lang.commands.shutdown}\n${lang.commands.token}\n${lang.commands.log}`)
         .addField(`${prefix}setprefix`, lang.commands.setprefix)
         .addField(`${prefix}ban [<User> <Reason> <Probe>] | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
         .addField(`${prefix}language`, lang.commands.language)
         .addField(`${prefix}setnotifyrep | ${prefix}setbanrep`, `${lang.commands.setnotifyrep} | ${lang.commands.setbanrep}`)
         .addField(`${prefix}antispam`, lang.commands.antispam)
-        .addField(`${prefix}purge`, lang.commands.purge)
-        .addField(`${prefix}purge <1-99>`, lang.commands.purge_number)
-        .addField(`${prefix}purge gdel`, lang.commands.purge_gdel)
-        .addField(`${prefix}purge gdel-msg`, lang.commands.purge_gdel_msg) /* 10 */
-        .addField(`${prefix}purge gdel-really`, lang.commands.purge_gdel_really)
-        .addField(`${prefix}purge remake <Channel>`, lang.commands.purge_remake)
-        .addField(`${prefix}vote create|start <Q> <A1...A10>`, lang.commands.vote_create)
-        .addField(`${prefix}vote list`, lang.commands.vote_list)
-        .addField(`${prefix}vote info <ID>`, lang.commands.vote_info)
-        .addField(`${prefix}vote close|end <ID>`, lang.commands.vote_close)
-        .addField(`${prefix}vote vote <ID> <1...10>`, lang.commands.vote_vote)
-        .addField(`${prefix}togglepurge [enable/disable]`, lang.commands.togglepurge)
         .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
-        .addField(`${prefix}listemojis [escape]`, lang.commands.listemojis) /* 20 */
         .addField(`${prefix}invite [GuildID] [create] or [allow/deny]`, lang.commands.invite)
-        .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
+        .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`) /* 10 */
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
         .addField(`${prefix}lookup <User>`, lang.lookup.desc)
-        .addField(lang.commands.warning, lang.commands.asterisk); /* 25 */
+        .addField(lang.commands.others, lang.commands.athere); /* 13 */
+      return msg.channel.send(embed);
+    } else if (msg.content === settings.prefix + "serverinfo") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      var prefix = lang.sunknown,
+        language = lang.sunknown,
+        notifyRep = lang.unknownorzero,
+        banrep = lang.unknownorzero,
+        antispam = lang.disabled,
+        banned = lang.no,
+        disable_purge = lang.yes,
+        ignoredChannels = lang.no,
+        autorole = lang.disabled,
+        global = lang.disabled,
+        group = lang.no,
+        excludeLogging = lang.disabled,
+        invite = lang.disallowed,
+        welcome_channel = lang.disabled,
+        welcome_message = lang.disabled,
+        ignoredChannelsSB = new StringBuilder(lang.no);
+      if (!!settings.prefix) prefix = `\`${settings.prefix}\``;
+      if (!!settings.language) language = `\`${settings.language}\``;
+      if (settings.notifyRep) notifyRep = settings.notifyRep;
+      if (settings.banRep) banRep = settings.banRep;
+      if (!!settings.antispam) antispam = lang.enabled;
+      if (!!settings.banned) banned = lang.yes;
+      if (!!settings.disable_purge) disable_purge = lang.no;
+      if (!!settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`;
+      if (!!settings.global) global = `${lang.enabled} (${client.channels.get(settings.global).name})`;
+      if (settings.group.length != 0) group = `${lang.yes} (${settings.group})`;
+      if (!!settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name})`;
+      if (!!settings.invite) invite = lang.allowed;
+      if (!!settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`;
+      if (!!settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`;
+      if (settings.ignoredChannels != []) {
+        ignoredChannelsSB.clear();
+        settings.ignoredChannels.forEach((data) => {
+          ignoredChannelsSB.append(data);
+        });
+        ignoredChannels = ignoredChannelsSB.toString();
+      }
+      let embed = new Discord.RichEmbed()
+        .setTitle(" - Server Information - ")
+        .setColor([0,255,0])
+        .setTimestamp()
+        .addField(lang.serverinfo.prefix, prefix)
+        .addField(lang.serverinfo.language, language)
+        .addField(lang.serverinfo.notifyRep, notifyRep)
+        .addField(lang.serverinfo.banRep, banRep)
+        .addField(lang.serverinfo.antispam, antispam)
+        .addField(lang.serverinfo.banned, banned)
+        .addField(lang.serverinfo.disable_purge, disable_purge)
+        .addField(lang.serverinfo.autorole, autorole)
+        .addField(lang.serverinfo.global, global)
+        .addField(lang.serverinfo.group, group)
+        .addField(lang.serverinfo.excludeLogging, excludeLogging)
+        .addField(lang.serverinfo.invite, invite)
+        .addField(lang.serverinfo.welcome_channel, welcome_channel)
+        .addField(lang.serverinfo.welcome_message, welcome_message);
       return msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "status minecraft") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
@@ -1261,32 +1330,53 @@ client.on('message', async msg => {
         });
         writeSettings(guildSettings, settings, msg.channel, "group");
       }*/ // under construction
-    } else if (msg.content.startsWith(settings.prefix + "setnick ") || msg.content.startsWith(settings.prefix + "setnickname ")) {
+    } else if (msg.content.startsWith(settings.prefix + "setnick ") || msg.content.startsWith(settings.prefix + "setnickname ") || msg.content.startsWith(settings.prefix + "resetnick ") || msg.content === settings.prefix + "resetnick") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if (/\s/gm.test(args[1]) || !args[1]) {
-        msg.channel.send(lang.cannotspace);
-      } else {
-        if (args[2] != null) {
+      if (args[0] === "resetnick") {
+        if (/\s/gm.test(args[1]) || !args[1]) { msg.guild.me.setNickname(client.user.username); return msg.channel.send(":ok_hand:"); }
+        try {
+          msg.guild.members.get(client.users.find("username", args[1]).id).setNickname(msg.mentions.members.first().user.username);
+          return msg.channel.send(":ok_hand:");
+        } catch (e) {
           try {
-            msg.guild.members.get(client.users.find("username", args[2]).id).setNickname(args[1]);
+            msg.guild.members.get(args[1]).setNickname(msg.mentions.members.first().user.username);
             return msg.channel.send(":ok_hand:");
-          } catch(e) {
+          } catch (e) {
             try {
-              msg.guild.members.get(args[2]).setNickname(args[1]);
+              msg.mentions.members.first().setNickname(msg.mentions.members.first().user.username);
               return msg.channel.send(":ok_hand:");
             } catch (e) {
-              try {
-                msg.mentions.members.first().setNickname(args[1]);
-                return msg.channel.send(":ok_hand:");
-              } catch (e) {
-                console.error(e);
-                msg.channel.send(lang.invalid_args);
-              }
+              console.error(e);
+              msg.channel.send(lang.invalid_args);
             }
           }
+        }
+      } else {
+        if (/\s/gm.test(args[1]) || !args[1]) {
+          msg.channel.send(lang.cannotspace);
         } else {
-          msg.guild.me.setNickname(args[1]);
-          return msg.channel.send(`:ok_hand:`);
+          if (args[2] != null) {
+            try {
+              msg.guild.members.get(client.users.find("username", args[2]).id).setNickname(args[1]);
+              return msg.channel.send(":ok_hand:");
+            } catch(e) {
+              try {
+                msg.guild.members.get(args[2]).setNickname(args[1]);
+                return msg.channel.send(":ok_hand:");
+              } catch (e) {
+                try {
+                  msg.mentions.members.first().setNickname(args[1]);
+                  return msg.channel.send(":ok_hand:");
+                } catch (e) {
+                  console.error(e);
+                  msg.channel.send(lang.invalid_args);
+                }
+              }
+            }
+          } else {
+            msg.guild.me.setNickname(args[1]);
+            return msg.channel.send(`:ok_hand:`);
+          }
         }
       }
     } else if (msg.content.startsWith(settings.prefix + "setnotifyrep ")) {
@@ -1524,7 +1614,7 @@ client.on('message', async msg => {
         });
       } else if (!args[1] || args[1] === `guilds`) {
         client.guilds.forEach((guild) => {
-          sb.append(`${guild.name} (${guild.id})\n`);
+          sb.append(`${guild.name} (${guild.id}) [ ${c.data_baseurl}/servers/${guild.id}/messages.log ]\n`);
         });
       }
       let image1 = `https://img.rht0910.tk/upload/2191111432/72932264/bump.png`,
@@ -1544,7 +1634,44 @@ client.on('message', async msg => {
       if (!nowrite) {
         fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
       }
+    } else if (msg.content.startsWith(settings.prefix + "setwelcome ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      if (args[1] === "message") {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
+        var commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length);
+        var message = "";
+        var argumentarray = commandcut.split(" ");
+        argumentarray.forEach(function(element) {
+          message += element + " ";
+        }, this);
+        settings.welcome_message = message;
+        writeSettings(guildSettings, settings, msg.channel, `welcome_message`);
+        msg.channel.send(lang.welcome_warning);
+      } else if (args[1] === "channel") {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
+        var channel;
+        try {
+          channel = msg.guild.channels.find("name", args[2]).id;
+        } catch (e) {
+          try {
+            channel = msg.guild.channels.get(args[2]).id;
+          } catch (e) {
+            try {
+              channel = msg.mentions.channels.first().id;
+            } catch (e) {
+              return msg.channel.send(`${lang.invalid_args} (\`${e}\`)`);
+              console.error(e);
+            }
+          }
+        }
+        settings.welcome_channel = channel;
+        writeSettings(guildSettings, settings, msg.channel, `welcome_channel`);
+        msg.channel.send(lang.welcome_warning);
+      } else {
+        return msg.channel.send(lang.invalid_args);
+      }
     } else if (msg.content.startsWith(settings.prefix + "deletemsg ") || msg.content === settings.prefix + "deletemsg") {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const url = c.dump_url,
         types = {
           guild: `guild`,
@@ -1658,6 +1785,8 @@ client.on('message', async msg => {
     } else {
       return msg.channel.send(lang.udonthaveperm);
     }
+  } else {
+    if (msg.content === `<@!${client.user.id}>`) return msg.channel.send(f(lang.prefixis, settings.prefix));
   }
  }
  settings = null;
@@ -1726,6 +1855,14 @@ client.on("guildMemberAdd", member => {
       console.log(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
     }
     process();
+  }
+  if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
+    let message = serverSetting.welcome_message.replace("{user}", `<@${member.user.id}>`);
+    message = message.replace("{rep}", `${userSetting.rep}`);
+    message = message.replace("{id}", `${member.user.id}`);
+    message = message.replace("{username}", `${member.user.username}`);
+    message = message.replace("{tag}", `${member.user.tag}`);
+    member.guild.channels.get(serverSetting.welcome_channel).send(message);
   }
 });
 

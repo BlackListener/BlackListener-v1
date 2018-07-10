@@ -33,7 +33,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
 | purge gdel-msg | guildDelete\[1\]. Remove messages of all channels. | guildDelete[1]。すべてのチャンネルからメッセージを削除します。 | Yes |
 | purge gdel-really | guildDelete\[2\]. Remove all channels, and **not** creating any channels. | guildDelete[2]。すべてのチャンネルを削除します。そして、チャンネルは作成しません。 | Yes |
 | purge remake \<Channel\> | Remake specified channel. | 指定されたチャンネルを再作成します。 | Yes |
-| togglepurge | The `purge` command can not be used as it is, so use it for use. | `purge`コマンドはこのままでは使用できないのでこれを使用して使えるようにします。 | Yes |
+| togglepurge \[enable/disable\] | The `purge` command can not be used as it is, so use it for use. | `purge`コマンドはこのままでは使用できないのでこれを使用して使えるようにします。 | Yes |
 | role \<Role\> [user] | Add/Remove role from [user], default [user] is sender. | [ユーザー]から役職を追加/削除します。[ユーザー] はデフォルトでは実行者です。 | Yes |
 | autorole \[add \<role\>\/remove\] | Settings for autorole | 自動役職の設定 | Yes |
 | status \<fortnite\|minecraft\> | Displays service status | サービスのステータスを表示します。 | No |
@@ -55,8 +55,18 @@ __Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
 | leave | Leave from guild. | ギルドから抜けます。 | Yes |
 | instantban | Ban from guild, not an global ban | サーバーからBANします、グローバルBANではありません | Yes |
 | instantkick | Kick from guild | サーバーからKickします | Yes |
+| setwelcome \<message:channel\> \<Message:Channel\> | Set welcome message | ウェルカムメッセージを設定します | Yes |
 
-**Note: Can't use instantban and instantkick anyone, anywhere. (Disabled feature)**
+**Note: Can't use `instantban` and `instantkick` anyone, anywhere. (Disabled feature)**
+
+---
+
+**Welcome message Placeholder**
+ - `{user}` ... Mention user
+ - `{tag}` ... `User#0000`
+ - `{id}` ... User ID
+ - `{username}` ... User name
+ - `{rep}` ... Reputation
 
 ---
 

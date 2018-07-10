@@ -29,6 +29,8 @@
     "role": "Set role and unset role from user.",
     "autorole": "Set up to automatically assign a position at the time of participation.",
     "image": "Displays NSFW images.",
+    "others": "Help of other commands,",
+    "athere": "Please see [GitHub](https://github.com/rht0910/BlackListener).",
     "warning": "::Warning::",
     "asterisk": "Commands marked with `[*]` may need to be changed settings."
   },
@@ -163,5 +165,28 @@
   "blocked_mention": ":x: Cannot be send mentions to other server(s).",
   "create_global": "You can start global chat with create `global` channel.",
   "sunknown": "Unknown",
-  "nul": "Nothing"
+  "nul": "Nothing",
+  "disallowed": "Disallowed",
+  "allowed": "Allowed",
+  "serverinfo": {
+    "prefix": "Prefix",
+    "language": "Language",
+    "notifyRep": "Reputation of notify for server owner",
+    "banRep": "Reputation of auto banning",
+    "antispam": "Antispam",
+    "banned": "Is server banned",
+    "disable_purge": "Is disabled purge features",
+    "autorole": "Auto Role",
+    "global": "Global Chat Channel",
+    "group": "Server Group",
+    "excludeLogging": "Disable logging channel",
+    "invite": "Is allowed show/create invites via command",
+    "welcome_channel": "Channel of send welcome messages",
+    "welcome_message": "Welcome message"
+  },
+  "disabled": "Disabled",
+  "enabled": "Enabled",
+  "prefixis": "Prefix is `{0}`.",
+  "unknownorzero": "Unknown or `0`.",
+  "welcome_warning": ":warning: Welcome message does not work until both channel and message are set."
 }

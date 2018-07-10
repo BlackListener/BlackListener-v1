@@ -2,8 +2,8 @@
   "prefix": "b:",
   "github": "https://github.com/rht0910/BlackListener/",
   "lang": "en",
-  "notifyRep": 2,
-  "banRep": 10,
+  "notifyRep": 1,
+  "banRep": 5,
   "dump_url": "https://dl.rht0910.tk/dump.txt",
   "data_baseurl": "https://dl.rht0910.tk/blacklistener",
   "version": "0.6"
