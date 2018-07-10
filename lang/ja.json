@@ -80,7 +80,7 @@
   "invalid_args": ":x: 引数が正しくありません。",
   "autobanned": "サーバー {2} ({3})から自動BANしました: {0} ({1})",
   "antispam": {
-    "description": "アンチスパムの設定(BETA) [現在: {0}]",
+    "description": "アンチスパムの設定 [現在: {0}]",
     "toggle": "アンチスパムをトグルします。",
     "toggled": "トグルしました。",
     "disable": "アンチスパムを無効化します。",
@@ -137,7 +137,7 @@
   "rebooting": "再起動中",
   "already_banned": "指定されたユーザーはすでにBANされています！",
   "known": "対象を見つけました: {0}",
-  "unknown": "指定されたユーザーはいない、もしくはボットみたいです: {0}",
+  "unknown": "指定されたユーザーはいない、もしくはボットみたいです、もしくはサーバーが存在しません: {0}",
   "already_set_group": "そのサーバーはすでにグループに追加されています。",
   "dumpmessage": "BlackListener：グローバルBANシステム",
   "lookup": {
@@ -151,7 +151,9 @@
     "nickname": "ニックネーム",
     "id": "ユーザーID",
     "bot": "ボットかどうか",
-    "createdAt": "作成日時"
+    "createdAt": "作成日時",
+    "joinedAt": "参加日時",
+    "nowTime": "現在の日時"
   },
   "no": "いいえ",
   "yes": "はい",

@@ -80,7 +80,7 @@
   "invalid_args": ":x: Invalid arguments.",
   "autobanned": "Auto banned user: {0} ({1}) from {2}({3})",
   "antispam": {
-    "description": "AntiSpam Settings(BETA) [Current: {0}]",
+    "description": "AntiSpam Settings [Current: {0}]",
     "toggle": "Toggles Anti-spam.",
     "disable": "Disables Anti-spam.",
     "disabled": "Disabled Anti-spam.",
@@ -135,7 +135,7 @@
   "rebooting": "Restarting!",
   "already_banned": "Already banned specific user!",
   "known": "I know specific target: {0}",
-  "unknown": "I can't find specific user(or is a bot?): {0}",
+  "unknown": "I can't find specific user(or is a bot?) or not found server: {0}",
   "already_set_group": "Already set that server.",
   "dumpmessage": "BlackListener: Global Banning System",
   "lookup": {
@@ -149,7 +149,9 @@
     "nickname": "Nickname",
     "id": "User ID",
     "bot": "Is bot",
-    "createdAt": "Created at"
+    "createdAt": "Created at",
+    "joinedAt": "Joined at",
+    "nowTime": "Now Time"
   },
   "no": "No",
   "yes": "Yes",

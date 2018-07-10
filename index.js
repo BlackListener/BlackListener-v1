@@ -839,7 +839,7 @@ client.on('message', async msg => {
       if (!!settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`;
       if (!!settings.global) global = `${lang.enabled} (${client.channels.get(settings.global).name})`;
       if (settings.group.length != 0) group = `${lang.yes} (${settings.group})`;
-      if (!!settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name})`;
+      if (!!settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`;
       if (!!settings.invite) invite = lang.allowed;
       if (!!settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`;
       if (!!settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`;
@@ -1113,8 +1113,12 @@ client.on('message', async msg => {
             try {
               id = client.users.find("username", args[1]).id; // Find user
             } catch (e) {
-              console.error(e);
-              return msg.channel.send(f(lang.unknown, args[1]));
+              try {
+                id = msg.guild.members.find("nickname", args[1]).id;
+              } catch (e) {
+                console.error(e);
+                return msg.channel.send(f(lang.unknown, args[1]));
+              }
             }
           } else if (/\d{18}/.test(args[1])) {
             try {
@@ -1124,16 +1128,24 @@ client.on('message', async msg => {
               try {
                 id = client.users.find("username", args[1]).id;
               } catch (e) {
-                await msg.channel.send(f(lang.unknown, args[1]));
-                return console.error(e);
+                try {
+                  id = msg.guild.members.find("nickname", args[1]).id;
+                } catch (e) {
+                  msg.channel.send(f(lang.unknown, args[1]));
+                  return console.error(e);
+                }
               }
             }
           } else {
             try {
               id = client.users.find("username", args[1]).id;
             } catch (e) {
-              console.error(e);
-              return msg.channel.send(f(lang.unknown, args[1]));
+              try {
+                id = msg.guild.members.find("nickname", args[1]).id;
+              } catch (e) {
+                console.error(e);
+                return msg.channel.send(f(lang.unknown, args[1]));
+              }
             }
           }
         }
@@ -1151,20 +1163,29 @@ client.on('message', async msg => {
         return msg.channel.send(f(lang.unknown, args[1]));
       }
       if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
-      for (let i=0;i<=userConfig.bannedFromServer.length;i++) {
-        if (userConfig.bannedFromServer[i] != null) {
-          sb.clear();
-          sb2.clear();
-          sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
+      try {
+        for (let i=0;i<=userConfig.bannedFromServer.length;i++) {
+          if (userConfig.bannedFromServer[i] != null) {
+            sb.clear();
+            sb2.clear();
+            sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
+          }
+          sb2.append(userConfig.bannedFromUser[i]);
         }
-        sb2.append(userConfig.bannedFromUser[i]);
+      } catch (e) {
+        sb.clear();
+        sb2.clear();
+        sb.append(lang.sunknown);
+        sb2.append(lang.sunknown);
       }
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
-      const nick = msg.guild.members.get(user2.id).nickname ? msg.guild.members.get(user2.id).nickname : lang.nul;
+      const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
+      const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown;
       let embed = new Discord.RichEmbed()
         .setTitle(lang.lookup.title)
         .setColor([0,255,0])
         .setFooter(desc)
+        .setThumbnail(user2.avatarURL)
         .addField(lang.lookup.rep, userConfig.rep)
         .addField(lang.lookup.bannedFromServer, sb.toString())
         .addField(lang.lookup.bannedFromUser, sb2.toString())
@@ -1172,7 +1193,9 @@ client.on('message', async msg => {
         .addField(lang.lookup.nickname, nick)
         .addField(lang.lookup.id, user2.id)
         .addField(lang.lookup.bot, isBot)
-        .addField(lang.lookup.createdAt, user2.createdAt);
+        .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString('ja-JP'))
+        .addField(lang.lookup.joinedAt, joinedAt.toLocaleString('ja-JP'))
+        .addField(lang.lookup.nowTime, new Date().toLocaleString('ja-JP'));
       msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "ban ") || msg.content === settings.prefix + "ban") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));

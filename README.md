@@ -7,7 +7,7 @@ Global Banning System for Discord.
 
 **If does not respond, please try Japanese. (`b:language ja`)**
 
-__Default Prefix: `b:`, Configurable with `b:setprefix \<Prefix\>`__
+__Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
  - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
 
@@ -76,7 +76,7 @@ If you're banned 5 times, you'll added 5 rep.
 
 ---
 
-Most servers are using default settings(maybe), notify reputations is `2`, default ban reputation is `10`.
+Most servers are using default settings(maybe), notify reputations is `1`, default ban reputation is `3`.
 
 Also you can't ban that users:
  - Not cached in Bot
@@ -94,7 +94,7 @@ Also you can't ban that users:
 
 ---
 
-ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`2`で、デフォルトの自動BAN評価値は`10`です。
+ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`1`で、デフォルトの自動BAN評価値は`3`です。
 
 そしてこれらのユーザーはBANできません:
  - Botにキャッシュされていない
