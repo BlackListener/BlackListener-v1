@@ -29,6 +29,8 @@
     "role": "役職を付与したり削除したりします。",
     "autorole": "参加時に自動で役職を付与する設定をします。",
     "image": "NSFW画像を表示します。",
+    "others": "その他の記載されていないコマンドは",
+    "athere": "[GitHub](https://github.com/rht0910/BlackListener)を見てください。",
     "warning": "::注意::",
     "asterisk": "`[*]` がついているコマンドは実行する前に設定の変更が必要な可能性があります。"
   },
@@ -165,5 +167,28 @@
   "blocked_mention": ":x: メンションをほかのサーバーに送信することはできません。",
   "create_global": "`global`チャンネルを作るとグローバルチャットが始められます。",
   "sunknown": "不明",
-  "nul": "なし"
+  "nul": "なし",
+  "disallowed": "許可されていません",
+  "allowed": "許可されています",
+  "serverinfo": {
+    "prefix": "接頭語",
+    "language": "言語",
+    "notifyRep": "オーナーに通知する評価値",
+    "banRep": "BANする評価値",
+    "antispam": "アンチスパム",
+    "banned": "サーバーがBANされているか",
+    "disable_purge": "パージ機能は無効か",
+    "autorole": "自動役職",
+    "global": "グローバルチャットチャンネル",
+    "group": "サーバーグループ",
+    "excludeLogging": "ロギングを無効化するチャンネル",
+    "invite": "コマンドで招待の表示・作成が許可されているか",
+    "welcome_channel": "ウェルカムメッセージを送信するチャンネル",
+    "welcome_message": "ウェルカムメッセージ"
+  },
+  "disabled": "無効",
+  "enabled": "有効",
+  "prefixis": "接頭語は `{0}` です。",
+  "unknownorzero": "不明もしくは`0`です",
+  "welcome_warning": ":warning: ウェルカムメッセージはチャンネル/メッセージ両方設定しないと動作しません。"
 }
