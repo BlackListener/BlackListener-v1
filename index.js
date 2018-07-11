@@ -18,8 +18,7 @@ const f = require('string-format'), // Load & Initialize string-format
   isWindows = process.platform === "win32", // windows: true, other: false
   FormData = require('form-data'),
   DBL = require("dblapi.js"),
-  dbl = new DBL("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ1Njk2NjE2MTA3OTIwNTg5OSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTMwNzUwNzA4fQ.G0zKo7mDAt75sLeMTk2cnq4hAIc5QPdg0gjwiA5LcnI", client),
-
+  dbl = new DBL(s.dbl, client),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -848,9 +847,9 @@ client.on('message', async msg => {
         settings.ignoredChannels.forEach((data) => {
           if (!!data) {
             if (!!msg.guild.channels.get(data)) {
-              ignoredChannelsSB.append(msg.guild.channels.get(data).name + "\n");
+              ignoredChannelsSB.append(`<#${data}> (${msg.guild.channels.get(data).name}) (${data})\n`);
             } else {
-              ignoredChannelsSB.append(`${data} (${lang.failed_to_get})\n`);
+              ignoredChannelsSB.append(`<#${data}> ${data} (${lang.failed_to_get})\n`);
             }
           }
         });
@@ -861,9 +860,9 @@ client.on('message', async msg => {
         settings.mute.forEach((data) => {
           if (!!data) {
             if (!!client.users.get(data)) {
-              muteSB.append(client.users.get(data).tag + "\n");
+              muteSB.append(`<@${data}> (${client.users.get(data).tag})\n`);
             } else {
-              muteSB.append(`${data} (${lang.failed_to_get})\n`);
+              muteSB.append(`<@${data}> ${data} (${lang.failed_to_get})\n`);
             }
           }
         });
@@ -1547,7 +1546,12 @@ client.on('message', async msg => {
         if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args); }
         if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
         let localSettings = settings,
-          id = msg.mentions.channels.first().id;
+          user2 = msg.mentions.channels.first(),
+          id;
+        if (!user2) user2 = msg.guild.channels.find("name", args[2]);
+        if (!user2) user2 = msg.guild.channels.get(args[2]);
+        id = user2 ? user2.id : `:poop:`;
+        if (id === `:poop:`) return msg.channel.send(lang.invalid_args);
         if (~localSettings.ignoredChannels.indexOf(id)) {
           delete localSettings.ignoredChannels[localSettings.ignoredChannels.indexOf(id)];
           writeSettings(guildSettings, localSettings, null, null, false);
@@ -1942,7 +1946,7 @@ client.on("guildMemberAdd", member => {
   } else {
     msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
-  if (serverSetting.autorole != null) {
+  if (!!serverSetting.autorole) {
     async function process() {
       let role = await member.guild.roles.get(serverSetting.autorole);
       member.addRole(role);
