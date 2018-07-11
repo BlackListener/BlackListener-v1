@@ -832,14 +832,14 @@ client.on('message', async msg => {
       if (!!settings.language) language = `\`${settings.language}\``;
       if (settings.notifyRep) notifyRep = settings.notifyRep;
       if (settings.banRep) banRep = settings.banRep;
-      if (!!settings.antispam) antispam = lang.enabled;
-      if (!!settings.banned) banned = lang.yes;
-      if (!!settings.disable_purge) disable_purge = lang.no;
+      if (settings.antispam) antispam = lang.enabled;
+      if (settings.banned) banned = lang.yes;
+      if (settings.disable_purge) disable_purge = lang.no;
       if (!!settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`;
       if (!!settings.global) global = `${lang.enabled} (${client.channels.get(settings.global).name})`;
       if (settings.group.length != 0) group = `${lang.yes} (${settings.group})`;
       if (!!settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`;
-      if (!!settings.invite) invite = lang.allowed;
+      if (settings.invite) invite = lang.allowed;
       if (!!settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`;
       if (!!settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`;
       if (settings.ignoredChannels.length != 0) {
@@ -859,7 +859,7 @@ client.on('message', async msg => {
         muteSB.clear();
         settings.mute.forEach((data) => {
           if (!!data) {
-            if (!!client.users.get(data)) {
+            if (client.users.has(data)) {
               muteSB.append(`<@${data}> (${client.users.get(data).tag})\n`);
             } else {
               muteSB.append(`<@${data}> ${data} (${lang.failed_to_get})\n`);
@@ -1824,14 +1824,14 @@ client.on('message', async msg => {
       } else {
         msg.channel.send(`${emojiList}`);
       }
-    /* } else if (msg.content.startsWith(settings.prefix + "instantban ")) {
+     } else if (msg.content.startsWith(settings.prefix + "instantban ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       msg.guild.ban(client.users.get(args[1]));
       msg.channel.send(":ok_hand:");
     } else if (msg.content.startsWith(settings.prefix + "instantkick ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       msg.guild.members.get(args[1]).kick("Instant Kick by BlackListener");
-      msg.channel.send(":ok_hand:"); */
+      msg.channel.send(":ok_hand:");
     } else if (msg.content.startsWith(settings.prefix + "language ") || msg.content === settings.prefix + "language") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === "help") {
