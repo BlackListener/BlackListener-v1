@@ -57,8 +57,6 @@ __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 | instantkick | Kick from guild | サーバーからKickします | Yes |
 | setwelcome \<message:channel\> \<Message:Channel\> | Set welcome message | ウェルカムメッセージを設定します | Yes |
 
-**Note: Can't use `instantban` and `instantkick` anyone, anywhere. (Disabled feature)**
-
 ---
 
 **Welcome message Placeholder**
