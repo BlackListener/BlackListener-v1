@@ -147,6 +147,7 @@
     "probe": "証拠一覧",
     "bannedFromServer": "これらのサーバーからBANされています(オーナー)",
     "bannedFromUser": "これらのユーザーがBANを実行しました",
+    "probes": "証拠一覧",
     "tag": "ユーザータグ",
     "nickname": "ニックネーム",
     "id": "ユーザーID",

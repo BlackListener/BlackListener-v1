@@ -145,6 +145,7 @@
     "probe": "Probes",
     "bannedFromServer": "Banned from following servers (Owner)",
     "bannedFromUser": "Executed from following users",
+    "probes": "Probes",
     "tag": "User Tag",
     "nickname": "Nickname",
     "id": "User ID",

@@ -432,12 +432,15 @@ client.on('message', async msg => {
  if (!msg.guild && !msg.author.bot) return msg.channel.send("Not supported DM or GroupDM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
+  console.info(`Creating data directory: ./data/users/${msg.author.id}`);
   mkdirp(`./data/users/${msg.author.id}`);
  }
  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
+  console.info(`Creating data directory: ./data/servers/${msg.guild.id}`);
   mkdirp(`./data/servers/${msg.guild.id}`);
  }
  if (!fs.existsSync(`./data/votes/${msg.guild.id}`)) {
+  console.info(`Creating data directory: ./data/votes/${msg.guild.id}`);
   mkdirp(`./data/votes/${msg.guild.id}`);
  }
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
@@ -483,7 +486,7 @@ client.on('message', async msg => {
     fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   // --- Begin of Mute
-  if (~settings.mute.indexOf(msg.author.id)) {
+  if (~settings.mute.indexOf(msg.author.id) && !settings.banned) {
     msg.delete(0);
   }
   // --- End of Mute
@@ -1153,6 +1156,7 @@ client.on('message', async msg => {
         user2,
         sb = new StringBuilder(`BANされていません`),
         sb2 = new StringBuilder(`BANされていません`),
+        sb3 = new StringBuilder(`BANされていません`),
         isBot = lang.no;
       try {
         userConfig = require(`./data/users/${id}/config.json`);
@@ -1163,19 +1167,27 @@ client.on('message', async msg => {
       }
       if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
       try {
-        for (let i=0;i<=userConfig.bannedFromServer.length;i++) {
+        for (let i=0;i<=userConfig.probes.length;i++) {
+          var once = false;
           if (userConfig.bannedFromServer[i] != null) {
-            sb.clear();
-            sb2.clear();
-            sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
+            if (!once) {
+              sb.clear();
+              sb2.clear();
+              sb3.clear();
+              once = true;
+            }
+            sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})\n`);
+            sb2.append(userConfig.bannedFromUser[i] + "\n");
           }
-          sb2.append(userConfig.bannedFromUser[i]);
+          sb3.append(userConfig.probes[i] + "\n");
         }
       } catch (e) {
         sb.clear();
         sb2.clear();
+        sb3.clear();
         sb.append(lang.sunknown);
         sb2.append(lang.sunknown);
+        sb3.append(lang.sunknown);
       }
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
@@ -1188,6 +1200,7 @@ client.on('message', async msg => {
         .addField(lang.lookup.rep, userConfig.rep)
         .addField(lang.lookup.bannedFromServer, sb.toString())
         .addField(lang.lookup.bannedFromUser, sb2.toString())
+        .addField(lang.lookup.probes, sb3.toString())
         .addField(lang.lookup.tag, user2.tag)
         .addField(lang.lookup.nickname, nick)
         .addField(lang.lookup.id, user2.id)
@@ -1201,7 +1214,7 @@ client.on('message', async msg => {
       if (!args[1] || args[1] === ``) {
         var sb = new StringBuilder(`まだ誰もBANしていません`);
         require(`./data/bans.json`).forEach((data) => {
-          if (!!data) { // Doesn'tn't has data => process (translated: does has data => process)
+          if (!!data) { // Not not operator
             sb.clear();
             try {
               sb.append(`${client.users.find("id", data).tag} (${client.users.find("id", data).tag})`);
@@ -1219,23 +1232,27 @@ client.on('message', async msg => {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
           async function process() {
             if (!args[2]) return msg.channel.send(lang.invalid_args);
-            reason = args[2];
-            if (args[3] !== `--force`) { if (user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && user.bannedFromServer.indexOf(msg.guild.id) && user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned); }
             var user2,
               fetchedBans,
               attach,
+              targetUserFile,
               reason;
-            if (/\d{18}/.test(args[1])) {
+            reason = args[2];
+            if (args[3] !== `--force`) { if (~user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && ~user.bannedFromServer.indexOf(msg.guild.id) && ~user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned); }
+            if (!!msg.mentions.users.first()) {
+              user2 = msg.mentions.users.first();
+            } else if (/\d{18}/.test(args[1])) {
               args[1] = args[1].replace("<@", "").replace(">", "");
               fetchedBans = await msg.guild.fetchBans();
-              if (fetchedBans.get(args[1])) {
-                user2 = client.users.get(args[1]);
-              } else {
+              if (fetchedBans.has(args[1])) {
                 user2 = fetchedBans.get(args[1]);
+              } else {
+                user2 = client.users.get(args[1]);
               }
             } else {
               // msg.guild.fetchMembers(args[1]);
               user2 = client.users.find("username", args[1]);
+              if (!user2) user2 = client.users.get(args[1]);
             }
             if (!msg.attachments.first()) {
               return msg.channel.send(lang.invalid_args);
@@ -1243,20 +1260,22 @@ client.on('message', async msg => {
               attach = msg.attachments.first().url;
             }
             if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
-            if (!user) { settings = null; return msg.channel.send(lang.invalid_user); }
+            if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
             let ban = bans;
-            user.bannedFromServerOwner.push(msg.guild.ownerID);
-            user.bannedFromServer.push(msg.guild.id);
-            user.bannedFromUser.push(msg.author.id);
-            user.probes.push(attach);
+            user2.bannedFromServerOwner.push(msg.guild.ownerID);
+            user2.bannedFromServer.push(msg.guild.id);
+            user2.bannedFromUser.push(msg.author.id);
+            user2.probes.push(attach);
             ban.push(user.id);
-            user.rep = ++user.rep;
+            user2.rep = ++user2.rep;
+            targetUserFile = `./data/users/${user2.id}/config.json`;
             fs.writeFileSync(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            msg.guild.ban(user, { "reason": reason })
+            fs.writeFileSync(targetUserFile, JSON.stringify(user2, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
+            msg.guild.ban(user2, { "reason": reason })
               .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
               .catch(console.error);
-            msg.channel.send(lang.banned);
+            return msg.channel.send(lang.banned);
           }
           process();
         }
@@ -1333,26 +1352,25 @@ client.on('message', async msg => {
         msg.channel.send(lang.no_args);
       } else {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
-          var user;
+          var user2;
           if (/[0-9]................./.test(args[1])) {
-            user = client.users.get(args[1]);
+            user2 = client.users.get(args[1]);
           } else {
-            user = client.users.find("username", args[1]);
+            user2 = client.users.find("username", args[1]);
           }
-          if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
-          if (!user) { settings = null; return msg.channel.send(lang.invalid_user); }
-          let ban = bans,
-            localUser = user;
+          if (!msg.mentions.users.first()) { /* Dummy */ } else { user2 = msg.mentions.users.first(); }
+          if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
+          let ban = bans;
           var exe = false;
           for (var i=0; i<=bans.length; i++) {
-            if (bans[i] == user.id) {
+            if (bans[i] == user2.id) {
               exe = true;
               delete ban[i];
             }
           }
           if (!exe) { settings = null; return msg.channel.send(lang.notfound_user); }
           for (var i=0; i<=client.guilds.length; i++) {
-            client.guilds[i].unban(user)
+            client.guilds[i].unban(user2)
               .then(user2 => console.log(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
               .catch(console.error);
           }
@@ -1982,5 +2000,5 @@ try {
   }
 } catch (e) {
   console.error(e);
-  return console.error(`incorrect password`);
+  console.error(`incorrect password`);
 }
