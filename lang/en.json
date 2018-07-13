@@ -193,5 +193,6 @@
   "enabled": "Enabled",
   "prefixis": "Prefix is `{0}`.",
   "unknownorzero": "Unknown or `0`.",
-  "welcome_warning": ":warning: Welcome message does not work until both channel and message are set."
+  "welcome_warning": ":warning: Welcome message does not work until both channel and message are set.",
+  "wrong_banned": "You got invalid ban?\nIf you believe this is invalid, please send mail at http://asyn.cf/contact ."
 }

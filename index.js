@@ -115,6 +115,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `serverinfo`, "args": ``},
     {"body": `setwelcome`, "args": ` [channel:message] [Channel:Message]`},
     {"body": `mute`, "args": ` <User>`},
+    {"body": `banned`, "args": ``},
   ];
 var guildSettings,
   settings,
@@ -728,7 +729,7 @@ client.on('message', async msg => {
           o1 = stdout;
           var { stdout, stderr } = await exec("df -h | grep /dev/sda");
           o2 = stdout;
-          loadavg = Math.floor(os.loadavg()[1] * 100) / 100;
+          loadavg = Math.floor(os.loadavg()[0] * 100) / 100;
         }
         let embed = new Discord.RichEmbed()
           .setTitle("Bot info")
@@ -793,6 +794,9 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "members") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       return msg.channel.send(msg.guild.members.size);
+    } else if (msg.content === settings.prefix + "banned") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      return msg.channel.send(lang.wrong_banned);
     } else if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let prefix = settings.prefix,
@@ -1903,7 +1907,7 @@ client.on('message', async msg => {
       return msg.channel.send(lang.udonthaveperm);
     }
   } else {
-    if (msg.content === `<@!${client.user.id}>`) return msg.channel.send(f(lang.prefixis, settings.prefix));
+    if (msg.content === `<@${client.user.id}>` || msg.content === `<@!${client.user.id}>` || msg.content === `<@!${client.user.id}>`) return msg.channel.send(f(lang.prefixis, settings.prefix));
   }
  }
  settings = null;
@@ -1996,10 +2000,9 @@ function getDateTime()
 try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
     .catch(error);
-  function error() {
-    return console.error(`incorrect password`);
+  function error(e) {
+    return console.error(e);
   }
 } catch (e) {
   console.error(e);
-  console.error(`incorrect password`);
 }

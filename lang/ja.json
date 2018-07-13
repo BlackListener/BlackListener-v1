@@ -195,5 +195,6 @@
   "enabled": "有効",
   "prefixis": "接頭語は `{0}` です。",
   "unknownorzero": "不明もしくは`0`です",
-  "welcome_warning": ":warning: ウェルカムメッセージはチャンネル/メッセージ両方設定しないと動作しません。"
+  "welcome_warning": ":warning: ウェルカムメッセージはチャンネル/メッセージ両方設定しないと動作しません。",
+  "wrong_banned": "間違ってBANされてしまいましたか？\nこちらからメールを送信してください: https://asyn.cf/contact"
 }
