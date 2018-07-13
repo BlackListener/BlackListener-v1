@@ -1261,16 +1261,17 @@ client.on('message', async msg => {
             }
             if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
             if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
-            let ban = bans;
-            user2.bannedFromServerOwner.push(msg.guild.ownerID);
-            user2.bannedFromServer.push(msg.guild.id);
-            user2.bannedFromUser.push(msg.author.id);
-            user2.probes.push(attach);
-            ban.push(user.id);
-            user2.rep = ++user2.rep;
+            let ban = bans,
+              userr = fs.existsSync(`./data/users/${user2.id}/config.json`) ? require(`./data/users/${user2.id}/config.json`) : defaultUser;
+            userr.bannedFromServerOwner.push(msg.guild.ownerID);
+            userr.bannedFromServer.push(msg.guild.id);
+            userr.bannedFromUser.push(msg.author.id);
+            userr.probes.push(attach);
+            ban.push(user2.id);
+            userr.rep = ++userr.rep;
             targetUserFile = `./data/users/${user2.id}/config.json`;
             fs.writeFileSync(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            fs.writeFileSync(targetUserFile, JSON.stringify(user2, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            fs.writeFileSync(targetUserFile, JSON.stringify(userr, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
             if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
             msg.guild.ban(user2, { "reason": reason })
               .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
