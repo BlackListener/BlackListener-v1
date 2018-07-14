@@ -1181,9 +1181,11 @@ client.on('message', async msg => {
               once = true;
             }
             sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})\n`);
-            sb2.append(userConfig.bannedFromUser[i] + "\n");
           }
-          sb3.append(userConfig.probes[i] + "\n");
+          if (userConfig.bannedFromUser[i] != null) sb2.append(userConfig.bannedFromUser[i] + "\n");
+          if (userConfig.probes[i] != null) {
+            sb3.append(userConfig.probes[i] + "\n");
+          }
         }
       } catch (e) {
         sb.clear();
@@ -1221,7 +1223,7 @@ client.on('message', async msg => {
           if (!!data) { // Not not operator
             sb.clear();
             try {
-              sb.append(`${client.users.find("id", data).tag} (${client.users.find("id", data).tag})`);
+              sb.append(`${client.users.find("id", data).tag} (${data})`);
             } catch (e) {
               sb.append(`${data} (${lang.failed_to_get})`)
             }
