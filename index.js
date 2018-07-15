@@ -797,6 +797,9 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "banned") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       return msg.channel.send(lang.wrong_banned);
+    } else if (msg.content.startsWith(settings.prefix + "music") || msg.content.startsWith(settings.prefix + "play")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      return msg.channel.send(f(lang.musicbotis, s.musicinvite));
     } else if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let prefix = settings.prefix,
