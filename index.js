@@ -814,10 +814,10 @@ client.on('message', async msg => {
         .addField(`${prefix}antispam`, lang.commands.antispam)
         .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
         .addField(`${prefix}invite [GuildID] [create] or [allow/deny]`, lang.commands.invite)
-        .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`) /* 10 */
+        .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
         .addField(`${prefix}lookup <User>`, lang.lookup.desc)
-        .addField(lang.commands.others, lang.commands.athere); /* 13 */
+        .addField(lang.commands.others, lang.commands.athere);
       return msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "serverinfo") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
