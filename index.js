@@ -430,7 +430,14 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
- if (!msg.guild && !msg.author.bot) return msg.channel.send("Not supported DM or GroupDM");
+ var attachments = new StringBuilder("Not found");
+ if (!!msg.attachments.first())
+ msg.attachments.forEach((attr) => {
+   attachments.clear();
+   attachments.append(`${attr.url}\n`);
+ });
+ if (msg.system || msg.author.bot) return;
+ if (msg.channel instanceof Discord.DMChannel && !msg.author.bot) { msg.author.send(`:ok_hand:`); return await client.users.get("254794124744458241").send(`Message: ${msg.content}\nSender: ${msg.author.tag} (${msg.author.id})\nSent at: ${msg.createdAt}\nAttachment: ${attachments.toString()}`); }
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
   console.info(`Creating data directory: ./data/users/${msg.author.id}`);

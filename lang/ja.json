@@ -196,6 +196,6 @@
   "prefixis": "接頭語は `{0}` です。",
   "unknownorzero": "不明もしくは`0`です",
   "welcome_warning": ":warning: ウェルカムメッセージはチャンネル/メッセージ両方設定しないと動作しません。",
-  "wrong_banned": "間違ってBANされてしまいましたか？\nこのサーバーに参加して解除申請してください！\nhttps://discord.gg/xQQXp4B",
+  "wrong_banned": "間違ってBANされてしまいましたか？\nBlackListener(このBot)のDMに詳細を送ってください！",
   "musicbotis": "音楽ボットはここ！\n招待URL: {0}"
 }
