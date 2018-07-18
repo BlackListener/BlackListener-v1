@@ -4,7 +4,7 @@
   "lang": "en",
   "notifyRep": 1,
   "banRep": 5,
-  "dump_url": "https://dl.rht0910.tk/dump.txt",
-  "data_baseurl": "https://dl.rht0910.tk/blacklistener",
+  "dump_url": "",
+  "data_baseurl": "",
   "version": "1.0.1"
 }
