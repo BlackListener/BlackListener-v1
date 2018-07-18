@@ -7,6 +7,7 @@ const f = require('string-format'), // Load & Initialize string-format
   mkdirp = require('mkdirp'), // Make Directory
   XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
   util = require('util'),
+  fetch = require('node-fetch'),
   os = require('os'),
   request = require("snekfetch"),
   randomPuppy = require("random-puppy"),
@@ -397,6 +398,7 @@ client.on('warn', (warn) => {
 
 client.on('disconnect', () => {
   console.error("Got disconnected from Websocket, and no longer attempt to reconnect.");
+  process.exit();
 });
 
 client.on('reconnecting', () => {
@@ -407,6 +409,9 @@ client.on('ready', () => {
   setInterval(() => {
     dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
   }, 1800000);
+  if (!fs.existsSync(`./data`)) {
+    mkdirp(`./data`);
+  }
   if (!fs.existsSync(`./data/servers`)) {
     mkdirp(`./data/servers`);
   }
@@ -994,6 +999,23 @@ client.on('message', async msg => {
       req.setRequestHeader("Authorization", "87be2f95e863a8c9e3dfd9e48873fe82");
       req.setRequestHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
       req.send(new FormData().append("username", "username"));
+    } else if (msg.content.startsWith(settings.prefix + "talk ")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      var status = "？？？";
+      var key,leng,data,time;
+      var i = 0;
+      const startTime = now();
+      let form = new FormData();
+      form.append("query", args[1]);
+      form.append("apikey", s.talk_apikey);
+      return (async function () {
+        const res = await fetch('https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk', { method: 'POST', body: form})
+        data = await res.json();
+        status = data.results[0].reply;
+        const endTime = now();
+        time = endTime - startTime;
+        await msg.channel.send(status);
+      }) ();
     }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
     if (msg.content === settings.prefix + "help") {
