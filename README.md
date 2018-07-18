@@ -1,13 +1,14 @@
-# BlackListener
+# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/)
+
 Global Banning System for Discord.
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
 ## All Commands (Too long!)
 
-**If does not respond, please try Japanese. (`b:language ja`)**
-
 __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
+
+Server's prefix can be show up in mention the bot.
 
  - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
 
@@ -56,6 +57,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 | instantban | Ban from guild, not an global ban | サーバーからBANします、グローバルBANではありません | Yes |
 | instantkick | Kick from guild | サーバーからKickします | Yes |
 | setwelcome \<message:channel\> \<Message:Channel\> | Set welcome message | ウェルカムメッセージを設定します | Yes |
+... and more commands on [documentation](http://docs.blacklistener.tk/) !
 
 ---
 
