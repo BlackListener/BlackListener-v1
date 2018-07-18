@@ -126,6 +126,9 @@ var guildSettings,
   user,
   serverMessagesFile,
   userMessagesFile,
+  plugins = {
+    run: null,
+  },
   voteCmd = (msg, split, settings) => {
   if (split[1] === `create` || split[1] === `start`) {
     if (!(/.*?\|.*?/gm).test(split[3])) return msg.channel.send(messages.votes.invalid_usage);
@@ -409,6 +412,13 @@ client.on('ready', () => {
   setInterval(() => {
     dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
   }, 1800000);
+  if (!fs.existsSync(`./plugins`)) {
+    mkdirp(`./plugins`);
+  }
+  plugins.run = function () {
+    return false; // always return false, not implemented!
+  }
+  // plugins.files.push();
   if (!fs.existsSync(`./data`)) {
     mkdirp(`./data`);
   }
@@ -445,7 +455,7 @@ client.on('message', async msg => {
  });
  if (msg.system || msg.author.bot) return;
  //if (msg.channel instanceof Discord.DMChannel && !msg.author.bot) { msg.author.send(`:ok_hand:`); return await client.users.get("254794124744458241").send(`Message: ${msg.content}\nSender: ${msg.author.tag} (${msg.author.id})\nSent at: ${msg.createdAt}\nAttachment: ${attachments.toString()}`); }
-  if (!msg.guild) return msg channel.send("Currently not supported DM");
+  if (!msg.guild) return msg.channel.send("Currently not supported DM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
   console.info(`Creating data directory: ./data/users/${msg.author.id}`);
@@ -1925,22 +1935,24 @@ client.on('message', async msg => {
       delete require.cache[require.resolve(`./lang/en.json`)];
       msg.channel.send(`:ok_hand:`);
     } else {
-      let sb = new StringBuilder(``),
-      cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
-      for(var i = 0; i < commandList.length; i++) {
-        commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
-      }
-      commandList.sort((a, b) => {
-        return a.no - b.no;
-      });
-      for (var i = 0; i < commandList.length; i++) {
-        if (commandList[i].no <= 2) {
-          sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
+      if (!plugins.run()) {
+        let sb = new StringBuilder(``),
+        cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
+        for (var i = 0; i < commandList.length; i++) {
+          commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
         }
-      }
-      msg.channel.send(f(lang.no_command, `${settings.prefix}${cmd}`));
-      if (sb.toString() != ``) {
-        msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
+        commandList.sort((a, b) => {
+          return a.no - b.no;
+        });
+        for (var i = 0; i < commandList.length; i++) {
+          if (commandList[i].no <= 2) {
+            sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
+          }
+        }
+        msg.channel.send(f(lang.no_command, `${settings.prefix}${cmd}`));
+        if (sb.toString() != ``) {
+          msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
+        }
       }
     }
     } else {
