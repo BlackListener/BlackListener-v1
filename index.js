@@ -55,7 +55,6 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `ban`, "args": ` [<ID/Mentions/Name> <Reason> <Probe>]`},
     {"body": `unban`, "args": ` <ID/Mentions/Name> *Not recommended*`},
     {"body": `language`, "args": ` <ja/en>`},
-    {"body": `log`, "args": ``},
     {"body": `setnotifyrep`, "args": ` <0...10>`},
     {"body": `setbanrep`, "args": ` <0...10>`},
     {"body": `antispam`, "args": ``},
@@ -425,7 +424,10 @@ client.on('ready', () => {
   if (!fs.existsSync(`./data/global_channels.json`)) {
     fs.writeFileSync(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+  client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
+  client.setTimeout(() => {
+    client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+  }, 10000);
   console.log(`Bot has Fully startup.`);
 });
 
@@ -758,55 +760,58 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "encode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let cmd = settings.prefix + "encode ";
-      return msg.channel.send(new Buffer.from(msg.content.slice(cmd.length)).toString(`base64`));
+      return await msg.channel.send(new Buffer.from(msg.content.slice(cmd.length)).toString(`base64`));
     } else if (msg.content.startsWith(settings.prefix + "decode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      return msg.channel.send(new Buffer.from(args[1], `base64`).toString(`ascii`));
+      return await msg.channel.send(new Buffer.from(args[1], `base64`).toString(`ascii`));
     } else if (msg.content.startsWith(settings.prefix + "encrypt ")) {
       if (!args[2]) return msg.channel.send(lang.invalid_args);
       var cipher = crypto.createCipher('aes192', args[2]);
       cipher.update(args[1], 'utf8', 'hex');
       var encryptedText = cipher.final('hex');
-      return msg.channel.send(f(lang.encrypted, args[1], args[2], encryptedText));
+      return await msg.channel.send(f(lang.encrypted, args[1], args[2], encryptedText));
     } else if (msg.content.startsWith(settings.prefix + "decrypt ")) {
-      if (!args[2]) return msg.channel.send(lang.invalid_args);
+      if (!args[2]) return await msg.channel.send(lang.invalid_args);
       var decipher,dec;
       try {
         decipher = crypto.createDecipher('aes192', args[2]);
         decipher.update(args[1], 'hex', 'utf8');
         dec = decipher.final('utf8');
       } catch (e) {
-        return msg.channel.send(f(lang.invalid_password, args[2]));
+        return await msg.channel.send(f(lang.invalid_password, args[2]));
       }
-      return msg.channel.send(f(lang.decrypted, args[1], args[2], dec));
+      return await msg.channel.send(f(lang.decrypted, args[1], args[2], dec));
     } else if (msg.content.startsWith(settings.prefix + "didyouknow ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (args[2] === "server") {
         let know = client.guilds.find("name", args[1]);
         if (!know) know = client.guilds.get(args[1]);
         if (!know) {
-          return msg.channel.send(f(lang.unknown, args[1]));
+          return await msg.channel.send(f(lang.unknown, args[1]));
         } else {
-          return msg.channel.send(f(lang.known, `${know.name} (${know.id})`));
+          return await msg.channel.send(f(lang.known, `${know.name} (${know.id})`));
         }
       }
       let know = client.users.find("username", args[1]);
       if (!know) know = msg.mentions.users.first();
       if (!know) know = client.users.get(args[1]);
       if (!know) {
-        return msg.channel.send(f(lang.unknown, args[1]));
+        return await msg.channel.send(f(lang.unknown, args[1]));
       } else {
-        return msg.channel.send(f(lang.known, `${know.tag} (${know.id})`));
+        return await msg.channel.send(f(lang.known, `${know.tag} (${know.id})`));
       }
     } else if (msg.content === settings.prefix + "members") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      return msg.channel.send(msg.guild.members.size);
+      return await msg.channel.send(msg.guild.members.size);
     } else if (msg.content === settings.prefix + "banned") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      return msg.channel.send(lang.wrong_banned);
+      return await msg.channel.send(lang.wrong_banned);
     } else if (msg.content.startsWith(settings.prefix + "music") || msg.content.startsWith(settings.prefix + "play")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      return msg.channel.send(f(lang.musicbotis, s.musicinvite));
+      return await msg.channel.send(f(lang.musicbotis, s.musicinvite));
+    } else if (msg.content.startsWith(settings.prefix + "docs") || msg.content === settings.prefix + "docs") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (args[1]) { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`)) } else { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands`)); }
     } else if (msg.content === settings.prefix + "help") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let prefix = settings.prefix,
@@ -825,7 +830,7 @@ client.on('message', async msg => {
         .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
         .addField(`${prefix}lookup <User>`, lang.lookup.desc)
         .addField(lang.commands.others, lang.commands.athere);
-      return msg.channel.send(embed);
+      return await msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "serverinfo") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       var prefix = lang.sunknown,
@@ -904,7 +909,7 @@ client.on('message', async msg => {
         .addField(lang.serverinfo.mute, muteSB.toString())
         .addField(lang.serverinfo.welcome_channel, welcome_channel)
         .addField(lang.serverinfo.welcome_message, welcome_message);
-      return msg.channel.send(embed);
+      return await msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "status minecraft") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.channel.send(lang.status.checking);
@@ -981,7 +986,7 @@ client.on('message', async msg => {
             .setColor([0,255,0])
             .setFooter(f(lang.status.time, Math.floor(time)))
             .setTimestamp()
-            .addField(lang.status.servers.fortnite, status)
+            .addField(lang.status.servers.fortnite, status);
           return msg.channel.send(embed);
         }
       };
@@ -1019,7 +1024,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "invite ") || msg.content === settings.prefix + "invite") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       async function process() {
-        if (!args[1]) return msg.channel.send(f(lang.invite_bot, s.inviteme));
+        if (!args[1]) return await msg.channel.send(f(lang.invite_bot, s.inviteme));
         if (args[1] === `allow`) {
           settings.invite = true;
           return writeSettings(guildSettings, settings, msg.channel, "invite");
@@ -1027,12 +1032,12 @@ client.on('message', async msg => {
           settings.invite = false;
           return writeSettings(guildSettings, settings, msg.channel, "invite");
         }
-        if (/\D/.test(args[1])) return msg.channel.send(lang.invalid_args);
-        if (/\d{19,}/.test(args[1])) return msg.channel.send(lang.invalid_args);
-        if (!client.guilds.get(args[1])) return msg.channel.send(lang.invalid_args);
+        if (/\D/.test(args[1])) return await msg.channel.send(lang.invalid_args);
+        if (/\d{19,}/.test(args[1])) return await msg.channel.send(lang.invalid_args);
+        if (!client.guilds.get(args[1])) return await msg.channel.send(lang.invalid_args);
         var sb = new StringBuilder(``);
         const thatGuild = require(`./data/servers/${client.guilds.get(args[1]).id}/config.json`);
-        if (!thatGuild.invite) return msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`));
+        if (!thatGuild.invite) return await msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`));
         try {
           if (args[2] === `create`) {
             var invite;
@@ -1057,7 +1062,7 @@ client.on('message', async msg => {
           msg.channel.send(embed);
         } catch (e) {
           console.error(e);
-          if (e.toString() === `TypeError: Cannot read property 'fetchInvites' of undefined`) return msg.channel.send(lang.noguild);
+          if (e.toString() === `TypeError: Cannot read property 'fetchInvites' of undefined`) return await msg.channel.send(lang.noguild);
         }
       }
       process();
