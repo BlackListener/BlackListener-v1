@@ -734,8 +734,8 @@ client.on('message', async msg => {
           loadavg = `利用不可`,
           invite = s.inviteme;
         if (!isWindows) {
-          var { stdout, stderr } = await exec("df -h | grep /dev/sdb");
-          o1 = stdout;
+          var { stdout, stderr } = await exec("df -h | grep /dev/sda");
+          o1 = ":thinking:"; // stdout;
           var { stdout, stderr } = await exec("df -h | grep /dev/sda");
           o2 = stdout;
           loadavg = Math.floor(os.loadavg()[0] * 100) / 100;
@@ -1023,7 +1023,7 @@ client.on('message', async msg => {
       writeSettings(guildSettings, unsavedSettings, msg.channel, "disable_purge");
     } else if (msg.content.startsWith(settings.prefix + "invite ") || msg.content === settings.prefix + "invite") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      async function process() {
+      async function asyncprocess() {
         if (!args[1]) return await msg.channel.send(f(lang.invite_bot, s.inviteme));
         if (args[1] === `allow`) {
           settings.invite = true;
@@ -1065,7 +1065,7 @@ client.on('message', async msg => {
           if (e.toString() === `TypeError: Cannot read property 'fetchInvites' of undefined`) return await msg.channel.send(lang.noguild);
         }
       }
-      process();
+      asyncprocess();
     } else if (msg.content.startsWith(settings.prefix + "shutdown ") || msg.content === settings.prefix + "shutdown") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author == "<@254794124744458241>") {
@@ -1074,12 +1074,12 @@ client.on('message', async msg => {
           msg.channel.send(lang.bye);
           client.destroy();
         } else if (args[1] == "-r") {
-          async function process() {
+          async function asyncprocess() {
             console.log(f(lang.rebooting));
             await msg.channel.send(lang.rebooting);
             process.kill(process.pid, 'SIGKILL');
           }
-          process();
+          asyncprocess();
         } else {
           console.log(f(lang.success, msg.content));
           msg.channel.send(lang.bye);
@@ -1251,7 +1251,7 @@ client.on('message', async msg => {
         msg.channel.send(embed);
       } else {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
-          async function process() {
+          async function asyncprocess() {
             if (!args[2]) return msg.channel.send(lang.invalid_args);
             var user2,
               fetchedBans,
@@ -1299,7 +1299,7 @@ client.on('message', async msg => {
               .catch(console.error);
             return msg.channel.send(lang.banned);
           }
-          process();
+          asyncprocess();
         }
       }
     } else if (msg.content.startsWith(settings.prefix + "purge ") || msg.content === settings.prefix + "purge") {
@@ -1987,12 +1987,12 @@ client.on("guildMemberAdd", member => {
     msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
   if (!!serverSetting.autorole) {
-    async function process() {
+    async function asyncprocess() {
       let role = await member.guild.roles.get(serverSetting.autorole);
       member.addRole(role);
       console.log(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
     }
-    process();
+    asyncprocess();
   }
   if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
     let message = serverSetting.welcome_message.replace("{user}", `<@${member.user.id}>`);
