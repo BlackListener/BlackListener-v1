@@ -195,5 +195,6 @@
   "unknownorzero": "Unknown or `0`.",
   "welcome_warning": ":warning: Welcome message does not work until both channel and message are set.",
   "wrong_banned": "You got invalid ban?\nIf you believe this is invalid, please send to BlackListener(This bot) DM.",
-  "musicbotis": "Music Bot is here!\nInvitation URL: {0}"
+  "musicbotis": "Music Bot is here!\nInvitation URL: {0}",
+  "returned_invalid_response": "[ Returned invalid response from server ]"
 }

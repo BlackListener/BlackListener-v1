@@ -116,6 +116,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `setwelcome`, "args": ` [channel:message] [Channel:Message]`},
     {"body": `mute`, "args": ` <User>`},
     {"body": `banned`, "args": ``},
+    {"body": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
   ];
 var guildSettings,
   settings,
@@ -410,7 +411,7 @@ client.on('reconnecting', () => {
 
 client.on('ready', () => {
   setInterval(() => {
-    dbl.postStats(client.guilds.size, client.shards.Id, client.shards.total);
+    dbl.postStats(client.guilds.size, null, null);
   }, 1800000);
   if (!fs.existsSync(`./plugins`)) {
     mkdirp(`./plugins`);
@@ -1010,19 +1011,32 @@ client.on('message', async msg => {
       req.setRequestHeader("Authorization", "87be2f95e863a8c9e3dfd9e48873fe82");
       req.setRequestHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
       req.send(new FormData().append("username", "username"));
-    } else if (msg.content.startsWith(settings.prefix + "talk ")) {
+    } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       var status = "？？？";
       var key,leng,data,time;
       var i = 0;
       const startTime = now();
-      let form = new FormData();
-      form.append("query", args[1]);
-      form.append("apikey", s.talk_apikey);
+      const header = {
+        "x-api-key": s.talk_apikey,
+        "Content-Type": "application/json",
+      };
+      const resreg = await fetch('https://api.repl-ai.jp/v1/registration', { method: 'POST', body: "{botId: sample}", headers: header });
+      if (resreg.status !== 200) return msg.channel.send(lang.returned_invalid_response);
+      console.log(resreg.status);
+      const resjson = await resreg.json();
+      const userId = resjson.appUserId;
+      let talkform = `{ "botId": "sample", "appUserId": ${userId}, "initTalkingFlag": true, "voiceText": ${args[1]}, "initTopicId": "docomoapi" }`;
+      const talkheader = {
+        "x-api-key": s.talk_apikey,
+        "Content-Type": "application/json",
+      };
       return (async function () {
-        const res = await fetch('https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk', { method: 'POST', body: form})
+        const res = await fetch('https://api.repl-ai.jp/v1/dialogue', { method: 'POST', body: talkform, headers: talkheader });
+        if (res.status !== 200) return msg.channel.send(lang.returned_invalid_response);
         data = await res.json();
-        status = data.results[0].reply;
+        console.log("fetched: " + JSON.stringify(data));
+        status = data.systemText.expression;
         const endTime = now();
         time = endTime - startTime;
         await msg.channel.send(status);
