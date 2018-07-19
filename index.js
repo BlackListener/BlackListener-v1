@@ -1023,7 +1023,6 @@ client.on('message', async msg => {
       };
       const resreg = await fetch('https://api.repl-ai.jp/v1/registration', { method: 'POST', body: "{botId: sample}", headers: header });
       if (resreg.status !== 200) return msg.channel.send(lang.returned_invalid_response);
-      console.log(resreg.status);
       const resjson = await resreg.json();
       const userId = resjson.appUserId;
       let talkform = `{ "botId": "sample", "appUserId": ${userId}, "initTalkingFlag": true, "voiceText": ${args[1]}, "initTopicId": "docomoapi" }`;
@@ -1035,11 +1034,10 @@ client.on('message', async msg => {
         const res = await fetch('https://api.repl-ai.jp/v1/dialogue', { method: 'POST', body: talkform, headers: talkheader });
         if (res.status !== 200) return msg.channel.send(lang.returned_invalid_response);
         data = await res.json();
-        console.log("fetched: " + JSON.stringify(data));
         status = data.systemText.expression;
         const endTime = now();
         time = endTime - startTime;
-        await msg.channel.send(status);
+        await msg.channel.send(status.replace("#", ""));
       }) ();
     }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
