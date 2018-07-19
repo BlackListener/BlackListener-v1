@@ -2,13 +2,13 @@ const f = require('string-format'), // Load & Initialize string-format
   now = require("performance-now"),
   Discord = require('discord.js'), // Load discord.js
   client = new Discord.Client(), // Initialize Client.
-  s = require('./secret.json'), // Tokens, and invite link.
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
   XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
   util = require('util'),
   fetch = require('node-fetch'),
   os = require('os'),
+  DBL = require("dblapi.js"),
   request = require("snekfetch"),
   randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
@@ -18,8 +18,6 @@ const f = require('string-format'), // Load & Initialize string-format
   messages = require('./messages.json'), // Used for vote command
   isWindows = process.platform === "win32", // windows: true, other: false
   FormData = require('form-data'),
-  DBL = require("dblapi.js"),
-  dbl = new DBL(s.dbl, client),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -127,6 +125,8 @@ var guildSettings,
   user,
   serverMessagesFile,
   userMessagesFile,
+  s, // Tokens, and invite link.
+  isTravisBuild = false,
   plugins = {
     run: null,
   },
@@ -401,7 +401,7 @@ client.on('warn', (warn) => {
 });
 
 client.on('disconnect', () => {
-  console.error("Got disconnected from Websocket, and no longer attempt to reconnect.");
+  console.info("Disconnected from Websocket.");
   process.exit();
 });
 
@@ -409,10 +409,19 @@ client.on('reconnecting', () => {
   console.error("Got Disconnected from Websocket, Reconnecting!");
 });
 
-client.on('ready', () => {
-  setInterval(() => {
-    dbl.postStats(client.guilds.size, null, null);
-  }, 1800000);
+if (!!process.argv[2]) {
+  if (process.argv[2] === `--travis-build`) {
+    s = require("./travis.json");
+    isTravisBuild = true;
+  }
+}
+if (!s) s = require("./secret.json");
+client.on('ready', async () => {
+  if (!isTravisBuild) {
+    setInterval(() => {
+      dbl.postStats(client.guilds.size, null, null);
+    }, 1800000);
+  }
   if (!fs.existsSync(`./plugins`)) {
     mkdirp(`./plugins`);
   }
@@ -445,7 +454,15 @@ client.on('ready', () => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
   }, 10000);
   console.log(`Bot has Fully startup.`);
+  if (isTravisBuild) {
+    console.log(`Shutting down...`);
+    await client.destroy();
+    process.exit();
+  }
 });
+
+var dbl;
+if (!isTravisBuild) dbl = new DBL(s.dbl, client);
 
 client.on('message', async msg => {
  var attachments = new StringBuilder("Not found");
@@ -1013,6 +1030,7 @@ client.on('message', async msg => {
       req.send(new FormData().append("username", "username"));
     } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (s.talk_apikey === ``) return msg.channel.send(lang.no_talkapikey);
       var status = "？？？";
       var key,leng,data,time;
       var i = 0;

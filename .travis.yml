@@ -1,0 +1,6 @@
+os: linux
+dist: trusty
+group: stable
+language: node_js
+script: "node index.js --travis-build"
+node_js: "node"
