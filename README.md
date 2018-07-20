@@ -25,7 +25,6 @@ Server's prefix can be show up in mention the bot.
 | setnotifyrep \<0...10\> | Set notify reputation | 通知する評価値を設定します | Yes |
 | setbanrep \<0...10\> | Set auto ban reputation | 自動BANする評価値を設定します | Yes |
 | antispam | Settings of Anti-spam. Recommended OFF in large servers. | アンチスパムの設定。大規模サーバーではオフ推奨。 | Yes |
-| vote \<args\> | It's too much to write everything here. See help. | ここですべてを書くのは多すぎる。ヘルプを参照。 | No |
 | info | Displays Bot environments | ボットの環境を表示します。 | No |
 | reload | Reload the guild config. | ギルドの設定をリロードします。 | Yes |
 | purge \[all\] | Delete 100 messages. | 100のメッセージを削除します。 | Yes |

@@ -14,7 +14,6 @@ const f = require('string-format'), // Load & Initialize string-format
   exec = util.promisify(require('child_process').exec),
   crypto = require("crypto"),
   StringBuilder = require('node-stringbuilder'), // String Builder
- /* messages = require('./messages.json'), // Used for vote command */
   isWindows = process.platform === "win32", // windows: true, other: false
   FormData = require('form-data'),
   defaultSettings = {
@@ -238,10 +237,6 @@ client.on('message', async msg => {
  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
   console.info(`Creating data directory: ./data/servers/${msg.guild.id}`);
   mkdirp(`./data/servers/${msg.guild.id}`);
- }
- if (!fs.existsSync(`./data/votes/${msg.guild.id}`)) {
-  console.info(`Creating data directory: ./data/votes/${msg.guild.id}`);
-  mkdirp(`./data/votes/${msg.guild.id}`);
  }
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
