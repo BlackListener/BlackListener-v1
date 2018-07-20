@@ -1302,7 +1302,8 @@ client.on('message', async msg => {
         var sb = new StringBuilder(`まだ誰もBANしていません`);
         require(`./data/bans.json`).forEach((data) => {
           if (!!data) { // Not not operator
-            sb.clear();
+            var once = false;
+            if (once) sb.clear(); once = true;
             try {
               sb.append(`${client.users.find("id", data).tag} (${data})`);
             } catch (e) {
