@@ -991,6 +991,7 @@ client.on('message', async msg => {
       return msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "status fortnite") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (s.fortnite_api_key === ``) return msg.channel.send(lang.no_apikey);
       msg.channel.send(lang.status.checking);
       var status = "Unknown";
       var key,leng,data,time;
@@ -999,7 +1000,7 @@ client.on('message', async msg => {
       data = await fetch("https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status", {
         method: "POST",
         headers: {
-          "Authorization": "87be2f95e863a8c9e3dfd9e48873fe82",
+          "Authorization": s.fortnite_api_key,
           "content-type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
         },
         body: new FormData().append("username", "username")
@@ -1023,7 +1024,7 @@ client.on('message', async msg => {
       return msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      if (s.talk_apikey === ``) return msg.channel.send(lang.no_talkapikey);
+      if (s.talk_apikey === ``) return msg.channel.send(lang.no_apikey);
       var status = "？？？";
       var key,leng,data,time;
       var i = 0;
