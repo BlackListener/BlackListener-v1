@@ -1361,7 +1361,7 @@ client.on('message', async msg => {
             fs.writeFileSync(targetUserFile, JSON.stringify(userr, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
             if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
             msg.guild.ban(user2, { "reason": reason })
-              .then(user2 => console.log(`Banned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
+              .then(user2 => console.log(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
               .catch(console.error);
             return msg.channel.send(lang.banned);
           }
