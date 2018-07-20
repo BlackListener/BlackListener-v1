@@ -133,7 +133,7 @@ var guildSettings,
   voteCmd = (msg, split, settings) => {
   if (split[1] === `create` || split[1] === `start`) {
     if (!(/.*?\|.*?/gm).test(split[3])) return msg.channel.send(messages.votes.invalid_usage);
-    if (split[3].split(`|`).length > 10) return msg.channel.send(format(messages.votes.too_many_args, split[3].split(`|`).length - 1));
+    if (split[3].split(`|`).length > 10) return msg.channel.send(f(messages.votes.too_many_args, split[3].split(`|`).length - 1));
     let voteId = Math.random().toString(36).substr(2, 3);
     const guildId = msg.guild.id;
     while (true) {
@@ -577,7 +577,7 @@ client.on('message', async msg => {
   if (!settings.banned) {
     if (settings.banRep <= user.rep && settings.banRep != 0) {
       msg.guild.ban(msg.author)
-        .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+        .then(user => console.log(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
         .catch(console.error);
     }
   }
@@ -872,7 +872,7 @@ client.on('message', async msg => {
       var prefix = lang.sunknown,
         language = lang.sunknown,
         notifyRep = lang.unknownorzero,
-        banrep = lang.unknownorzero,
+        banRep = lang.unknownorzero,
         antispam = lang.disabled,
         banned = lang.no,
         disable_purge = lang.yes,
@@ -1457,9 +1457,9 @@ client.on('message', async msg => {
               .then(user2 => console.log(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
               .catch(console.error);
           }
-          localUser.rep = --localUser.rep;
+          user.rep = --user.rep;
           writeSettings(bansFile, ban, null, null, false);
-          writeSettings(userFile, localUser, null, null, false);
+          writeSettings(userFile, user, null, null, false);
           msg.channel.send(lang.unbanned);
         } else {
           msg.channel.send(lang.guild_unavailable);
@@ -1896,7 +1896,7 @@ client.on('message', async msg => {
       } else {
         user2 = client.users.find("username", args[1]);
       }
-      if (!user2) return msg.channel.send(invalid_args);
+      if (!user2) return msg.channel.send(lang.invalid_args);
       id = user2.id;
       if (mode === types.guild) {
         link = `${c.data_baseurl}/servers/${id}/messages.log`;
@@ -2064,7 +2064,7 @@ client.on("guildMemberAdd", member => {
       member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
     }
   } else {
-    msg.channel.send(f(lang.error, lang.errors.server_banned));
+    // msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
   if (serverSetting.autorole) {
     async function asyncprocess() {
