@@ -8,7 +8,6 @@ const f = require('string-format'), // Load & Initialize string-format
   fetch = require('node-fetch'),
   os = require('os'),
   DBL = require("dblapi.js"),
-  request = require("snekfetch"),
   randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
   exec = util.promisify(require('child_process').exec),
@@ -400,15 +399,10 @@ client.on('message', async msg => {
             args[2]
           ]
           var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-          randomPuppy(sub)
-              .then(url => {
-                  request.get(url).then(r => {
-                      fs.writeFile(`hentai.jpg`, r.body);
-                      let embed = new Discord.RichEmbed().attachFile(r.body);
-                      msg.channel.send(embed).catch(msg.channel.send);
-                      fs.unlink(`./hentai.jpg`);
-                })
-            })
+          const url = await randomPuppy(sub);
+          const bin = await fetch(url).then(res => res.buffer());
+          const embed = new Discord.RichEmbed().attachFile(bin);
+          msg.channel.send(embed).catch(msg.channel.send);
           return;
         }
       } else if (msg.content == settings.prefix + "image anime") {
@@ -429,15 +423,10 @@ client.on('message', async msg => {
             'AnimeFigures'
         ];
         var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new Discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`);
-                })
-            })
+        const url = await randomPuppy(sub);
+        const bin = await fetch(url).then(res => res.buffer());
+        const embed = new Discord.RichEmbed().attachFile(bin);
+        msg.channel.send(embed).catch(msg.channel.send);
         return;
       } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意" || msg.content === settings.prefix + "image r18") {
         msg.channel.send(lang.searching);
@@ -453,16 +442,11 @@ client.on('message', async msg => {
             'UHDnsfw'
         ];
         var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new Discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`);
-                    msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
-                })
-            })
+        const url = await randomPuppy(sub);
+        const bin = await fetch(url).then(res => res.buffer());
+        const embed = new Discord.RichEmbed().attachFile(bin);
+        msg.channel.send(embed).catch(msg.channel.send);
+        msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
         return;
       } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
         msg.channel.send(lang.searching);
@@ -495,15 +479,10 @@ client.on('message', async msg => {
             'adultgifs'
         ];
         var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body)
-                    let embed = new Discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`)
-                })
-            })
+        const url = await randomPuppy(sub);
+        const bin = await fetch(url).then(res => res.buffer());
+        let embed = new Discord.RichEmbed().attachFile(bin);
+        msg.channel.send(embed).catch(msg.channel.send);
         return;
       } else {
         let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
