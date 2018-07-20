@@ -1299,15 +1299,18 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "ban ") || msg.content === settings.prefix + "ban") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === ``) {
+        var once = false;
         var sb = new StringBuilder(`まだ誰もBANしていません`);
         require(`./data/bans.json`).forEach((data) => {
           if (!!data) { // Not not operator
-            var once = false;
-            if (!once) { sb.clear(); once = true; }
+            if (!once) {
+              sb.clear();
+              once = true;
+            }
             try {
-              sb.append(`${client.users.find("id", data).tag} (${data})`);
+              sb.append(`${client.users.find("id", data).tag} (${data})\n`);
             } catch (e) {
-              sb.append(`${data} (${lang.failed_to_get})`)
+              sb.append(`${data} (${lang.failed_to_get})\n`);
             }
           }
         });
