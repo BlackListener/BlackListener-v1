@@ -1303,7 +1303,7 @@ client.on('message', async msg => {
         require(`./data/bans.json`).forEach((data) => {
           if (!!data) { // Not not operator
             var once = false;
-            if (once) sb.clear(); once = true;
+            if (!once) { sb.clear(); once = true; }
             try {
               sb.append(`${client.users.find("id", data).tag} (${data})`);
             } catch (e) {
