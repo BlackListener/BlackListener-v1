@@ -199,5 +199,6 @@
   "wrong_banned": "間違ってBANされてしまいましたか？\nBlackListener(このBot)のDMに詳細を送ってください！",
   "musicbotis": "音楽ボットはここ！\n招待URL: {0}",
   "returned_invalid_response": "[ サーバーから無効なレスポンスが返されました ]",
-  "no_talkapikey": "APIキーが設定されていません。talkjaコマンドは使用できません。"
+  "no_talkapikey": "APIキーが設定されていません。talkjaコマンドは使用できません。",
+  "eval_error": "エラーが発生しました: {0}"
 }

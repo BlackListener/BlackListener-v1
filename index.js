@@ -47,7 +47,7 @@ const f = require('string-format'), // Load & Initialize string-format
   global = [],
   levenshtein = function (s1, s2) {if (s1 == s2) {return 0;}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len;}if (s2_len === 0) {return s1_len;}let split = false; try{split = !(`0`)[0];}catch(e){split = true;}if (split) {s1 = s1.split(``); s2 = s2.split(``);}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0, s2_idx = 0, cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx;}let char_s1 = ``, char_s2 = ``; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b;}if (c < m_min) {m_min = c;}v1[s1_idx + 1] = m_min;}const v_tmp = v0; v0 = v1; v1 = v_tmp;}return v0[s1_len];},
   commandList = [
-    {"body": `help`, "args": ``},
+    {"body": `help`, "args": ` [Command]`},
     {"body": `shutdown`, "args": ` [-f]`},
     {"body": `token`, "args": ``},
     {"body": `setprefix`, "args": ` <Prefix>`},
@@ -115,6 +115,7 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `mute`, "args": ` <User>`},
     {"body": `banned`, "args": ``},
     {"body": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
+    {"body": `eval`, "args": ` <program>`},
   ];
 var guildSettings,
   settings,
@@ -846,8 +847,9 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "docs") || msg.content === settings.prefix + "docs") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (args[1]) { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`)) } else { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands`)); }
-    } else if (msg.content === settings.prefix + "help") {
+    } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`));
       let prefix = settings.prefix,
         embed = new Discord.RichEmbed()
         .setTitle(f(lang.commands.title, c.version))
@@ -1953,6 +1955,23 @@ client.on('message', async msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const src = fs.createReadStream("latest.log", "utf8");
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
+    } else if (msg.content.startsWith(settings.prefix + "eval ")) {
+      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
+          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
+          var message = "";
+          var argumentarray = commandcut.split(" ");
+          argumentarray.forEach(function(element) {
+              message += element + " ";
+          }, this);
+      try {
+        const returned = client._eval(message); // _eval is PRIVATE method
+        console.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`);
+        msg.channel.send(`:ok_hand: (${returned})`);
+      } catch (e) {
+        console.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.eval_error} (${e})`);
+        msg.channel.send(f(lang.eval_error, e));
+      }
     } else if (msg.content === settings.prefix + "reload" || msg.content.startsWith(settings.prefix + "reload ")) {
       if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
