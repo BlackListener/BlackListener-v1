@@ -409,7 +409,7 @@ client.on('reconnecting', () => {
   console.error("Got Disconnected from Websocket, Reconnecting!");
 });
 
-if (!!process.argv[2]) {
+if (process.argv[2]) {
   if (process.argv[2] === `--travis-build`) {
     s = require("./travis.json");
     isTravisBuild = true;
@@ -466,7 +466,7 @@ if (!isTravisBuild) dbl = new DBL(s.dbl, client);
 
 client.on('message', async msg => {
  var attachments = new StringBuilder("Not found");
- if (!!msg.attachments.first())
+ if (msg.attachments.first())
  msg.attachments.forEach((attr) => {
    attachments.clear();
    attachments.append(`${attr.url}\n`);
@@ -886,25 +886,25 @@ client.on('message', async msg => {
         welcome_message = lang.disabled,
         muteSB = new StringBuilder(lang.no),
         ignoredChannelsSB = new StringBuilder(lang.no);
-      if (!!settings.prefix) prefix = `\`${settings.prefix}\``;
-      if (!!settings.language) language = `\`${settings.language}\``;
+      if (settings.prefix) prefix = `\`${settings.prefix}\``;
+      if (settings.language) language = `\`${settings.language}\``;
       if (settings.notifyRep) notifyRep = settings.notifyRep;
       if (settings.banRep) banRep = settings.banRep;
       if (settings.antispam) antispam = lang.enabled;
       if (settings.banned) banned = lang.yes;
       if (settings.disable_purge) disable_purge = lang.no;
-      if (!!settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`;
-      if (!!settings.global) global = `${lang.enabled} (${client.channels.get(settings.global).name})`;
+      if (settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`;
+      if (settings.global) global = `${lang.enabled} (${client.channels.get(settings.global).name})`;
       if (settings.group.length != 0) group = `${lang.yes} (${settings.group})`;
-      if (!!settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`;
+      if (settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`;
       if (settings.invite) invite = lang.allowed;
-      if (!!settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`;
-      if (!!settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`;
+      if (settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`;
+      if (settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`;
       if (settings.ignoredChannels.length != 0) {
         ignoredChannelsSB.clear();
         settings.ignoredChannels.forEach((data) => {
-          if (!!data) {
-            if (!!msg.guild.channels.get(data)) {
+          if (data) {
+            if (msg.guild.channels.get(data)) {
               ignoredChannelsSB.append(`<#${data}> (${msg.guild.channels.get(data).name}) (${data})\n`);
             } else {
               ignoredChannelsSB.append(`<#${data}> ${data} (${lang.failed_to_get})\n`);
@@ -916,7 +916,7 @@ client.on('message', async msg => {
       if (settings.mute.length != 0) {
         muteSB.clear();
         settings.mute.forEach((data) => {
-          if (!!data) {
+          if (data) {
             if (client.users.has(data)) {
               muteSB.append(`<@${data}> (${client.users.get(data).tag})\n`);
             } else {
@@ -1148,7 +1148,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "setignore")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       var channel, id;
-      if (!!msg.mentions.channels.first()) {
+      if (msg.mentions.channels.first()) {
         channel = msg.mentions.channels.first();
       } else if (/\D/.test(args[1])) {
         channel = msg.guild.channels.find("name", args[1]);
@@ -1181,7 +1181,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       var id, force = false;
-      if (!!msg.mentions.users.first()) {
+      if (msg.mentions.users.first()) {
         id = msg.mentions.users.first().id;
       } else {
         if (args[2] === `--force`) { force = true; id = lang.sunknown; }
@@ -1292,7 +1292,7 @@ client.on('message', async msg => {
         var once = false;
         var sb = new StringBuilder(`まだ誰もBANしていません`);
         require(`./data/bans.json`).forEach((data) => {
-          if (!!data) { // Not not operator
+          if (data) { // Not not operator
             if (!once) {
               sb.clear();
               once = true;
@@ -1320,7 +1320,7 @@ client.on('message', async msg => {
               reason;
             reason = args[2];
             if (args[3] !== `--force`) { if (~user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && ~user.bannedFromServer.indexOf(msg.guild.id) && ~user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned); }
-            if (!!msg.mentions.users.first()) {
+            if (msg.mentions.users.first()) {
               user2 = msg.mentions.users.first();
             } else if (/\d{18}/.test(args[1])) {
               args[1] = args[1].replace("<@", "").replace(">", "");
@@ -1882,7 +1882,7 @@ client.on('message', async msg => {
       if (!args[1]) {
         mode = types.guild;
         user2 = msg.guild;
-      } else if (!!msg.mentions.users.first()) { // true if found a mention
+      } else if (msg.mentions.users.first()) { // true if found a mention
         user2 = msg.mentions.users.first();
       } else if (/\D/gm.test(args[1])) {
         user2 = client.users.find("username", args[1]);
@@ -2065,7 +2065,7 @@ client.on("guildMemberAdd", member => {
   } else {
     msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
-  if (!!serverSetting.autorole) {
+  if (serverSetting.autorole) {
     async function asyncprocess() {
       let role = await member.guild.roles.get(serverSetting.autorole);
       member.addRole(role);
