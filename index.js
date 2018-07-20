@@ -1958,7 +1958,7 @@ client.on('message', async msg => {
       src.on('data', chunk => msg.author.send("```" + chunk + "```"));
     } else if (msg.content.startsWith(settings.prefix + "eval ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
+      if (msg.author.id !== "254794124744458241" || ~msg.content.indexOf("token")) return msg.channel.send(lang.noperm);
           var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
           var message = "";
           var argumentarray = commandcut.split(" ");
