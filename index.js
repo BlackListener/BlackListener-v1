@@ -846,6 +846,7 @@ client.on('message', async msg => {
       return await msg.channel.send(f(lang.musicbotis, s.musicinvite));
     } else if (msg.content.startsWith(settings.prefix + "docs") || msg.content === settings.prefix + "docs") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      msg.channel.send(lang.deprecated);
       if (args[1]) { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`)) } else { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands`)); }
     } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));

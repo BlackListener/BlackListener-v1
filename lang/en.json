@@ -198,5 +198,6 @@
   "musicbotis": "Music Bot is here!\nInvitation URL: {0}",
   "returned_invalid_response": "[ Returned invalid response from server ]",
   "no_talkapikey": "No api key found, cannot use talkja command.",
-  "eval_error": "An error occurred in eval: {0}"
+  "eval_error": "An error occurred in eval: {0}",
+  "deprecated": "This command is __**deprecated**__ .\nPlease find replacements in `help <Command>`."
 }
