@@ -14,7 +14,7 @@ const f = require('string-format'), // Load & Initialize string-format
   exec = util.promisify(require('child_process').exec),
   crypto = require("crypto"),
   StringBuilder = require('node-stringbuilder'), // String Builder
-  messages = require('./messages.json'), // Used for vote command
+ /* messages = require('./messages.json'), // Used for vote command */
   isWindows = process.platform === "win32", // windows: true, other: false
   FormData = require('form-data'),
   defaultSettings = {
@@ -69,14 +69,6 @@ const f = require('string-format'), // Load & Initialize string-format
     {"body": `purge gdel-msg`, "args": ``},
     {"body": `purge gdel-really`, "args": ``},
     {"body": `purge remake`, "args": ` <Channel>`},
-    {"body": `vote`, "args": ` [args]`},
-    {"body": `vote create`, "args": ` <Q> <A1...A10>`},
-    {"body": `vote start`, "args": ` <Q> <A1...A10>`},
-    {"body": `vote list`, "args": ``},
-    {"body": `vote info`, "args": ` <ID>`},
-    {"body": `vote end`, "args": ` <ID>`},
-    {"body": `vote close`, "args": ` <ID>`},
-    {"body": `vote vote`, "args": ` <ID> <Number>`},
     {"body": `togglepurge`, "args": ` [enable/disable]`},
     {"body": `dump`, "args": ` [guilds|users|channels|emojis|messages]`},
     {"body": `listemojis`, "args": ` [escape]`},
@@ -129,243 +121,7 @@ var guildSettings,
   isTravisBuild = false,
   plugins = {
     run: null,
-  },
-  voteCmd = (msg, split, settings) => {
-  if (split[1] === `create` || split[1] === `start`) {
-    if (!(/.*?\|.*?/gm).test(split[3])) return msg.channel.send(messages.votes.invalid_usage);
-    if (split[3].split(`|`).length > 10) return msg.channel.send(f(messages.votes.too_many_args, split[3].split(`|`).length - 1));
-    let voteId = Math.random().toString(36).substr(2, 3);
-    const guildId = msg.guild.id;
-    while (true) {
-      if (fs.existsSync(`./data/votes/${guildId}/${voteId}.json`)) {
-        voteId = Math.random().toString(36).substr(2, 5);
-        continue;
-      } else {
-        break;
-      }
-    }
-    const args2 = split[3].split(`|`),
-      voteFile = `./data/votes/${guildId}/${voteId}.json`,
-      voteData = {
-      "title": `${split[2]}`,
-      "data1": `${args2[0]}`,
-      "data2": `${args2[1]}`,
-      "data3": `${args2[2]}`,
-      "data4": `${args2[3]}`,
-      "data5": `${args2[4]}`,
-      "data6": `${args2[5]}`,
-      "data7": `${args2[6]}`,
-      "data8": `${args2[7]}`,
-      "data9": `${args2[8]}`,
-      "data10": `${args2[9]}`,
-      "closed": false,
-      "votes1": 0,
-      "votes2": 0,
-      "votes3": 0,
-      "votes4": 0,
-      "votes5": 0,
-      "votes6": 0,
-      "votes7": 0,
-      "votes8": 0,
-      "votes9": 0,
-      "votes10": 0,
-      "creator": `${msg.author.id}`
-    };
-    fs.writeFileSync(voteFile, JSON.stringify(voteData, null, 4), `utf8`, (err) => {
-  console.error(err);
-});
-   const vote = require(voteFile);
-   msg.channel.send(`\`${voteId}\`を作成しました。\n投票には、\`${settings.prefix}vote vote <ID> <数値>\`を入力してください。`);
-    const voteEmbed = new Discord.RichEmbed().
-      setTitle(`投票`).
-      addField(vote.data1, vote.votes1).
-      addField(vote.data2, vote.votes2);
-      if (vote.data3.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data3, vote.votes3);
-      }
-      if (vote.data4.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data4, vote.votes4);
-      }
-      if (vote.data5.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data5, vote.votes5);
-      }
-      if (vote.data6.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data6, vote.votes6);
-      }
-      if (vote.data7.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data7, vote.votes7);
-      }
-      if (vote.data8.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data8, vote.votes8);
-      }
-      if (vote.data9.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data9, vote.votes9);
-      }
-      if (vote.data10.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data10, vote.votes10);
-      }
-      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
-      setFooter(`閉じられているか: ${vote.closed}`);
-    msg.channel.send(voteEmbed);
-  } else if (split[1] === `close` || split[1] === `end`) {
-    if (!split[2]) return msg.channel.send(messages.wrong_args);
-    const voteId = split[2],
-      guildId = msg.guild.id,
-      voteFile = `./data/votes/${guildId}/${voteId}.json`;
-    if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
-    let vote = require(voteFile);
-    if (vote.creator === msg.author.id) {
-      vote.closed = true;
-      writeSettings(voteFile, vote, msg.channel, false);
-      vote = require(voteFile);
-      msg.channel.send(messages.votes.close);
-      const voteEmbed = new Discord.RichEmbed().
-        setTitle(`投票`).
-        addField(vote.data1, vote.votes1).
-        addField(vote.data2, vote.votes2);
-      if (vote.data3.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data3, vote.votes3);
-      }
-      if (vote.data4.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data4, vote.votes4);
-      }
-      if (vote.data5.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data5, vote.votes5);
-      }
-      if (vote.data6.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data6, vote.votes6);
-      }
-      if (vote.data7.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data7, vote.votes7);
-      }
-      if (vote.data8.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data8, vote.votes8);
-      }
-      if (vote.data9.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data9, vote.votes9);
-      }
-      if (vote.data10.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data10, vote.votes10);
-      }
-      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
-        setFooter(`閉じられているか: ${vote.closed}`);
-      msg.channel.send(voteEmbed);
-    } else {
-      msg.channel.send(messages.no_permission);
-    }
-  } else if (split[1] === `vote`) {
-    if (!split[3]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.prefix}vote list\`で見れます。`);
-    const voteId = split[2],
-      guildId = msg.guild.id,
-      voteFile = `./data/votes/${guildId}/${voteId}.json`;
-    if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
-    let vote = require(voteFile);
-    if (vote[`closed`] === true) return msg.channel.send(messages.votes.closed);
-    vote[`votes${split[3]}`] = ++vote[`votes${split[3]}`];
-    writeSettings(voteFile, vote, msg.channel, false);
-    vote = require(voteFile);
-    msg.channel.send(messages.votes.voted);
-    const voteEmbed = new Discord.RichEmbed().
-      setTitle(`投票`).
-      addField(vote.data1, vote.votes1).
-      addField(vote.data2, vote.votes2);
-      if (vote.data3.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data3, vote.votes3);
-      }
-      if (vote.data4.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data4, vote.votes4);
-      }
-      if (vote.data5.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data5, vote.votes5);
-      }
-      if (vote.data6.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data6, vote.votes6);
-      }
-      if (vote.data7.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data7, vote.votes7);
-      }
-      if (vote.data8.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data8, vote.votes8);
-      }
-      if (vote.data9.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data9, vote.votes9);
-      }
-      if (vote.data10.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data10, vote.votes10);
-      }
-      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
-      setFooter(`閉じられているか: ${vote.closed}`);
-    msg.channel.send(voteEmbed);
-  } else if (split[1] === `list`) {
-    const embed = new Discord.RichEmbed().
-      setTitle(`投票ID一覧`).
-      setTimestamp(),
-      sb = new StringBuilder(``),
-      items = fs.readdirSync(`./data/votes/${msg.guild.id}/`);
-    for (let i = 0; i < items.length; i++) {
-      sb.append(`${items[i].replace(`.json`, ``)}\n`);
-    }
-    embed.setDescription(sb.toString());
-    msg.channel.send(embed);
-  } else if (split[1] === `info`) {
-    if (!split[2]) return msg.channel.send(`${messages.wrong_args}\n投票IDを指定してください。一覧は\`${settings.prefix}vote list\`で見れます。`);
-    const voteId = split[2],
-      guildId = msg.guild.id,
-      voteFile = `./data/votes/${guildId}/${voteId}.json`;
-    if (!fs.existsSync(voteFile)) return msg.channel.send(messages.votes.no_file);
-    const vote = require(voteFile);
-    const voteEmbed = new Discord.RichEmbed().
-      setTimestamp().
-      setTitle(`投票`).
-      addField(vote.data1, vote.votes1).
-      addField(vote.data2, vote.votes2);
-      if (vote.data3.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data3, vote.votes3);
-      }
-      if (vote.data4.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data4, vote.votes4);
-      }
-      if (vote.data5.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data5, vote.votes5);
-      }
-      if (vote.data6.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data6, vote.votes6);
-      }
-      if (vote.data7.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data7, vote.votes7);
-      }
-      if (vote.data8.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data8, vote.votes8);
-      }
-      if (vote.data9.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data9, vote.votes9);
-      }
-      if (vote.data10.toString() !== `undefined`) {
-        voteEmbed.addField(vote.data10, vote.votes10);
-      }
-      voteEmbed.addField(`作成者`, client.users.get(vote.creator).toString()).
-      setFooter(`閉じられているか: ${vote.closed}`);
-    msg.channel.send(voteEmbed);
-  } else {
-      let sb = new StringBuilder(``),
-      cmd = `${split[0]} ${split[1]}`.replace(` undefined`, ``);
-      for(var i = 0; i < commandList.length; i++) {
-        commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
-      }
-      commandList.sort((a, b) => {
-        return a.no - b.no;
-      });
-      for (var i = 0; i < commandList.length; i++) {
-        if (commandList[i].no <= 2) {
-          sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
-        }
-      }
-      msg.channel.send(f(lang.no_command, cmd));
-      if (sb.toString() != ``) {
-        msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
-      }
-  }
-};
+  };
 
 function addRole(msg, rolename, isCommand = true, guildmember = null) {
       var role = null;
@@ -612,7 +368,6 @@ client.on('message', async msg => {
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
-    if (msg.content.startsWith(`${settings.prefix}vote `) || msg.content === `${settings.prefix}vote`) return voteCmd(msg, args, settings);
     if (msg.content.startsWith(c.prefix + "say ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
           var commandcut = msg.content.substr(`${settings.prefix}say `.length);
