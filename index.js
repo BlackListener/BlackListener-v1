@@ -4,7 +4,6 @@ const f = require('string-format'), // Load & Initialize string-format
   client = new Discord.Client(), // Initialize Client.
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
-  XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
   util = require('util'),
   fetch = require('node-fetch'),
   os = require('os'),
@@ -954,49 +953,42 @@ client.on('message', async msg => {
       var key,leng,data,time;
       var i = 0;
       const startTime = now();
-      var req = new XMLHttpRequest();
-      req.onreadystatechange = function() {
-        if(req.readyState == 4 && req.status == 200){
-          data = JSON.parse(req.responseText);
-          for (leng = data.length; i < data.length; i ++) {
-            for (key in data[i]){
-              switch (data[i][key]){
-                case 'green':
-                  status[i] = lang.status.ok;
-                  break;
-                case 'red':
-                  status[i] = lang.status.down;
-                  break;
-                case 'yellow':
-                  status[i] = lang.status.unstable;
-                  break;
-                default:
-                  status[i] = lang.status.unknown;
-                  break;
-              }
-            }
+      data = await fetch("https://status.mojang.com/check").then(res => res.json())
+      for (leng = data.length; i < data.length; i ++) {
+        for (key in data[i]){
+          switch (data[i][key]){
+            case 'green':
+              status[i] = lang.status.ok;
+              break;
+            case 'red':
+              status[i] = lang.status.down;
+              break;
+            case 'yellow':
+              status[i] = lang.status.unstable;
+              break;
+            default:
+              status[i] = lang.status.unknown;
+              break;
           }
-          const endTime = now();
-          time = endTime - startTime;
-          let embed = new Discord.RichEmbed()
-            .setTitle(lang.status.title)
-            .setURL("https://help.mojang.com")
-            .setColor([0,255,0])
-            .setFooter(f(lang.status.time, Math.floor(time)))
-            .setTimestamp()
-            .addField(lang.status.servers.minecraft, status[0])
-            .addField(lang.status.servers.sessionminecraft, status[1])
-            .addField(lang.status.servers.accountmojang, status[2])
-            .addField(lang.status.servers.authservermojang, status[3])
-            .addField(lang.status.servers.sessionservermojang, status[4])
-            .addField(lang.status.servers.apimojang, status[5])
-            .addField(lang.status.servers.texturesminecraft, status[6])
-            .addField(lang.status.servers.mojang, status[7]);
-          return msg.channel.send(embed);
         }
-      };
-      req.open("GET", "https://status.mojang.com/check", false);
-      req.send(null);
+      }
+      const endTime = now();
+      time = endTime - startTime;
+      let embed = new Discord.RichEmbed()
+        .setTitle(lang.status.title)
+        .setURL("https://help.mojang.com")
+        .setColor([0,255,0])
+        .setFooter(f(lang.status.time, Math.floor(time)))
+        .setTimestamp()
+        .addField(lang.status.servers.minecraft, status[0])
+        .addField(lang.status.servers.sessionminecraft, status[1])
+        .addField(lang.status.servers.accountmojang, status[2])
+        .addField(lang.status.servers.authservermojang, status[3])
+        .addField(lang.status.servers.sessionservermojang, status[4])
+        .addField(lang.status.servers.apimojang, status[5])
+        .addField(lang.status.servers.texturesminecraft, status[6])
+        .addField(lang.status.servers.mojang, status[7]);
+      return msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "status fortnite") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.channel.send(lang.status.checking);
@@ -1004,33 +996,31 @@ client.on('message', async msg => {
       var key,leng,data,time;
       var i = 0;
       const startTime = now();
-      var req = new XMLHttpRequest();
-      req.onreadystatechange = function() {
-        if(req.readyState == 4 && req.status == 200){
-          data = JSON.parse(req.responseText);
-          if (data.status === "UP") {
-            status = lang.status.ok;
-          } else if (data.status === "DOWN") {
-            status = lang.status.down;
-          } else {
-            status = lang.status.unknown;
-          }
-          const endTime = now();
-          time = endTime - startTime;
-          let embed = new Discord.RichEmbed()
-            .setTitle(lang.status.title)
-            .setURL("https://status.epicgames.com")
-            .setColor([0,255,0])
-            .setFooter(f(lang.status.time, Math.floor(time)))
-            .setTimestamp()
-            .addField(lang.status.servers.fortnite, status);
-          return msg.channel.send(embed);
-        }
-      };
-      req.open("POST", "https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status", false);
-      req.setRequestHeader("Authorization", "87be2f95e863a8c9e3dfd9e48873fe82");
-      req.setRequestHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-      req.send(new FormData().append("username", "username"));
+      data = await fetch("https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status", {
+        method: "POST",
+        headers: {
+          "Authorization": "87be2f95e863a8c9e3dfd9e48873fe82",
+          "content-type": "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
+        },
+        body: new FormData().append("username", "username")
+      }).then(res => res.json())
+      if (data.status === "UP") {
+        status = lang.status.ok;
+      } else if (data.status === "DOWN") {
+        status = lang.status.down;
+      } else {
+        status = lang.status.unknown;
+      }
+      const endTime = now();
+      time = endTime - startTime;
+      let embed = new Discord.RichEmbed()
+        .setTitle(lang.status.title)
+        .setURL("https://status.epicgames.com")
+        .setColor([0,255,0])
+        .setFooter(f(lang.status.time, Math.floor(time)))
+        .setTimestamp()
+        .addField(lang.status.servers.fortnite, status);
+      return msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (s.talk_apikey === ``) return msg.channel.send(lang.no_talkapikey);
