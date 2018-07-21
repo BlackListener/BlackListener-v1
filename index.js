@@ -8,7 +8,6 @@ const f = require('string-format'), // Load & Initialize string-format
   fetch = require('node-fetch'),
   os = require('os'),
   DBL = require("dblapi.js"),
-  request = require("snekfetch"),
   randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
   exec = util.promisify(require('child_process').exec),
@@ -386,35 +385,22 @@ client.on('message', async msg => {
           }, this);
           msg.delete(0).catch(console.error);
           return msg.channel.send(message);
-    } else if (msg.content.startsWith(settings.prefix + "image")) {
+    } else if (args[0] === 'image') {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      // const args = msg.content.slice(settings.prefix + "image".length).trim().split(/ +/g);
-      if (msg.content.startsWith(settings.prefix + "image custom")) {
-        if(/\s/gm.test(args[2])) {
-          msg.channel.send(lang.cannotspace);
-        } else {
-          msg.channel.send(lang.searching);
-          /* Normal NSFW */
-          if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
-          var subreddits = [
-            args[2]
-          ]
-          var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-          randomPuppy(sub)
-              .then(url => {
-                  request.get(url).then(r => {
-                      fs.writeFile(`hentai.jpg`, r.body);
-                      let embed = new Discord.RichEmbed().attachFile(r.body);
-                      msg.channel.send(embed).catch(msg.channel.send);
-                      fs.unlink(`./hentai.jpg`);
-                })
-            })
-          return;
-        }
-      } else if (msg.content == settings.prefix + "image anime") {
+      const sendImage = async list => {
         msg.channel.send(lang.searching);
         if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
-        var subreddits = [
+        const sub = list[Math.round(Math.random() * (list.length - 1))];
+        const url = await randomPuppy(sub);
+        const bin = await fetch(url).then(res => res.buffer());
+        const embed = new Discord.RichEmbed().attachFile(bin);
+        msg.channel.send(embed).catch(msg.channel.send);
+      }
+      if (args[1] === "custom") {
+        if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace);
+        return await sendImage([args[2]]);
+      } else if (args[1] === "anime") {
+        return await sendImage([
             'Undertale',
             'awwnime',
             'Gunime',
@@ -427,23 +413,39 @@ client.on('message', async msg => {
             'anime_irl',
             'animegifs',
             'AnimeFigures'
-        ];
-        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new Discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`);
-                })
-            })
-        return;
-      } else if (msg.content == settings.prefix + "image nsfw" || msg.content == settings.prefix + "image 閲覧注意" || msg.content === settings.prefix + "image r18") {
-        msg.channel.send(lang.searching);
-        /* Normal NSFW */
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
-        var subreddits = [
+        ]);
+      } else if (["nsfw", "閲覧注意", "r18"].includes(args[1])) {
+        if (args[1] !== "r18" && args[2] === "confirm") {
+          /* Confirm command! */
+          return await sendImage([
+              'HENTAI_GIF',
+              'hentai_irl',
+              'diskpic',
+              'cum',
+              'cumshot',
+              'anal',
+              'oral',
+              'teen',
+              'tits',
+              'milf',
+              'creampie',
+              'NSFW_Wallpapers',
+              'SexyWallpapers',
+              'HighResNSFW',
+              'nsfw_hd',
+              'UHDnsfw',
+              'NSFW_GIF',
+              'nsfw_gifs',
+              'porninfifteenseconds',
+              '60FPSPorn',
+              'porn_gifs',
+              'nsfw_Best_Porn_Gif',
+              'LipsThatFrip',
+              'adultgifs'
+          ]);
+        } else {
+          /* Normal NSFW */
+          await sendImage([
             'HENTAI_GIF',
             'hentai_irl',
             'NSFW_Wallpapers',
@@ -451,60 +453,9 @@ client.on('message', async msg => {
             'HighResNSFW',
             'nsfw_hd',
             'UHDnsfw'
-        ];
-        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body);
-                    let embed = new Discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`);
-                    msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
-                })
-            })
-        return;
-      } else if(msg.content.startsWith(settings.prefix + "image nsfw confirm") || msg.content.startsWith(settings.prefix + "image 閲覧注意 confirm")) {
-        msg.channel.send(lang.searching);
-        /* Confirm command! */
-        if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
-        var subreddits = [
-            'HENTAI_GIF',
-            'hentai_irl',
-            'diskpic',
-            'cum',
-            'cumshot',
-            'anal',
-            'oral',
-            'teen',
-            'tits',
-            'milf',
-            'creampie',
-            'NSFW_Wallpapers',
-            'SexyWallpapers',
-            'HighResNSFW',
-            'nsfw_hd',
-            'UHDnsfw',
-            'NSFW_GIF',
-            'nsfw_gifs',
-            'porninfifteenseconds',
-            '60FPSPorn',
-            'porn_gifs',
-            'nsfw_Best_Porn_Gif',
-            'LipsThatFrip',
-            'adultgifs'
-        ];
-        var sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        randomPuppy(sub)
-            .then(url => {
-                request.get(url).then(r => {
-                    fs.writeFile(`hentai.jpg`, r.body)
-                    let embed = new Discord.RichEmbed().attachFile(r.body);
-                    msg.channel.send(embed).catch(msg.channel.send);
-                    fs.unlink(`./hentai.jpg`)
-                })
-            })
-        return;
+          ]);
+          return msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
+        }
       } else {
         let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
