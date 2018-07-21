@@ -1697,10 +1697,6 @@ client.on('message', async msg => {
         set.language = args[1];
         writeSettings(guildSettings, set, msg.channel, "language");
       }
-    } else if (msg.content === settings.prefix + "log") {
-      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      const src = fs.createReadStream("latest.log", "utf8");
-      src.on('data', chunk => msg.author.send("```" + chunk + "```"));
     } else if (msg.content.startsWith(settings.prefix + "eval ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author.id !== "254794124744458241" || ~msg.content.indexOf("token")) return msg.channel.send(lang.noperm);
