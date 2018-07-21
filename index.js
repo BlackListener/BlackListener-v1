@@ -1793,10 +1793,7 @@ function getDateTime()
 
 try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
-    .catch(error);
-  function error(e) {
-    return console.error(e);
-  }
+    .catch(console.error);
 } catch (e) {
   console.error(e);
 }
