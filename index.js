@@ -1,7 +1,3 @@
-delete require.cache[require.resolve(`./lang/ja.json`)];
-delete require.cache[require.resolve(`./lang/en.json`)];
-delete require.cache[require.resolve(`./secret.json`)];
-delete require.cache[require.resolve(`./config.json`)];
 const f = require('string-format'), // Load & Initialize string-format
   now = require("performance-now"),
   Discord = require('discord.js'), // Load discord.js
