@@ -177,20 +177,20 @@ client.on('ready', async () => {
     }, 1800000);
   }
   if (!fs.existsSync(`./plugins`)) {
-    mkdirp(`./plugins`);
+    mkdirp.sync(`./plugins`);
   }
   plugins.run = function () {
     return false; // always return false, not implemented!
   }
   // plugins.files.push();
   if (!fs.existsSync(`./data`)) {
-    mkdirp(`./data`);
+    mkdirp.sync(`./data`);
   }
   if (!fs.existsSync(`./data/servers`)) {
-    mkdirp(`./data/servers`);
+    mkdirp.sync(`./data/servers`);
   }
   if (!fs.existsSync(`./data/users`)) {
-    mkdirp(`./data/users`);
+    mkdirp.sync(`./data/users`);
   }
   bansFile = `./data/bans.json`;
   if (!fs.existsSync(bansFile)) {
@@ -231,11 +231,11 @@ client.on('message', async msg => {
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
   console.info(`Creating data directory: ./data/users/${msg.author.id}`);
-  mkdirp(`./data/users/${msg.author.id}`);
+  mkdirp.sync(`./data/users/${msg.author.id}`);
  }
  if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
   console.info(`Creating data directory: ./data/servers/${msg.guild.id}`);
-  mkdirp(`./data/servers/${msg.guild.id}`);
+  mkdirp.sync(`./data/servers/${msg.guild.id}`);
  }
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
@@ -1729,13 +1729,13 @@ client.on("guildMemberAdd", member => {
     userFile = `./data/users/${member.user.id}/config.json`;
     if (!fs.existsSync(userFile)) {
       console.log(`Creating ${userFile}`);
-      mkdirp(`./data/users/${member.user.id}`);
+      mkdirp.sync(`./data/users/${member.user.id}`);
       fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
     }
     serverFile = `./data/servers/${member.guild.id}/config.json`;
     if (!fs.existsSync(serverFile)) {
       console.log(`Creating ${serverFile}`);
-      mkdirp(`./data/servers/${member.guild.id}`);
+      mkdirp.sync(`./data/servers/${member.guild.id}`);
       fs.writeFileSync(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
     }
   } catch (e) {
@@ -1743,13 +1743,13 @@ client.on("guildMemberAdd", member => {
       userFile = `./data/users/${member.user.id}/config.json`;
       if (!fs.existsSync(userFile)) {
         console.log(`Creating ${userFile}`);
-        mkdirp(`./data/users/${member.user.id}`);
+        mkdirp.sync(`./data/users/${member.user.id}`);
         fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
       }
       serverFile = `./data/servers/${member.guild.id}/config.json`;
       if (!fs.existsSync(serverFile)) {
         console.log(`Creating ${serverFile}`);
-        mkdirp(`./data/servers/${member.guild.id}`);
+        mkdirp.sync(`./data/servers/${member.guild.id}`);
         fs.writeFileSync(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
       }
     } catch (e) {console.error(e);}
