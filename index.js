@@ -80,10 +80,10 @@ const f = require('string-format'),
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
-    {"body": `image nsfw`, "args": ` confirm`},
-    {"body": `image r18`, "args": ` confirm`},
-    {"body": `image 閲覧注意`, "args": ` confirm`},
-    {"body": `image`, "args": ` nsfw|r18|閲覧注意 confirm`},
+    {"body": `image nsfw`, "args": ``},
+    {"body": `image r18`, "args": ``},
+    {"body": `image 閲覧注意`, "args": ``},
+    {"body": `image`, "args": ` nsfw|r18|閲覧注意`},
     {"body": `image custom`, "args": ` <subreddit>`},
     {"body": `didyouknow`, "args": ` <User:Guild> [:server]`},
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
@@ -373,6 +373,7 @@ client.on('message', async msg => {
         ]);
       } else if (["nsfw", "閲覧注意", "r18"].includes(args[1])) {
         if (args[1] !== "r18" && args[2] === "confirm") {
+          msg.channel.send(lang.deprecated);
           /* Confirm command! */
           return await sendImage([
               'HENTAI_GIF',
