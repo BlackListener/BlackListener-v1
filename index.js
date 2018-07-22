@@ -2,7 +2,6 @@ const f = require('string-format'),
   now = require("performance-now"),
   Discord = require('discord.js'),
   client = new Discord.Client(),
-  c = require('./config.json'),
   mkdirp = require('mkdirp'),
   {promisify} = require('util'),
   fetch = require('node-fetch'),
@@ -16,6 +15,7 @@ const f = require('string-format'),
   isWindows = process.platform === "win32",
   FormData = require('form-data'),
   util = require('./util'),
+  c = util.readJSON('./config.json'),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -166,11 +166,11 @@ client.on('reconnecting', () => {
 
 if (process.argv[2]) {
   if (process.argv[2] === `--travis-build`) {
-    s = require("./travis.json");
+    s = util.readJSON("./travis.json");
     isTravisBuild = true;
   }
 }
-if (!s) s = require("./secret.json");
+if (!s) s = util.readJSON("./secret.json");
 client.on('ready', async () => {
   if (!isTravisBuild) {
     setInterval(() => {
@@ -235,14 +235,14 @@ client.on('message', async msg => {
    await util.initJSON(guildSettings, defaultSettings)
   } catch (e) {console.error(e);}
  }
- user = require(userFile);
- settings = require(guildSettings);
+ user = util.readJSON(userFile);
+ settings = util.readJSON(guildSettings);
  if (msg.channel.id !== settings.excludeLogging) {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
- bans = require(bansFile);
+ bans = util.readJSON(bansFile);
   if (!settings.mute) {
     settings.mute = [];
     await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
@@ -292,7 +292,7 @@ client.on('message', async msg => {
   }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
   if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
-  lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
+  lang = util.readJSON(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Auto-ban
   if (!settings.banned) {
@@ -746,7 +746,7 @@ client.on('message', async msg => {
         if (/\d{19,}/.test(args[1])) return await msg.channel.send(lang.invalid_args);
         if (!client.guilds.get(args[1])) return await msg.channel.send(lang.invalid_args);
         var sb = new StringBuilder(``);
-        const thatGuild = require(`./data/servers/${client.guilds.get(args[1]).id}/config.json`);
+        const thatGuild = util.readJSON(`./data/servers/${client.guilds.get(args[1]).id}/config.json`);
         if (!thatGuild.invite) return await msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`));
         try {
           if (args[2] === `create`) {
@@ -887,7 +887,7 @@ client.on('message', async msg => {
         sb3 = new StringBuilder(`BANされていません`),
         isBot = lang.no;
       try {
-        userConfig = require(`./data/users/${id}/config.json`);
+        userConfig = util.readJSON(`./data/users/${id}/config.json`);
         user2 = client.users.get(id);
       } catch (e) {
         console.error(e);
@@ -944,7 +944,7 @@ client.on('message', async msg => {
       if (!args[1] || args[1] === ``) {
         var once = false;
         var sb = new StringBuilder(`まだ誰もBANしていません`);
-        require(`./data/bans.json`).forEach((data) => {
+        util.readJSON(`./data/bans.json`).forEach((data) => {
           if (data) {
             if (!once) {
               sb.clear();
@@ -1377,8 +1377,8 @@ client.on('message', async msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       return msg.channel.send(lang.create_global);
       if (args[1] === `remove`) {
-        let global_servers = require('./data/global_servers.json'),
-          global_channels = require('./data/global_channels.json'),
+        let global_servers = util.readJSON('./data/global_servers.json'),
+          global_channels = util.readJSON('./data/global_channels.json'),
           localSettings = settings;
         delete global_servers[args[1]];
         delete global_channels[settings.global];
@@ -1394,8 +1394,8 @@ client.on('message', async msg => {
         }
         console.log(id);
         var localSettings = settings,
-          global_servers = require('./data/global_servers.json'),
-          global_channels = require('./data/global_channels.json');
+          global_servers = util.readJSON('./data/global_servers.json'),
+          global_channels = util.readJSON('./data/global_channels.json');
         if (/\d{18,}/.test(args[2])) {
           localSettings.global = args[2];
         } else {
@@ -1688,8 +1688,8 @@ client.on("guildMemberAdd", async (member) => {
       await util.initJSON(serverFile, defaultSettings)
     } catch (e) {console.error(e);}
   }
-  let serverSetting = require(serverFile);
-  let userSetting = require(userFile);
+  let serverSetting = util.readJSON(serverFile);
+  let userSetting = util.readJSON(userFile);
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
@@ -1717,7 +1717,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("messageUpdate", async (old, msg) => {
- settings = require(`./data/servers/${msg.guild.id}/config.json`);
+ settings = util.readJSON(`./data/servers/${msg.guild.id}/config.json`);
  if (msg.channel.id !== settings.excludeLogging) {
   let parentName;
   if (msg.channel.parent) {
