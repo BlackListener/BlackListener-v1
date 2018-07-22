@@ -4,17 +4,18 @@ const f = require('string-format'), // Load & Initialize string-format
   client = new Discord.Client(), // Initialize Client.
   c = require('./config.json'), // Config file
   mkdirp = require('mkdirp'), // Make Directory
-  util = require('util'),
+  {promisify} = require('util'),
   fetch = require('node-fetch'),
   os = require('os'),
   DBL = require("dblapi.js"),
   randomPuppy = require("random-puppy"),
   fsp = require('fs').promises, // File System
-  exec = util.promisify(require('child_process').exec),
+  exec = promisify(require('child_process').exec),
   crypto = require("crypto"),
   StringBuilder = require('node-stringbuilder'), // String Builder
   isWindows = process.platform === "win32", // windows: true, other: false
   FormData = require('form-data'),
+  util = require('./util'),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -184,16 +185,9 @@ client.on('ready', async () => {
   }
   // plugins.files.push();
   bansFile = `./data/bans.json`;
-  if (!existsSync(bansFile)) {
-    console.log(`Creating ${bansFile}`);
-    fsp.writeFile(bansFile, JSON.stringify(defaultBans, null, 4), 'utf8').catch(console.error);
-  }
-  if (!existsSync(`./data/global_servers.json`)) {
-    fsp.writeFile(`./data/global_servers.json`, JSON.stringify(global, null, 4), 'utf8').catch(console.error);
-  }
-  if (!existsSync(`./data/global_channels.json`)) {
-    fsp.writeFile(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8').catch(console.error);
-  }
+  util.initJSON(bansFile, defaultBans).catch(console.error);
+  util.initJSON(`./data/global_servers.json`, global).catch(console.error);
+  util.initJSON(`./data/global_channels.json`, global).catch(console.error);
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
@@ -231,25 +225,13 @@ client.on('message', async msg => {
  }
  try {
   userFile = `./data/users/${msg.author.id}/config.json`;
-  if (!existsSync(userFile)) {
-   console.log(`Creating ${userFile}`);
-   await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4));
-  }
-  if (!existsSync(guildSettings)) {
-   console.log(`Creating ${guildSettings}`);
-   await fsp.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4));
-  }
+  await util.initJSON(userFile, defaultUser)
+  await util.initJSON(guildSettings, defaultSettings)
  } catch (e) {
   try {
    userFile = `./data/users/${msg.author.id}/config.json`;
-   if (!existsSync(userFile)) {
-    console.log(`Creating ${userFile}`);
-    await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8');
-   }
-   if (!existsSync(guildSettings)) {
-    console.log(`Creating ${guildSettings}`);
-    await fsp.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8');
-   }
+   await util.initJSON(userFile, defaultUser)
+   await util.initJSON(guildSettings, defaultSettings)
   } catch (e) {console.error(e);}
  }
  user = require(userFile);
@@ -1030,7 +1012,7 @@ client.on('message', async msg => {
             if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
             if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
             let ban = bans,
-              userr = existsSync(`./data/users/${user2.id}/config.json`) ? require(`./data/users/${user2.id}/config.json`) : defaultUser;
+              userr = util.readJSON(`./data/users/${user2.id}/config.json`, defaultUser)
             userr.bannedFromServerOwner.push(msg.guild.ownerID);
             userr.bannedFromServer.push(msg.guild.id);
             userr.bannedFromUser.push(msg.author.id);
@@ -1483,7 +1465,7 @@ client.on('message', async msg => {
         });
       } else if (args[1] === `messages`) {
         if (args[2] === `size`) {
-          const {size} = await fs.statSync(`./data/servers/${msg.guild.id}/messages.log`)
+          const {size} = await fsp.stat(`./data/servers/${msg.guild.id}/messages.log`)
           msg.channel.send(f(lang.logsize, size / 1000000.0));
         } else if (args[2] === `delete`) {
           fsp.writeFile(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8');
@@ -1715,27 +1697,15 @@ client.on("guildMemberAdd", async (member) => {
   await mkdirp(`./data/servers/${member.guild.id}`);
   try {
     userFile = `./data/users/${member.user.id}/config.json`;
-    if (!existsSync(userFile)) {
-      console.log(`Creating ${userFile}`);
-      await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8');
-    }
+    await util.initJSON(userFile, defaultUser)
     serverFile = `./data/servers/${member.guild.id}/config.json`;
-    if (!existsSync(serverFile)) {
-      console.log(`Creating ${serverFile}`);
-      await fsp.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8');
-    }
+    await util.initJSON(serverFile, defaultSettings)
   } catch (e) {
     try {
       userFile = `./data/users/${member.user.id}/config.json`;
-      if (!existsSync(userFile)) {
-        console.log(`Creating ${userFile}`);
-        await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8');
-      }
+      await util.initJSON(userFile, defaultUser)
       serverFile = `./data/servers/${member.guild.id}/config.json`;
-      if (!existsSync(serverFile)) {
-        console.log(`Creating ${serverFile}`);
-        await fsp.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8');
-      }
+      await util.initJSON(serverFile, defaultSettings)
     } catch (e) {console.error(e);}
   }
   let serverSetting = require(serverFile);
@@ -1786,17 +1756,6 @@ function getDateTime()
       date.getMonth() + 1,
       date.getDate()
     ].join( '/' ) + ' ' + date.toLocaleTimeString();
-}
-
-async function existsSync(path)
-{
-  return false;
-  try {
-    await fsp.access(path);
-  } catch (e) {
-    return false;
-  }
-  return true;
 }
 
 try {
