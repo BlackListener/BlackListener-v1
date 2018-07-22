@@ -1,19 +1,19 @@
-const f = require('string-format'), // Load & Initialize string-format
+const f = require('string-format'),
   now = require("performance-now"),
-  Discord = require('discord.js'), // Load discord.js
-  client = new Discord.Client(), // Initialize Client.
-  c = require('./config.json'), // Config file
-  mkdirp = require('mkdirp'), // Make Directory
+  Discord = require('discord.js'),
+  client = new Discord.Client(),
+  c = require('./config.json'),
+  mkdirp = require('mkdirp'),
   {promisify} = require('util'),
   fetch = require('node-fetch'),
   os = require('os'),
   DBL = require("dblapi.js"),
   randomPuppy = require("random-puppy"),
-  fsp = require('fs').promises, // File System
+  fsp = require('fs').promises,
   exec = promisify(require('child_process').exec),
   crypto = require("crypto"),
-  StringBuilder = require('node-stringbuilder'), // String Builder
-  isWindows = process.platform === "win32", // windows: true, other: false
+  StringBuilder = require('node-stringbuilder'),
+  isWindows = process.platform === "win32",
   FormData = require('form-data'),
   util = require('./util'),
   defaultSettings = {
@@ -33,8 +33,8 @@ const f = require('string-format'), // Load & Initialize string-format
     welcome_channel: null,
     welcome_message: null,
     mute: [],
-  }, // Default settings, by config.json.
-  defaultBans = [], // Default settings for bans.json, blank.
+  },
+  defaultBans = [],
   defaultUser = {
     rep: 0,
     bannedFromServer: [],
@@ -116,7 +116,7 @@ var guildSettings,
   user,
   serverMessagesFile,
   userMessagesFile,
-  s, // Tokens, and invite link.
+  s,
   isTravisBuild = false,
   plugins = {
     run: null,
@@ -130,7 +130,7 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
         if (!guildmember) {
           member = msg.guild.members.get(msg.author.id);
         } else {
-          member = msg.guild.members.get(guildmember.id); // Expected GuildMember
+          member = msg.guild.members.get(guildmember.id);
         }
         if (isCommand) {
           if (member.roles.has(role.id)) {
@@ -211,8 +211,7 @@ client.on('message', async msg => {
    attachments.append(`${attr.url}\n`);
  });
  if (msg.system || msg.author.bot) return;
- //if (msg.channel instanceof Discord.DMChannel && !msg.author.bot) { msg.author.send(`:ok_hand:`); return await client.users.get("254794124744458241").send(`Message: ${msg.content}\nSender: ${msg.author.tag} (${msg.author.id})\nSent at: ${msg.createdAt}\nAttachment: ${attachments.toString()}`); }
-  if (!msg.guild) return msg.channel.send("Currently not supported DM");
+ if (!msg.guild) return msg.channel.send("Currently not supported DM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  await mkdirp(`./data/users/${msg.author.id}`);
  await mkdirp(`./data/servers/${msg.guild.id}`);
@@ -305,9 +304,6 @@ client.on('message', async msg => {
   }
   // --- End of Auto-ban
 
-  // --- Begin of Global chat [ - - - Removed feature, I will create new system - - - ]
-  // --- End of Global chat
-
   // --- Begin of Anti-spam
   if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id) && !msg.author.bot) {
     var status = false;
@@ -319,17 +315,6 @@ client.on('message', async msg => {
     }
   }
   // --- End of Anti-spam
-
-  // Disboard Fucking Message [Permanently Disabled, Never seeing this on Discord.]
-  /*
-  if (msg.content === "!disboard bump") {
-    let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png")
-      .setTitle("ディスボード: Discordサーバー掲示板").setURL("https://disboard.org/")
-      .setColor([140,190,210]).setDescription("下げました :thumbsdown:\nディスボードでチェックしてね: https://disboard.org");
-    msg.channel.send(embed);
-  }
-  */
-  //
 
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
@@ -734,9 +719,9 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       let unsavedSettings = settings;
-      if (args[1] === "enable") { // enable purge command
+      if (args[1] === "enable") {
         unsavedSettings.disable_purge = false;
-      } else if (args[1] === "disable") { // disable purge command
+      } else if (args[1] === "disable") {
         unsavedSettings.disable_purge = true;
       } else {
         if (settings.disable_purge) {
@@ -855,9 +840,9 @@ client.on('message', async msg => {
       } else {
         if (args[2] === `--force`) { force = true; id = lang.sunknown; }
         if (!force) {
-          if (/\D/gm.test(args[1])) { // True if including any 'not digits'
+          if (/\D/gm.test(args[1])) {
             try {
-              id = client.users.find("username", args[1]).id; // Find user
+              id = client.users.find("username", args[1]).id;
             } catch (e) {
               try {
                 id = msg.guild.members.find("nickname", args[1]).id;
@@ -870,7 +855,6 @@ client.on('message', async msg => {
             try {
               id = client.users.get(args[1]).id;
             } catch (e) {
-              // do not use {e}
               try {
                 id = client.users.find("username", args[1]).id;
               } catch (e) {
@@ -961,7 +945,7 @@ client.on('message', async msg => {
         var once = false;
         var sb = new StringBuilder(`まだ誰もBANしていません`);
         require(`./data/bans.json`).forEach((data) => {
-          if (data) { // Not not operator
+          if (data) {
             if (!once) {
               sb.clear();
               once = true;
@@ -1000,7 +984,6 @@ client.on('message', async msg => {
                 user2 = client.users.get(args[1]);
               }
             } else {
-              // msg.guild.fetchMembers(args[1]);
               user2 = client.users.find("username", args[1]);
               if (!user2) user2 = client.users.get(args[1]);
             }
@@ -1156,7 +1139,6 @@ client.on('message', async msg => {
           return item !== user2;
         });
         settings.mute = result;
-        // delete settings.mute[user2];
       } else if (args[2] === `mute`) {
         settings.mute.push(user2);
       } else {
@@ -1191,7 +1173,8 @@ client.on('message', async msg => {
           }
         });
         writeSettings(guildSettings, settings, msg.channel, "group");
-      }*/ // under construction
+      }*/
+      // under construction
     } else if (msg.content.startsWith(settings.prefix + "setnick ") || msg.content.startsWith(settings.prefix + "setnickname ") || msg.content.startsWith(settings.prefix + "resetnick ") || msg.content === settings.prefix + "resetnick") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (args[0] === "resetnick") {
@@ -1351,9 +1334,6 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "role ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      //if (msg.author.id === "254794124744458241") {
-      //  if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
-      //}
       if (!msg.mentions.members.first()) {
         addRole(msg, args[1], true);
       } else {
@@ -1552,7 +1532,7 @@ client.on('message', async msg => {
       if (!args[1]) {
         mode = types.guild;
         user2 = msg.guild;
-      } else if (msg.mentions.users.first()) { // true if found a mention
+      } else if (msg.mentions.users.first()) {
         user2 = msg.mentions.users.first();
       } else if (/\D/gm.test(args[1])) {
         user2 = client.users.find("username", args[1]);
@@ -1626,7 +1606,7 @@ client.on('message', async msg => {
               message += element + " ";
           }, this);
       try {
-        const returned = client._eval(message); // _eval is PRIVATE method
+        const returned = client._eval(message);
         console.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`);
         msg.channel.send(`:ok_hand: (${returned})`);
       } catch (e) {
@@ -1718,8 +1698,6 @@ client.on("guildMemberAdd", async (member) => {
     } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
       member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
     }
-  } else {
-    // msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
   if (serverSetting.autorole) {
     (async function () {
