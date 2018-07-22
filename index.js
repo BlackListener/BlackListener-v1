@@ -176,32 +176,23 @@ client.on('ready', async () => {
       dbl.postStats(client.guilds.size, null, null);
     }, 1800000);
   }
-  if (!fs.existsSync(`./plugins`)) {
-    mkdirp.sync(`./plugins`);
-  }
+  await mkdirp(`./plugins`);
+  await mkdirp(`./data/servers`);
+  await mkdirp(`./data/users`);
   plugins.run = function () {
     return false; // always return false, not implemented!
   }
   // plugins.files.push();
-  if (!fs.existsSync(`./data`)) {
-    mkdirp.sync(`./data`);
-  }
-  if (!fs.existsSync(`./data/servers`)) {
-    mkdirp.sync(`./data/servers`);
-  }
-  if (!fs.existsSync(`./data/users`)) {
-    mkdirp.sync(`./data/users`);
-  }
   bansFile = `./data/bans.json`;
-  if (!fs.existsSync(bansFile)) {
-    console.log(`Creating ${bans}`);
-    fs.writeFileSync(bansFile, JSON.stringify(defaultBans, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  if (!existsSync(bansFile)) {
+    console.log(`Creating ${bansFile}`);
+    fs.writeFile(bansFile, JSON.stringify(defaultBans, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  if (!fs.existsSync(`./data/global_servers.json`)) {
-    fs.writeFileSync(`./data/global_servers.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  if (!existsSync(`./data/global_servers.json`)) {
+    fs.writeFile(`./data/global_servers.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  if (!fs.existsSync(`./data/global_channels.json`)) {
-    fs.writeFileSync(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  if (!existsSync(`./data/global_channels.json`)) {
+    fs.writeFile(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
   client.setTimeout(() => {
@@ -229,14 +220,8 @@ client.on('message', async msg => {
  //if (msg.channel instanceof Discord.DMChannel && !msg.author.bot) { msg.author.send(`:ok_hand:`); return await client.users.get("254794124744458241").send(`Message: ${msg.content}\nSender: ${msg.author.tag} (${msg.author.id})\nSent at: ${msg.createdAt}\nAttachment: ${attachments.toString()}`); }
   if (!msg.guild) return msg.channel.send("Currently not supported DM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
- if (!fs.existsSync(`./data/users/${msg.author.id}`)) {
-  console.info(`Creating data directory: ./data/users/${msg.author.id}`);
-  mkdirp.sync(`./data/users/${msg.author.id}`);
- }
- if (!fs.existsSync(`./data/servers/${msg.guild.id}`)) {
-  console.info(`Creating data directory: ./data/servers/${msg.guild.id}`);
-  mkdirp.sync(`./data/servers/${msg.guild.id}`);
- }
+ await mkdirp(`./data/users/${msg.author.id}`);
+ await mkdirp(`./data/servers/${msg.guild.id}`);
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
  let parentName;
@@ -246,38 +231,38 @@ client.on('message', async msg => {
  }
  try {
   userFile = `./data/users/${msg.author.id}/config.json`;
-  if (!fs.existsSync(userFile)) {
+  if (!existsSync(userFile)) {
    console.log(`Creating ${userFile}`);
-   fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+   fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
-  if (!fs.existsSync(guildSettings)) {
+  if (!existsSync(guildSettings)) {
    console.log(`Creating ${guildSettings}`);
-   fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+   fs.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
  } catch (e) {
   try {
    userFile = `./data/users/${msg.author.id}/config.json`;
-   if (!fs.existsSync(userFile)) {
+   if (!existsSync(userFile)) {
     console.log(`Creating ${userFile}`);
-    fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
    }
-   if (!fs.existsSync(guildSettings)) {
+   if (!existsSync(guildSettings)) {
     console.log(`Creating ${guildSettings}`);
-    fs.writeFileSync(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
    }
   } catch (e) {console.error(e);}
  }
  user = require(userFile);
  settings = require(guildSettings);
  if (msg.channel.id !== settings.excludeLogging) {
-  fs.appendFileSync(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
-  fs.appendFileSync(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
+  fs.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`, (err) => {if(err)console.error(err);});
+  fs.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`, (err) => {if(err)console.error(err);});
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
  bans = require(bansFile);
   if (!settings.mute) {
     settings.mute = [];
-    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   // --- Begin of Mute
   if (~settings.mute.indexOf(msg.author.id) && !settings.banned) {
@@ -287,39 +272,39 @@ client.on('message', async msg => {
  if (!msg.author.bot) {
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
-    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!user.bannedFromServerOwner) {
     user.bannedFromServerOwner = [];
-    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!user.bannedFromUser) {
     user.bannedFromUser = [];
-    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!user.probes) {
     user.probes = [];
-    fs.writeFileSync(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!settings.group) {
     settings.group = [];
-    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!settings.excludeLogging) {
     settings.excludeLogging = ``;
-    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!settings.invite) {
     settings.invite = false;
-    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!settings.welcome_channel) {
     settings.welcome_channel = null;
-    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   if (!settings.welcome_message) {
     settings.welcome_message = null;
-    fs.writeFileSync(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   }
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
@@ -462,7 +447,6 @@ client.on('message', async msg => {
         return msg.channel.send(embed).catch(console.error);
       }
     } else if (msg.content === settings.prefix + "info") {
-     async function diskinfo() {
         const graph = `Device          Total  Used Avail Use% Mounted on\n`;
         var o1 = `利用不可`,
           o2 = ``,
@@ -489,9 +473,7 @@ client.on('message', async msg => {
           .addField(lang.info.createdBy, `${client.users.get("254794124744458241").tag} (${client.users.get("254794124744458241").id})`)
           .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)`)
           .setFooter(`Sent by ${msg.author.tag}`);
-        msg.channel.send(embed);
-      }
-      return diskinfo();
+      return msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "encode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       let cmd = settings.prefix + "encode ";
@@ -1045,7 +1027,7 @@ client.on('message', async msg => {
             if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
             if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
             let ban = bans,
-              userr = fs.existsSync(`./data/users/${user2.id}/config.json`) ? require(`./data/users/${user2.id}/config.json`) : defaultUser;
+              userr = existsSync(`./data/users/${user2.id}/config.json`) ? require(`./data/users/${user2.id}/config.json`) : defaultUser;
             userr.bannedFromServerOwner.push(msg.guild.ownerID);
             userr.bannedFromServer.push(msg.guild.id);
             userr.bannedFromUser.push(msg.author.id);
@@ -1053,8 +1035,8 @@ client.on('message', async msg => {
             ban.push(user2.id);
             userr.rep = ++userr.rep;
             targetUserFile = `./data/users/${user2.id}/config.json`;
-            fs.writeFileSync(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            fs.writeFileSync(targetUserFile, JSON.stringify(userr, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            fs.writeFile(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            fs.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
             if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
             msg.guild.ban(user2, { "reason": reason })
               .then(user2 => console.log(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
@@ -1500,7 +1482,7 @@ client.on('message', async msg => {
         if (args[2] === `size`) {
           msg.channel.send(f(lang.logsize, fs.statSync(`./data/servers/${msg.guild.id}/messages.log`).size / 1000000.0));
         } else if (args[2] === `delete`) {
-          fs.writeFileSync(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+          fs.writeFile(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
         }
         nowrite = true;
         if (c.data_baseurl == "" || !c.data_baseurl) {
@@ -1532,7 +1514,7 @@ client.on('message', async msg => {
         .setDescription(f(lang.dumped, link));
       msg.channel.send(embed);
       if (!nowrite) {
-        fs.writeFileSync(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
+        fs.writeFile(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
       }
     } else if (msg.content.startsWith(settings.prefix + "setwelcome ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -1601,10 +1583,10 @@ client.on('message', async msg => {
       id = user2.id;
       if (mode === types.guild) {
         link = `${c.data_baseurl}/servers/${id}/messages.log`;
-        fs.writeFileSync(`./data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+        fs.writeFile(`./data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
       } else if (mode === types.user) {
         link = `${c.data_baseurl}/users/${id}/messages.log`;
-        fs.writeFileSync(`./data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+        fs.writeFile(`./data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
       } else {
         await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified));
         throw new TypeError("Types are not specified or invalid type.");
@@ -1717,40 +1699,38 @@ process.on('SIGINT', function() {
 });
 
 function writeSettings(settingsFile, wsettings, channel, config, message = true) {
-  fs.writeFileSync(settingsFile, JSON.stringify(wsettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  fs.writeFile(settingsFile, JSON.stringify(wsettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
   if (message) {
     channel.send(f(lang.setconfig, config));
   }
 }
 
-client.on("guildMemberAdd", member => {
+client.on("guildMemberAdd", async (member) => {
   var serverFile;
+  await mkdirp(`./data/users/${member.user.id}`, (err) => {if(err)console.error(err);});
+  await mkdirp(`./data/servers/${member.guild.id}`, (err) => {if(err)console.error(err);});
   try {
     userFile = `./data/users/${member.user.id}/config.json`;
-    if (!fs.existsSync(userFile)) {
+    if (!existsSync(userFile)) {
       console.log(`Creating ${userFile}`);
-      mkdirp.sync(`./data/users/${member.user.id}`);
-      fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+      fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
     }
     serverFile = `./data/servers/${member.guild.id}/config.json`;
-    if (!fs.existsSync(serverFile)) {
+    if (!existsSync(serverFile)) {
       console.log(`Creating ${serverFile}`);
-      mkdirp.sync(`./data/servers/${member.guild.id}`);
-      fs.writeFileSync(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+      fs.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
     }
   } catch (e) {
     try {
       userFile = `./data/users/${member.user.id}/config.json`;
-      if (!fs.existsSync(userFile)) {
+      if (!existsSync(userFile)) {
         console.log(`Creating ${userFile}`);
-        mkdirp.sync(`./data/users/${member.user.id}`);
-        fs.writeFileSync(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+        fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
       }
       serverFile = `./data/servers/${member.guild.id}/config.json`;
-      if (!fs.existsSync(serverFile)) {
+      if (!existsSync(serverFile)) {
         console.log(`Creating ${serverFile}`);
-        mkdirp.sync(`./data/servers/${member.guild.id}`);
-        fs.writeFileSync(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+        fs.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
       }
     } catch (e) {console.error(e);}
   }
@@ -1768,12 +1748,11 @@ client.on("guildMemberAdd", member => {
     // msg.channel.send(f(lang.error, lang.errors.server_banned));
   }
   if (serverSetting.autorole) {
-    async function asyncprocess() {
+    (async function () {
       let role = await member.guild.roles.get(serverSetting.autorole);
       member.addRole(role);
       console.log(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
-    }
-    asyncprocess();
+    }) ();
   }
   if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
     let message = serverSetting.welcome_message.replace("{user}", `<@${member.user.id}>`);
@@ -1793,6 +1772,11 @@ function getDateTime()
       date.getMonth() + 1,
       date.getDate()
     ].join( '/' ) + ' ' + date.toLocaleTimeString();
+}
+
+async function existsSync(path)
+{
+  return await fs.access(path, fs.constants.F_OK, (err) => {return err;});
 }
 
 try {
