@@ -9,8 +9,7 @@ const f = require('string-format'), // Load & Initialize string-format
   os = require('os'),
   DBL = require("dblapi.js"),
   randomPuppy = require("random-puppy"),
-  fs = require('fs'), // File System
-  fsp = fs.promises, // File System
+  fsp = require('fs').promises, // File System
   exec = util.promisify(require('child_process').exec),
   crypto = require("crypto"),
   StringBuilder = require('node-stringbuilder'), // String Builder
@@ -1484,7 +1483,8 @@ client.on('message', async msg => {
         });
       } else if (args[1] === `messages`) {
         if (args[2] === `size`) {
-          msg.channel.send(f(lang.logsize, fs.statSync(`./data/servers/${msg.guild.id}/messages.log`).size / 1000000.0));
+          const {size} = await fsp.stat(`./data/servers/${msg.guild.id}/messages.log`)
+          msg.channel.send(f(lang.logsize, size / 1000000.0));
         } else if (args[2] === `delete`) {
           fsp.writeFile(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8');
         }
