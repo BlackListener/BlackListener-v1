@@ -10,6 +10,7 @@ const f = require('string-format'), // Load & Initialize string-format
   DBL = require("dblapi.js"),
   randomPuppy = require("random-puppy"),
   fs = require('fs'), // File System
+  fsp = fs.promises, // File System
   exec = util.promisify(require('child_process').exec),
   crypto = require("crypto"),
   StringBuilder = require('node-stringbuilder'), // String Builder
@@ -186,13 +187,13 @@ client.on('ready', async () => {
   bansFile = `./data/bans.json`;
   if (!existsSync(bansFile)) {
     console.log(`Creating ${bansFile}`);
-    fs.writeFile(bansFile, JSON.stringify(defaultBans, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fsp.writeFile(bansFile, JSON.stringify(defaultBans, null, 4), 'utf8').catch(console.error);
   }
   if (!existsSync(`./data/global_servers.json`)) {
-    fs.writeFile(`./data/global_servers.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fsp.writeFile(`./data/global_servers.json`, JSON.stringify(global, null, 4), 'utf8').catch(console.error);
   }
   if (!existsSync(`./data/global_channels.json`)) {
-    fs.writeFile(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    fsp.writeFile(`./data/global_channels.json`, JSON.stringify(global, null, 4), 'utf8').catch(console.error);
   }
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
   client.setTimeout(() => {
@@ -233,36 +234,36 @@ client.on('message', async msg => {
   userFile = `./data/users/${msg.author.id}/config.json`;
   if (!existsSync(userFile)) {
    console.log(`Creating ${userFile}`);
-   await fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+   await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4));
   }
   if (!existsSync(guildSettings)) {
    console.log(`Creating ${guildSettings}`);
-   await fs.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+   await fsp.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4));
   }
  } catch (e) {
   try {
    userFile = `./data/users/${msg.author.id}/config.json`;
    if (!existsSync(userFile)) {
     console.log(`Creating ${userFile}`);
-    await fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8');
    }
    if (!existsSync(guildSettings)) {
     console.log(`Creating ${guildSettings}`);
-    await fs.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    await fsp.writeFile(guildSettings, JSON.stringify(defaultSettings, null, 4), 'utf8');
    }
   } catch (e) {console.error(e);}
  }
  user = require(userFile);
  settings = require(guildSettings);
  if (msg.channel.id !== settings.excludeLogging) {
-  fs.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`, (err) => {if(err)console.error(err);});
-  fs.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`, (err) => {if(err)console.error(err);});
+  fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+  fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
  bans = require(bansFile);
   if (!settings.mute) {
     settings.mute = [];
-    await fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+    await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
   }
   // --- Begin of Mute
   if (~settings.mute.indexOf(msg.author.id) && !settings.banned) {
@@ -307,8 +308,8 @@ client.on('message', async msg => {
     settings.welcome_message = null;
     serverChanged = true;
   }
-  if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-  if (serverChanged) await fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
+  if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
   lang = require(`./lang/${settings.language}.json`); // Processing message is under of this
 
   // --- Begin of Auto-ban
@@ -1038,8 +1039,8 @@ client.on('message', async msg => {
             ban.push(user2.id);
             userr.rep = ++userr.rep;
             targetUserFile = `./data/users/${user2.id}/config.json`;
-            await fs.writeFile(bansFile, JSON.stringify(ban, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
-            await fs.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+            await fsp.writeFile(bansFile, JSON.stringify(ban, null, 4), 'utf8');
+            await fsp.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8');
             if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
             msg.guild.ban(user2, { "reason": reason })
               .then(user2 => console.log(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
@@ -1485,7 +1486,7 @@ client.on('message', async msg => {
         if (args[2] === `size`) {
           msg.channel.send(f(lang.logsize, fs.statSync(`./data/servers/${msg.guild.id}/messages.log`).size / 1000000.0));
         } else if (args[2] === `delete`) {
-          fs.writeFile(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+          fsp.writeFile(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8');
         }
         nowrite = true;
         if (c.data_baseurl == "" || !c.data_baseurl) {
@@ -1517,7 +1518,7 @@ client.on('message', async msg => {
         .setDescription(f(lang.dumped, link));
       msg.channel.send(embed);
       if (!nowrite) {
-        fs.writeFile(`./dump.txt`, sb.toString(), 'utf8', (err) => {if(err){console.error(err);}});
+        fsp.writeFile(`./dump.txt`, sb.toString(), 'utf8');
       }
     } else if (msg.content.startsWith(settings.prefix + "setwelcome ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -1586,10 +1587,10 @@ client.on('message', async msg => {
       id = user2.id;
       if (mode === types.guild) {
         link = `${c.data_baseurl}/servers/${id}/messages.log`;
-        fs.writeFile(`./data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+        fsp.writeFile(`./data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8');
       } else if (mode === types.user) {
         link = `${c.data_baseurl}/users/${id}/messages.log`;
-        fs.writeFile(`./data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8', (err) => {if(err){console.error(err);}});
+        fsp.writeFile(`./data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8');
       } else {
         await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified));
         throw new TypeError("Types are not specified or invalid type.");
@@ -1702,7 +1703,7 @@ process.on('SIGINT', function() {
 });
 
 function writeSettings(settingsFile, wsettings, channel, config, message = true) {
-  fs.writeFile(settingsFile, JSON.stringify(wsettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+  fsp.writeFile(settingsFile, JSON.stringify(wsettings, null, 4), 'utf8');
   if (message) {
     channel.send(f(lang.setconfig, config));
   }
@@ -1710,30 +1711,30 @@ function writeSettings(settingsFile, wsettings, channel, config, message = true)
 
 client.on("guildMemberAdd", async (member) => {
   var serverFile;
-  await mkdirp(`./data/users/${member.user.id}`, (err) => {if(err)console.error(err);});
-  await mkdirp(`./data/servers/${member.guild.id}`, (err) => {if(err)console.error(err);});
+  await mkdirp(`./data/users/${member.user.id}`);
+  await mkdirp(`./data/servers/${member.guild.id}`);
   try {
     userFile = `./data/users/${member.user.id}/config.json`;
     if (!existsSync(userFile)) {
       console.log(`Creating ${userFile}`);
-      await fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+      await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8');
     }
     serverFile = `./data/servers/${member.guild.id}/config.json`;
     if (!existsSync(serverFile)) {
       console.log(`Creating ${serverFile}`);
-      await fs.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+      await fsp.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8');
     }
   } catch (e) {
     try {
       userFile = `./data/users/${member.user.id}/config.json`;
       if (!existsSync(userFile)) {
         console.log(`Creating ${userFile}`);
-        await fs.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+        await fsp.writeFile(userFile, JSON.stringify(defaultUser, null, 4), 'utf8');
       }
       serverFile = `./data/servers/${member.guild.id}/config.json`;
       if (!existsSync(serverFile)) {
         console.log(`Creating ${serverFile}`);
-        await fs.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8', (err) => {if(err){console.error(err);}});
+        await fsp.writeFile(serverFile, JSON.stringify(defaultSettings, null, 4), 'utf8');
       }
     } catch (e) {console.error(e);}
   }
@@ -1780,7 +1781,12 @@ function getDateTime()
 async function existsSync(path)
 {
   return false;
-  // return await fs.access(path, fs.constants.F_OK, (err) => {return err;});
+  try {
+    await fsp.access(path);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }
 
 try {
@@ -1789,3 +1795,4 @@ try {
 } catch (e) {
   console.error(e);
 }
+process.on('unhandledRejection', console.error);
