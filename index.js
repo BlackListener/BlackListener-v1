@@ -1,3 +1,7 @@
+delete require.cache[require.resolve(`./lang/ja.json`)];
+delete require.cache[require.resolve(`./lang/en.json`)];
+delete require.cache[require.resolve(`./secret.json`)];
+delete require.cache[require.resolve(`./config.json`)];
 const f = require('string-format'), // Load & Initialize string-format
   now = require("performance-now"),
   Discord = require('discord.js'), // Load discord.js
@@ -434,6 +438,7 @@ client.on('message', async msg => {
         return msg.channel.send(embed).catch(console.error);
       }
     } else if (msg.content === settings.prefix + "info") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
         const graph = `Device          Total  Used Avail Use% Mounted on\n`;
         var o1 = `利用不可`,
           loadavg = `利用不可`,
@@ -691,7 +696,7 @@ client.on('message', async msg => {
       return msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      if (s.talk_apikey === ``) return msg.channel.send(lang.no_apikey);
+      if (s.talk_apikey == `` || s.talk_apikey == `undefined` || !s.talk_apikey) return msg.channel.send(lang.no_apikey);
       var status = "？？？";
       var key,leng,data,time;
       var i = 0;
@@ -1746,8 +1751,10 @@ client.on("messageUpdate", async (old, msg) => {
   } else {
    parentName = ``;
   }
-  let editUserMessagesFile = `./data/users/${msg.author.id}/editedMessages.log`;
-  let editserverMessagesFile = `./data/servers/${msg.guild.id}/editedMessages.log`;
+  await mkdirp(`./data/users/${msg.author.id}`);
+  await mkdirp(`./data/servers/${msg.guild.id}`);
+  const editUserMessagesFile = `./data/users/${msg.author.id}/editedMessages.log`;
+  const editServerMessagesFile = `./data/servers/${msg.guild.id}/editedMessages.log`;
   fsp.appendFile(editUserMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
   fsp.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
  }
