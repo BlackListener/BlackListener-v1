@@ -218,10 +218,12 @@ client.on('message', async msg => {
  await mkdirp(`./data/servers/${msg.guild.id}`);
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
- let parentName;
  var userFile;
+ let parentName;
  if (msg.channel.parent) {
   parentName = msg.channel.parent.name;
+ } else {
+  parentName = ``;
  }
  try {
   userFile = `./data/users/${msg.author.id}/config.json`;
@@ -434,14 +436,11 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "info") {
         const graph = `Device          Total  Used Avail Use% Mounted on\n`;
         var o1 = `利用不可`,
-          o2 = ``,
           loadavg = `利用不可`,
           invite = s.inviteme;
         if (!isWindows) {
           var { stdout, stderr } = await exec("df -h | grep /dev/sda");
-          o1 = ":thinking:"; // stdout;
-          var { stdout, stderr } = await exec("df -h | grep /dev/sda");
-          o2 = stdout;
+          o1 = stdout;
           loadavg = Math.floor(os.loadavg()[0] * 100) / 100;
         }
         let embed = new Discord.RichEmbed()
@@ -450,7 +449,7 @@ client.on('message', async msg => {
           .setColor([0,255,0])
           .addField(lang.info.memory, `${lang.info.memory_max}: ${Math.round(os.totalmem() / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_usage}: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100}MB\n${lang.info.memory_free}: ${Math.round(os.freemem() / 1024 / 1024 * 100) / 100}MB`)
           .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}\n${lang.info.cpu_model}: ${os.cpus()[0].model}\n${lang.info.cpu_speed}: ${os.cpus()[0].speed}`)
-          .addField(lang.info.disk, `${graph}${o1}${o2}`)
+          .addField(lang.info.disk, `${graph}${o1}`)
           .addField(lang.info.platform, `${os.platform}`)
           .addField(lang.info.loadavg, `${loadavg}`)
           .addField(lang.info.servers, `${client.guilds.size}`)
@@ -1741,8 +1740,14 @@ client.on("guildMemberAdd", async (member) => {
 client.on("messageUpdate", async (old, msg) => {
  settings = require(`./data/servers/${msg.guild.id}/config.json`);
  if (msg.channel.id !== settings.excludeLogging) {
-  editUserMessagesFile = `./data/users/${msg.author.id}/editedMessages.log`;
-  editserverMessagesFile = `./data/servers/${msg.guild.id}/editedMessages.log`;
+  let parentName;
+  if (msg.channel.parent) {
+   parentName = msg.channel.parent.name;
+  } else {
+   parentName = ``;
+  }
+  let editUserMessagesFile = `./data/users/${msg.author.id}/editedMessages.log`;
+  let editserverMessagesFile = `./data/servers/${msg.guild.id}/editedMessages.log`;
   fsp.appendFile(editUserMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
   fsp.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
  }
@@ -1764,4 +1769,4 @@ try {
 } catch (e) {
   console.error(e);
 }
-process.on('unhandledRejection', console.error);
+//process.on('unhandledRejection', console.error);
