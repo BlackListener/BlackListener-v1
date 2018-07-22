@@ -7,7 +7,7 @@ module.exports = {
   async initJSON(path, json) {
     if (await this.exists(path)) return // <- exists is not defined (x3) [fixed] but.............
     console.log(`Creating ${path}`);
-    return await this.writeJSON(path.toString(), json)
+    return await this.writeJSON(path, json)
   },
   async readJSON(path, default2) { // <- Unexpected token `default` [fixed]
     const data = await fs.readFile(path, 'utf8').catch(() => {})
