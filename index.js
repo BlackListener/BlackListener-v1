@@ -1768,6 +1768,16 @@ client.on("guildMemberAdd", async (member) => {
   }
 });
 
+client.on("messageUpdate", async (old, msg) => {
+ settings = require(`./data/servers/${msg.guild.id}/config.json`);
+ if (msg.channel.id !== settings.excludeLogging) {
+  editUserMessagesFile = `./data/users/${msg.author.id}/editedMessages.log`;
+  editserverMessagesFile = `./data/servers/${msg.guild.id}/editedMessages.log`;
+  fsp.appendFile(editUserMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
+  fsp.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
+ }
+});
+
 function getDateTime()
 {
     var date = new Date();
