@@ -954,7 +954,7 @@ client.on('message', async msg => {
       if (!args[1] || args[1] === ``) {
         var once = false;
         var sb = new StringBuilder(`まだ誰もBANしていません`);
-        await util.readJSON(`./data/bans.json`).forEach((data) => {
+        require(`./data/bans.json`).forEach((data) => {
           if (data) {
             if (!once) {
               sb.clear();
