@@ -1002,20 +1002,22 @@ client.on('message', async msg => {
             } else {
               attach = msg.attachments.first().url;
             }
-            if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
-            if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
-            let userr = await util.readJSON(`./data/users/${user2.id}/config.json`, defaultUser)
+            if (msg.mentions.users.first()) { user = msg.mentions.users.first(); }
+            if (args[3] !== `--force`) { if (!user2) { return msg.channel.send(lang.invalid_user); } }
+            let userid;
+            if (args[3] === `--force`) { userid = args[1]; } else { userid = user2.id; }
+            let userr = await util.readJSON(`./data/users/${userid}/config.json`, defaultUser);
             userr.bannedFromServerOwner.push(msg.guild.ownerID);
             userr.bannedFromServer.push(msg.guild.id);
             userr.bannedFromUser.push(msg.author.id);
             userr.probes.push(attach);
-            bans.push(user2.id);
+            bans.push(userid);
             userr.rep = ++userr.rep;
             targetUserFile = `./data/users/${user2.id}/config.json`;
             await fsp.writeFile(bansFile, JSON.stringify(bans, null, 4), 'utf8');
             await fsp.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8');
-            if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
-            msg.guild.ban(user2, { "reason": reason })
+            if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned);
+            msg.guild.ban(userid, { "reason": reason })
               .then(user2 => console.log(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
               .catch(console.error);
             return msg.channel.send(lang.banned);
