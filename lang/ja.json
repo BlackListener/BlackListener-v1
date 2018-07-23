@@ -196,5 +196,6 @@
   "returned_invalid_response": "[ サーバーから無効なレスポンスが返されました ]",
   "no_apikey": "APIキーが設定されていません。コマンドは使用できません。",
   "eval_error": "エラーが発生しました: {0}",
-  "deprecated": ":exclamation: このコマンドは __**非推奨**__ です。\n代わりのコマンドがあるか `help <コマンド>` で確認してください。 :exclamation:"
+  "deprecated": ":exclamation: このコマンドは __**非推奨**__ です。\n代わりのコマンドがあるか `help <コマンド>` で確認してください。 :exclamation:",
+  "invalidVersion": ":x: 無効なバージョンが指定されました。"
 }

@@ -83,7 +83,7 @@ const f = require('string-format'),
     {"body": `image nsfw`, "args": ` confirm`},
     {"body": `image r18`, "args": ` confirm`},
     {"body": `image 閲覧注意`, "args": ` confirm`},
-    {"body": `image`, "args": ` nsfw|r18|閲覧注意 confirm`},
+    {"body": `image`, "args": ` nsfw|r18|閲覧注意`},
     {"body": `image custom`, "args": ` <subreddit>`},
     {"body": `didyouknow`, "args": ` <User:Guild> [:server]`},
     {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
@@ -105,6 +105,7 @@ const f = require('string-format'),
     {"body": `mute`, "args": ` <User>`},
     {"body": `banned`, "args": ``},
     {"body": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
+    {"body": `releases`, "args": ` [version]`},
     {"body": `eval`, "args": ` <program>`},
   ];
 var guildSettings,
@@ -496,10 +497,22 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "music") || msg.content.startsWith(settings.prefix + "play")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       return await msg.channel.send(f(lang.musicbotis, s.musicinvite));
-    } else if (msg.content.startsWith(settings.prefix + "docs") || msg.content === settings.prefix + "docs") {
+    } else if (msg.content.startsWith(settings.prefix + "docs ") || msg.content === settings.prefix + "docs") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.channel.send(lang.deprecated);
       if (args[1]) { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`)) } else { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands`)); }
+    } else if (msg.content.startsWith(settings.prefix + "releases ") || msg.content === settings.prefix + "releases") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      const versions = [
+        "1.1",
+        "1.1.1",
+      ];
+      if (!~versions.indexOf(args[1])) return msg.channel.send(lang.invalidVersion);
+      if (args[1]) {
+        return await msg.channel.send(f(`http://go.blacklistener.tk/go/release_notes/${args[1]}`));
+      } else {
+        return await msg.channel.send(f(`http://go.blacklistener.tk/go/history`));
+      }
     } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`));
