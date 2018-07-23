@@ -1013,7 +1013,7 @@ client.on('message', async msg => {
             userr.probes.push(attach);
             bans.push(userid);
             userr.rep = ++userr.rep;
-            targetUserFile = `./data/users/${user2.id}/config.json`;
+            targetUserFile = `./data/users/${userid}/config.json`;
             await fsp.writeFile(bansFile, JSON.stringify(bans, null, 4), 'utf8');
             await fsp.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8');
             if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned);
