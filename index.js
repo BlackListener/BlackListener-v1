@@ -243,7 +243,7 @@ client.on('message', async msg => {
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
- bans = util.readJSON(bansFile);
+ bans = await util.readJSON(bansFile);
   if (!settings.mute) {
     settings.mute = [];
     await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
@@ -1007,16 +1007,15 @@ client.on('message', async msg => {
             }
             if (!msg.mentions.users.first()) { /* Dummy */ } else { user = msg.mentions.users.first(); }
             if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
-            let ban = bans,
-              userr = await util.readJSON(`./data/users/${user2.id}/config.json`, defaultUser)
+            let userr = await util.readJSON(`./data/users/${user2.id}/config.json`, defaultUser)
             userr.bannedFromServerOwner.push(msg.guild.ownerID);
             userr.bannedFromServer.push(msg.guild.id);
             userr.bannedFromUser.push(msg.author.id);
             userr.probes.push(attach);
-            ban.push(user2.id);
+            bans.push(user2.id);
             userr.rep = ++userr.rep;
             targetUserFile = `./data/users/${user2.id}/config.json`;
-            await fsp.writeFile(bansFile, JSON.stringify(ban, null, 4), 'utf8');
+            await fsp.writeFile(bansFile, JSON.stringify(bans, null, 4), 'utf8');
             await fsp.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8');
             if (!msg.guild.members.has(user2.id)) return msg.channel.send(lang.banned);
             msg.guild.ban(user2, { "reason": reason })
