@@ -44,7 +44,7 @@ Server's prefix can be show up in mention the bot.
 | setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします。 | Yes |
 | deletemsg \[User\] | Delete messages, default is guild messages file. | メッセージを削除します。デフォルトはギルドのメッセージログです。 | Yes |
 | setgroup | __Incomplete feature__ | __未完成の機能__ | Yes |
-| image \<nsfw\|閲覧注意\|r18\> \[confirm\] | Send nsfw images... very very be careful. | NSFW画像を送信します...かなりかなり気を付けてくださいね。 | No |
+| image \<nsfw\|閲覧注意\|r18\> | Send nsfw images... very very be careful. | NSFW画像を送信します...かなりかなり気を付けてくださいね。 | No |
 | image anime | Send anime images. | アニメ画像を送信します。 | No |
 | say \<Message\> | Send message by bot. | ボットからメッセージを送信します。 | No |
 | sayd \<Message\> | Send message and delete `sayd` message. | メッセージを送信、さらに送信された元のメッセージを削除します。 | No |

@@ -80,9 +80,6 @@ const f = require('string-format'),
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
-    {"body": `image nsfw`, "args": ` confirm`},
-    {"body": `image r18`, "args": ` confirm`},
-    {"body": `image 閲覧注意`, "args": ` confirm`},
     {"body": `image`, "args": ` nsfw|r18|閲覧注意`},
     {"body": `image custom`, "args": ` <subreddit>`},
     {"body": `didyouknow`, "args": ` <User:Guild> [:server]`},
@@ -373,8 +370,9 @@ client.on('message', async msg => {
             'AnimeFigures'
         ]);
       } else if (["nsfw", "閲覧注意", "r18"].includes(args[1])) {
-        if (args[1] !== "r18" && args[2] === "confirm") {
+        if (args[2] === "confirm") {
           /* Confirm command! */
+          msg.channel.send(lang.deprecated);
           return await sendImage([
               'HENTAI_GIF',
               'hentai_irl',
@@ -412,7 +410,6 @@ client.on('message', async msg => {
             'nsfw_hd',
             'UHDnsfw'
           ]);
-          return msg.channel.send("Greater NSFWはこちら: `" + settings.prefix + "image nsfw confirm`");
         }
       } else {
         let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
@@ -529,7 +526,7 @@ client.on('message', async msg => {
         .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
         .addField(`${prefix}invite [GuildID] [create] or [allow/deny]`, lang.commands.invite)
         .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
-        .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [confirm|confirm| |subreddit]`, lang.commands.image)
+        .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [subreddit]`, lang.commands.image)
         .addField(`${prefix}lookup <User>`, lang.lookup.desc)
         .addField(lang.commands.others, lang.commands.athere);
       return await msg.channel.send(embed);
