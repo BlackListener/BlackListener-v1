@@ -246,7 +246,7 @@ client.on('message', async msg => {
     await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
   }
   // --- Begin of Mute
-  if (~settings.mute.indexOf(msg.author.id) && !settings.banned) {
+  if (settings.mute.contains(msg.author.id) && !settings.banned) {
     msg.delete(0);
   }
   // --- End of Mute
@@ -270,6 +270,10 @@ client.on('message', async msg => {
   }
   if (!settings.group) {
     settings.group = [];
+    serverChanged = true;
+  }
+  if (!settings.banned) {
+    settings.banned = false;
     serverChanged = true;
   }
   if (!settings.excludeLogging) {
@@ -303,7 +307,7 @@ client.on('message', async msg => {
   // --- End of Auto-ban
 
   // --- Begin of Anti-spam
-  if (settings.antispam && !~settings.ignoredChannels.indexOf(msg.channel.id) && !msg.author.bot) {
+  if (settings.antispam && !settings.ignoredChannels.contains(msg.channel.id) && !msg.author.bot) {
     var status = false;
     if (/(\S)\1{15,}/gm.test(msg.content)) {
       status = true;
@@ -504,7 +508,7 @@ client.on('message', async msg => {
         "1.1",
         "1.1.1",
       ];
-      if (!~versions.indexOf(args[1])) return msg.channel.send(lang.invalidVersion);
+      if (!versions.contains(args[1])) return msg.channel.send(lang.invalidVersion);
       if (args[1]) {
         return await msg.channel.send(f(`http://go.blacklistener.tk/go/release_notes/${args[1]}`));
       } else {
@@ -982,7 +986,7 @@ client.on('message', async msg => {
               targetUserFile,
               reason;
             reason = args[2];
-            if (args[3] !== `--force`) { if (~user.bannedFromServerOwner.indexOf(msg.guild.ownerID) && ~user.bannedFromServer.indexOf(msg.guild.id) && ~user.bannedFromUser.indexOf(msg.author.id)) return msg.channel.send(lang.already_banned); }
+            if (args[3] !== `--force`) { if (user.bannedFromServerOwner.contains(msg.guild.ownerID) && user.bannedFromServer.contains(msg.guild.id) && user.bannedFromUser.contains(msg.author.id)) return msg.channel.send(lang.already_banned); }
             if (msg.mentions.users.first()) {
               user2 = msg.mentions.users.first();
             } else if (/\d{18}/.test(args[1])) {
@@ -1145,7 +1149,7 @@ client.on('message', async msg => {
         }
       }
       if (!user2 || user2 === msg.author.id || user2 === client.user.id) return msg.channel.send(lang.invalid_args);
-      if (~settings.mute.indexOf(user2) || args[2] === `unmute`) {
+      if (settings.mute.contains(user2) || args[2] === `unmute`) {
         var result = settings.mute.filter(function( item ) {
           return item !== user2;
         });
@@ -1171,7 +1175,7 @@ client.on('message', async msg => {
         return msg.channel.send(lang.invalid_args);
       } else if (args[1] === "add") {
         if (/\D/gm.test(args[1])) return msg.channel.send(lang.invalid_args);
-        if (!~settings.group.indexOf(args[1])) {
+        if (!settings.group.contains(args[1])) {
           settings.group.push(args[1]);
           writeSettings(guildSettings, settings, msg.channel, "group");
         } else {
@@ -1315,7 +1319,7 @@ client.on('message', async msg => {
         if (!user2) user2 = msg.guild.channels.get(args[2]);
         id = user2 ? user2.id : `:poop:`;
         if (id === `:poop:`) return msg.channel.send(lang.invalid_args);
-        if (~localSettings.ignoredChannels.indexOf(id)) {
+        if (localSettings.ignoredChannels.contains(id)) {
           delete localSettings.ignoredChannels[localSettings.ignoredChannels.indexOf(id)];
           writeSettings(guildSettings, localSettings, null, null, false);
           msg.channel.send(lang.antispam.ignore_enabled);
@@ -1337,7 +1341,7 @@ client.on('message', async msg => {
         let localSettings = settings,
           id = msg.mentions.channels.first().id;
         if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
-        if (~settings.ignoredChannels.indexOf(id)) {
+        if (settings.ignoredChannels.contains(id)) {
           msg.channel.send(f(lang.antispam.status2, off));
         } else {
           msg.channel.send(f(lang.antispam.status2, on));
@@ -1609,7 +1613,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "eval ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if (msg.author.id !== "254794124744458241" || ~msg.content.indexOf("token")) return msg.channel.send(lang.noperm);
+      if (msg.author.id !== "254794124744458241" || msg.content.contains("token")) return msg.channel.send(lang.noperm);
           var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
           var message = "";
           var argumentarray = commandcut.split(" ");

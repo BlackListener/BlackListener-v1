@@ -24,3 +24,11 @@ module.exports = {
     return JSON.stringify(json, null, 4)
   }
 }
+
+String.prototype.contains = function(str) {
+  return ~this.indexOf(str);
+}
+
+Array.prototype.contains = function(str) {
+  return ~this.indexOf(str);
+}
