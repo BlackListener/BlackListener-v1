@@ -320,12 +320,55 @@ client.on('message', async msg => {
   }
   // --- End of Anti-spam
 
+  const args = msg.content.replace(settings.prefix, "").split(` `);
+  if (c.use_as_extension) {
+    if (msg.content.startsWith(c.prefix + "workspace ") || msg.content === c.prefix + "workspace") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (args[1] === `init`) {
+        if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix));
+        cmd.initWorkspace(msg.author.id).then((status) => {
+          if (status) return msg.channel.send(lang.workspace.initialized);
+          return msg.channel.send(f(lang.workspace.unknown_error, status));
+        });
+      } else if (args[1] === `reinit`) {
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        cmd.reinitWorkspace(msg.author.id).then((status) => {
+          if (status) return msg.channel.send(lang.workspace.initialized);
+          return msg.channel.send(f(lang.workspace.unknown_error, status));
+        });
+      } else if (args[1] === `run`) {
+        const statusCodes = {
+          np: 0,
+          not_initialized: 1,
+          error: 2,
+        };
+        const commandcut = msg.content.substr(`${settings.prefix}workspace run `.length);
+        var message = "";
+        const argumentarray = commandcut.split(" ");
+        argumentarray.forEach(function(element) {
+            message += element + " ";
+        }, this);
+        cmd.execute(msg.author.id, message).then((statusArray) => {
+          if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
+            return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+          } else if (!statusArray.status && statusArray.code === statusCodes.error) {
+            return msg.channel.send(f(lang.workspace.error, message, statusArray.message));
+          } else if (statusArray.status && statusArray.code === statusCodes.np) {
+            return msg.channel.send(f(lang.workspace.executed, message, statusArray.message));
+          }
+        });
+      } else if (args[1] === `rm` || args[1] === `remove`) {
+        cmd.reset(msg.author.id).then((status) => {
+          if (!status) return msg.channel.send(f(lang.workspace.unknown_error, status));
+          return msg.channel.send(lang.workspace.removed);
+        });
+      } else {
+        return msg.channel.send(lang.invalid_args);
+      }
+    } else { return; }
+  }
   if (msg.content.startsWith(settings.prefix)) {
-    if (c.use_as_extension) {
-      if (msg.content.startsWith(c.prefix + "workspace ")) return;
-    }
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
-    const args = msg.content.replace(settings.prefix, "").split(` `);
     if (msg.content.startsWith(c.prefix + "say ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
           var commandcut = msg.content.substr(`${settings.prefix}say `.length);
