@@ -333,7 +333,7 @@ client.on('message', async msg => {
   // --- End of Anti-spam
 
   var argsvar;
-  if (c.use_as_extension) {
+  if (c.use_as_extension && msg.guild.members.get("456966161079205899")) {
     argsvar = msg.content.replace(c.prefix, "").split(` `);
     const args = argsvar;
     if (msg.content.startsWith(c.prefix + "workspace ") || msg.content === c.prefix + "workspace") {
