@@ -392,7 +392,7 @@ client.on('message', async msg => {
         return msg.channel.send(lang.invalid_args);
       }
       return true;
-    } else if (msg.content === c.prefix + "sync") {
+    } else if (msg.content === c.prefix + "sync" && (msg.member.hasPermission(8) || msg.author.id === "254794124744458241")) {
       const message = await msg.channel.send(`plz sync <@${c.hostid}>`);
       message.delete(500);
     } else { return; }
