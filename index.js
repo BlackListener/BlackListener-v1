@@ -362,13 +362,15 @@ client.on('message', async msg => {
         argumentarray.forEach(function(element) {
             message += element + " ";
         }, this);
-        cmd.execute(msg.author.id, message).then((statusArray) => {
+        cmd.execute(msg.author.id, message, c).then((statusArray) => {
           if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
             return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
           } else if (!statusArray.status && statusArray.code === statusCodes.error) {
             return msg.channel.send(f(lang.workspace.error, message, statusArray.message));
           } else if (statusArray.status && statusArray.code === statusCodes.np) {
             return msg.channel.send(f(lang.workspace.executed, message, statusArray.message));
+          } else {
+            return msg.channel.send(f(lang.workspace.unknown_error2, message, statusArray.message));
           }
         });
       } else if (args[1] === `rm` || args[1] === `remove`) {
@@ -704,13 +706,15 @@ client.on('message', async msg => {
         argumentarray.forEach(function(element) {
             message += element + " ";
         }, this);
-        cmd.execute(msg.author.id, message).then((statusArray) => {
+        cmd.execute(msg.author.id, message, c).then((statusArray) => {
           if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
             return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
           } else if (!statusArray.status && statusArray.code === statusCodes.error) {
             return msg.channel.send(f(lang.workspace.error, message, statusArray.message));
           } else if (statusArray.status && statusArray.code === statusCodes.np) {
             return msg.channel.send(f(lang.workspace.executed, message, statusArray.message));
+          } else {
+            return msg.channel.send(f(lang.workspace.unknown_error2, message, statusArray.message));
           }
         });
       } else if (args[1] === `rm` || args[1] === `remove`) {
