@@ -218,7 +218,6 @@ client.on('message', async msg => {
    attachments.clear();
    attachments.append(`${attr.url}\n`);
  });
- if (msg.system || msg.author.bot) return;
  if (!msg.guild) return msg.channel.send("Currently not supported DM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  await mkdirp(`./data/users/${msg.author.id}`);
@@ -248,6 +247,13 @@ client.on('message', async msg => {
  if (msg.channel.id !== settings.excludeLogging) {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+ }
+ if (msg.author.id === c.hostid && msg.content.startsWith(`hey <@${c.hostid}>, `)) {
+   const received_lang = msg.content.replace(`hey <@${c.hostid}>, `, ``);
+   if (received_lang === "en" || received_lang === "ja") {
+     settings.language = received_lang;
+     writeSettings(guildSettings, settings, null, null, false);
+   } else { return; }
  }
   if (c.use_as_extension) {
     client.user.setActivity(`${c.prefix}workspace <Args> | ${client.guilds.size} guilds`);
@@ -310,6 +316,8 @@ client.on('message', async msg => {
   if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
   lang = await util.readJSON(`./lang/${settings.language}.json`); // Processing message is under of this
 
+  if (msg.system || msg.author.bot) return;
+
   // --- Begin of Auto-ban
   if (!settings.banned) {
     if (settings.banRep <= user.rep && settings.banRep != 0) {
@@ -333,7 +341,7 @@ client.on('message', async msg => {
   // --- End of Anti-spam
 
   var argsvar;
-  if (c.use_as_extension && msg.guild.members.get("456966161079205899")) {
+  if (c.use_as_extension && msg.guild.members.get(c.hostid)) {
     argsvar = msg.content.replace(c.prefix, "").split(` `);
     const args = argsvar;
     if (msg.content.startsWith(c.prefix + "workspace ") || msg.content === c.prefix + "workspace") {
@@ -384,6 +392,9 @@ client.on('message', async msg => {
         return msg.channel.send(lang.invalid_args);
       }
       return true;
+    } else if (msg.content === c.prefix + "sync") {
+      const message = await msg.channel.send(`plz sync <@${c.hostid}>`);
+      message.delete(500);
     } else { return; }
   } else {
     argsvar = msg.content.replace(settings.prefix, "").split(` `);
@@ -391,30 +402,7 @@ client.on('message', async msg => {
   const args = argsvar;
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
-    if (msg.content.startsWith(c.prefix + "say ")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr(`${settings.prefix}say `.length);
-          var message = "";
-          var argumentarray = commandcut.split(" ");
-          argumentarray.forEach(function(element) {
-              message += element + " ";
-          }, this);
-          return msg.channel.send(message);
-    } else if (msg.content.startsWith(c.prefix + "saye ")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      msg.delete(0).catch(console.error);
-      return msg.channel.send(`<:${args[1]}:${args[2]}>`);
-    } else if (msg.content.startsWith(c.prefix + "sayd ")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
-          var message = "";
-          var argumentarray = commandcut.split(" ");
-          argumentarray.forEach(function(element) {
-              message += element + " ";
-          }, this);
-          msg.delete(0).catch(console.error);
-          return msg.channel.send(message);
-    } else if (args[0] === 'image') {
+    if (args[0] === 'image') {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       const sendImage = async list => {
         msg.channel.send(lang.searching);
