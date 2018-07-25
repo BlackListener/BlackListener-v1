@@ -6,6 +6,7 @@ const f = require('string-format'),
   {promisify} = require('util'),
   fetch = require('node-fetch'),
   os = require('os'),
+  cmd = require('./cmd'),
   DBL = require("dblapi.js"),
   randomPuppy = require("random-puppy"),
   fsp = require('fs').promises,
@@ -516,8 +517,52 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      if (msg.guild.members.get(c.extender_id)) return;
-      return msg.channel.send(f(lang.workspace, s.extenderinvite))
+      if (isWindows) return msg.channel.send(lang.workspace.windows);
+      if (args[1] === `init`) {
+        if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix));
+        cmd.initWorkspace(msg.author.id).then((status) => {
+          if (status) return msg.channel.send(lang.workspace.initialized);
+          return msg.channel.send(f(lang.workspace.unknown_error, status));
+        });
+      } else if (args[1] === `reinit`) {
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        cmd.reinitWorkspace(msg.author.id).then((status) => {
+          if (status) return msg.channel.send(lang.workspace.initialized);
+          return msg.channel.send(f(lang.workspace.unknown_error, status));
+        });
+      } else if (args[1] === `run`) {
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        const statusCodes = {
+          np: 0,
+          not_initialized: 1,
+          error: 2,
+        };
+        const commandcut = msg.content.substr(`${settings.prefix}workspace run `.length);
+        var message = "";
+        const argumentarray = commandcut.split(" ");
+        argumentarray.forEach(function(element) {
+            message += element + " ";
+        }, this);
+        cmd.execute(msg.author.id, message, c).then((statusArray) => {
+          if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
+            return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+          } else if (!statusArray.status && statusArray.code === statusCodes.error) {
+            return msg.channel.send(f(lang.workspace.error, message, statusArray.message));
+          } else if (statusArray.status && statusArray.code === statusCodes.np) {
+            return msg.channel.send(f(lang.workspace.executed, message, statusArray.message));
+          } else {
+            return msg.channel.send(f(lang.workspace.unknown_error2, message, statusArray.message));
+          }
+        });
+      } else if (args[1] === `rm` || args[1] === `remove`) {
+        cmd.reset(msg.author.id).then((status) => {
+          if (!status) return msg.channel.send(f(lang.workspace.unknown_error, status));
+          return msg.channel.send(lang.workspace.removed);
+        });
+      } else {
+        return msg.channel.send(lang.invalid_args);
+      }
+      return true;
     } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`));
