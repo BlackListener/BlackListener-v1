@@ -1,8 +1,26 @@
 # BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/)
 
-Global Banning System for Discord.
+Global Banning System for Discord(**Extension**).
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
+
+----
+
+## About this BlackListener Extension(this branch)
+This is workspace enabled edition, and may use lot of disk spaces, if 10000 users created workspace, use 362GB only workspaces.
+This is can be used with BlackListener(other branches), and you may not have to re-set config.
+It has 2 modes...
+ - Standalone
+ - Extender
+
+### Standalone
+ Use this bot as standalone, not needed BlackListener(other branches).
+
+### Extender
+ Use this bot as extender, may need BlackListener.
+ Or if you use workspace only, may not need BlackListener.
+
+----
 
 ## All Commands (Too long!)
 
@@ -10,7 +28,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
 Server's prefix can be show up in mention the bot.
 
- - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
+ - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins(invite allow).
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
 | ------- | ---------------- | ---------------- | - |
