@@ -1,10 +1,11 @@
 {
-  "prefix": "a:",
+  "prefix": "b:",
   "github": "https://github.com/rht0910/BlackListener/",
   "lang": "ja",
   "notifyRep": 1,
   "banRep": 5,
   "dump_url": "",
   "data_baseurl": "",
-  "version": "1.1.1"
+  "version": "1.1.1",
+  "use_as_extension": true
 }

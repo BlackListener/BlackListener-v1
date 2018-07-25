@@ -321,6 +321,9 @@ client.on('message', async msg => {
   // --- End of Anti-spam
 
   if (msg.content.startsWith(settings.prefix)) {
+    if (c.use_as_extension) {
+      if (msg.content.startsWith(c.prefix + "workspace ")) return;
+    }
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
     if (msg.content.startsWith(c.prefix + "say ")) {
