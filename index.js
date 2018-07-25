@@ -203,7 +203,6 @@ client.on('ready', async () => {
 });
 
 client.on('message', async msg => {
- if (msg.content === settings.prefix + "sync") return;
  var attachments = new StringBuilder("Not found");
  if (msg.attachments.first())
  msg.attachments.forEach((attr) => {
@@ -240,6 +239,7 @@ client.on('message', async msg => {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
  }
+ if (msg.content === settings.prefix + "sync") return;
  if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
    if (msg.content === `plz sync <@${client.user.id}>`) {
      const message = await msg.channel.send(`hey <@${c.extender_id}>, ` + settings.language);
@@ -328,30 +328,7 @@ client.on('message', async msg => {
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     const args = msg.content.replace(settings.prefix, "").split(` `);
-    if (msg.content.startsWith(c.prefix + "say ")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr(`${settings.prefix}say `.length);
-          var message = "";
-          var argumentarray = commandcut.split(" ");
-          argumentarray.forEach(function(element) {
-              message += element + " ";
-          }, this);
-          return msg.channel.send(message);
-    } else if (msg.content.startsWith(c.prefix + "saye ")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      msg.delete(0).catch(console.error);
-      return msg.channel.send(`<:${args[1]}:${args[2]}>`);
-    } else if (msg.content.startsWith(c.prefix + "sayd ")) {
-      console.log(f(lang.issueduser, msg.author.tag, msg.content));
-          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
-          var message = "";
-          var argumentarray = commandcut.split(" ");
-          argumentarray.forEach(function(element) {
-              message += element + " ";
-          }, this);
-          msg.delete(0).catch(console.error);
-          return msg.channel.send(message);
-    } else if (args[0] === 'image') {
+    if (args[0] === 'image') {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       const sendImage = async list => {
         msg.channel.send(lang.searching);
