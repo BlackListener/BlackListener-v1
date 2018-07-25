@@ -189,9 +189,17 @@ client.on('ready', async () => {
   util.initJSON(bansFile, defaultBans).catch(console.error);
   util.initJSON(`./data/global_servers.json`, global).catch(console.error);
   util.initJSON(`./data/global_channels.json`, global).catch(console.error);
-  client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
+  if (c.use_as_extension) {
+    client.user.setActivity(`${c.prefix}workspace <Args> | Hello @everyone!`);
+  } else {
+    client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
+  }
   client.setTimeout(() => {
-    client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+    if (c.use_as_extension) {
+      client.user.setActivity(`${c.prefix}workspace <Args> | ${client.guilds.size} guilds`);
+    } else {
+      client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+    }
   }, 10000);
   console.log(`Bot has Fully startup.`);
   if (isTravisBuild) {
@@ -241,7 +249,11 @@ client.on('message', async msg => {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
  }
- client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+  if (c.use_as_extension) {
+    client.user.setActivity(`${c.prefix}workspace <Args> | ${client.guilds.size} guilds`);
+  } else {
+    client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+  }
  bans = await util.readJSON(bansFile);
   if (!settings.mute) {
     settings.mute = [];
@@ -320,8 +332,10 @@ client.on('message', async msg => {
   }
   // --- End of Anti-spam
 
-  const args = msg.content.replace(settings.prefix, "").split(` `);
+  var argsvar;
   if (c.use_as_extension) {
+    argsvar = msg.content.replace(c.prefix, "").split(` `);
+    const args = argsvar;
     if (msg.content.startsWith(c.prefix + "workspace ") || msg.content === c.prefix + "workspace") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (args[1] === `init`) {
@@ -366,7 +380,10 @@ client.on('message', async msg => {
         return msg.channel.send(lang.invalid_args);
       }
     } else { return; }
+  } else {
+    argsvar = msg.content.replace(settings.prefix, "").split(` `);
   }
+  const args = argsvar;
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
     if (msg.content.startsWith(c.prefix + "say ")) {
