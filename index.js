@@ -353,8 +353,8 @@ client.on('message', async msg => {
         if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
         const sub = list[Math.round(Math.random() * (list.length - 1))];
         const url = await randomPuppy(sub);
-        const bin = await fetch(url).then(res => res.buffer());
-        const embed = new Discord.RichEmbed().attachFile(bin);
+        const image = await fetch(url).then(res => res.buffer());
+        const embed = new Discord.RichEmbed().attachFile(image);
         msg.channel.send(embed).catch(msg.channel.send);
       }
       if (args[1] === "custom") {
@@ -645,9 +645,9 @@ client.on('message', async msg => {
           if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
             return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
           } else if (!statusArray.status && statusArray.code === statusCodes.error) {
-            return msg.channel.send(f(lang.workspace.error, args[2]));
+            return msg.channel.send(f(lang.workspace.error, message, statusArray.message));
           } else if (statusArray.status && statusArray.code === statusCodes.np) {
-            return msg.channel.send(f(lang.workspace.executed, args[2], statusArray.message));
+            return msg.channel.send(f(lang.workspace.executed, message, statusArray.message));
           }
         });
       } else if (args[1] === `rm` || args[1] === `remove`) {

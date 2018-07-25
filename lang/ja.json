@@ -191,8 +191,8 @@
     "initialized": ":white_check_mark: ワークスペースを作成しました。",
     "already_initialized": ":x: すでにワークスペースは作成されています。\n再作成する場合は`{0}workspace reinit` を実行してください。",
     "removed": ":wastebasket: ワークスペースを削除しました。",
-    "executed": ":white_check_mark: コマンドを実行しました:{0}\n結果: ```{1} ```",
-    "error": ":x: エラーが発生しました: コマンド: {0}",
+    "executed": ":white_check_mark: コマンドを実行しました: ``{0}``\n結果: ```{1} ```",
+    "error": ":x: エラーが発生しました: コマンド: ``{0}``\nエラー: ```{1} ```",
     "unknown_error": ":x: 不明なエラーが発生しました(ステータスコード: {0})"
   },
   "disabled": "無効",

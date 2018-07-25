@@ -189,7 +189,7 @@
     "already_initialized": ":x: Already created a workspace.\nIf you wish re-create workspace, please `{0}workspace reinit`.",
     "removed": ":wastebasket: Removed a workspace.",
     "executed": ":white_check_mark: Executed command: {0}\nResult: ```{1} ```",
-    "error": ":x: An error occurred: Command: {0}",
+    "error": ":x: An error occurred: Command: {0}\nError: ```{1} ```",
     "unknown_error": ":x: An unknown error occurred(Status Code: {0})"
   },
   "disabled": "Disabled",

@@ -21,13 +21,23 @@ module.exports = {
   },
   async execute(userId, cmd) {
     if (await !this.check(userId)) return { status: false, code: 1, message: "Not initialized" };
-    var out;
-    try {
-      out = await exec(`chroot ./data/users/${userId}/workspace ` + cmd);
+    var out, err;
+    //try {
+      return exec(`chroot --userspec=anonymous:anonymous ./data/users/${userId}/workspace ` + cmd)
+        .then((out) => {
+          return { status: true, code: 0, message: out.stdout };
+        })
+        .catch((error) => {
+          let err = error.toString().replace(`Error: Command failed: chroot --userspec=anonymous:anonymous ./data/users/${userId}/workspace ${cmd}`, "");
+          return { status: false, code: 2, message: err };
+        });
+      /*
+      out = await exec(`chroot --userspec=anonymous:anonymous ./data/users/${userId}/workspace ` + cmd);
       return { status: true, code: 0, message: out.stdout};
     } catch (e) {
-      return { status: false, code: 2, message: ""};
+      return { status: false, code: 2, message: out };
     }
+    */
   },
   async check(userId) {
     if (await util.exists(`./data/users/${userId}/workspace`)) return true;
