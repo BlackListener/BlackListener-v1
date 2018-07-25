@@ -338,6 +338,7 @@ client.on('message', async msg => {
     const args = argsvar;
     if (msg.content.startsWith(c.prefix + "workspace ") || msg.content === c.prefix + "workspace") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (isWindows) return msg.channel.send(lang.workspace.windows);
       if (args[1] === `init`) {
         if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix));
         cmd.initWorkspace(msg.author.id).then((status) => {
@@ -682,6 +683,7 @@ client.on('message', async msg => {
       return await msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "workspace")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (isWindows) return msg.channel.send(lang.workspace.windows);
       if (args[1] === `init`) {
         if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix));
         cmd.initWorkspace(msg.author.id).then((status) => {

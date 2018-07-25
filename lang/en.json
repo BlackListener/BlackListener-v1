@@ -191,7 +191,8 @@
     "executed": ":white_check_mark: Executed command: {0}\nResult: ```{1} ```",
     "error": ":x: An error occurred: Command: {0}\nError: ```{1} ```",
     "unknown_error2": ":x: An unknown error occurred: Command: {0}\nError: ```{1} ```",
-    "unknown_error": ":x: An unknown error occurred(Status Code: {0})"
+    "unknown_error": ":x: An unknown error occurred(Status Code: {0})",
+    "windows": ":x: Not supported Windows."
   },
   "disabled": "Disabled",
   "enabled": "Enabled",
