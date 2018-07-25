@@ -209,7 +209,6 @@ client.on('message', async msg => {
    attachments.clear();
    attachments.append(`${attr.url}\n`);
  });
- if (msg.system || msg.author.bot) return;
  if (!msg.guild) return msg.channel.send("Currently not supported DM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  await mkdirp(`./data/users/${msg.author.id}`);
@@ -239,6 +238,12 @@ client.on('message', async msg => {
  if (msg.channel.id !== settings.excludeLogging) {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+ }
+ if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
+   if (msg.content === `plz sync <@${client.user.id}>`) {
+     const message = msg.channel.send(`hey <${c.extender_id}>, ` + settings.language);
+     message.delete(1000);
+   }
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
  bans = await util.readJSON(bansFile);
@@ -296,7 +301,7 @@ client.on('message', async msg => {
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
   if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
   lang = await util.readJSON(`./lang/${settings.language}.json`); // Processing message is under of this
-
+  if (msg.system || msg.author.bot) return;
   // --- Begin of Auto-ban
   if (!settings.banned) {
     if (settings.banRep <= user.rep && settings.banRep != 0) {
@@ -517,6 +522,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (msg.guild.members.get(c.extender_id)) return true;
       if (isWindows) return msg.channel.send(lang.workspace.windows);
       if (args[1] === `init`) {
         if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix));
