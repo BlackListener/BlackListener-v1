@@ -203,6 +203,7 @@ client.on('ready', async () => {
 });
 
 client.on('message', async msg => {
+ if (msg.content === settings.prefix + "sync") return;
  var attachments = new StringBuilder("Not found");
  if (msg.attachments.first())
  msg.attachments.forEach((attr) => {
@@ -241,8 +242,8 @@ client.on('message', async msg => {
  }
  if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
    if (msg.content === `plz sync <@${client.user.id}>`) {
-     const message = msg.channel.send(`hey <${c.extender_id}>, ` + settings.language);
-     message.delete(1000);
+     const message = await msg.channel.send(`hey <@${c.extender_id}>, ` + settings.language);
+     message.delete(500);
    }
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
