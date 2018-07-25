@@ -352,6 +352,7 @@ client.on('message', async msg => {
           return msg.channel.send(f(lang.workspace.unknown_error, status));
         });
       } else if (args[1] === `run`) {
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
         const statusCodes = {
           np: 0,
           not_initialized: 1,
@@ -382,6 +383,7 @@ client.on('message', async msg => {
       } else {
         return msg.channel.send(lang.invalid_args);
       }
+      return true;
     } else { return; }
   } else {
     argsvar = msg.content.replace(settings.prefix, "").split(` `);
@@ -697,6 +699,7 @@ client.on('message', async msg => {
           return msg.channel.send(f(lang.workspace.unknown_error, status));
         });
       } else if (args[1] === `run`) {
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
         const statusCodes = {
           np: 0,
           not_initialized: 1,
