@@ -2,11 +2,12 @@ const f = require('string-format'),
   now = require("performance-now"),
   Discord = require('discord.js'),
   client = new Discord.Client(),
-  mkdirp = require('mkdirp'),
+  mkdirp = require('mkdirp-promise'),
   {promisify} = require('util'),
   fetch = require('node-fetch'),
   os = require('os'),
-  DBL = require("dblapi.js"),
+  DBL = require('dblapi.js'),
+  cmd = require('./cmd'),
   randomPuppy = require("random-puppy"),
   fsp = require('fs').promises,
   exec = promisify(require('child_process').exec),
@@ -102,8 +103,9 @@ const f = require('string-format'),
     {"body": `mute`, "args": ` <User>`},
     {"body": `banned`, "args": ``},
     {"body": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
-    {"body": `releases`, "args": ` [version]`},
-    {"body": `eval`, "args": ` <program>`},
+    {"body": `releases`, "args": ` [Version]`},
+    {"body": `eval`, "args": ` <Program>`},
+    {"body": `workspace`, "args": ` <init|reinit|run|rm/remove> [run: Command]`},
   ];
 var guildSettings,
   settings,
@@ -613,6 +615,49 @@ client.on('message', async msg => {
         .addField(lang.serverinfo.welcome_channel, welcome_channel)
         .addField(lang.serverinfo.welcome_message, welcome_message);
       return await msg.channel.send(embed);
+    } else if (msg.content.startsWith(settings.prefix + "workspace")) {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (args[1] === `init`) {
+        if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix));
+        cmd.initWorkspace(msg.author.id).then((status) => {
+          if (status) return msg.channel.send(lang.workspace.initialized);
+          return msg.channel.send(f(lang.workspace.unknown_error, status));
+        });
+      } else if (args[1] === `reinit`) {
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        cmd.reinitWorkspace(msg.author.id).then((status) => {
+          if (status) return msg.channel.send(lang.workspace.initialized);
+          return msg.channel.send(f(lang.workspace.unknown_error, status));
+        });
+      } else if (args[1] === `run`) {
+        const statusCodes = {
+          np: 0,
+          not_initialized: 1,
+          error: 2,
+        };
+        const commandcut = msg.content.substr(`${settings.prefix}workspace run `.length);
+        var message = "";
+        const argumentarray = commandcut.split(" ");
+        argumentarray.forEach(function(element) {
+            message += element + " ";
+        }, this);
+        cmd.execute(msg.author.id, message).then((statusArray) => {
+          if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
+            return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+          } else if (!statusArray.status && statusArray.code === statusCodes.error) {
+            return msg.channel.send(f(lang.workspace.error, args[2]));
+          } else if (statusArray.status && statusArray.code === statusCodes.np) {
+            return msg.channel.send(f(lang.workspace.executed, args[2], statusArray.message));
+          }
+        });
+      } else if (args[1] === `rm` || args[1] === `remove`) {
+        cmd.reset(msg.author.id).then((status) => {
+          if (!status) return msg.channel.send(f(lang.workspace.unknown_error, status));
+          return msg.channel.send(lang.workspace.removed);
+        });
+      } else {
+        return msg.channel.send(lang.invalid_args);
+      }
     } else if (msg.content === settings.prefix + "status minecraft") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.channel.send(lang.status.checking);
@@ -720,15 +765,17 @@ client.on('message', async msg => {
       }) ();
     }
     if (msg.member.hasPermission(8) || msg.author == "<@254794124744458241>") {
-    if (msg.content === settings.prefix + "help") {
-      /* Nothing. Dummy. */
-    } else if (msg.content.startsWith(settings.prefix + "image")) {
-      /* Nothing. Dummy. */
-    } else if (msg.content.startsWith(settings.prefix + "say")) {
-      /* Nothing. Dummy. */
-    } else if (msg.content.startsWith(settings.prefix + "sayd")) {
-      /* Nothing. Dummy. */
-    } else if (msg.content.startsWith(settings.prefix + "status")) {
+    if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help")) {
+      /* Dummy */
+    } else if (msg.content.startsWith(settings.prefix + "image ")) {
+      /* Dummy */
+    } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
+      /* Dummy */
+    } else if (msg.content.startsWith(settings.prefix + "say ")) {
+      /* Dummy */
+    } else if (msg.content.startsWith(settings.prefix + "sayd ")) {
+      /* Dummy */
+    } else if (msg.content.startsWith(settings.prefix + "status ")) {
       /* Dummy */
     } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
@@ -1731,6 +1778,7 @@ client.on("guildMemberAdd", async (member) => {
   }
 });
 
+/*
 client.on("messageUpdate", async (old, msg) => {
  settings = await util.readJSON(`./data/servers/${msg.guild.id}/config.json`);
  if (msg.channel.id !== settings.excludeLogging) {
@@ -1748,6 +1796,7 @@ client.on("messageUpdate", async (old, msg) => {
   fsp.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`);
  }
 });
+*/
 
 function getDateTime()
 {

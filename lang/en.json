@@ -183,6 +183,15 @@
     "welcome_message": "Welcome message",
     "mute": "List of muted users"
   },
+  "workspace": {
+    "not_initialized": ":x: Your workspace is not yet available.\nPlease create a workspace in `{0}workspace init`.",
+    "initialized": ":white_check_mark: Created a workspace.",
+    "already_initialized": ":x: Already created a workspace.\nIf you wish re-create workspace, please `{0}workspace reinit`.",
+    "removed": ":wastebasket: Removed a workspace.",
+    "executed": ":white_check_mark: Executed command: {0}\nResult: ```{1} ```",
+    "error": ":x: An error occurred: Command: {0}",
+    "unknown_error": ":x: An unknown error occurred(Status Code: {0})"
+  },
   "disabled": "Disabled",
   "enabled": "Enabled",
   "prefixis": "Prefix is `{0}`.",

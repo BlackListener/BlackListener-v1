@@ -186,6 +186,15 @@
     "welcome_message": "ウェルカムメッセージ",
     "mute": "ミュートされた人たち"
   },
+  "workspace": {
+    "not_initialized": ":x: ワークスペースはまだ使用可能な状態ではありません。\n`{0}workspace init` で作成してください。",
+    "initialized": ":white_check_mark: ワークスペースを作成しました。",
+    "already_initialized": ":x: すでにワークスペースは作成されています。\n再作成する場合は`{0}workspace reinit` を実行してください。",
+    "removed": ":wastebasket: ワークスペースを削除しました。",
+    "executed": ":white_check_mark: コマンドを実行しました:{0}\n結果: ```{1} ```",
+    "error": ":x: エラーが発生しました: コマンド: {0}",
+    "unknown_error": ":x: 不明なエラーが発生しました(ステータスコード: {0})"
+  },
   "disabled": "無効",
   "enabled": "有効",
   "prefixis": "接頭語は `{0}` です。",
