@@ -197,5 +197,6 @@
   "no_apikey": "APIキーが設定されていません。コマンドは使用できません。",
   "eval_error": "エラーが発生しました: {0}",
   "deprecated": ":exclamation: このコマンドは __**非推奨**__ です。\n代わりのコマンドがあるか `help <コマンド>` で確認してください。 :exclamation:",
-  "invalidVersion": ":x: 無効なバージョンが指定されました。"
+  "invalidVersion": ":x: 無効なバージョンが指定されました。",
+  "workspace": "ワークスペースはこのボットを追加すると使用可能です: {0}"
 }

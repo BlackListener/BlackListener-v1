@@ -514,6 +514,10 @@ client.on('message', async msg => {
       } else {
         return await msg.channel.send(f(`http://go.blacklistener.tk/go/history`));
       }
+    } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
+      console.log(f(lang.issueduser, msg.author.tag, msg.content));
+      if (msg.guild.members.get(c.extender_id)) return;
+      return msg.channel.send(f(lang.workspace, s.extenderinvite))
     } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`));
