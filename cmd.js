@@ -14,6 +14,7 @@ module.exports = {
       await exec(`cp -R /lib/x86_64-linux-gnu ./data/workspace/lib/`);
       await exec(`cp -R /bin ./data/workspace/`);
       await exec(`cp -R /usr/lib/x86_64-linux-gnu/libidn.so* ./data/workspace/usr/lib/x86_64-linux-gnu/`);
+      await exec(`cp -R /usr/bin/gcc ./data/workspace/usr/bin/`);
       await exec(`cp -R /usr/bin/tail ./data/workspace/usr/bin/`);
       await exec(`mknod ./data/workspace/dev/random c 1 8`)
       await exec(`chmod 777 ./data/workspace`);
