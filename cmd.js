@@ -29,10 +29,10 @@ module.exports = {
     return await this.initWorkspace(userId);
   },
   async execute(userId, cmd, config) {
-    if (cmd.includes(">") || cmd.includes("<")) return { status: false, code: 3, message: "Cannot use < or > character." };
+    if (cmd.includes(">") || cmd.includes("<")) return { status: false, code: 3, message: "Cannot use < and > character." };
     if (await !this.check(userId)) return { status: false, code: 1, message: "Not initialized" };
     if (cmd.includes("su") || cmd.includes("sudo") || cmd.includes("curl") || cmd.includes("/proc") || cmd.includes("sysrq-trigger") || cmd.includes("mknod")) return { status: false, code: 4, message: `This command has been matched in blacklist.` };
-    return exec(`chroot --userspec=anonymous:anonymous ./data/users/${userId}/workspace ` + cmd)
+    return exec(`chroot --userspec=anonymous:anonymous ./data/users/${userId}/workspace ${cmd}`)
       .then((out) => {
         return { status: true, code: 0, message: out.stdout };
       })
@@ -47,5 +47,14 @@ module.exports = {
   },
   async reset(userId) {
     return await exec(`rm -rf ./data/users/${userId}/workspace`);
+  },
+  async gcc(userId, file) {
+    return exec(`gcc ./data/users/${userId}/workspace/${file} -o ./data/users/${userId}/workspace/a.out`)
+      .then((out) => {
+        return { status: true, code: 0, message: out.stdout };
+      })
+      .catch((err) => {
+        return { status: false, code: 1, message: err };
+      });
   }
 }

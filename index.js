@@ -359,7 +359,18 @@ client.on('message', async msg => {
           if (status) return msg.channel.send(lang.workspace.initialized);
           return msg.channel.send(f(lang.workspace.unknown_error, status));
         });
+      } else if (args[1] === `gcc`) {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        cmd.gcc(msg.author.id, args[2]).then((statusArray) => {
+          if (statusArray.status === 0) {
+            return msg.channel.send(f(lang.workspace.compiled, args[2], statusArray.message));
+          } else {
+            return msg.channel.send(f(lang.workspace.compiled_withe, args[2], statusArray.message));
+          }
+        });
       } else if (args[1] === `run`) {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
         if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
         const statusCodes = {
           np: 0,
@@ -686,7 +697,18 @@ client.on('message', async msg => {
           if (status) return msg.channel.send(lang.workspace.initialized);
           return msg.channel.send(f(lang.workspace.unknown_error, status));
         });
+      } else if (args[1] === `gcc`) {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        cmd.gcc(msg.author.id, args[2]).then((statusArray) => {
+          if (statusArray.status === 0) {
+            return msg.channel.send(f(lang.workspace.compiled, args[2], statusArray.message));
+          } else {
+            return msg.channel.send(f(lang.workspace.compiled_withe, args[2], statusArray.message));
+          }
+        });
       } else if (args[1] === `run`) {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
         if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
         const statusCodes = {
           np: 0,

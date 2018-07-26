@@ -192,7 +192,9 @@
     "error": ":x: An error occurred: Command: {0}\nError: ```{1} ```",
     "unknown_error2": ":x: An unknown error occurred: Command: {0}\nError: ```{1} ```",
     "unknown_error": ":x: An unknown error occurred(Status Code: {0})",
-    "windows": ":x: Not supported Windows."
+    "windows": ":x: Not supported Windows.",
+    "compiled": "Compiled your program.\nFile: `{0}`\nMessage: ```{1} ```",
+    "compiled_withe": "Compiled your program with warning or errors.\nFile: `{0}`\nMessage: ```{1} ```"
   },
   "disabled": "Disabled",
   "enabled": "Enabled",
