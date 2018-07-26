@@ -192,7 +192,11 @@
     "error": ":x: An error occurred: Command: {0}\nError: ```{1} ```",
     "unknown_error2": ":x: An unknown error occurred: Command: {0}\nError: ```{1} ```",
     "unknown_error": ":x: An unknown error occurred(Status Code: {0})",
-    "windows": ":x: Not supported Windows."
+    "windows": ":x: Not supported Windows.",
+    "compiled": "Compiled your program.\nFile: `{0}`\nMessage: ```{1} ```",
+    "compiled_withe": "プログラムをコンパイルしましたが、警告かエラーが発生しています。\nファイル: `{0}`\nメッセージ: ```{1} ```",
+    "download": "Download URL is here: {0}",
+    "cannot_download": ":x: Not defined data_baseurl in configuration file, can't use download URL."
   },
   "disabled": "Disabled",
   "enabled": "Enabled",
