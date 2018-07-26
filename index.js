@@ -514,6 +514,11 @@ client.on('message', async msg => {
           if (status) return msg.channel.send(lang.workspace.initialized);
           return msg.channel.send(f(lang.workspace.unknown_error, status));
         });
+      } else if (args[1] === `download`) {
+        if (!args[2]) return msg.channel.send(lang.invalid_args);
+        if (!c.data_baseurl || c.data_baseurl === ``) return msg.channel.send(lang.workspace.cannot_download);
+        if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
+        return msg.channel.send(f(lang.workspace.download, `${c.data_baseurl}/users/${msg.author.id}/workspace/${args[2]}`));
       } else if (args[1] === `run`) {
         if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix));
         const statusCodes = {
