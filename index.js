@@ -236,6 +236,7 @@ client.on('message', async msg => {
  }
  user = await util.readJSON(userFile, defaultUser);
  settings = await util.readJSON(guildSettings, defaultSettings);
+ console.log("Loading " + guildSettings);
  if (msg.channel.id !== settings.excludeLogging) {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
@@ -1802,7 +1803,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("messageUpdate", async (old, msg) => {
- settings = await util.readJSON(`./data/servers/${msg.guild.id}/config.json`);
+ settings = await util.readJSON(`./data/servers/${msg.guild.id}/config.json`, defaultSettings);
  if (msg.channel.id !== settings.excludeLogging) {
   let parentName;
   if (msg.channel.parent) {
