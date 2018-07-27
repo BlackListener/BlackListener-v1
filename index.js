@@ -1821,4 +1821,6 @@ try {
   console.error(e);
 }
 
-//process.on('unhandledRejection', console.error);
+process.on('unhandledRejection', (error) => {
+  console.error(`Caught error: ${error}`);
+});
