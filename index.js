@@ -1171,7 +1171,25 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "mute")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      var user2;
+      var user2, muteSB = new StringBuilder(lang.no);
+      if (!args[1]) {
+        if (settings.mute.length != 0) {
+          muteSB.clear();
+          settings.mute.forEach((data) => {
+            if (data) {
+              if (client.users.has(data)) {
+                muteSB.append(`<@${data}> (${client.users.get(data).tag})\n`);
+              } else {
+                muteSB.append(`<@${data}> ${data} (${lang.failed_to_get})\n`);
+              }
+            }
+          });
+        }
+      }
+      msg.channel.send(new RichEmbed()
+        .setTitle(lang.serverinfo.mute)
+        .addField(lang.serverinfo.mute, muteSB.toString())
+      );
       try {
         user2 = client.users.find("username", args[1]).id;
       } catch (e) {
@@ -1181,8 +1199,7 @@ client.on('message', async msg => {
           try {
             user2 = msg.mentions.users.first().id;
           } catch (e) {
-            msg.channel.send(lang.invalid_args);
-            console.error(e);
+            return msg.channel.send(lang.invalid_args);
           }
         }
       }
