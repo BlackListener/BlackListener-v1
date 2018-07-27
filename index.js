@@ -909,14 +909,19 @@ client.on('message', async msg => {
               }
             }
           } else if (/\d{18}/.test(args[1])) {
+            var ok = false;
             try {
               id = client.users.get(args[1]).id;
+              ok = true;
             } catch (e) {
               try {
-                id = client.users.find("username", args[1]).id;
+                if (!ok) {
+                  id = client.users.find("username", args[1]).id;
+                  ok = true;
+                }
               } catch (e) {
                 try {
-                  id = msg.guild.members.find("nickname", args[1]).id;
+                  if (!ok) id = msg.guild.members.find("nickname", args[1]).id;
                 } catch (e) {
                   msg.channel.send(f(lang.unknown, args[1]));
                   return console.error(e);
