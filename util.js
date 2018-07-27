@@ -10,8 +10,9 @@ module.exports = {
     return await this.writeJSON(path, json)
   },
   async readJSON(path, _default) {
-    const data = await fs.readFile(path, 'utf8').catch(() => {})
-    return data ? this.parse(data) : _default
+    return await fs.readFile(path, 'utf8')
+      .then(data => this.parse(data))
+      .catch(err => _default ? null : err)
   },
   async writeJSON(path, json) {
     const data = this.stringify(json)
