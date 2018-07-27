@@ -250,7 +250,7 @@ client.on('message', async msg => {
  bans = await util.readJSON(bansFile);
   if (!settings.mute) {
     settings.mute = [];
-    await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
+    await writeSettings(guildSettings, settings, null, null, false);
   }
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
@@ -1823,4 +1823,5 @@ try {
 
 process.on('unhandledRejection', (error) => {
   console.error(`Caught error: ${error}`);
+  console.error(error.stack);
 });
