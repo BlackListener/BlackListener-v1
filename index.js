@@ -1185,11 +1185,11 @@ client.on('message', async msg => {
             }
           });
         }
+        return msg.channel.send(new Discord.RichEmbed()
+          .setTitle(lang.serverinfo.mute)
+          .addField(lang.serverinfo.mute, muteSB.toString())
+        );
       }
-      msg.channel.send(new RichEmbed()
-        .setTitle(lang.serverinfo.mute)
-        .addField(lang.serverinfo.mute, muteSB.toString())
-      );
       try {
         user2 = client.users.find("username", args[1]).id;
       } catch (e) {
