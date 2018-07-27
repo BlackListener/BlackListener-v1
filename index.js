@@ -233,8 +233,8 @@ client.on('message', async msg => {
    await util.initJSON(guildSettings, defaultSettings)
   } catch (e) {console.error(e);}
  }
- user = await util.readJSON(userFile);
- settings = await util.readJSON(guildSettings);
+ user = await util.readJSON(userFile, defaultUser);
+ settings = await util.readJSON(guildSettings, defaultSettings);
  if (msg.channel.id !== settings.excludeLogging) {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);

@@ -14,7 +14,7 @@ module.exports = {
     return data ? this.parse(data) : _default
   },
   async writeJSON(path, json) {
-    const data = await this.stringify(json)
+    const data = this.stringify(json)
     return fs.writeFile(path, data, 'utf8')
   },
   parse(json) {
