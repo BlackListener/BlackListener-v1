@@ -45,6 +45,10 @@ module.exports = {
     if (await util.exists(`./data/users/${userId}/workspace`)) return true;
     return false;
   },
+  async du(userId) {
+    const out = await exec(`./data/users/${userId}/workspace/`);
+    return out.replace(/(M|G).*/gm, "");
+  },
   async reset(userId) {
     return await exec(`rm -rf ./data/users/${userId}/workspace`);
   },

@@ -42,6 +42,7 @@ const f = require('string-format'),
     bannedFromServerOwner: [],
     bannedFromUser: [],
     probes: [],
+    reasons: [],
   },
   global = [],
   levenshtein = function (s1, s2) {if (s1 == s2) {return 0;}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len;}if (s2_len === 0) {return s1_len;}let split = false; try{split = !(`0`)[0];}catch(e){split = true;}if (split) {s1 = s1.split(``); s2 = s2.split(``);}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0, s2_idx = 0, cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx;}let char_s1 = ``, char_s2 = ``; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b;}if (c < m_min) {m_min = c;}v1[s1_idx + 1] = m_min;}const v_tmp = v0; v0 = v1; v1 = v_tmp;}return v0[s1_len];},
@@ -242,8 +243,8 @@ client.on('message', async msg => {
    await util.initJSON(guildSettings, defaultSettings)
   } catch (e) {console.error(e);}
  }
- user = await util.readJSON(userFile);
- settings = await util.readJSON(guildSettings);
+ user = await util.readJSON(userFile, defaultUser);
+ settings = await util.readJSON(guildSettings, defaultSettings);
  if (msg.channel.id !== settings.excludeLogging) {
   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
@@ -263,7 +264,7 @@ client.on('message', async msg => {
  bans = await util.readJSON(bansFile);
   if (!settings.mute) {
     settings.mute = [];
-    await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
+    await writeSettings(guildSettings, settings, null, null, false);
   }
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
@@ -286,6 +287,10 @@ client.on('message', async msg => {
   }
   if (!user.probes) {
     user.probes = [];
+    userChanged = true;
+  }
+  if (!user.reasons) {
+    user.reasons = [];
     userChanged = true;
   }
   if (!settings.group) {
@@ -1005,14 +1010,19 @@ client.on('message', async msg => {
               }
             }
           } else if (/\d{18}/.test(args[1])) {
+            var ok = false;
             try {
               id = client.users.get(args[1]).id;
+              ok = true;
             } catch (e) {
               try {
-                id = client.users.find("username", args[1]).id;
+                if (!ok) {
+                  id = client.users.find("username", args[1]).id;
+                  ok = true;
+                }
               } catch (e) {
                 try {
-                  id = msg.guild.members.find("nickname", args[1]).id;
+                  if (!ok) id = msg.guild.members.find("nickname", args[1]).id;
                 } catch (e) {
                   msg.channel.send(f(lang.unknown, args[1]));
                   return console.error(e);
@@ -1038,6 +1048,7 @@ client.on('message', async msg => {
         sb = new StringBuilder(`BANされていません`),
         sb2 = new StringBuilder(`BANされていません`),
         sb3 = new StringBuilder(`BANされていません`),
+        sb4 = new StringBuilder(`BANされていません`),
         isBot = lang.no;
       try {
         userConfig = await util.readJSON(`./data/users/${id}/config.json`);
@@ -1055,22 +1066,24 @@ client.on('message', async msg => {
               sb.clear();
               sb2.clear();
               sb3.clear();
+              sb4.clear();
               once = true;
             }
             sb.append(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})\n`);
           }
           if (userConfig.bannedFromUser[i] != null) sb2.append(userConfig.bannedFromUser[i] + "\n");
-          if (userConfig.probes[i] != null) {
-            sb3.append(userConfig.probes[i] + "\n");
-          }
+          if (userConfig.probes[i] != null) sb3.append(userConfig.probes[i] + "\n");
+          if (userConfig.reasons[i] != null) sb4.append(userConfig.reasons[i] + "\n");
         }
       } catch (e) {
         sb.clear();
         sb2.clear();
         sb3.clear();
+        sb4.clear();
         sb.append(lang.sunknown);
         sb2.append(lang.sunknown);
         sb3.append(lang.sunknown);
+        sb4.append(lang.sunknown);
       }
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
@@ -1084,6 +1097,7 @@ client.on('message', async msg => {
         .addField(lang.lookup.bannedFromServer, sb.toString())
         .addField(lang.lookup.bannedFromUser, sb2.toString())
         .addField(lang.lookup.probes, sb3.toString())
+        .addField(lang.lookup.reasons, sb4.toString())
         .addField(lang.lookup.tag, user2.tag)
         .addField(lang.lookup.nickname, nick)
         .addField(lang.lookup.id, user2.id)
@@ -1154,6 +1168,7 @@ client.on('message', async msg => {
             userr.bannedFromServer.push(msg.guild.id);
             userr.bannedFromUser.push(msg.author.id);
             userr.probes.push(attach);
+            userr.reasons.push(reason);
             bans.push(userid);
             userr.rep = ++userr.rep;
             targetUserFile = `./data/users/${userid}/config.json`;
@@ -1272,7 +1287,25 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "mute")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      var user2;
+      var user2, muteSB = new StringBuilder(lang.no);
+      if (!args[1]) {
+        if (settings.mute.length != 0) {
+          muteSB.clear();
+          settings.mute.forEach((data) => {
+            if (data) {
+              if (client.users.has(data)) {
+                muteSB.append(`<@${data}> (${client.users.get(data).tag})\n`);
+              } else {
+                muteSB.append(`<@${data}> ${data} (${lang.failed_to_get})\n`);
+              }
+            }
+          });
+        }
+        return msg.channel.send(new Discord.RichEmbed()
+          .setTitle(lang.serverinfo.mute)
+          .addField(lang.serverinfo.mute, muteSB.toString())
+        );
+      }
       try {
         user2 = client.users.find("username", args[1]).id;
       } catch (e) {
@@ -1283,7 +1316,6 @@ client.on('message', async msg => {
             user2 = msg.mentions.users.first().id;
           } catch (e) {
             msg.channel.send(lang.invalid_args);
-            console.error(e);
           }
         }
       }
@@ -1907,4 +1939,7 @@ try {
   console.error(e);
 }
 
-//process.on('unhandledRejection', console.error);
+process.on('unhandledRejection', (error) => {
+  console.error(`Caught error: ${error}`);
+  console.error(error.stack);
+});
