@@ -1870,6 +1870,7 @@ client.on("userUpdate", async (olduser, newuser) => {
   if (olduser.avatarURL !== newuser.avatarURL) user.avatar_changes.push(`${olduser.avatarURL} -> ${newuser.avatarURL}`);
 });
 
+/*
 client.on("guildMemberUpdate", async (oldMember, newMember) => {
   try {
     user = await util.readJSON(oldMember.id, defaultUser);
@@ -1880,6 +1881,7 @@ client.on("guildMemberUpdate", async (oldMember, newMember) => {
     console.error(e);
   }
 });
+*/
 
 try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
