@@ -1007,7 +1007,7 @@ client.on('message', async msg => {
           sb6.clear();
           once2 = true;
         }
-        userConfig.username_changes[i] != null) sb6.append(userConfig.username_changes[i] + "\n");
+        if (userConfig.username_changes[i] != null) sb6.append(userConfig.username_changes[i] + "\n");
       } catch (e) {
         sb6.clear();
         sb6.append(lang.sunknown);
