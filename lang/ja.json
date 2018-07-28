@@ -146,6 +146,7 @@
     "tag": "ユーザータグ",
     "nickname": "ニックネーム",
     "id": "ユーザーID",
+    "username_changes": "名前変更",
     "bot": "ボットかどうか",
     "createdAt": "作成日時",
     "joinedAt": "参加日時",

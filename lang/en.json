@@ -144,6 +144,7 @@
     "tag": "User Tag",
     "nickname": "Nickname",
     "id": "User ID",
+    "username_changes": "List of username changes",
     "bot": "Is bot",
     "createdAt": "Created at",
     "joinedAt": "Joined at",

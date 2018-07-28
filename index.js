@@ -962,6 +962,9 @@ client.on('message', async msg => {
         sb2 = new StringBuilder(`BANされていません`),
         sb3 = new StringBuilder(`BANされていません`),
         sb4 = new StringBuilder(`BANされていません`),
+        sb5 = new StringBuilder(``),
+        sb6 = new StringBuilder(``),
+        sb7 = new StringBuilder(``),
         isBot = lang.no;
       try {
         userConfig = await util.readJSON(`./data/users/${id}/config.json`);
@@ -998,6 +1001,17 @@ client.on('message', async msg => {
         sb3.append(lang.sunknown);
         sb4.append(lang.sunknown);
       }
+      try {
+        var once2 = false;
+        if (!once2) {
+          sb6.clear();
+          once2 = true;
+        }
+        userConfig.username_changes[i] != null) sb6.append(userConfig.username_changes[i] + "\n");
+      } catch (e) {
+        sb6.clear();
+        sb6.append(lang.sunknown);
+      }
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
       const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown;
@@ -1014,6 +1028,7 @@ client.on('message', async msg => {
         .addField(lang.lookup.tag, user2.tag)
         .addField(lang.lookup.nickname, nick)
         .addField(lang.lookup.id, user2.id)
+        .addField(lang.lookup.username_changes, sb6.toString())
         .addField(lang.lookup.bot, isBot)
         .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString('ja-JP'))
         .addField(lang.lookup.joinedAt, joinedAt.toLocaleString('ja-JP'))
