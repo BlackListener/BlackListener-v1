@@ -79,9 +79,6 @@ const f = require('string-format'),
     {"body": `invite`, "args": ` [GuildID] [create] or [allow/deny]`},
     {"body": `role`, "args": ` <Role> [User]`},
     {"body": `autorole`, "args": ` [add/remove] <Role>`},
-    {"body": `say`, "args": ` <Message>`},
-    {"body": `sayd`, "args": ` <Message>`},
-    {"body": `saye`, "args": ` <<Name> <ID>>`},
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
@@ -780,10 +777,6 @@ client.on('message', async msg => {
     if (msg.content === settings.prefix + "help") {
       /* Nothing. Dummy. */
     } else if (msg.content.startsWith(settings.prefix + "image")) {
-      /* Nothing. Dummy. */
-    } else if (msg.content.startsWith(settings.prefix + "say")) {
-      /* Nothing. Dummy. */
-    } else if (msg.content.startsWith(settings.prefix + "sayd")) {
       /* Nothing. Dummy. */
     } else if (msg.content.startsWith(settings.prefix + "status")) {
       /* Dummy */
@@ -1713,7 +1706,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "eval ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author.id !== "254794124744458241" || msg.content.includes("token")) return msg.channel.send(lang.noperm);
-          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
+          var commandcut = msg.content.substr(`${settings.prefix}eval `.length);
           var message = "";
           var argumentarray = commandcut.split(" ");
           argumentarray.forEach(function(element) {
