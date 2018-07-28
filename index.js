@@ -76,9 +76,6 @@ const f = require('string-format'),
     {"body": `invite`, "args": ` [GuildID] [create] or [allow/deny]`},
     {"body": `role`, "args": ` <Role> [User]`},
     {"body": `autorole`, "args": ` [add/remove] <Role>`},
-    {"body": `say`, "args": ` <Message>`},
-    {"body": `sayd`, "args": ` <Message>`},
-    {"body": `saye`, "args": ` <<Name> <ID>>`},
     {"body": `info`, "args": ``},
     {"body": `image`, "args": ``},
     {"body": `image anime`, "args": ``},
@@ -346,7 +343,7 @@ client.on('message', async msg => {
   // --- End of Anti-spam
 
   var argsvar;
-  if (c.use_as_extension && msg.guild.members.get(c.hostid)) {
+  if (c.use_as_extension && msg.guild.members.get(c.hostid) && client.users.get(c.hostid).presence.status === "online") {
     argsvar = msg.content.replace(c.prefix, "").split(` `);
     const args = argsvar;
     if (msg.content.startsWith(c.prefix + "workspace ") || msg.content === c.prefix + "workspace") {
@@ -867,10 +864,6 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "image ")) {
       /* Dummy */
     } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
-      /* Dummy */
-    } else if (msg.content.startsWith(settings.prefix + "say ")) {
-      /* Dummy */
-    } else if (msg.content.startsWith(settings.prefix + "sayd ")) {
       /* Dummy */
     } else if (msg.content.startsWith(settings.prefix + "status ")) {
       /* Dummy */
@@ -1785,7 +1778,7 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "eval ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author.id !== "254794124744458241" || msg.content.includes("token")) return msg.channel.send(lang.noperm);
-          var commandcut = msg.content.substr(`${settings.prefix}sayd `.length);
+          var commandcut = msg.content.substr(`${settings.prefix}eval `.length);
           var message = "";
           var argumentarray = commandcut.split(" ");
           argumentarray.forEach(function(element) {

@@ -31,6 +31,7 @@ module.exports = {
   async execute(userId, cmd, config) {
     if (cmd.includes(">") || cmd.includes("<")) return { status: false, code: 3, message: "Cannot use < and > character." };
     if (await !this.check(userId)) return { status: false, code: 1, message: "Not initialized" };
+    //if ( !(await this.checkdu(userId).status) ) return { status: false, code: 1, message: "Your workspace is overloaded. Please remove(or reinit) workspace." };
     if (cmd.includes("su") || cmd.includes("sudo") || cmd.includes("curl") || cmd.includes("/proc") || cmd.includes("sysrq-trigger") || cmd.includes("mknod")) return { status: false, code: 4, message: `This command has been matched in blacklist.` };
     return exec(`chroot --userspec=anonymous:anonymous ./data/users/${userId}/workspace ${cmd}`)
       .then((out) => {
@@ -41,9 +42,25 @@ module.exports = {
         return { status: false, code: 2, message: err };
       });
   },
+  async checkall(userId) {
+    if (await this.check(userId) && await this.checkdu(userId)) return true; // workspace exists and workspace is not overloaded (>=50MB)
+    return false;
+  },
   async check(userId) {
     if (await util.exists(`./data/users/${userId}/workspace`)) return true;
     return false;
+  },
+  async checkdu(userId) {
+    var duraw;
+    try {
+      duraw = await du(userId);
+    } catch (e) {
+      return { status: false, code: 127, message: e };
+      console.error(e);
+    }
+    const du = parseInt(duraw);
+    if (du >= 50) return { status: false, code: 1, message: "Your workspace is overloaded. Please remove(or reinit) workspace." };
+    return { status: true, code: 0, message: "[ check | passing ]" };
   },
   async du(userId) {
     const out = await exec(`./data/users/${userId}/workspace/`);
