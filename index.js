@@ -268,10 +268,11 @@ client.on('message', async msg => {
     user.username_changes =[];
     userChanged = true;
   }
-  if (!settings.group) {
+
+/*  if (!settings.group) {
     settings.group = [];
     serverChanged = true;
-  }
+  }*/
   if (!settings.banned) {
     settings.banned = false;
     serverChanged = true;
@@ -1907,7 +1908,6 @@ client.on("userUpdate", async (olduser, newuser) => {
   console.error(`Error while null checking (${e})`);
  }
  if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
- if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
  if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`);
 });
 
