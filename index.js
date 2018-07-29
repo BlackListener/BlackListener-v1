@@ -266,6 +266,10 @@ client.on('message', async msg => {
     user.avatar_changes = [];
     userChanged = true;
   }
+  if (!user.username_changes) {
+    user.username_changes =[];
+    userChanged = true;
+  }
   if (!settings.group) {
     settings.group = [];
     serverChanged = true;
@@ -963,9 +967,7 @@ client.on('message', async msg => {
         sb2 = new StringBuilder(`BANされていません`),
         sb3 = new StringBuilder(`BANされていません`),
         sb4 = new StringBuilder(`BANされていません`),
-        sb5 = new StringBuilder(``),
         sb6 = new StringBuilder(``),
-        sb7 = new StringBuilder(``),
         isBot = lang.no;
       try {
         userConfig = await util.readJSON(`./data/users/${id}/config.json`);
