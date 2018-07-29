@@ -43,9 +43,7 @@ const f = require('string-format'),
     bannedFromUser: [],
     probes: [],
     reasons: [],
-    tag_changes: [],
-    avatar_changes: [],
-    nickname_changes: {},
+    username_changes: [],
   },
   global = [],
   levenshtein = function (s1, s2) {if (s1 == s2) {return 0;}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len;}if (s2_len === 0) {return s1_len;}let split = false; try{split = !(`0`)[0];}catch(e){split = true;}if (split) {s1 = s1.split(``); s2 = s2.split(``);}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0, s2_idx = 0, cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx;}let char_s1 = ``, char_s2 = ``; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b;}if (c < m_min) {m_min = c;}v1[s1_idx + 1] = m_min;}const v_tmp = v0; v0 = v1; v1 = v_tmp;}return v0[s1_len];},
@@ -967,7 +965,7 @@ client.on('message', async msg => {
         sb2 = new StringBuilder(`BANされていません`),
         sb3 = new StringBuilder(`BANされていません`),
         sb4 = new StringBuilder(`BANされていません`),
-        sb6 = new StringBuilder(``),
+        sb6 = new StringBuilder(lang.no),
         isBot = lang.no;
       try {
         userConfig = await util.readJSON(`./data/users/${id}/config.json`);
@@ -1870,22 +1868,8 @@ process.on('unhandledRejection', (error) => {
 
 client.on("userUpdate", async (olduser, newuser) => {
   user = await util.readJSON(olduser.id, defaultUser);
-  if (olduser.tag !== newuser.tag) user.tag_changes.push(`${olduser.tag} -> ${newuser.tag}`);
-  if (olduser.avatarURL !== newuser.avatarURL) user.avatar_changes.push(`${olduser.avatarURL} -> ${newuser.avatarURL}`);
+  if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`);
 });
-
-/*
-client.on("guildMemberUpdate", async (oldMember, newMember) => {
-  try {
-    user = await util.readJSON(oldMember.id, defaultUser);
-    nickname_changes = user.nickname_changes;
-    nickname_changes.push({ `${newMember.guild.id}`: []});
-    if (oldMember.nickname !== newMember.nickname) nickname_changes.`${newMember.guild.id}`.push(`${oldMember.nickname} -> ${newMember.nickname}`);
-  } catch (e) {
-    console.error(e);
-  }
-});
-*/
 
 try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
