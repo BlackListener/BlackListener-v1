@@ -237,29 +237,6 @@ client.on('message', async msg => {
  user = await util.readJSON(userFile, defaultUser);
  settings = await util.readJSON(guildSettings, defaultSettings);
  //console.log("Loading " + guildSettings);
- if (msg.channel.id !== settings.excludeLogging) {
-  fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
-  fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
- }
- if (msg.content === settings.prefix + "sync") return;
- if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
-   if (msg.content === `plz sync <@${client.user.id}>`) {
-     const message = await msg.channel.send(`hey <@${c.extender_id}>, ` + settings.language);
-     message.delete(500);
-   }
- }
- client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
- bans = await util.readJSON(bansFile);
-  if (!settings.mute) {
-    settings.mute = [];
-    await writeSettings(guildSettings, settings, null, null, false);
-  }
-  // --- Begin of Mute
-  if (settings.mute.includes(msg.author.id) && !settings.banned) {
-    msg.delete(0);
-  }
-  // --- End of Mute
- if (!msg.author.bot) {
   var userChanged = false, serverChanged = false;
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
@@ -315,6 +292,33 @@ client.on('message', async msg => {
   }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
   if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
+ try {
+  if (msg.channel.id !== settings.excludeLogging) {
+   fsp.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+   fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
+  }
+ } catch (e) {
+  console.error(`Error while logging message (${guildSettings}) (${e})`);
+ }
+ if (msg.content === settings.prefix + "sync") return;
+ if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
+   if (msg.content === `plz sync <@${client.user.id}>`) {
+     const message = await msg.channel.send(`hey <@${c.extender_id}>, ` + settings.language);
+     message.delete(500);
+   }
+ }
+ client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
+ bans = await util.readJSON(bansFile);
+  if (!settings.mute) {
+    settings.mute = [];
+    await writeSettings(guildSettings, settings, null, null, false);
+  }
+  // --- Begin of Mute
+  if (settings.mute.includes(msg.author.id) && !settings.banned) {
+    msg.delete(0);
+  }
+  // --- End of Mute
+ if (!msg.author.bot) {
   lang = await util.readJSON(`./lang/${settings.language}.json`); // Processing message is under of this
   if (msg.system || msg.author.bot) return;
   // --- Begin of Auto-ban
@@ -328,14 +332,18 @@ client.on('message', async msg => {
   // --- End of Auto-ban
 
   // --- Begin of Anti-spam
-  if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
-    var status = false;
-    if (/(\S)\1{15,}/gm.test(msg.content)) {
-      status = true;
-      if (settings.banned) return;
-      msg.delete(0);
-      msg.channel.send(lang.includes_spam);
+  try {
+    if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
+      var status = false;
+      if (/(\S)\1{15,}/gm.test(msg.content)) {
+        status = true;
+        if (settings.banned) return;
+        msg.delete(0);
+        msg.channel.send(lang.includes_spam);
+      }
     }
+  } catch (e) {
+    console.error(`Error while processing anti-spam. (${guildSettings})`);
   }
   // --- End of Anti-spam
 
@@ -1004,6 +1012,7 @@ client.on('message', async msg => {
       } catch (e) {
         sb6.clear();
         sb6.append(lang.sunknown);
+        console.error(`Error while lookup command (sb6) ${e}`);
       }
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
