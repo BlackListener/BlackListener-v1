@@ -1014,6 +1014,7 @@ client.on('message', async msg => {
         sb6.append(lang.sunknown);
         console.error(`Error while lookup command (sb6) ${e}`);
       }
+      if (!sb6.toString() || sb6.toString() === "") sb6.append(lang.no);
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
       const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown;
