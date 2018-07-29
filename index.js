@@ -292,6 +292,10 @@ client.on('message', async msg => {
     settings.welcome_message = null;
     serverChanged = true;
   }
+  if (!settings.mute) {
+    settings.mute = [];
+    serverChanged = true;
+  }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
   if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
  try {
@@ -311,10 +315,6 @@ client.on('message', async msg => {
  }
  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
  bans = await util.readJSON(bansFile);
-  if (!settings.mute) {
-    settings.mute = [];
-    await writeSettings(guildSettings, settings, null, null, false);
-  }
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
     msg.delete(0);
@@ -1868,8 +1868,47 @@ process.on('unhandledRejection', (error) => {
 });
 
 client.on("userUpdate", async (olduser, newuser) => {
-  user = await util.readJSON(olduser.id, defaultUser);
-  if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`);
+ user = await util.readJSON(olduser.id, defaultUser);
+ try {
+  var userChanged = false;
+  if (!user.bannedFromServer) {
+    user.bannedFromServer = [];
+    userChanged = true;
+  }
+  if (!user.bannedFromServerOwner) {
+    user.bannedFromServerOwner = [];
+    userChanged = true;
+  }
+  if (!user.bannedFromUser) {
+    user.bannedFromUser = [];
+    userChanged = true;
+  }
+  if (!user.probes) {
+    user.probes = [];
+    userChanged = true;
+  }
+  if (!user.reasons) {
+    user.reasons = [];
+    userChanged = true;
+  }
+  if (!user.tag_changes) {
+    user.tag_changes = [];
+    userChanged = true;
+  }
+  if (!user.avatar_changes) {
+    user.avatar_changes = [];
+    userChanged = true;
+  }
+  if (!user.username_changes) {
+    user.username_changes =[];
+    userChanged = true;
+  }
+ } catch (e) {
+  console.error(`Error while null checking (${e})`);
+ }
+ if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
+ if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8');
+ if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`);
 });
 
 try {
