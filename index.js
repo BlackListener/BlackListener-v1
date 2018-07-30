@@ -1865,10 +1865,9 @@ function getDateTime()
     ].join( '/' ) + ' ' + date.toLocaleTimeString();
 }
 
-process.on('unhandledRejection', (error) => {
-  console.error(`Caught error: ${error}`);
-  console.error(error.stack);
-});
+if (lastTalkChannel) {
+  lastTalkChannel = null;
+}
 
 client.on("userUpdate", async (olduser, newuser) => {
  user = await util.readJSON(olduser.id, defaultUser);
@@ -1928,7 +1927,3 @@ process.on('unhandledRejection', (error) => {
     lastTalkChannel = null;
   }
 });
-
-if (lastTalkChannel) {
-  lastTalkChannel = null;
-}
