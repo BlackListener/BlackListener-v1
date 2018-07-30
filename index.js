@@ -1922,7 +1922,7 @@ process.on('unhandledRejection', (error) => {
   console.error(`Caught error: ${error}`);
   console.error(error.stack);
   if (lastTalkChannel) {
-    client.channels.get(lastTalkChannel).send(f(lang.error, `\`\`${error}\`\``));
+//    client.channels.get(lastTalkChannel).send(f(lang.error, `\`\`${error}\`\``));
     lastTalkChannel = null;
   }
 });
