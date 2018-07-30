@@ -118,7 +118,8 @@ var guildSettings,
   isTravisBuild = false,
   plugins = {
     run: null,
-  };
+  },
+  lastTalkChannel = null;
 
 function addRole(msg, rolename, isCommand = true, guildmember = null) {
       var role = null;
@@ -210,6 +211,7 @@ client.on('ready', async () => {
 });
 
 client.on('message', async msg => {
+ lastTalkChannel = msg.channel.id;
  var attachments = new StringBuilder("Not found");
  if (msg.attachments.first())
  msg.attachments.forEach((attr) => {
@@ -1935,4 +1937,12 @@ try {
 process.on('unhandledRejection', (error) => {
   console.error(`Caught error: ${error}`);
   console.error(error.stack);
+  if (lastTalkChannel) {
+    client.channels.get(lastTalkChannel).send(f(lang.error, `\`\`${error}\`\``));
+    lastTalkChannel = null;
+  }
 });
+
+if (lastTalkChannel) {
+  lastTalkChannel = null;
+}
