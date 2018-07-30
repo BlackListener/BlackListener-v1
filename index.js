@@ -1773,6 +1773,9 @@ client.on('message', async msg => {
   }
  }
  settings = null;
+ if (lastTalkChannel) {
+   lastTalkChannel = null;
+ }
 });
 
 process.on('SIGINT', function() {
@@ -1863,10 +1866,6 @@ function getDateTime()
       date.getMonth() + 1,
       date.getDate()
     ].join( '/' ) + ' ' + date.toLocaleTimeString();
-}
-
-if (lastTalkChannel) {
-  lastTalkChannel = null;
 }
 
 client.on("userUpdate", async (olduser, newuser) => {
