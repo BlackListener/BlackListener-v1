@@ -210,7 +210,7 @@ client.on('message', async msg => {
    attachments.clear();
    attachments.append(`${attr.url}\n`);
  });
- if (!msg.guild) return msg.channel.send("Currently not supported DM");
+ if (!msg.guild && !msg.author.bot) return msg.channel.send("Currently not supported DM");
  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
  await mkdirp(`./data/users/${msg.author.id}`);
  await mkdirp(`./data/servers/${msg.guild.id}`);
