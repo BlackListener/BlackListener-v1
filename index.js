@@ -105,7 +105,7 @@ const f = require('string-format'),
     {"body": `releases`, "args": ` [version]`},
     {"body": `eval`, "args": ` <program>`},
   ];
-var guildSettings,
+let guildSettings,
   settings,
   lang,
   bansFile,
@@ -122,8 +122,8 @@ var guildSettings,
   lastTalkChannel = null;
 
 function addRole(msg, rolename, isCommand = true, guildmember = null) {
-      var role = null;
-      var member = null;
+      let role = null;
+      let member = null;
       try {
         role = msg.guild.roles.find("name", rolename);
         if (!guildmember) {
@@ -134,11 +134,11 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
         if (isCommand) {
           if (member.roles.has(role.id)) {
             member.removeRole(role).catch(console.error);
-            let embed = new Discord.RichEmbed().setTitle(":wastebasket: ロールから削除").setColor([255,0,0]).setDescription("ロール[" + rolename + "] から削除しました。");
+            const embed = new Discord.RichEmbed().setTitle(":wastebasket: ロールから削除").setColor([255,0,0]).setDescription("ロール[" + rolename + "] から削除しました。");
             msg.channel.send(embed);
           } else {
             member.addRole(role).catch(console.error);
-            let embed = new Discord.RichEmbed().setTitle(":heavy_plus_sign: ロールへ追加").setColor([0,255,0]).setDescription("ロール[" + rolename + "] へ追加しました。");
+            const embed = new Discord.RichEmbed().setTitle(":heavy_plus_sign: ロールへ追加").setColor([0,255,0]).setDescription("ロール[" + rolename + "] へ追加しました。");
             msg.channel.send(embed);
           }
         } else {
@@ -198,13 +198,13 @@ client.on('ready', async () => {
     await client.destroy();
     process.exit();
   }
- var dbl;
+ let dbl;
  if (!isTravisBuild) dbl = new DBL(s.dbl, client);
 });
 
 client.on('message', async msg => {
  lastTalkChannel = msg.channel.id;
- var attachments = new StringBuilder("Not found");
+ const attachments = new StringBuilder("Not found");
  if (msg.attachments.first())
  msg.attachments.forEach((attr) => {
    attachments.clear();
@@ -216,7 +216,7 @@ client.on('message', async msg => {
  await mkdirp(`./data/servers/${msg.guild.id}`);
  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
- var userFile;
+ let userFile;
  let parentName;
  if (msg.channel.parent) {
   parentName = msg.channel.parent.name;
@@ -237,7 +237,7 @@ client.on('message', async msg => {
  user = await util.readJSON(userFile, defaultUser);
  settings = await util.readJSON(guildSettings, defaultSettings);
  //console.log("Loading " + guildSettings);
-  var userChanged = false, serverChanged = false;
+  let userChanged = false, serverChanged = false;
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
     userChanged = true;
@@ -339,7 +339,7 @@ client.on('message', async msg => {
   // --- Begin of Anti-spam
   try {
     if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
-      var status = false;
+      let status = false;
       if (/(\S)\1{15,}/gm.test(msg.content)) {
         status = true;
         if (settings.banned) return;
@@ -427,22 +427,22 @@ client.on('message', async msg => {
           ]);
         }
       } else {
-        let embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
+        const embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
         .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
         return msg.channel.send(embed).catch(console.error);
       }
     } else if (msg.content === settings.prefix + "info") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
         const graph = `Device          Total  Used Avail Use% Mounted on\n`;
-        var o1 = `利用不可`,
+        let o1 = `利用不可`,
           loadavg = `利用不可`,
           invite = s.inviteme;
         if (!isWindows) {
-          var { stdout, stderr } = await exec("df -h | grep /dev/sda");
+          const { stdout, stderr } = await exec("df -h | grep /dev/sda");
           o1 = stdout;
           loadavg = Math.floor(os.loadavg()[0] * 100) / 100;
         }
-        let embed = new Discord.RichEmbed()
+        const embed = new Discord.RichEmbed()
           .setTitle("Bot info")
           .setTimestamp()
           .setColor([0,255,0])
@@ -459,20 +459,20 @@ client.on('message', async msg => {
       return msg.channel.send(embed);
     } else if (msg.content.startsWith(settings.prefix + "encode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      let cmd = settings.prefix + "encode ";
+      const cmd = settings.prefix + "encode ";
       return await msg.channel.send(new Buffer.from(msg.content.slice(cmd.length)).toString(`base64`));
     } else if (msg.content.startsWith(settings.prefix + "decode ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       return await msg.channel.send(new Buffer.from(args[1], `base64`).toString(`ascii`));
     } else if (msg.content.startsWith(settings.prefix + "encrypt ")) {
       if (!args[2]) return msg.channel.send(lang.invalid_args);
-      var cipher = crypto.createCipher('aes192', args[2]);
+      const cipher = crypto.createCipher('aes192', args[2]);
       cipher.update(args[1], 'utf8', 'hex');
-      var encryptedText = cipher.final('hex');
+      const encryptedText = cipher.final('hex');
       return await msg.channel.send(f(lang.encrypted, args[1], args[2], encryptedText));
     } else if (msg.content.startsWith(settings.prefix + "decrypt ")) {
       if (!args[2]) return await msg.channel.send(lang.invalid_args);
-      var decipher,dec;
+      let decipher,dec;
       try {
         decipher = crypto.createDecipher('aes192', args[2]);
         decipher.update(args[1], 'hex', 'utf8');
@@ -556,7 +556,7 @@ client.on('message', async msg => {
           error: 2,
         };
         const commandcut = msg.content.substr(`${settings.prefix}workspace run `.length);
-        var message = "";
+        let message = "";
         const argumentarray = commandcut.split(" ");
         argumentarray.forEach(function(element) {
             message += element + " ";
@@ -603,7 +603,7 @@ client.on('message', async msg => {
       return await msg.channel.send(embed);
     } else if (msg.content === settings.prefix + "serverinfo") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
-      var prefix = lang.sunknown,
+      let prefix = lang.sunknown,
         language = lang.sunknown,
         notifyRep = lang.unknownorzero,
         banRep = lang.unknownorzero,
@@ -659,7 +659,7 @@ client.on('message', async msg => {
           }
         });
       }
-      let embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
         .setTitle(" - Server Information - ")
         .setColor([0,255,0])
         .setTimestamp()
@@ -683,9 +683,9 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "status minecraft") {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       msg.channel.send(lang.status.checking);
-      var status = ["undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined"];
-      var key,leng,data,time;
-      var i = 0;
+      const status = ["undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined"];
+      let key,leng,data,time;
+      let i = 0;
       const startTime = now();
       data = await fetch("https://status.mojang.com/check").then(res => res.json())
       for (leng = data.length; i < data.length; i ++) {
@@ -708,7 +708,7 @@ client.on('message', async msg => {
       }
       const endTime = now();
       time = endTime - startTime;
-      let embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
         .setTitle(lang.status.title)
         .setURL("https://help.mojang.com")
         .setColor([0,255,0])
@@ -727,9 +727,9 @@ client.on('message', async msg => {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (s.fortnite_api_key === ``) return msg.channel.send(lang.no_apikey);
       msg.channel.send(lang.status.checking);
-      var status = "Unknown";
-      var key,leng,data,time;
-      var i = 0;
+      let status = "Unknown";
+      let key,leng,data,time;
+      const i = 0;
       const startTime = now();
       data = await fetch("https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status", {
         method: "POST",
@@ -748,7 +748,7 @@ client.on('message', async msg => {
       }
       const endTime = now();
       time = endTime - startTime;
-      let embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
         .setTitle(lang.status.title)
         .setURL("https://status.epicgames.com")
         .setColor([0,255,0])
@@ -759,9 +759,9 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
       console.log(f(lang.issueduser, msg.author.tag, msg.content));
       if (s.talk_apikey == `` || s.talk_apikey == `undefined` || !s.talk_apikey) return msg.channel.send(lang.no_apikey);
-      var status = "？？？";
-      var key,leng,data,time;
-      var i = 0;
+      let status = "？？？";
+      let key,leng,data,time;
+      const i = 0;
       const startTime = now();
       const header = {
         "x-api-key": s.talk_apikey,
@@ -771,7 +771,7 @@ client.on('message', async msg => {
       if (resreg.status !== 200) return msg.channel.send(lang.returned_invalid_response);
       const resjson = await resreg.json();
       const userId = resjson.appUserId;
-      let talkform = `{ "botId": "sample", "appUserId": ${userId}, "initTalkingFlag": true, "voiceText": ${args[1]}, "initTopicId": "docomoapi" }`;
+      const talkform = `{ "botId": "sample", "appUserId": ${userId}, "initTalkingFlag": true, "voiceText": ${args[1]}, "initTopicId": "docomoapi" }`;
       const talkheader = {
         "x-api-key": s.talk_apikey,
         "Content-Type": "application/json",
@@ -795,7 +795,7 @@ client.on('message', async msg => {
       /* Dummy */
     } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      let unsavedSettings = settings;
+      const unsavedSettings = settings;
       if (args[1] === "enable") {
         unsavedSettings.disable_purge = false;
       } else if (args[1] === "disable") {
@@ -822,12 +822,12 @@ client.on('message', async msg => {
         if (/\D/.test(args[1])) return await msg.channel.send(lang.invalid_args);
         if (/\d{19,}/.test(args[1])) return await msg.channel.send(lang.invalid_args);
         if (!client.guilds.get(args[1])) return await msg.channel.send(lang.invalid_args);
-        var sb = new StringBuilder(``);
+        const sb = new StringBuilder(``);
         const thatGuild = await util.readJSON(`./data/servers/${client.guilds.get(args[1]).id}/config.json`);
         if (!thatGuild.invite) return await msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`));
         try {
           if (args[2] === `create`) {
-            var invite;
+            let invite;
             try {
               invite = await client.guilds.get(args[1]).channels.first().createInvite();
             } catch (e) {
@@ -841,7 +841,7 @@ client.on('message', async msg => {
               });
             })
             .catch(console.error);
-          let embed = new Discord.RichEmbed()
+          const embed = new Discord.RichEmbed()
             .setTitle(lang.invites)
             .setDescription(sb.toString())
             .setFooter(lang.invite_create)
@@ -878,7 +878,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "setignore")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      var channel, id;
+      let channel, id;
       if (msg.mentions.channels.first()) {
         channel = msg.mentions.channels.first();
       } else if (/\D/.test(args[1])) {
@@ -901,7 +901,7 @@ client.on('message', async msg => {
         msg.author.send(f(lang.mytoken, client.token));
         msg.reply(lang.senttodm);
         console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-        var embed = new Discord.RichEmbed();
+        const embed = new Discord.RichEmbed();
         embed.description = "You'll need to set - add permission - 'Manage Messages' => 'Save Changes'";
         embed.setColor([255, 0, 0]);
         msg.delete(5000).catch(function (error) { msg.channel.send(":no_good: Missing permission: 'manage message'", embed); console.error("Error: missing 'manage message' permission.");});
@@ -911,7 +911,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      var id, force = false;
+      let id, force = false;
       if (msg.mentions.users.first()) {
         id = msg.mentions.users.first().id;
       } else {
@@ -929,7 +929,7 @@ client.on('message', async msg => {
               }
             }
           } else if (/\d{18}/.test(args[1])) {
-            var ok = false;
+            let ok = false;
             try {
               id = client.users.get(args[1]).id;
               ok = true;
@@ -962,7 +962,7 @@ client.on('message', async msg => {
           }
         }
       }
-      var userConfig,
+      let userConfig,
         user2,
         sb = new StringBuilder(`BANされていません`),
         sb2 = new StringBuilder(`BANされていません`),
@@ -980,7 +980,7 @@ client.on('message', async msg => {
       if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
       try {
         for (let i=0;i<=userConfig.probes.length;i++) {
-          var once = false;
+          let once = false;
           if (userConfig.bannedFromServer[i] != null) {
             if (!once) {
               sb.clear();
@@ -1006,7 +1006,7 @@ client.on('message', async msg => {
         sb4.append(lang.sunknown);
       }
       try {
-        var once2 = false;
+        let once2 = false;
         if (!once2) {
           sb6.clear();
           once2 = true;
@@ -1021,7 +1021,7 @@ client.on('message', async msg => {
       const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
       const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
       const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown;
-      let embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
         .setTitle(lang.lookup.title)
         .setColor([0,255,0])
         .setFooter(desc)
@@ -1043,8 +1043,8 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "ban ") || msg.content === settings.prefix + "ban") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === ``) {
-        var once = false;
-        var sb = new StringBuilder(`まだ誰もBANしていません`);
+        let once = false;
+        const sb = new StringBuilder(`まだ誰もBANしていません`);
         require(`./data/bans.json`).forEach((data) => {
           if (data) {
             if (!once) {
@@ -1058,7 +1058,7 @@ client.on('message', async msg => {
             }
           }
         });
-        let embed = new Discord.RichEmbed()
+        const embed = new Discord.RichEmbed()
           .setTitle(lang.banned_users)
           .setColor([0,255,0])
           .setDescription(sb.toString());
@@ -1067,7 +1067,7 @@ client.on('message', async msg => {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
           async function asyncprocess() {
             if (!args[2]) return msg.channel.send(lang.invalid_args);
-            var user2,
+            let user2,
               fetchedBans,
               attach,
               targetUserFile,
@@ -1097,7 +1097,7 @@ client.on('message', async msg => {
             if (args[3] !== `--force`) { if (!user2) { return msg.channel.send(lang.invalid_user); } }
             let userid;
             if (args[3] === `--force`) { userid = args[1]; } else { userid = user2.id; }
-            let userr = await util.readJSON(`./data/users/${userid}/config.json`, defaultUser);
+            const userr = await util.readJSON(`./data/users/${userid}/config.json`, defaultUser);
             userr.bannedFromServerOwner.push(msg.guild.ownerID);
             userr.bannedFromServer.push(msg.guild.id);
             userr.bannedFromUser.push(msg.author.id);
@@ -1123,9 +1123,9 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
       }
       if (settings.disable_purge) return msg.channel.send(lang.disabled_purge);
-      var messages;
+      let messages;
       if (args[1] === `` || !args[1] || args[1] === `all`) {
-        let clear = () => {
+        const clear = () => {
           msg.channel.fetchMessages()
             .then((messages) => {
               msg.channel.bulkDelete(messages);
@@ -1137,7 +1137,7 @@ client.on('message', async msg => {
         clear();
       } else if (/[^0-9]/.test(args[1]) && args[1] === `gdel-msg`) {
         msg.guild.channels.forEach((channel) => {
-          var clear = () => {
+          const clear = () => {
             channel.fetchMessages()
               .then((messages) => {
                 channel.bulkDelete(messages);
@@ -1157,10 +1157,10 @@ client.on('message', async msg => {
         if (!msg.mentions.channels.first()) return msg.channel.send(lang.no_args);
         try {
           async function asyncProcess() {
-            let channel = msg.mentions.channels.first();
+            const channel = msg.mentions.channels.first();
             msg.channel.send(`:ok_hand:`);
             channel.delete(`Remake of Channel`);
-            let created_channel = await msg.guild.createChannel(channel.name, channel.type);
+            const created_channel = await msg.guild.createChannel(channel.name, channel.type);
             if (channel.parent) {
               created_channel.setParent(channel.parentID);
             }
@@ -1189,7 +1189,7 @@ client.on('message', async msg => {
         msg.channel.send(lang.no_args);
       } else {
         if (msg.guild && msg.guild.available && !msg.author.bot) {
-          var user2;
+          let user2;
           if (/[0-9]................./.test(args[1])) {
             user2 = client.users.get(args[1]);
           } else {
@@ -1197,16 +1197,16 @@ client.on('message', async msg => {
           }
           if (!msg.mentions.users.first()) { /* Dummy */ } else { user2 = msg.mentions.users.first(); }
           if (!user2) { settings = null; return msg.channel.send(lang.invalid_user); }
-          let ban = bans;
-          var exe = false;
-          for (var i=0; i<=bans.length; i++) {
+          const ban = bans;
+          let exe = false;
+          for (let i=0; i<=bans.length; i++) {
             if (bans[i] == user2.id) {
               exe = true;
               delete ban[i];
             }
           }
           if (!exe) { settings = null; return msg.channel.send(lang.notfound_user); }
-          for (var i=0; i<=client.guilds.length; i++) {
+          for (let i=0; i<=client.guilds.length; i++) {
             client.guilds[i].unban(user2)
               .then(user2 => console.log(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
               .catch(console.error);
@@ -1221,7 +1221,7 @@ client.on('message', async msg => {
       }
     } else if (msg.content.startsWith(settings.prefix + "mute")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      var user2, muteSB = new StringBuilder(lang.no);
+      let user2, muteSB = new StringBuilder(lang.no);
       if (!args[1]) {
         if (settings.mute.length != 0) {
           muteSB.clear();
@@ -1255,7 +1255,7 @@ client.on('message', async msg => {
       }
       if (!user2 || user2 === msg.author.id || user2 === client.user.id) return msg.channel.send(lang.invalid_args);
       if (settings.mute.includes(user2) || args[2] === `unmute`) {
-        var result = settings.mute.filter(function( item ) {
+        const result = settings.mute.filter(function( item ) {
           return item !== user2;
         });
         settings.mute = result;
@@ -1267,7 +1267,7 @@ client.on('message', async msg => {
       writeSettings(guildSettings, settings, msg.channel, "mute");
     } else if (msg.content.startsWith(settings.prefix + "setprefix ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-      let set = settings;
+      const set = settings;
       if (/\s/gm.test(args[1]) || !args[1]) {
         msg.channel.send(lang.cannotspace);
       } else {
@@ -1376,13 +1376,13 @@ client.on('message', async msg => {
         off = `無効`,
         on = `有効`;
       if (!args[1] || args[1] === "help") {
-        var status;
+        let status;
         if (settings.antispam) {
           status = on;
         } else {
           status = off;
         }
-        let embed = new Discord.RichEmbed()
+        const embed = new Discord.RichEmbed()
           .setTitle(` - AntiSpam - `)
           .setDescription(f(lang.antispam.description, status))
           .addField(`${command} toggle`, lang.antispam.toggle)
@@ -1394,23 +1394,23 @@ client.on('message', async msg => {
         msg.channel.send(embed);
       } else if (args[1] === "toggle") {
         if (settings.antispam) {
-          let localSettings = settings;
+          const localSettings = settings;
           localSettings.antispam = false;
           writeSettings(guildSettings, localSettings, null, null, false);
           msg.channel.send(lang.antispam.disabled);
         } else {
-          let localSettings = settings;
+          const localSettings = settings;
           localSettings.antispam = true;
           writeSettings(guildSettings, localSettings, null, null, false);
           msg.channel.send(lang.antispam.enabled);
         }
       } else if (args[1] === "disable") {
-        let localSettings = settings;
+        const localSettings = settings;
         localSettings.antispam = false;
         writeSettings(guildSettings, localSettings, null, null, false);
         msg.channel.send(lang.antispam.disabled);
       } else if (args[1] === "enable") {
-        let localSettings = settings;
+        const localSettings = settings;
         localSettings.antispam = true;
         writeSettings(guildSettings, localSettings, null, null, false);
         msg.channel.send(lang.antispam.enabled);
@@ -1435,7 +1435,7 @@ client.on('message', async msg => {
         }
       } else if (args[1] === "status") {
         if (!msg.mentions.channels.first()) {
-          var sb = new StringBuilder(``);
+          const sb = new StringBuilder(``);
           settings.ignoredChannels.forEach((channel) => {
             if (channel != null) {
               sb.append(`<#${channel}>\n`);
@@ -1464,20 +1464,20 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "autorole" || msg.content.startsWith(settings.prefix + "autorole ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (args[1] === `remove`) {
-        let localSettings = settings;
+        const localSettings = settings;
         localSettings.autorole = null;
         writeSettings(guildSettings, localSettings, msg.channel, "autorole");
       } else if (args[1] === `add`) {
-        let localSettings = settings;
+        const localSettings = settings;
         if (/\d{18,}/.test(args[2])) {
           localSettings.autorole = args[2];
         } else {
           try {
-            let role = msg.mentions.roles.first().id.toString();
+            const role = msg.mentions.roles.first().id.toString();
             localSettings.autorole = role;
           } catch (e) {
             try {
-              let role = msg.guild.roles.find("name", args[2]).id;
+              const role = msg.guild.roles.find("name", args[2]).id;
               localSettings.autorole = role;
             } catch (e) {
               msg.channel.send(lang.invalid_args);
@@ -1507,13 +1507,13 @@ client.on('message', async msg => {
         localSettings.global = null;
         writeSettings(guildSettings, localSettings, msg.channel, "global");
       } else if (args[1] === `add`) {
-        var id;
+        let id;
         if (!msg.mentions.channels.first()) { /* Dummy */} else {
           console.log(msg.mentions.channels.first().id);
           id = msg.mentions.channels.first().id;
         }
         console.log(id);
-        var localSettings = settings,
+        let localSettings = settings,
           global_servers = await util.readJSON('./data/global_servers.json'),
           global_channels = await util.readJSON('./data/global_channels.json');
         if (/\d{18,}/.test(args[2])) {
@@ -1552,7 +1552,7 @@ client.on('message', async msg => {
     } else if (msg.content === settings.prefix + "dump" || msg.content.startsWith(settings.prefix + "dump ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       const url = c.dump_url;
-      var sb = new StringBuilder(``),
+      let sb = new StringBuilder(``),
         link = `${url}`,
         nowrite;
       if (args[1] === `users`) {
@@ -1587,13 +1587,13 @@ client.on('message', async msg => {
       }
       let image1 = `https://img.rht0910.tk/upload/2191111432/72932264/bump.png`,
         image2 = `https://img.rht0910.tk/upload/2191111432/710894583/dump2.png`;
-      var image;
+      let image;
       if (!args[2]) {
         image = image1;
       } else {
         image = image2;
       }
-      let embed = new Discord.RichEmbed().setImage(image)
+      const embed = new Discord.RichEmbed().setImage(image)
         .setTitle(lang.dumpmessage)
         .setURL(s.inviteme)
         .setColor([140,190,210])
@@ -1606,9 +1606,9 @@ client.on('message', async msg => {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (args[1] === "message") {
         if (!args[2]) return msg.channel.send(lang.invalid_args);
-        var commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length);
-        var message = "";
-        var argumentarray = commandcut.split(" ");
+        const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length);
+        let message = "";
+        const argumentarray = commandcut.split(" ");
         argumentarray.forEach(function(element) {
           message += element + " ";
         }, this);
@@ -1617,7 +1617,7 @@ client.on('message', async msg => {
         msg.channel.send(lang.welcome_warning);
       } else if (args[1] === "channel") {
         if (!args[2]) return msg.channel.send(lang.invalid_args);
-        var channel;
+        let channel;
         try {
           channel = msg.guild.channels.find("name", args[2]).id;
         } catch (e) {
@@ -1645,7 +1645,7 @@ client.on('message', async msg => {
           guild: `guild`,
           user: `user`,
         };
-      var user2,
+      let user2,
         mode = types.user,
         id,
         link = ``;
@@ -1677,7 +1677,7 @@ client.on('message', async msg => {
         await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified));
         throw new TypeError("Types are not specified or invalid type.");
       }
-      let embed = new Discord.RichEmbed()
+      const embed = new Discord.RichEmbed()
         .setTitle(lang.dumpmessage)
         .setURL(s.inviteme)
         .setColor([140,190,210])
@@ -1705,23 +1705,23 @@ client.on('message', async msg => {
     } else if (msg.content.startsWith(settings.prefix + "language ") || msg.content === settings.prefix + "language") {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1] || args[1] === "help") {
-        let embed = new Discord.RichEmbed()
+        const embed = new Discord.RichEmbed()
           .setTitle(lang.langnotsupported)
           .setDescription(lang.availablelang)
           .addField(":flag_jp: Japanese - 日本語", "ja")
           .addField(":flag_us: English - English", "en");
         msg.channel.send(embed);
       } else if (args[1] === "en" || args[1] === "ja") {
-        let set = settings;
+        const set = settings;
         set.language = args[1];
         writeSettings(guildSettings, set, msg.channel, "language");
       }
     } else if (msg.content.startsWith(settings.prefix + "eval ")) {
       console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (msg.author.id !== "254794124744458241" || msg.content.includes("token")) return msg.channel.send(lang.noperm);
-          var commandcut = msg.content.substr(`${settings.prefix}eval `.length);
-          var message = "";
-          var argumentarray = commandcut.split(" ");
+          const commandcut = msg.content.substr(`${settings.prefix}eval `.length);
+          let message = "";
+          const argumentarray = commandcut.split(" ");
           argumentarray.forEach(function(element) {
               message += element + " ";
           }, this);
@@ -1748,13 +1748,13 @@ client.on('message', async msg => {
       if (!plugins.run()) {
         let sb = new StringBuilder(``),
         cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
-        for (var i = 0; i < commandList.length; i++) {
+        for (let i = 0; i < commandList.length; i++) {
           commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
         }
         commandList.sort((a, b) => {
           return a.no - b.no;
         });
-        for (var i = 0; i < commandList.length; i++) {
+        for (let i = 0; i < commandList.length; i++) {
           if (commandList[i].no <= 2) {
             sb.append(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\`\n`);
           }
@@ -1795,7 +1795,7 @@ function writeSettings(settingsFile, wsettings, channel, config, message = true)
 }
 
 client.on("guildMemberAdd", async (member) => {
-  var serverFile;
+  let serverFile;
   await mkdirp(`./data/users/${member.user.id}`);
   await mkdirp(`./data/servers/${member.guild.id}`);
   try {
@@ -1811,8 +1811,8 @@ client.on("guildMemberAdd", async (member) => {
       await util.initJSON(serverFile, defaultSettings)
     } catch (e) {console.error(e);}
   }
-  let serverSetting = await util.readJSON(serverFile);
-  let userSetting = await util.readJSON(userFile);
+  const serverSetting = await util.readJSON(serverFile);
+  const userSetting = await util.readJSON(userFile);
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
@@ -1824,7 +1824,7 @@ client.on("guildMemberAdd", async (member) => {
   }
   if (serverSetting.autorole) {
     (async function () {
-      let role = await member.guild.roles.get(serverSetting.autorole);
+      const role = await member.guild.roles.get(serverSetting.autorole);
       member.addRole(role);
       console.log(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
     }) ();
@@ -1860,7 +1860,7 @@ client.on("messageUpdate", async (old, msg) => {
 
 function getDateTime()
 {
-    var date = new Date();
+    const date = new Date();
     return [
       date.getFullYear(),
       date.getMonth() + 1,
@@ -1871,7 +1871,7 @@ function getDateTime()
 client.on("userUpdate", async (olduser, newuser) => {
  user = await util.readJSON(olduser.id, defaultUser);
  try {
-  var userChanged = false;
+  let userChanged = false;
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
     userChanged = true;
