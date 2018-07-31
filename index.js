@@ -104,7 +104,9 @@ const f = require('string-format'),
     {"body": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
     {"body": `releases`, "args": ` [version]`},
     {"body": `eval`, "args": ` <program>`},
-  ];
+  ],
+  isTravisBuild = process.argv[2] === `--travis-build`,
+  s = isTravisBuild ? require("./travis.json") : require("./secret.json");
 let guildSettings,
   settings,
   lang,
@@ -114,8 +116,6 @@ let guildSettings,
   user,
   serverMessagesFile,
   userMessagesFile,
-  s,
-  isTravisBuild = false,
   plugins = {
     run: null,
   },
@@ -150,6 +150,8 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
   }
 }
 
+if (!isTravisBuild) new DBL(s.dbl, client);
+
 client.on('warn', (warn) => {
   console.warn(`Got Warning from Client: ${warn}`);
 });
@@ -163,20 +165,7 @@ client.on('reconnecting', () => {
   console.error("Got Disconnected from Websocket, Reconnecting!");
 });
 
-if (process.argv[2]) {
-  if (process.argv[2] === `--travis-build`) {
-    s = require("./travis.json");
-    isTravisBuild = true;
-  }
-}
-if (!s) s = require("./secret.json");
-
 client.on('ready', async () => {
-  if (!isTravisBuild) {
-    setInterval(() => {
-      dbl.postStats(client.guilds.size, null, null);
-    }, 1800000);
-  }
   await mkdirp(`./plugins`);
   await mkdirp(`./data/servers`);
   await mkdirp(`./data/users`);
@@ -198,8 +187,6 @@ client.on('ready', async () => {
     await client.destroy();
     process.exit();
   }
-  let dbl;
-  if (!isTravisBuild) dbl = new DBL(s.dbl, client);
 });
 
 client.on('message', async msg => {
