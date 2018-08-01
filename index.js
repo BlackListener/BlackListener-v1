@@ -1856,8 +1856,8 @@ function getDateTime()
 
 client.on("userUpdate", async (olduser, newuser) => {
   const user = await util.readJSON(olduser.id, defaultUser);
+  let userChanged = false;
   try {
-    let userChanged = false;
     if (!user.bannedFromServer) {
       user.bannedFromServer = [];
       userChanged = true;
