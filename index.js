@@ -194,7 +194,11 @@ client.on('message', async msg => {
       attachments.clear();
       attachments.append(`${attr.url}\n`);
     });
-  if (!msg.guild && !msg.author.bot) return msg.channel.send("Currently not supported DM");
+  if (!msg.guild && !msg.author.bot) {
+    return msg.channel.send("Currently not supported DM");
+  } else if (!msg.guild && msg.author.bot) {
+    return;
+  }
   const guildSettings = `./data/servers/${msg.guild.id}/config.json`;
   await mkdirp(`./data/users/${msg.author.id}`);
   await mkdirp(`./data/servers/${msg.guild.id}`);
@@ -511,7 +515,7 @@ client.on('message', async msg => {
         }
       } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
         console.log(f(lang.issueduser, msg.author.tag, msg.content));
-        if (msg.guild.members.get(c.extender_id)) return true;
+        if (msg.guild.members.get(c.extender_id)) return;
         if (isWindows) return msg.channel.send(lang.workspace.windows);
         if (args[1] === `url`) {
           return msg.channel.send(s.extenderinvite);
@@ -564,7 +568,7 @@ client.on('message', async msg => {
         } else {
           return msg.channel.send(lang.invalid_args);
         }
-        return true;
+        return;
       } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
         console.log(f(lang.issueduser, msg.author.tag, msg.content));
         if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`));
