@@ -107,19 +107,14 @@ const f = require('string-format'),
   ],
   isTravisBuild = process.argv[2] === `--travis-build`,
   s = isTravisBuild ? require("./travis.json") : require("./secret.json");
-let guildSettings,
-  settings,
-  lang,
-  bansFile,
-  bans,
-  userFile,
-  user,
-  serverMessagesFile,
-  userMessagesFile,
+let bansFile,
+  lang;
+/*
   plugins = {
     run: null,
   },
-  lastTalkChannel = null;
+*/
+  // lastTalkChannel = null;
 
 function addRole(msg, rolename, isCommand = true, guildmember = null) {
   let role = null;
@@ -169,9 +164,11 @@ client.on('ready', async () => {
   await mkdirp(`./plugins`);
   await mkdirp(`./data/servers`);
   await mkdirp(`./data/users`);
+  /*
   plugins.run = function () {
     return false; // always return false, not implemented!
   }
+  */
   // plugins.files.push();
   bansFile = `./data/bans.json`;
   util.initJSON(bansFile, defaultBans).catch(console.error);
@@ -190,7 +187,7 @@ client.on('ready', async () => {
 });
 
 client.on('message', async msg => {
-  lastTalkChannel = msg.channel.id;
+  // lastTalkChannel = msg.channel.id;
   const attachments = new StringBuilder("Not found");
   if (msg.attachments.first())
     msg.attachments.forEach((attr) => {
@@ -198,11 +195,11 @@ client.on('message', async msg => {
       attachments.append(`${attr.url}\n`);
     });
   if (!msg.guild && !msg.author.bot) return msg.channel.send("Currently not supported DM");
-  guildSettings = `./data/servers/${msg.guild.id}/config.json`;
+  const guildSettings = `./data/servers/${msg.guild.id}/config.json`;
   await mkdirp(`./data/users/${msg.author.id}`);
   await mkdirp(`./data/servers/${msg.guild.id}`);
-  userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
-  serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
+  const userMessagesFile = `./data/users/${msg.author.id}/messages.log`;
+  const serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`;
   let userFile;
   let parentName;
   if (msg.channel.parent) {
@@ -221,8 +218,8 @@ client.on('message', async msg => {
       await util.initJSON(guildSettings, defaultSettings)
     } catch (e) {console.error(e);}
   }
-  user = await util.readJSON(userFile, defaultUser);
-  settings = await util.readJSON(guildSettings, defaultSettings);
+  const user = await util.readJSON(userFile, defaultUser);
+  let settings = await util.readJSON(guildSettings, defaultSettings);
   //console.log("Loading " + guildSettings);
   let userChanged = false, serverChanged = false;
   if (!user.bannedFromServer) {
@@ -304,7 +301,7 @@ client.on('message', async msg => {
     }
   }
   client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
-  bans = await util.readJSON(bansFile);
+  let bans = await util.readJSON(bansFile);
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
     msg.delete(0);
@@ -317,7 +314,7 @@ client.on('message', async msg => {
     if (!settings.banned) {
       if (settings.banRep <= user.rep && settings.banRep != 0) {
         msg.guild.ban(msg.author)
-          .then(user => console.log(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
+          .then(user2 => console.log(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
           .catch(console.error);
       }
     }
@@ -1080,7 +1077,7 @@ client.on('message', async msg => {
                 } else {
                   attach = msg.attachments.first().url;
                 }
-                if (msg.mentions.users.first()) { user = msg.mentions.users.first(); }
+                if (msg.mentions.users.first()) { user2 = msg.mentions.users.first(); }
                 if (args[3] !== `--force`) { if (!user2) { return msg.channel.send(lang.invalid_user); } }
                 let userid;
                 if (args[3] === `--force`) { userid = args[1]; } else { userid = user2.id; }
@@ -1404,9 +1401,9 @@ client.on('message', async msg => {
           } else if (args[1] === "ignore") {
             if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args); }
             if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
-            let localSettings = settings,
-              user2 = msg.mentions.channels.first(),
-              id;
+            const localSettings = settings,
+              user2 = msg.mentions.channels.first();
+            let id;
             if (!user2) user2 = msg.guild.channels.find("name", args[2]);
             if (!user2) user2 = msg.guild.channels.get(args[2]);
             id = user2 ? user2.id : `:poop:`;
@@ -1430,7 +1427,7 @@ client.on('message', async msg => {
               });
               return msg.channel.send(f(lang.antispam.disabled_channels, sb.toString()));
             }
-            let localSettings = settings,
+            const localSettings = settings,
               id = msg.mentions.channels.first().id;
             if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace); }
             if (settings.ignoredChannels.includes(id)) {
@@ -1500,7 +1497,7 @@ client.on('message', async msg => {
               id = msg.mentions.channels.first().id;
             }
             console.log(id);
-            let localSettings = settings,
+            const localSettings = settings,
               global_servers = await util.readJSON('./data/global_servers.json'),
               global_channels = await util.readJSON('./data/global_channels.json');
             if (/\d{18,}/.test(args[2])) {
@@ -1732,7 +1729,7 @@ client.on('message', async msg => {
           delete require.cache[require.resolve(`./lang/en.json`)];
           msg.channel.send(`:ok_hand:`);
         } else {
-          if (!plugins.run()) {
+          //if (!plugins.run()) {
             let sb = new StringBuilder(``),
               cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
             for (let i = 0; i < commandList.length; i++) {
@@ -1750,7 +1747,7 @@ client.on('message', async msg => {
             if (sb.toString() != ``) {
               msg.channel.send(f(lang.didyoumean, `\n${sb.toString()}`));
             }
-          }
+          //} if (!plugins.run)
         }
       } else {
         return msg.channel.send(lang.udonthaveperm);
@@ -1760,9 +1757,7 @@ client.on('message', async msg => {
     }
   }
   settings = null;
-  if (lastTalkChannel) {
-    lastTalkChannel = null;
-  }
+  delete require.cache[require.resolve(bansFile)];
 });
 
 process.on('SIGINT', function() {
@@ -1803,7 +1798,7 @@ client.on("guildMemberAdd", async (member) => {
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
-        .then(user => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+        .then(user2 => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
         .catch(console.error);
     } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
       member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
@@ -1827,7 +1822,7 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("messageUpdate", async (old, msg) => {
-  settings = await util.readJSON(`./data/servers/${msg.guild.id}/config.json`, defaultSettings);
+  let settings = await util.readJSON(`./data/servers/${msg.guild.id}/config.json`, defaultSettings);
   if (old.content === msg.content) return;
   if (msg.channel.id !== settings.excludeLogging) {
     let parentName;
@@ -1856,7 +1851,7 @@ function getDateTime()
 }
 
 client.on("userUpdate", async (olduser, newuser) => {
-  user = await util.readJSON(olduser.id, defaultUser);
+  const user = await util.readJSON(olduser.id, defaultUser);
   try {
     let userChanged = false;
     if (!user.bannedFromServer) {
@@ -1908,8 +1903,4 @@ try {
 process.on('unhandledRejection', (error) => {
   console.error(`Caught error: ${error}`);
   console.error(error.stack);
-  if (lastTalkChannel) {
-    //    client.channels.get(lastTalkChannel).send(f(lang.error, `\`\`${error}\`\``));
-    lastTalkChannel = null;
-  }
 });
