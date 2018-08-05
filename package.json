@@ -9,7 +9,6 @@
     "form-data": "^2.3.2",
     "mkdirp-promise": "^5.0.1",
     "node-fetch": "^2.1.2",
-    "node-stringbuilder": "^2.2.3",
     "performance-now": "^2.1.0",
     "random-puppy": "^1.1.0",
     "string-format": "^2.0.0"
