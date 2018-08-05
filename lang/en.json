@@ -90,7 +90,7 @@
   "contains_spam": ":x: Detected spamming.",
   "no_command": "`{0}` is not BlackListener command.",
   "didyoumean": "Did you mean? {0}",
-  "error": "Errored while processing: Error code: {0}",
+  "error": "Errored while processing: Error: {0}",
   "errors": {
     "server_banned": "k52j",
     "permission_denied": "bu93",
