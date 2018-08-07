@@ -7,6 +7,7 @@ const f = require('string-format'),
   fetch = require('node-fetch'),
   os = require('os'),
   cmd = require('./cmd'),
+  jsonpp = require('jsonplusplus'),
   DBL = require("dblapi.js"),
   randomPuppy = require("random-puppy"),
   fsp = require('fs').promises,
@@ -15,7 +16,8 @@ const f = require('string-format'),
   isWindows = process.platform === "win32",
   FormData = require('form-data'),
   util = require('./util'),
-  c = require('./config.json'),
+  c = jsonpp.require('./config.json'),
+  logger = require('./logger'),
   defaultSettings = {
     prefix: c.prefix,
     language: c.lang,
@@ -33,6 +35,7 @@ const f = require('string-format'),
     welcome_channel: null,
     welcome_message: null,
     mute: [],
+    message_blacklist: [],
   },
   defaultBans = [],
   defaultUser = {
@@ -47,65 +50,65 @@ const f = require('string-format'),
   global = [],
   levenshtein = function (s1, s2) {if (s1 == s2) {return 0;}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len;}if (s2_len === 0) {return s1_len;}let split = false; try{split = !(`0`)[0];}catch(e){split = true;}if (split) {s1 = s1.split(``); s2 = s2.split(``);}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0, s2_idx = 0, cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx;}let char_s1 = ``, char_s2 = ``; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b;}if (c < m_min) {m_min = c;}v1[s1_idx + 1] = m_min;}const v_tmp = v0; v0 = v1; v1 = v_tmp;}return v0[s1_len];},
   commandList = [
-    {"body": `help`, "args": ` [Command]`},
-    {"body": `shutdown`, "args": ` [-f]`},
-    {"body": `token`, "args": ``},
-    {"body": `setprefix`, "args": ` <Prefix>`},
-    {"body": `ban`, "args": ` [<ID/Mentions/Name> <Reason> <Probe>]`},
-    {"body": `unban`, "args": ` <ID/Mentions/Name> *Not recommended*`},
-    {"body": `language`, "args": ` <ja/en>`},
-    {"body": `setnotifyrep`, "args": ` <0...10>`},
-    {"body": `setbanrep`, "args": ` <0...10>`},
-    {"body": `antispam`, "args": ``},
-    {"body": `antispam toggle`, "args": ``},
-    {"body": `antispam disable`, "args": ``},
-    {"body": `antispam enable`, "args": ``},
-    {"body": `antispam ignore`, "args": ` <Channel>`},
-    {"body": `antispam status`, "args": ` [Channel]`},
-    {"body": `reload`, "args": ``},
-    {"body": `setnick`, "args": ` <NewName> [User]`},
-    {"body": `setnickname`, "args": ` <NewName> [User]`},
-    {"body": `purge`, "args": ` [number/all]`},
-    {"body": `purge gdel`, "args": ``},
-    {"body": `purge gdel-msg`, "args": ``},
-    {"body": `purge gdel-really`, "args": ``},
-    {"body": `purge remake`, "args": ` <Channel>`},
-    {"body": `togglepurge`, "args": ` [enable/disable]`},
-    {"body": `dump`, "args": ` [guilds|users|channels|emojis|messages]`},
-    {"body": `listemojis`, "args": ` [escape]`},
-    {"body": `invite`, "args": ` [GuildID] [create] or [allow/deny]`},
-    {"body": `role`, "args": ` <Role> [User]`},
-    {"body": `autorole`, "args": ` [add/remove] <Role>`},
-    {"body": `info`, "args": ``},
-    {"body": `image`, "args": ``},
-    {"body": `image anime`, "args": ``},
-    {"body": `image`, "args": ` nsfw|r18|閲覧注意`},
-    {"body": `image custom`, "args": ` <subreddit>`},
-    {"body": `didyouknow`, "args": ` <User:Guild> [:server]`},
-    {"body": `setgroup`, "args": ` [add/remove] [ServerID]`},
-    {"body": `lookup`, "args": ` <User>`},
-    {"body": `status minecraft`, "args": ``},
-    {"body": `status fortnite`, "args": ``},
-    {"body": `encode`, "args": ` <String>`},
-    {"body": `decode`, "args": ` <Base64String>`},
-    {"body": `encrypt`, "args": ` <Text> <Password>`},
-    {"body": `decrypt`, "args": ` <EncryptedText> <Password>`},
-    {"body": `deletemsg`, "args": ` [User]`},
-    {"body": `setignore`, "args": ` <Channel>`},
-    {"body": `leave`, "args": ``},
-    {"body": `instantban`, "args": ``},
-    {"body": `instantkick`, "args": ``},
-    {"body": `resetnick`, "args": ` [User]`},
-    {"body": `serverinfo`, "args": ``},
-    {"body": `setwelcome`, "args": ` [channel:message] [Channel:Message]`},
-    {"body": `mute`, "args": ` <User>`},
-    {"body": `banned`, "args": ``},
-    {"body": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
-    {"body": `releases`, "args": ` [version]`},
-    {"body": `eval`, "args": ` <program>`},
+    {"cmd": `help`, "args": ` [Command]`},
+    {"cmd": `shutdown`, "args": ` [-f]`},
+    {"cmd": `token`, "args": ``},
+    {"cmd": `setprefix`, "args": ` <Prefix>`},
+    {"cmd": `ban`, "args": ` [<ID/Mentions/Name> <Reason> <Probe>]`},
+    {"cmd": `unban`, "args": ` <ID/Mentions/Name> *Not recommended*`},
+    {"cmd": `language`, "args": ` <ja/en>`},
+    {"cmd": `setnotifyrep`, "args": ` <0...10>`},
+    {"cmd": `setbanrep`, "args": ` <0...10>`},
+    {"cmd": `antispam`, "args": ``},
+    {"cmd": `antispam toggle`, "args": ``},
+    {"cmd": `antispam disable`, "args": ``},
+    {"cmd": `antispam enable`, "args": ``},
+    {"cmd": `antispam ignore`, "args": ` <Channel>`},
+    {"cmd": `antispam status`, "args": ` [Channel]`},
+    {"cmd": `reload`, "args": ``},
+    {"cmd": `setnick`, "args": ` <NewName> [User]`},
+    {"cmd": `setnickname`, "args": ` <NewName> [User]`},
+    {"cmd": `purge`, "args": ` [number/all]`},
+    {"cmd": `purge gdel`, "args": ``},
+    {"cmd": `purge gdel-msg`, "args": ``},
+    {"cmd": `purge gdel-really`, "args": ``},
+    {"cmd": `purge remake`, "args": ` <Channel>`},
+    {"cmd": `togglepurge`, "args": ` [enable/disable]`},
+    {"cmd": `dump`, "args": ` [guilds|users|channels|emojis|messages]`},
+    {"cmd": `listemojis`, "args": ` [escape]`},
+    {"cmd": `invite`, "args": ` [GuildID] [create] or [allow/deny]`},
+    {"cmd": `role`, "args": ` <Role> [User]`},
+    {"cmd": `autorole`, "args": ` [add/remove] <Role>`},
+    {"cmd": `info`, "args": ``},
+    {"cmd": `image`, "args": ``},
+    {"cmd": `image anime`, "args": ``},
+    {"cmd": `image`, "args": ` nsfw|r18|閲覧注意`},
+    {"cmd": `image custom`, "args": ` <subreddit>`},
+    {"cmd": `didyouknow`, "args": ` <User:Guild> [:server]`},
+    {"cmd": `setgroup`, "args": ` [add/remove] [ServerID]`},
+    {"cmd": `lookup`, "args": ` <User>`},
+    {"cmd": `status minecraft`, "args": ``},
+    {"cmd": `status fortnite`, "args": ``},
+    {"cmd": `encode`, "args": ` <String>`},
+    {"cmd": `decode`, "args": ` <Base64String>`},
+    {"cmd": `encrypt`, "args": ` <Text> <Password>`},
+    {"cmd": `decrypt`, "args": ` <EncryptedText> <Password>`},
+    {"cmd": `deletemsg`, "args": ` [User]`},
+    {"cmd": `setignore`, "args": ` <Channel>`},
+    {"cmd": `leave`, "args": ``},
+    {"cmd": `instantban`, "args": ``},
+    {"cmd": `instantkick`, "args": ``},
+    {"cmd": `resetnick`, "args": ` [User]`},
+    {"cmd": `serverinfo`, "args": ``},
+    {"cmd": `setwelcome`, "args": ` [channel:message] [Channel:Message]`},
+    {"cmd": `mute`, "args": ` <User>`},
+    {"cmd": `banned`, "args": ``},
+    {"cmd": `talkja`, "args": ` <話しかけたいこと(日本語のみ)>`},
+    {"cmd": `releases`, "args": ` [version]`},
+    {"cmd": `eval`, "args": ` <program>`},
   ],
   isTravisBuild = process.argv[2] === `--travis-build`,
-  s = isTravisBuild ? require("./travis.json") : require("./secret.json");
+  s = isTravisBuild ? jsonpp.require("./travis.json") : jsonpp.require("./secret.json");
 let bansFile,
   lang;
 /*
@@ -278,6 +281,10 @@ client.on('message', async msg => {
   }
   if (!settings.mute) {
     settings.mute = [];
+    serverChanged = true;
+  }
+  if (!settings.message_blacklist) {
+    settings.message_blacklist = [];
     serverChanged = true;
   }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
@@ -582,6 +589,137 @@ client.on('message', async msg => {
             .addField(`${prefix}lookup <User>`, lang.lookup.desc)
             .addField(lang.commands.others, lang.commands.athere);
         return await msg.channel.send(embed);
+      } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
+        console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+        let id, force = false;
+        if (msg.mentions.users.first()) {
+          id = msg.mentions.users.first().id;
+        } else {
+          if (args[2] === `--force`) { force = true; id = lang.sunknown; }
+          if (!force) {
+            if (/\D/gm.test(args[1])) {
+              try {
+                id = client.users.find("username", args[1]).id;
+              } catch (e) {
+                try {
+                  id = msg.guild.members.find("nickname", args[1]).id;
+                } catch (e) {
+                  console.error(e);
+                  return msg.channel.send(f(lang.unknown, args[1]));
+                }
+              }
+            } else if (/\d{18}/.test(args[1])) {
+              let ok = false;
+              try {
+                id = client.users.get(args[1]).id;
+                ok = true;
+              } catch (e) {
+                try {
+                  if (!ok) {
+                    id = client.users.find("username", args[1]).id;
+                    ok = true;
+                  }
+                } catch (e) {
+                  try {
+                    if (!ok) id = msg.guild.members.find("nickname", args[1]).id;
+                  } catch (e) {
+                    msg.channel.send(f(lang.unknown, args[1]));
+                    return console.error(e);
+                  }
+                }
+              }
+            } else {
+              try {
+                id = client.users.find("username", args[1]).id;
+              } catch (e) {
+                try {
+                  id = msg.guild.members.find("nickname", args[1]).id;
+                } catch (e) {
+                  console.error(e);
+                  return msg.channel.send(f(lang.unknown, args[1]));
+                }
+              }
+            }
+          }
+        }
+        let userConfig,
+          user2,
+          sb = [`BANされていません`],
+          sb2 = [`BANされていません`],
+          sb3 = [`BANされていません`],
+          sb4 = [`BANされていません`],
+          sb6 = [lang.no],
+          isBot = lang.no;
+        try {
+          userConfig = await util.readJSON(`./data/users/${id}/config.json`);
+          user2 = client.users.get(id);
+        } catch (e) {
+          console.error(e);
+          return msg.channel.send(f(lang.unknown, args[1]));
+        }
+        if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
+        try {
+          for (let i=0;i<=userConfig.probes.length;i++) {
+            let once = false;
+            if (userConfig.bannedFromServer[i] != null) {
+              if (!once) {
+                sb.length = 0;
+                sb2.length = 0;
+                sb3.length = 0;
+                sb4.length = 0;
+                once = true;
+              }
+              sb.push(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
+            }
+            if (userConfig.bannedFromUser[i] != null) sb2.push(userConfig.bannedFromUser[i]);
+            if (userConfig.probes[i] != null) sb3.push(userConfig.probes[i]);
+            if (userConfig.reasons[i] != null) sb4.push(userConfig.reasons[i]);
+          }
+        } catch (e) {
+          sb.length = 0;
+          sb2.length = 0;
+          sb3.length = 0;
+          sb4.length = 0;
+          sb.push(lang.sunknown);
+          sb2.push(lang.sunknown);
+          sb3.push(lang.sunknown);
+          sb4.push(lang.sunknown);
+        }
+        try {
+          let once2 = false;
+          if (!once2) {
+            sb6.length = 0;
+            once2 = true;
+          }
+          if (userConfig.username_changes[i] != null) sb6.push(userConfig.username_changes[i]);
+        } catch (e) {
+          sb6.length = 0;
+          sb6.push(lang.sunknown);
+          console.error(`Error while lookup command (sb6) ${e}`);
+        }
+        if (!sb6.length) sb6.push(lang.no);
+        const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
+        const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
+        const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown;
+        const embed = new Discord.RichEmbed()
+          .setTitle(lang.lookup.title)
+          .setColor([0,255,0])
+          .setFooter(desc)
+          .setThumbnail(user2.avatarURL)
+          .addField(lang.lookup.rep, userConfig.rep)
+          .addField(lang.lookup.bannedFromServer, sb.join('\n'))
+          .addField(lang.lookup.bannedFromUser, sb2.join('\n'))
+          .addField(lang.lookup.probes, sb3.join('\n'))
+          .addField(lang.lookup.reasons, sb4.join('\n'))
+          .addField(lang.lookup.tag, user2.tag)
+          .addField(lang.lookup.nickname, nick)
+          .addField(lang.lookup.id, user2.id)
+          .addField(lang.lookup.username_changes, sb6.join('\n'))
+          .addField(lang.lookup.bot, isBot)
+          .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString('ja-JP'))
+          .addField(lang.lookup.joinedAt, joinedAt.toLocaleString('ja-JP'))
+          .addField(lang.lookup.nowTime, new Date().toLocaleString('ja-JP'));
+        msg.channel.send(embed);
       } else if (msg.content === settings.prefix + "serverinfo") {
         console.log(f(lang.issueduser, msg.author.tag, msg.content));
         let prefix = lang.sunknown,
@@ -890,137 +1028,6 @@ client.on('message', async msg => {
             msg.reply(lang.youdonthavear);
             console.log(f(lang.issuedfailadmin, msg.author.tag, msg.content, "Doesn't have Admin Role"));
           }
-        } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-          let id, force = false;
-          if (msg.mentions.users.first()) {
-            id = msg.mentions.users.first().id;
-          } else {
-            if (args[2] === `--force`) { force = true; id = lang.sunknown; }
-            if (!force) {
-              if (/\D/gm.test(args[1])) {
-                try {
-                  id = client.users.find("username", args[1]).id;
-                } catch (e) {
-                  try {
-                    id = msg.guild.members.find("nickname", args[1]).id;
-                  } catch (e) {
-                    console.error(e);
-                    return msg.channel.send(f(lang.unknown, args[1]));
-                  }
-                }
-              } else if (/\d{18}/.test(args[1])) {
-                let ok = false;
-                try {
-                  id = client.users.get(args[1]).id;
-                  ok = true;
-                } catch (e) {
-                  try {
-                    if (!ok) {
-                      id = client.users.find("username", args[1]).id;
-                      ok = true;
-                    }
-                  } catch (e) {
-                    try {
-                      if (!ok) id = msg.guild.members.find("nickname", args[1]).id;
-                    } catch (e) {
-                      msg.channel.send(f(lang.unknown, args[1]));
-                      return console.error(e);
-                    }
-                  }
-                }
-              } else {
-                try {
-                  id = client.users.find("username", args[1]).id;
-                } catch (e) {
-                  try {
-                    id = msg.guild.members.find("nickname", args[1]).id;
-                  } catch (e) {
-                    console.error(e);
-                    return msg.channel.send(f(lang.unknown, args[1]));
-                  }
-                }
-              }
-            }
-          }
-          let userConfig,
-            user2,
-            sb = [`BANされていません`],
-            sb2 = [`BANされていません`],
-            sb3 = [`BANされていません`],
-            sb4 = [`BANされていません`],
-            sb6 = [lang.no],
-            isBot = lang.no;
-          try {
-            userConfig = await util.readJSON(`./data/users/${id}/config.json`);
-            user2 = client.users.get(id);
-          } catch (e) {
-            console.error(e);
-            return msg.channel.send(f(lang.unknown, args[1]));
-          }
-          if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
-          try {
-            for (let i=0;i<=userConfig.probes.length;i++) {
-              let once = false;
-              if (userConfig.bannedFromServer[i] != null) {
-                if (!once) {
-                  sb.length = 0;
-                  sb2.length = 0;
-                  sb3.length = 0;
-                  sb4.length = 0;
-                  once = true;
-                }
-                sb.push(`${userConfig.bannedFromServer[i]} (${userConfig.bannedFromServerOwner[i]})`);
-              }
-              if (userConfig.bannedFromUser[i] != null) sb2.push(userConfig.bannedFromUser[i]);
-              if (userConfig.probes[i] != null) sb3.push(userConfig.probes[i]);
-              if (userConfig.reasons[i] != null) sb4.push(userConfig.reasons[i]);
-            }
-          } catch (e) {
-            sb.length = 0;
-            sb2.length = 0;
-            sb3.length = 0;
-            sb4.length = 0;
-            sb.push(lang.sunknown);
-            sb2.push(lang.sunknown);
-            sb3.push(lang.sunknown);
-            sb4.push(lang.sunknown);
-          }
-          try {
-            let once2 = false;
-            if (!once2) {
-              sb6.length = 0;
-              once2 = true;
-            }
-            if (userConfig.username_changes[i] != null) sb6.push(userConfig.username_changes[i]);
-          } catch (e) {
-            sb6.length = 0;
-            sb6.push(lang.sunknown);
-            console.error(`Error while lookup command (sb6) ${e}`);
-          }
-          if (!sb6.length) sb6.push(lang.no);
-          const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
-          const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul;
-          const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown;
-          const embed = new Discord.RichEmbed()
-            .setTitle(lang.lookup.title)
-            .setColor([0,255,0])
-            .setFooter(desc)
-            .setThumbnail(user2.avatarURL)
-            .addField(lang.lookup.rep, userConfig.rep)
-            .addField(lang.lookup.bannedFromServer, sb.join('\n'))
-            .addField(lang.lookup.bannedFromUser, sb2.join('\n'))
-            .addField(lang.lookup.probes, sb3.join('\n'))
-            .addField(lang.lookup.reasons, sb4.join('\n'))
-            .addField(lang.lookup.tag, user2.tag)
-            .addField(lang.lookup.nickname, nick)
-            .addField(lang.lookup.id, user2.id)
-            .addField(lang.lookup.username_changes, sb6.join('\n'))
-            .addField(lang.lookup.bot, isBot)
-            .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString('ja-JP'))
-            .addField(lang.lookup.joinedAt, joinedAt.toLocaleString('ja-JP'))
-            .addField(lang.lookup.nowTime, new Date().toLocaleString('ja-JP'));
-          msg.channel.send(embed);
         } else if (msg.content.startsWith(settings.prefix + "ban ") || msg.content === settings.prefix + "ban") {
           console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (!args[1] || args[1] === ``) {
@@ -1730,14 +1737,14 @@ client.on('message', async msg => {
             let sb = [],
               cmd = `${args[0]} ${args[1]}`.replace(` undefined`, ``);
             for (let i = 0; i < commandList.length; i++) {
-              commandList[i].no = levenshtein(`${cmd}`, commandList[i].body);
+              commandList[i].no = levenshtein(`${cmd}`, commandList[i].cmd);
             }
             commandList.sort((a, b) => {
               return a.no - b.no;
             });
             for (let i = 0; i < commandList.length; i++) {
               if (commandList[i].no <= 2) {
-                sb.push(`・\`${settings.prefix}${commandList[i].body}${commandList[i].args}\``);
+                sb.push(`・\`${settings.prefix}${commandList[i].cmd}${commandList[i].args}\``);
               }
             }
             msg.channel.send(f(lang.no_command, `${settings.prefix}${cmd}`));

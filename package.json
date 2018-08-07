@@ -7,6 +7,7 @@
     "dblapi.js": "^2.1.0",
     "discord.js": "^11.3.2",
     "form-data": "^2.3.2",
+    "jsonplusplus": "0.0.3",
     "mkdirp-promise": "^5.0.1",
     "node-fetch": "^2.1.2",
     "performance-now": "^2.1.0",
