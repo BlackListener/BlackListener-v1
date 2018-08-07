@@ -130,36 +130,36 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
     }
     if (isCommand) {
       if (member.roles.has(role.id)) {
-        member.removeRole(role).catch(console.error);
+        member.removeRole(role).catch(logger.error);
         const embed = new Discord.RichEmbed().setTitle(":wastebasket: ロールから削除").setColor([255,0,0]).setDescription("ロール[" + rolename + "] から削除しました。");
         msg.channel.send(embed);
       } else {
-        member.addRole(role).catch(console.error);
+        member.addRole(role).catch(logger.error);
         const embed = new Discord.RichEmbed().setTitle(":heavy_plus_sign: ロールへ追加").setColor([0,255,0]).setDescription("ロール[" + rolename + "] へ追加しました。");
         msg.channel.send(embed);
       }
     } else {
-      member.addRole(role).catch(console.error);
+      member.addRole(role).catch(logger.error);
     }
   } catch (e) {
     msg.channel.send(lang.role_error);
-    console.error(e);
+    logger.error(e);
   }
 }
 
 if (!isTravisBuild) new DBL(s.dbl, client);
 
 client.on('warn', (warn) => {
-  console.warn(`Got Warning from Client: ${warn}`);
+  logger.warn(`Got Warning from Client: ${warn}`);
 });
 
 client.on('disconnect', () => {
-  console.info("Disconnected from Websocket.");
+  logger.info("Disconnected from Websocket.");
   process.exit();
 });
 
 client.on('reconnecting', () => {
-  console.error("Got Disconnected from Websocket, Reconnecting!");
+  logger.fatal("Got Disconnected from Websocket, Reconnecting!");
 });
 
 client.on('ready', async () => {
@@ -173,16 +173,16 @@ client.on('ready', async () => {
   */
   // plugins.files.push();
   bansFile = `./data/bans.json`;
-  util.initJSON(bansFile, defaultBans).catch(console.error);
-  util.initJSON(`./data/global_servers.json`, global).catch(console.error);
-  util.initJSON(`./data/global_channels.json`, global).catch(console.error);
+  util.initJSON(bansFile, defaultBans).catch(logger.error);
+  util.initJSON(`./data/global_servers.json`, global).catch(logger.error);
+  util.initJSON(`./data/global_channels.json`, global).catch(logger.error);
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`);
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`);
   }, 10000);
-  console.log(`Bot has Fully startup.`);
+  logger.info(`Bot has Fully startup.`);
   if (isTravisBuild) {
-    console.log(`Shutting down...`);
+    logger.info(`Shutting down...`);
     await client.destroy();
     process.exit();
   }
@@ -216,11 +216,11 @@ client.on('message', async msg => {
       userFile = `./data/users/${msg.author.id}/config.json`;
       await util.initJSON(userFile, defaultUser)
       await util.initJSON(guildSettings, defaultSettings)
-    } catch (e) {console.error(e);}
+    } catch (e) {logger.error(e);}
   }
   const user = await util.readJSON(userFile, defaultUser);
   let settings = await util.readJSON(guildSettings, defaultSettings);
-  //console.log("Loading " + guildSettings);
+  //logger.debug("Loading " + guildSettings);
   let userChanged = false, serverChanged = false;
   if (!user.bannedFromServer) {
     user.bannedFromServer = [];
@@ -295,7 +295,7 @@ client.on('message', async msg => {
       fsp.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`);
     }
   } catch (e) {
-    console.error(`Error while logging message (${guildSettings}) (${e})`);
+    logger.error(`Error while logging message (${guildSettings}) (${e})`);
   }
   if (msg.content === settings.prefix + "sync") return;
   if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
@@ -318,8 +318,8 @@ client.on('message', async msg => {
     if (!settings.banned) {
       if (settings.banRep <= user.rep && settings.banRep != 0) {
         msg.guild.ban(msg.author)
-          .then(user2 => console.log(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
-          .catch(console.error);
+          .then(user2 => logger.info(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
+          .catch(logger.error);
       }
     }
     // --- End of Auto-ban
@@ -336,7 +336,7 @@ client.on('message', async msg => {
         }
       }
     } catch (e) {
-      console.error(`Error while processing anti-spam. (${guildSettings})`);
+      logger.error(`Error while processing anti-spam. (${guildSettings})`);
     }
     // --- End of Anti-spam
 
@@ -344,7 +344,7 @@ client.on('message', async msg => {
       if (settings.banned && msg.author.id !== "254794124744458241") { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)); }
       const args = msg.content.replace(settings.prefix, "").split(` `);
       if (args[0] === 'image') {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         const sendImage = async list => {
           msg.channel.send(lang.searching);
           if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw);
@@ -417,10 +417,10 @@ client.on('message', async msg => {
         } else {
           const embed = new Discord.RichEmbed().setImage("https://i.imgur.com/rc8mMFi.png").setTitle("引数が").setColor([0,255,0])
             .setDescription(":thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:");
-          return msg.channel.send(embed).catch(console.error);
+          return msg.channel.send(embed).catch(logger.error);
         }
       } else if (msg.content === settings.prefix + "info") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         const graph = `Device          Total  Used Avail Use% Mounted on\n`;
         let o1 = `利用不可`,
           loadavg = `利用不可`,
@@ -446,11 +446,11 @@ client.on('message', async msg => {
           .setFooter(`Sent by ${msg.author.tag}`);
         return msg.channel.send(embed);
       } else if (msg.content.startsWith(settings.prefix + "encode ")) {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         const cmd = settings.prefix + "encode ";
         return await msg.channel.send(new Buffer.from(msg.content.slice(cmd.length)).toString(`base64`));
       } else if (msg.content.startsWith(settings.prefix + "decode ")) {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         return await msg.channel.send(new Buffer.from(args[1], `base64`).toString(`ascii`));
       } else if (msg.content.startsWith(settings.prefix + "encrypt ")) {
         if (!args[2]) return msg.channel.send(lang.invalid_args);
@@ -470,7 +470,7 @@ client.on('message', async msg => {
         }
         return await msg.channel.send(f(lang.decrypted, args[1], args[2], dec));
       } else if (msg.content.startsWith(settings.prefix + "didyouknow ")) {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         if (args[2] === "server") {
           let know = client.guilds.find("name", args[1]);
           if (!know) know = client.guilds.get(args[1]);
@@ -489,20 +489,20 @@ client.on('message', async msg => {
           return await msg.channel.send(f(lang.known, `${know.tag} (${know.id})`));
         }
       } else if (msg.content === settings.prefix + "members") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         return await msg.channel.send(msg.guild.members.size);
       } else if (msg.content === settings.prefix + "banned") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         return await msg.channel.send(lang.wrong_banned);
       } else if (msg.content.startsWith(settings.prefix + "music") || msg.content.startsWith(settings.prefix + "play")) {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         return await msg.channel.send(f(lang.musicbotis, s.musicinvite));
       } else if (msg.content.startsWith(settings.prefix + "docs ") || msg.content === settings.prefix + "docs") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         msg.channel.send(lang.deprecated);
         if (args[1]) { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`)) } else { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands`)); }
       } else if (msg.content.startsWith(settings.prefix + "releases ") || msg.content === settings.prefix + "releases") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         const versions = [
           "1.1",
           "1.1.1",
@@ -514,7 +514,7 @@ client.on('message', async msg => {
           return await msg.channel.send(f(`http://go.blacklistener.tk/go/history`));
         }
       } else if (msg.content.startsWith(settings.prefix + "workspace ") || msg.content === settings.prefix + "workspace") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         if (msg.guild.members.get(c.extender_id)) return;
         if (isWindows) return msg.channel.send(lang.workspace.windows);
         if (args[1] === `url`) {
@@ -570,7 +570,7 @@ client.on('message', async msg => {
         }
         return;
       } else if (msg.content === settings.prefix + "help" || msg.content.startsWith(settings.prefix + "help ")) {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`));
         let prefix = settings.prefix,
           embed = new Discord.RichEmbed()
@@ -590,7 +590,7 @@ client.on('message', async msg => {
             .addField(lang.commands.others, lang.commands.athere);
         return await msg.channel.send(embed);
       } else if (msg.content.startsWith(settings.prefix + "lookup ")) {
-        console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
         let id, force = false;
         if (msg.mentions.users.first()) {
           id = msg.mentions.users.first().id;
@@ -604,7 +604,7 @@ client.on('message', async msg => {
                 try {
                   id = msg.guild.members.find("nickname", args[1]).id;
                 } catch (e) {
-                  console.error(e);
+                  logger.error(e);
                   return msg.channel.send(f(lang.unknown, args[1]));
                 }
               }
@@ -624,7 +624,7 @@ client.on('message', async msg => {
                     if (!ok) id = msg.guild.members.find("nickname", args[1]).id;
                   } catch (e) {
                     msg.channel.send(f(lang.unknown, args[1]));
-                    return console.error(e);
+                    return logger.error(e);
                   }
                 }
               }
@@ -635,7 +635,7 @@ client.on('message', async msg => {
                 try {
                   id = msg.guild.members.find("nickname", args[1]).id;
                 } catch (e) {
-                  console.error(e);
+                  logger.error(e);
                   return msg.channel.send(f(lang.unknown, args[1]));
                 }
               }
@@ -654,7 +654,7 @@ client.on('message', async msg => {
           userConfig = await util.readJSON(`./data/users/${id}/config.json`);
           user2 = client.users.get(id);
         } catch (e) {
-          console.error(e);
+          logger.error(e);
           return msg.channel.send(f(lang.unknown, args[1]));
         }
         if (!force) { if (user2.bot) isBot = lang.yes; } else { isBot = lang.sunknown; }
@@ -695,7 +695,7 @@ client.on('message', async msg => {
         } catch (e) {
           sb6.length = 0;
           sb6.push(lang.sunknown);
-          console.error(`Error while lookup command (sb6) ${e}`);
+          logger.error(`Error while lookup command (sb6) ${e}`);
         }
         if (!sb6.length) sb6.push(lang.no);
         const desc = force ? lang.lookup.desc + " ・ " + f(lang.unknown, args[1]) : lang.lookup.desc;
@@ -721,7 +721,7 @@ client.on('message', async msg => {
           .addField(lang.lookup.nowTime, new Date().toLocaleString('ja-JP'));
         msg.channel.send(embed);
       } else if (msg.content === settings.prefix + "serverinfo") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         let prefix = lang.sunknown,
           language = lang.sunknown,
           notifyRep = lang.unknownorzero,
@@ -800,7 +800,7 @@ client.on('message', async msg => {
           .addField(lang.serverinfo.welcome_message, welcome_message);
         return await msg.channel.send(embed);
       } else if (msg.content === settings.prefix + "status minecraft") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         msg.channel.send(lang.status.checking);
         const status = ["undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined", "undefined"];
         let key,leng,data,time;
@@ -843,7 +843,7 @@ client.on('message', async msg => {
           .addField(lang.status.servers.mojang, status[7]);
         return msg.channel.send(embed);
       } else if (msg.content === settings.prefix + "status fortnite") {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         if (s.fortnite_api_key === ``) return msg.channel.send(lang.no_apikey);
         msg.channel.send(lang.status.checking);
         let status = "Unknown";
@@ -876,7 +876,7 @@ client.on('message', async msg => {
           .addField(lang.status.servers.fortnite, status);
         return msg.channel.send(embed);
       } else if (msg.content.startsWith(settings.prefix + "talkja ")) {
-        console.log(f(lang.issueduser, msg.author.tag, msg.content));
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content));
         if (s.talk_apikey == `` || s.talk_apikey == `undefined` || !s.talk_apikey) return msg.channel.send(lang.no_apikey);
         let status = "？？？";
         let key,leng,data,time;
@@ -913,7 +913,7 @@ client.on('message', async msg => {
         } else if (msg.content.startsWith(settings.prefix + "status")) {
           /* Dummy */
         } else if (msg.content === settings.prefix + "togglepurge" || msg.content.startsWith(settings.prefix + "togglepurge ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           const unsavedSettings = settings;
           if (args[1] === "enable") {
             unsavedSettings.disable_purge = false;
@@ -928,7 +928,7 @@ client.on('message', async msg => {
           }
           writeSettings(guildSettings, unsavedSettings, msg.channel, "disable_purge");
         } else if (msg.content.startsWith(settings.prefix + "invite ") || msg.content === settings.prefix + "invite") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           async function asyncprocess() {
             if (!args[1]) return await msg.channel.send(f(lang.invite_bot, s.inviteme));
             if (args[1] === `allow`) {
@@ -959,7 +959,7 @@ client.on('message', async msg => {
                     sb.push(`https://discord.gg/${data.code}`);
                   });
                 })
-                .catch(console.error);
+                .catch(logger.error);
               const embed = new Discord.RichEmbed()
                 .setTitle(lang.invites)
                 .setDescription(sb.join('\n'))
@@ -967,36 +967,36 @@ client.on('message', async msg => {
                 .setTimestamp();
               msg.channel.send(embed);
             } catch (e) {
-              console.error(e);
+              logger.error(e);
               if (e.toString() === `TypeError: Cannot read property 'fetchInvites' of undefined`) return await msg.channel.send(lang.noguild);
             }
           }
           asyncprocess();
         } else if (msg.content.startsWith(settings.prefix + "shutdown ") || msg.content === settings.prefix + "shutdown") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (msg.author == "<@254794124744458241>") {
             if (args[1] == "-f") {
-              console.log(f(lang.atmpfs, msg.author.tag));
+              logger.info(f(lang.atmpfs, msg.author.tag));
               msg.channel.send(lang.bye);
               client.destroy();
             } else if (args[1] == "-r") {
               async function asyncprocess() {
-                console.log(f(lang.rebooting));
+                logger.info(f(lang.rebooting));
                 await msg.channel.send(lang.rebooting);
                 process.kill(process.pid, 'SIGKILL');
               }
               asyncprocess();
             } else {
-              console.log(f(lang.success, msg.content));
+              logger.info(f(lang.success, msg.content));
               msg.channel.send(lang.bye);
               client.destroy();
             }
           } else {
             msg.reply(lang.noperm);
-            console.log(f(lang.failednotmatch, msg.content));
+            logger.info(f(lang.failednotmatch, msg.content));
           }
         } else if (msg.content.startsWith(settings.prefix + "setignore")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           let channel, id;
           if (msg.mentions.channels.first()) {
             channel = msg.mentions.channels.first();
@@ -1019,17 +1019,17 @@ client.on('message', async msg => {
           if (msg.author.id === "254794124744458241") {
             msg.author.send(f(lang.mytoken, client.token));
             msg.reply(lang.senttodm);
-            console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+            logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
             const embed = new Discord.RichEmbed();
             embed.description = "You'll need to set - add permission - 'Manage Messages' => 'Save Changes'";
             embed.setColor([255, 0, 0]);
-            msg.delete(5000).catch(function (error) { msg.channel.send(":no_good: Missing permission: 'manage message'", embed); console.error("Error: missing 'manage message' permission.");});
+            msg.delete(5000).catch(function (error) { msg.channel.send(":no_good: Missing permission: 'manage message'", embed); logger.error("Error: missing 'manage message' permission.");});
           } else {
             msg.reply(lang.youdonthavear);
-            console.log(f(lang.issuedfailadmin, msg.author.tag, msg.content, "Doesn't have Admin Role"));
+            logger.info(f(lang.issuedfailadmin, msg.author.tag, msg.content, "Doesn't have Admin Role"));
           }
         } else if (msg.content.startsWith(settings.prefix + "ban ") || msg.content === settings.prefix + "ban") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (!args[1] || args[1] === ``) {
             let once = false;
             const sb = [`まだ誰もBANしていません`];
@@ -1098,15 +1098,15 @@ client.on('message', async msg => {
                 await fsp.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8');
                 if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned);
                 msg.guild.ban(userid, { "reason": reason })
-                  .then(user2 => console.log(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
-                  .catch(console.error);
+                  .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
+                  .catch(logger.error);
                 return msg.channel.send(lang.banned);
               }
               asyncprocess();
             }
           }
         } else if (msg.content.startsWith(settings.prefix + "purge ") || msg.content === settings.prefix + "purge") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (msg.author.id === "254794124744458241") {
             if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm);
           }
@@ -1156,7 +1156,7 @@ client.on('message', async msg => {
               }
               asyncProcess();
             } catch (e) {
-              console.error(e);
+              logger.error(e);
             }
           } else if (/[0-9]/.test(args[1])) {
             if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
@@ -1165,14 +1165,14 @@ client.on('message', async msg => {
             async function clear() {
               messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1});
               msg.channel.bulkDelete(messages)
-                .catch(console.error);
+                .catch(logger.error);
             }
             clear();
           } else {
             msg.channel.send(lang.invalid_args);
           }
         } else if (msg.content.startsWith(settings.prefix + "unban ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (!args[1] || args[1] === ``) {
             msg.channel.send(lang.no_args);
           } else {
@@ -1196,8 +1196,8 @@ client.on('message', async msg => {
               if (!exe) { settings = null; return msg.channel.send(lang.notfound_user); }
               for (let i=0; i<=client.guilds.length; i++) {
                 client.guilds[i].unban(user2)
-                  .then(user2 => console.log(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
-                  .catch(console.error);
+                  .then(user2 => logger.info(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
+                  .catch(logger.error);
               }
               user.rep = --user.rep;
               writeSettings(bansFile, ban, null, null, false);
@@ -1208,7 +1208,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content.startsWith(settings.prefix + "mute")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           let user2, muteSB = [lang.no];
           if (!args[1]) {
             if (settings.mute.length != 0) {
@@ -1254,7 +1254,7 @@ client.on('message', async msg => {
           }
           writeSettings(guildSettings, settings, msg.channel, "mute");
         } else if (msg.content.startsWith(settings.prefix + "setprefix ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           const set = settings;
           if (/\s/gm.test(args[1]) || !args[1]) {
             msg.channel.send(lang.cannotspace);
@@ -1263,7 +1263,7 @@ client.on('message', async msg => {
             writeSettings(guildSettings, set, msg.channel, "prefix");
           }
           /*} else if (msg.content.startsWith(settings.prefix + "group ") || msg.content === settings.prefix + "group") {
-      console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+      logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
       if (!args[1]) {
         return msg.channel.send(lang.invalid_args);
       } else if (args[1] === "add") {
@@ -1284,7 +1284,7 @@ client.on('message', async msg => {
       }*/
           // under construction
         } else if (msg.content.startsWith(settings.prefix + "setnick ") || msg.content.startsWith(settings.prefix + "setnickname ") || msg.content.startsWith(settings.prefix + "resetnick ") || msg.content === settings.prefix + "resetnick") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (args[0] === "resetnick") {
             if (/\s/gm.test(args[1]) || !args[1]) { msg.guild.me.setNickname(client.user.username); return msg.channel.send(":ok_hand:"); }
             try {
@@ -1299,7 +1299,7 @@ client.on('message', async msg => {
                   msg.mentions.members.first().setNickname(msg.mentions.members.first().user.username);
                   return msg.channel.send(":ok_hand:");
                 } catch (e) {
-                  console.error(e);
+                  logger.error(e);
                   msg.channel.send(lang.invalid_args);
                 }
               }
@@ -1321,7 +1321,7 @@ client.on('message', async msg => {
                       msg.mentions.members.first().setNickname(args[1]);
                       return msg.channel.send(":ok_hand:");
                     } catch (e) {
-                      console.error(e);
+                      logger.error(e);
                       msg.channel.send(lang.invalid_args);
                     }
                   }
@@ -1333,7 +1333,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content.startsWith(settings.prefix + "setnotifyrep ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           let set = settings,
             n = parseInt(args[1], 10),
             min = 0,
@@ -1346,7 +1346,7 @@ client.on('message', async msg => {
             writeSettings(guildSettings, set, msg.channel, "notifyRep");
           }
         } else if (msg.content.startsWith(settings.prefix + "setbanrep ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           let set = settings,
             n = parseInt(args[1], 10),
             min = 0,
@@ -1359,7 +1359,7 @@ client.on('message', async msg => {
             writeSettings(guildSettings, set, msg.channel, "banRep");
           }
         } else if (msg.content.startsWith(settings.prefix + "antispam ") || msg.content === settings.prefix + "antispam") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           const command = `${settings.prefix}antispam`,
             off = `無効`,
             on = `有効`;
@@ -1441,7 +1441,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content.startsWith(settings.prefix + "role ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (!msg.mentions.members.first()) {
             addRole(msg, args[1], true);
           } else {
@@ -1450,7 +1450,7 @@ client.on('message', async msg => {
         } else if (msg.content.startsWith(settings.prefix + "info ") || msg.content === settings.prefix + "info") {
           /* Dummy */
         } else if (msg.content === settings.prefix + "autorole" || msg.content.startsWith(settings.prefix + "autorole ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (args[1] === `remove`) {
             const localSettings = settings;
             localSettings.autorole = null;
@@ -1469,7 +1469,7 @@ client.on('message', async msg => {
                   localSettings.autorole = role;
                 } catch (e) {
                   msg.channel.send(lang.invalid_args);
-                  console.error(e);
+                  logger.error(e);
                 }
               }
             }
@@ -1482,7 +1482,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content === settings.prefix + "global" || msg.content.startsWith(settings.prefix + "global ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           return msg.channel.send(lang.create_global);
           if (args[1] === `remove`) {
             let global_servers = await util.readJSON('./data/global_servers.json'),
@@ -1497,10 +1497,10 @@ client.on('message', async msg => {
           } else if (args[1] === `add`) {
             let id;
             if (!msg.mentions.channels.first()) { /* Dummy */} else {
-              console.log(msg.mentions.channels.first().id);
+              logger.info(msg.mentions.channels.first().id);
               id = msg.mentions.channels.first().id;
             }
-            console.log(id);
+            logger.info(id);
             const localSettings = settings,
               global_servers = await util.readJSON('./data/global_servers.json'),
               global_channels = await util.readJSON('./data/global_channels.json');
@@ -1509,9 +1509,9 @@ client.on('message', async msg => {
             } else {
               return msg.channel.send(`:x: :bow: まだ使えません - You cannot use this :bow`);
               try {
-                console.log(id);
+                logger.info(id);
                 localSettings.global = id;
-                console.log(localSettings.global);
+                logger.info(localSettings.global);
                 global_servers.push(msg.guild.id);
                 global_channels.push(msg.mentions.channels.first().id);
                 writeSettings(`./data/global_servers.json`, global_servers, null, null, false);
@@ -1525,7 +1525,7 @@ client.on('message', async msg => {
                   writeSettings(`./data/global_channels.json`, global_channels, null, null, false);
                 } catch (e) {
                   msg.channel.send(lang.invalid_args);
-                  console.error(e);
+                  logger.error(e);
                 }
               }
             }
@@ -1538,7 +1538,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content === settings.prefix + "dump" || msg.content.startsWith(settings.prefix + "dump ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           const url = c.dump_url;
           let sb = [],
             link = `${url}`,
@@ -1591,7 +1591,7 @@ client.on('message', async msg => {
             fsp.writeFile(`./dump.txt`, sb.join('\n'), 'utf8');
           }
         } else if (msg.content.startsWith(settings.prefix + "setwelcome ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (args[1] === "message") {
             if (!args[2]) return msg.channel.send(lang.invalid_args);
             const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length);
@@ -1616,7 +1616,7 @@ client.on('message', async msg => {
                   channel = msg.mentions.channels.first().id;
                 } catch (e) {
                   return msg.channel.send(`${lang.invalid_args} (\`${e}\`)`);
-                  console.error(e);
+                  logger.error(e);
                 }
               }
             }
@@ -1627,7 +1627,7 @@ client.on('message', async msg => {
             return msg.channel.send(lang.invalid_args);
           }
         } else if (msg.content.startsWith(settings.prefix + "deletemsg ") || msg.content === settings.prefix + "deletemsg") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           const url = c.dump_url,
             types = {
               guild: `guild`,
@@ -1683,15 +1683,15 @@ client.on('message', async msg => {
             msg.channel.send(`${emojiList}`);
           }
         } else if (msg.content.startsWith(settings.prefix + "instantban ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           msg.guild.ban(client.users.get(args[1]));
           msg.channel.send(":ok_hand:");
         } else if (msg.content.startsWith(settings.prefix + "instantkick ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           msg.guild.members.get(args[1]).kick("Instant Kick by BlackListener");
           msg.channel.send(":ok_hand:");
         } else if (msg.content.startsWith(settings.prefix + "language ") || msg.content === settings.prefix + "language") {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (!args[1] || args[1] === "help") {
             const embed = new Discord.RichEmbed()
               .setTitle(lang.langnotsupported)
@@ -1705,7 +1705,7 @@ client.on('message', async msg => {
             writeSettings(guildSettings, set, msg.channel, "language");
           }
         } else if (msg.content.startsWith(settings.prefix + "eval ")) {
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
           if (msg.author.id !== "254794124744458241" || msg.content.includes("token")) return msg.channel.send(lang.noperm);
           const commandcut = msg.content.substr(`${settings.prefix}eval `.length);
           let message = "";
@@ -1715,16 +1715,16 @@ client.on('message', async msg => {
           }, this);
           try {
             const returned = client._eval(message);
-            console.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`);
+            logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`);
             msg.channel.send(`:ok_hand: (${returned})`);
           } catch (e) {
-            console.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.eval_error} (${e})`);
+            logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.eval_error} (${e})`);
             msg.channel.send(f(lang.eval_error, e));
           }
         } else if (msg.content === settings.prefix + "reload" || msg.content.startsWith(settings.prefix + "reload ")) {
           if (msg.author.id !== "254794124744458241") return msg.channel.send(lang.noperm);
-          console.log(f(lang.issuedadmin, msg.author.tag, msg.content));
-          console.log("Reloading!");
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
+          logger.info("Reloading!");
           if (args[1] === `restart`) { await msg.channel.send(lang.rebooting); return process.kill(process.pid, 'SIGKILL'); }
           delete require.cache[require.resolve(guildSettings)];
           delete require.cache[require.resolve(userFile)];
@@ -1766,10 +1766,10 @@ client.on('message', async msg => {
 
 process.on('SIGINT', function() {
   setTimeout(() => {
-    console.log(`Exiting`);
+    logger.info(`Exiting`);
     process.exit();
   }, 5000)
-  console.log("Caught INT signal, shutdown.");
+  logger.info("Caught INT signal, shutdown.");
   client.destroy();
 });
 
@@ -1795,15 +1795,15 @@ client.on("guildMemberAdd", async (member) => {
       await util.initJSON(userFile, defaultUser)
       serverFile = `./data/servers/${member.guild.id}/config.json`;
       await util.initJSON(serverFile, defaultSettings)
-    } catch (e) {console.error(e);}
+    } catch (e) {logger.error(e);}
   }
   const serverSetting = await util.readJSON(serverFile);
   const userSetting = await util.readJSON(userFile);
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
-        .then(user2 => console.log(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
-        .catch(console.error);
+        .then(user2 => logger.info(f(lang.autobanned, member.user.tag, user.id, member.guild.name, member.guild.id)))
+        .catch(logger.error);
     } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
       member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`);
     }
@@ -1812,7 +1812,7 @@ client.on("guildMemberAdd", async (member) => {
     (async function () {
       const role = await member.guild.roles.get(serverSetting.autorole);
       member.addRole(role);
-      console.log(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
+      logger.info(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`);
     }) ();
   }
   if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
@@ -1891,7 +1891,7 @@ client.on("userUpdate", async (olduser, newuser) => {
       userChanged = true;
     }
   } catch (e) {
-    console.error(`Error while null checking (${e})`);
+    logger.error(`Error while null checking (${e})`);
   }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8');
   if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`);
@@ -1899,12 +1899,12 @@ client.on("userUpdate", async (olduser, newuser) => {
 
 try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, `base64`).toString(`ascii`), `base64`).toString(`ascii`), `base64`).toString(`ascii`))
-    .catch(console.error);
+    .catch(logger.error);
 } catch (e) {
-  console.error(e);
+  logger.error(e);
 }
 
 process.on('unhandledRejection', (error) => {
-  console.error(`Caught error: ${error}`);
-  console.error(error.stack);
+  logger.fatal(`Caught error: ${error}`);
+  logger.fatal(error.stack);
 });

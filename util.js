@@ -1,4 +1,5 @@
 const fs = require('fs').promises
+const logger = require('./logger');
 
 module.exports = {
   async exists(path) {
@@ -6,7 +7,7 @@ module.exports = {
   },
   async initJSON(path, json) {
     if (await this.exists(path)) return
-    console.log(`Creating ${path}`);
+    logger.log(`Creating ${path}`);
     return await this.writeJSON(path, json)
   },
   async readJSON(path, _default) {
