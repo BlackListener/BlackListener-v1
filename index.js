@@ -6,7 +6,6 @@ const mkdirp = require('mkdirp')
 const {promisify} = require('util')
 const fetch = require('node-fetch')
 const os = require('os')
-const cmd = require('./cmd')
 const jsonpp = require('jsonplusplus')
 const DBL = require('dblapi.js')
 const randomPuppy = require('random-puppy')
@@ -28,8 +27,6 @@ const defaultSettings = {
   disable_purge: true,
   ignoredChannels: [],
   autorole: null,
-  global: null,
-  group: [],
   excludeLogging: '',
   invite: false,
   welcome_channel: null,
@@ -47,7 +44,6 @@ const defaultUser = {
   reasons: [],
   username_changes: [],
 }
-const global = []
 const levenshtein = function (s1, s2) {if (s1 == s2) {return 0}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len}if (s2_len === 0) {return s1_len}let split = false; try{split = !('0')[0]}catch(e){split = true}if (split) {s1 = s1.split(''); s2 = s2.split('')}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0; let s2_idx = 0; let cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx}let char_s1 = ''; let char_s2 = ''; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b}if (c < m_min) {m_min = c}v1[s1_idx + 1] = m_min}const v_tmp = v0; v0 = v1; v1 = v_tmp}return v0[s1_len]}
 const commandList = [
   {'cmd': 'help', 'args': ' [Command]'},
@@ -85,7 +81,6 @@ const commandList = [
   {'cmd': 'image', 'args': ' nsfw|r18|閲覧注意'},
   {'cmd': 'image custom', 'args': ' <subreddit>'},
   {'cmd': 'didyouknow', 'args': ' <User:Guild> [:server]'},
-  {'cmd': 'setgroup', 'args': ' [add/remove] [ServerID]'},
   {'cmd': 'lookup', 'args': ' <User>'},
   {'cmd': 'status minecraft', 'args': ''},
   {'cmd': 'status fortnite', 'args': ''},
@@ -160,8 +155,6 @@ client.on('ready', async () => {
   await mkdirp('./data/servers')
   await mkdirp('./data/users')
   util.initJSON(bansFile, defaultBans).catch(logger.error)
-  util.initJSON('./data/global_servers.json', global).catch(logger.error)
-  util.initJSON('./data/global_channels.json', global).catch(logger.error)
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
@@ -232,10 +225,6 @@ client.on('message', async msg => {
     user.username_changes =[]
     userChanged = true
   }
-  /*  if (!settings.group) {
-    settings.group = [];
-    serverChanged = true;
-  }*/
   if (!settings.banned) {
     settings.banned = false
     serverChanged = true
@@ -348,47 +337,15 @@ client.on('message', async msg => {
             'AnimeFigures',
           ])
         } else if (['nsfw', '閲覧注意', 'r18'].includes(args[1])) {
-          if (args[2] === 'confirm') {
-          /* Confirm command! */
-            msg.channel.send(lang.deprecated)
-            return await sendImage([
-              'HENTAI_GIF',
-              'hentai_irl',
-              'diskpic',
-              'cum',
-              'cumshot',
-              'anal',
-              'oral',
-              'teen',
-              'tits',
-              'milf',
-              'creampie',
-              'NSFW_Wallpapers',
-              'SexyWallpapers',
-              'HighResNSFW',
-              'nsfw_hd',
-              'UHDnsfw',
-              'NSFW_GIF',
-              'nsfw_gifs',
-              'porninfifteenseconds',
-              '60FPSPorn',
-              'porn_gifs',
-              'nsfw_Best_Porn_Gif',
-              'LipsThatFrip',
-              'adultgifs',
-            ])
-          } else {
-          /* Normal NSFW */
-            await sendImage([
-              'HENTAI_GIF',
-              'hentai_irl',
-              'NSFW_Wallpapers',
-              'SexyWallpapers',
-              'HighResNSFW',
-              'nsfw_hd',
-              'UHDnsfw',
-            ])
-          }
+          await sendImage([
+            'HENTAI_GIF',
+            'hentai_irl',
+            'NSFW_Wallpapers',
+            'SexyWallpapers',
+            'HighResNSFW',
+            'nsfw_hd',
+            'UHDnsfw',
+          ])
         } else {
           const embed = new Discord.RichEmbed().setImage('https://i.imgur.com/rc8mMFi.png').setTitle('引数が').setColor([0,255,0])
             .setDescription(':thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:')
@@ -472,10 +429,6 @@ client.on('message', async msg => {
       } else if (msg.content.startsWith(settings.prefix + 'music') || msg.content.startsWith(settings.prefix + 'play')) {
         logger.info(f(lang.issueduser, msg.author.tag, msg.content))
         return await msg.channel.send(f(lang.musicbotis, s.musicinvite))
-      } else if (msg.content.startsWith(settings.prefix + 'docs ') || msg.content === settings.prefix + 'docs') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-        msg.channel.send(lang.deprecated)
-        if (args[1]) { return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`)) } else { return await msg.channel.send(f('http://go.blacklistener.tk/go/commands')) }
       } else if (msg.content.startsWith(settings.prefix + 'releases ') || msg.content === settings.prefix + 'releases') {
         logger.info(f(lang.issueduser, msg.author.tag, msg.content))
         const versions = [
@@ -488,60 +441,6 @@ client.on('message', async msg => {
         } else {
           return await msg.channel.send(f('http://go.blacklistener.tk/go/history'))
         }
-      } else if (msg.content.startsWith(settings.prefix + 'workspace ') || msg.content === settings.prefix + 'workspace') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-        if (msg.guild.members.get(c.extender_id)) return
-        if (isWindows) return msg.channel.send(lang.workspace.windows)
-        if (args[1] === 'url') {
-          return msg.channel.send(s.extenderinvite)
-        } else if (args[1] === 'init') {
-          if (await cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.already_initialized, settings.prefix))
-          cmd.initWorkspace(msg.author.id).then((status) => {
-            if (status) return msg.channel.send(lang.workspace.initialized)
-            return msg.channel.send(f(lang.workspace.unknown_error, status))
-          })
-        } else if (args[1] === 'reinit') {
-          if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix))
-          cmd.reinitWorkspace(msg.author.id).then((status) => {
-            if (status) return msg.channel.send(lang.workspace.initialized)
-            return msg.channel.send(f(lang.workspace.unknown_error, status))
-          })
-        } else if (args[1] === 'download') {
-          if (!args[2]) return msg.channel.send(lang.invalid_args)
-          if (!c.data_baseurl || c.data_baseurl === '') return msg.channel.send(lang.workspace.cannot_download)
-          if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix))
-          return msg.channel.send(f(lang.workspace.download, `${c.data_baseurl}/workspace/${args[2]}`))
-        } else if (args[1] === 'run') {
-          if (await !cmd.check(msg.author.id)) return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix))
-          const statusCodes = {
-            np: 0,
-            not_initialized: 1,
-            error: 2,
-          }
-          const commandcut = msg.content.substr(`${settings.prefix}workspace run `.length)
-          let message = ''
-          const argumentarray = commandcut.split(' ')
-          argumentarray.forEach(element => message += element + ' ')
-          cmd.execute(msg.author.id, message, c).then((statusArray) => {
-            if (!statusArray.status && statusArray.code === statusCodes.not_initialized) {
-              return msg.channel.send(f(lang.workspace.not_initialized, settings.prefix))
-            } else if (!statusArray.status && statusArray.code === statusCodes.error) {
-              return msg.channel.send(f(lang.workspace.error, message, statusArray.message))
-            } else if (statusArray.status && statusArray.code === statusCodes.np) {
-              return msg.channel.send(f(lang.workspace.executed, message, statusArray.message))
-            } else {
-              return msg.channel.send(f(lang.workspace.unknown_error2, message, statusArray.message))
-            }
-          })
-        } else if (args[1] === 'rm' || args[1] === 'remove') {
-          cmd.reset(msg.author.id).then((status) => {
-            if (!status) return msg.channel.send(f(lang.workspace.unknown_error, status))
-            return msg.channel.send(lang.workspace.removed)
-          })
-        } else {
-          return msg.channel.send(lang.invalid_args)
-        }
-        return
       } else if (msg.content === settings.prefix + 'help' || msg.content.startsWith(settings.prefix + 'help ')) {
         logger.info(f(lang.issueduser, msg.author.tag, msg.content))
         if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`))
@@ -704,8 +603,6 @@ client.on('message', async msg => {
         let disable_purge = lang.yes
         let ignoredChannels = lang.no
         let autorole = lang.disabled
-        let global = lang.disabled
-        let group = lang.no
         let excludeLogging = lang.disabled
         let invite = lang.disallowed
         let welcome_channel = lang.disabled
@@ -720,8 +617,6 @@ client.on('message', async msg => {
         if (settings.banned) banned = lang.yes
         if (settings.disable_purge) disable_purge = lang.no
         if (settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`
-        if (settings.global) global = `${lang.enabled} (${client.channels.get(settings.global).name})`
-        if (settings.group.length != 0) group = `${lang.yes} (${settings.group})`
         if (settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`
         if (settings.invite) invite = lang.allowed
         if (settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`
@@ -764,8 +659,6 @@ client.on('message', async msg => {
           .addField(lang.serverinfo.banned, banned)
           .addField(lang.serverinfo.disable_purge, disable_purge)
           .addField(lang.serverinfo.autorole, autorole)
-          .addField(lang.serverinfo.global, global)
-          .addField(lang.serverinfo.group, group)
           .addField(lang.serverinfo.excludeLogging, excludeLogging)
           .addField(lang.serverinfo.invite, invite)
           .addField(lang.serverinfo.mute, muteSB.join('\n'))
@@ -871,13 +764,7 @@ client.on('message', async msg => {
         }) ()
       }
       if (msg.member.hasPermission(8) || msg.author == '<@254794124744458241>') {
-        if (msg.content === settings.prefix + 'help') {
-          /* Nothing. Dummy. */
-        } else if (msg.content.startsWith(settings.prefix + 'image')) {
-          /* Nothing. Dummy. */
-        } else if (msg.content.startsWith(settings.prefix + 'status')) {
-          /* Dummy */
-        } else if (msg.content === settings.prefix + 'togglepurge' || msg.content.startsWith(settings.prefix + 'togglepurge ')) {
+        if (msg.content === settings.prefix + 'togglepurge' || msg.content.startsWith(settings.prefix + 'togglepurge ')) {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           const unsavedSettings = settings
           if (args[1] === 'enable') {
@@ -1140,7 +1027,7 @@ client.on('message', async msg => {
               } else {
                 user2 = client.users.find('username', args[1])
               }
-              if (!msg.mentions.users.first()) { /* Dummy */ } else { user2 = msg.mentions.users.first() }
+              if (msg.mentions.users.first()) user2 = msg.mentions.users.first()
               if (!user2) { settings = null; return msg.channel.send(lang.invalid_user) }
               const ban = bans
               let exe = false
@@ -1217,27 +1104,6 @@ client.on('message', async msg => {
             set.prefix = args[1]
             writeSettings(guildSettings, set, msg.channel, 'prefix')
           }
-          /*} else if (msg.content.startsWith(settings.prefix + "group ") || msg.content === settings.prefix + "group") {
-      logger.info(f(lang.issuedadmin, msg.author.tag, msg.content));
-      if (!args[1]) {
-        return msg.channel.send(lang.invalid_args);
-      } else if (args[1] === "add") {
-        if (/\D/gm.test(args[1])) return msg.channel.send(lang.invalid_args);
-        if (!settings.group.includes(args[1])) {
-          settings.group.push(args[1]);
-          writeSettings(guildSettings, settings, msg.channel, "group");
-        } else {
-          msg.channel.send(lang.already_set_group);
-        }
-      } else if (args[1] === "remove") {
-        settings.group.forEach({
-          if (settings.group[i] === args[1]) {
-            delete settings.group[i];
-          }
-        });
-        writeSettings(guildSettings, settings, msg.channel, "group");
-      }*/
-          // under construction
         } else if (msg.content.startsWith(settings.prefix + 'setnick ') || msg.content.startsWith(settings.prefix + 'setnickname ') || msg.content.startsWith(settings.prefix + 'resetnick ') || msg.content === settings.prefix + 'resetnick') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           if (args[0] === 'resetnick') {
@@ -1400,8 +1266,6 @@ client.on('message', async msg => {
           } else {
             addRole(msg, args[1], true, msg.mentions.members.first())
           }
-        } else if (msg.content.startsWith(settings.prefix + 'info ') || msg.content === settings.prefix + 'info') {
-          /* Dummy */
         } else if (msg.content === settings.prefix + 'autorole' || msg.content.startsWith(settings.prefix + 'autorole ')) {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           if (args[1] === 'remove') {
@@ -1434,62 +1298,6 @@ client.on('message', async msg => {
               msg.channel.send(lang.autorole_disabled)
             }
           }
-        } else if (msg.content === settings.prefix + 'global' || msg.content.startsWith(settings.prefix + 'global ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-          return msg.channel.send(lang.create_global)
-          // if (args[1] === 'remove') {
-          //   const global_servers = await util.readJSON('./data/global_servers.json')
-          //   const global_channels = await util.readJSON('./data/global_channels.json')
-          //   const localSettings = settings
-          //   delete global_servers[args[1]]
-          //   delete global_channels[settings.global]
-          //   writeSettings('./data/global_servers.json', global_servers, null, null, false)
-          //   writeSettings('./data/global_channels.json', global_channels, null, null, false)
-          //   localSettings.global = null
-          //   writeSettings(guildSettings, localSettings, msg.channel, 'global')
-          // } else if (args[1] === 'add') {
-          //   let id
-          //   if (!msg.mentions.channels.first()) { /* Dummy */} else {
-          //     logger.info(msg.mentions.channels.first().id)
-          //     id = msg.mentions.channels.first().id
-          //   }
-          //   logger.info(id)
-          //   const localSettings = settings
-          //   const global_servers = await util.readJSON('./data/global_servers.json')
-          //   const global_channels = await util.readJSON('./data/global_channels.json')
-          //   if (/\d{18,}/.test(args[2])) {
-          //     localSettings.global = args[2]
-          //   } else {
-          //     return msg.channel.send(':x: :bow: まだ使えません - You cannot use this :bow')
-          //     try {
-          //       logger.info(id)
-          //       localSettings.global = id
-          //       logger.info(localSettings.global)
-          //       global_servers.push(msg.guild.id)
-          //       global_channels.push(msg.mentions.channels.first().id)
-          //       writeSettings('./data/global_servers.json', global_servers, null, null, false)
-          //       writeSettings('./data/global_channels.json', global_channels, null, null, false)
-          //     } catch (e) {
-          //       try {
-          //         localSettings.global = msg.guild.channels.find('name', args[2]).id
-          //         global_servers.push(msg.guild.id)
-          //         global_channels.push(msg.guild.channels.find('name', args[2]).id)
-          //         writeSettings('./data/global_servers.json', global_servers, null, null, false)
-          //         writeSettings('./data/global_channels.json', global_channels, null, null, false)
-          //       } catch (e) {
-          //         msg.channel.send(lang.invalid_args)
-          //         logger.error(e)
-          //       }
-          //     }
-          //   }
-          //   writeSettings(guildSettings, localSettings, msg.channel, 'global')
-          // } else {
-          //   if (settings.global != null) {
-          //     msg.channel.send(f(lang.global_enabled, msg.guild.channels.get(settings.global).name))
-          //   } else if (!settings.global) {
-          //     msg.channel.send(lang.global_disabled)
-          //   }
-          // }
         } else if (msg.content === settings.prefix + 'dump' || msg.content.startsWith(settings.prefix + 'dump ')) {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           const url = c.dump_url
