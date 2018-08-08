@@ -1,3 +1,4 @@
+require('json5/lib/register')
 const f = require('string-format')
 const now = require('performance-now')
 const Discord = require('discord.js')
@@ -6,7 +7,6 @@ const mkdirp = require('mkdirp')
 const {promisify} = require('util')
 const fetch = require('node-fetch')
 const os = require('os')
-const jsonpp = require('jsonplusplus')
 const DBL = require('dblapi.js')
 const randomPuppy = require('random-puppy')
 const fsp = require('fs').promises
@@ -15,7 +15,7 @@ const crypto = require('crypto')
 const isWindows = process.platform === 'win32'
 const FormData = require('form-data')
 const util = require('./util')
-const c = jsonpp.require('./config.json')
+const c = require('./config.json5')
 const logger = require('./logger')
 const defaultSettings = {
   prefix: c.prefix,
@@ -44,7 +44,7 @@ const defaultUser = {
   reasons: [],
   username_changes: [],
 }
-const levenshtein = function (s1, s2) {if (s1 == s2) {return 0}const s1_len = s1.length; const s2_len = s2.length; if (s1_len === 0) {return s2_len}if (s2_len === 0) {return s1_len}let split = false; try{split = !('0')[0]}catch(e){split = true}if (split) {s1 = s1.split(''); s2 = s2.split('')}let v0 = new Array(s1_len + 1); let v1 = new Array(s1_len + 1); let s1_idx = 0; let s2_idx = 0; let cost = 0; for (s1_idx = 0; s1_idx < s1_len + 1; s1_idx++) {v0[s1_idx] = s1_idx}let char_s1 = ''; let char_s2 = ''; for (s2_idx = 1; s2_idx <= s2_len; s2_idx++) {v1[0] = s2_idx; char_s2 = s2[s2_idx - 1]; for (s1_idx = 0; s1_idx < s1_len; s1_idx++) {char_s1 = s1[s1_idx]; cost = (char_s1 == char_s2) ? 0 : 1; let m_min = v0[s1_idx + 1] + 1; const b = v1[s1_idx] + 1; const c = v0[s1_idx] + cost; if (b < m_min) {m_min = b}if (c < m_min) {m_min = c}v1[s1_idx + 1] = m_min}const v_tmp = v0; v0 = v1; v1 = v_tmp}return v0[s1_len]}
+const levenshtein = require('fast-levenshtein').get
 const commandList = [
   {'cmd': 'help', 'args': ' [Command]'},
   {'cmd': 'shutdown', 'args': ' [-f]'},
@@ -103,7 +103,7 @@ const commandList = [
   {'cmd': 'eval', 'args': ' <program>'},
 ]
 const isTravisBuild = process.argv[2] === '--travis-build'
-const s = isTravisBuild ? jsonpp.require('./travis.json') : jsonpp.require('./secret.json')
+const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 const bansFile = './data/bans.json'
 let lang
 

@@ -2,7 +2,7 @@
 /node_modules/
 
 # Bot tokens, invite links file.
-/secret.json
+/secret.json5
 
 # Data folder.
 /data/
