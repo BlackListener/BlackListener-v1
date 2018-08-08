@@ -1,4 +1,5 @@
-const fs = require('fs').promises
+const _fs = require('fs')
+const fs = _fs.promises
 const logger = require('./logger')
 
 module.exports = {
@@ -18,6 +19,14 @@ module.exports = {
   async writeJSON(path, json) {
     const data = this.stringify(json)
     return fs.writeFile(path, data, 'utf8')
+  },
+  readJSONSync(path, _default) {
+    const data = _fs.readFileSync(path, 'utf8')
+    return this.parse(data)
+  },
+  writeJSONSync(path, json) {
+    const data = this.stringify(json)
+    _fs.writeFileSync(path, data, 'utf8')
   },
   parse(json) {
     return JSON.parse(json)

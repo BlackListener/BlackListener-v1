@@ -136,7 +136,7 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
   }
 }
 
-if (!isTravisBuild) new DBL(s.dbl, client)
+if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('warn', (warn) => {
   logger.warn(`Got Warning from Client: ${warn}`)
@@ -168,11 +168,8 @@ client.on('ready', async () => {
 })
 
 client.on('message', async msg => {
-  if (!msg.guild && !msg.author.bot) {
-    return msg.channel.send('Currently not supported DM')
-  } else if (!msg.guild && msg.author.bot) {
-    return
-  }
+  if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
+  if (!msg.guild) return
   const guildSettings = `./data/servers/${msg.guild.id}/config.json`
   await mkdirp(`./data/users/${msg.author.id}`)
   await mkdirp(`./data/servers/${msg.guild.id}`)
@@ -263,6 +260,7 @@ client.on('message', async msg => {
   } catch (e) {
     logger.error(`Error while logging message (${guildSettings}) (${e})`)
   }
+  // --- Begin of Sync
   if (msg.content === settings.prefix + 'sync') return
   if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
     if (msg.content === `plz sync <@${client.user.id}>`) {
@@ -270,7 +268,7 @@ client.on('message', async msg => {
       message.delete(500)
     }
   }
-  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
+  // --- End of Sync
   const bans = await util.readJSON(bansFile)
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
@@ -793,7 +791,6 @@ client.on('message', async msg => {
             if (/\D/.test(args[1])) return await msg.channel.send(lang.invalid_args)
             if (/\d{19,}/.test(args[1])) return await msg.channel.send(lang.invalid_args)
             if (!client.guilds.get(args[1])) return await msg.channel.send(lang.invalid_args)
-            const sb = []
             const thatGuild = await util.readJSON(`./data/servers/${client.guilds.get(args[1]).id}/config.json`)
             if (!thatGuild.invite) return await msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`))
             try {
@@ -804,16 +801,11 @@ client.on('message', async msg => {
                   await client.guilds.get(args[1]).channels.random().createInvite()
                 }
               }
-              await client.guilds.get(args[1]).fetchInvites()
-                .then((invite) => {
-                  invite.forEach((data) => {
-                    sb.push(`https://discord.gg/${data.code}`)
-                  })
-                })
-                .catch(logger.error)
+              const invites = await client.guilds.get(args[1]).fetchInvites()
+              const inviteLinks = invites.map(invite => `https://discord.gg/${invite.code}`)
               const embed = new Discord.RichEmbed()
                 .setTitle(lang.invites)
-                .setDescription(sb.join('\n'))
+                .setDescription(inviteLinks.join('\n'))
                 .setFooter(lang.invite_create)
                 .setTimestamp()
               msg.channel.send(embed)
@@ -880,25 +872,14 @@ client.on('message', async msg => {
         } else if (msg.content.startsWith(settings.prefix + 'ban ') || msg.content === settings.prefix + 'ban') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           if (!args[1] || args[1] === '') {
-            let once = false
-            const sb = ['まだ誰もBANしていません']
-            require('./data/bans.json').forEach((data) => {
-              if (data) {
-                if (!once) {
-                  sb.length = 0
-                  once = true
-                }
-                try {
-                  sb.push(`${client.users.find('id', data).tag} (${data})`)
-                } catch (e) {
-                  sb.push(`${data} (${lang.failed_to_get})`)
-                }
-              }
-            })
+            const bans = await Promise.all(util.readJSONSync(bansFile).map(async (id) => {
+              const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
+              return `${user.tag} (${id})`
+            }))
             const embed = new Discord.RichEmbed()
               .setTitle(lang.banned_users)
               .setColor([0,255,0])
-              .setDescription(sb.join('\n'))
+              .setDescription(bans.join('\n') || 'まだ誰もBANしていません')
             msg.channel.send(embed)
           } else {
             if (msg.guild && msg.guild.available && !msg.author.bot) {
@@ -1356,10 +1337,7 @@ client.on('message', async msg => {
           if (args[1] === 'message') {
             if (!args[2]) return msg.channel.send(lang.invalid_args)
             const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)
-            let message = ''
-            const argumentarray = commandcut.split(' ')
-            argumentarray.forEach(element => message += element + ' ')
-            settings.welcome_message = message
+            settings.welcome_message = commandcut
             writeSettings(guildSettings, settings, msg.channel, 'welcome_message')
             msg.channel.send(lang.welcome_warning)
           } else if (args[1] === 'channel') {
@@ -1465,11 +1443,8 @@ client.on('message', async msg => {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           if (msg.author.id !== '254794124744458241' || msg.content.includes('token')) return msg.channel.send(lang.noperm)
           const commandcut = msg.content.substr(`${settings.prefix}eval `.length)
-          let message = ''
-          const argumentarray = commandcut.split(' ')
-          argumentarray.forEach(element => message += element + ' ')
           try {
-            const returned = client._eval(message)
+            const returned = client._eval(commandcut)
             logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`)
             msg.channel.send(`:ok_hand: (${returned})`)
           } catch (e) {
@@ -1481,11 +1456,6 @@ client.on('message', async msg => {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           logger.info('Reloading!')
           if (args[1] === 'restart') { await msg.channel.send(lang.rebooting); return process.kill(process.pid, 'SIGKILL') }
-          delete require.cache[require.resolve(guildSettings)]
-          delete require.cache[require.resolve(userFile)]
-          delete require.cache[require.resolve(bansFile)]
-          delete require.cache[require.resolve('./lang/ja.json')]
-          delete require.cache[require.resolve('./lang/en.json')]
           msg.channel.send(':ok_hand:')
         } else {
           const sb = []
@@ -1514,7 +1484,6 @@ client.on('message', async msg => {
     }
   }
   settings = null
-  delete require.cache[require.resolve(bansFile)]
 })
 
 process.on('SIGINT', () => {
@@ -1646,6 +1615,10 @@ client.on('userUpdate', async (olduser, newuser) => {
   }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
   if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
+})
+
+client.on('guildCreate', () => {
+  client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
 })
 
 try {
