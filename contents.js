@@ -61,7 +61,7 @@ module.exports = {
     { 'cmd': 'info', 'args': '' },
     { 'cmd': 'image', 'args': '' },
     { 'cmd': 'image anime', 'args': '' },
-    { 'cmd': 'image', 'args': ' nsfw|r18|閲覧注意' },
+    { 'cmd': 'image', 'args': ' nsfw|r18' },
     { 'cmd': 'image custom', 'args': ' <subreddit>' },
     { 'cmd': 'didyouknow', 'args': ' <User:Guild> [:server]' },
     { 'cmd': 'lookup', 'args': ' <User>' },

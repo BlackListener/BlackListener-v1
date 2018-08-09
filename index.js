@@ -152,10 +152,6 @@ client.on('message', async msg => {
     settings.excludeLogging = ''
     serverChanged = true
   }
-  if (!settings.invite) {
-    settings.invite = false
-    serverChanged = true
-  }
   if (!settings.welcome_channel) {
     settings.welcome_channel = null
     serverChanged = true
@@ -255,7 +251,7 @@ client.on('message', async msg => {
             'animegifs',
             'AnimeFigures',
           ])
-        } else if (['nsfw', '閲覧注意', 'r18'].includes(args[1])) {
+        } else if (['nsfw', 'r18'].includes(args[1])) {
           await sendImage([
             'HENTAI_GIF',
             'hentai_irl',
@@ -374,9 +370,9 @@ client.on('message', async msg => {
           .addField(`${prefix}setnotifyrep | ${prefix}setbanrep`, `${lang.commands.setnotifyrep} | ${lang.commands.setbanrep}`)
           .addField(`${prefix}antispam`, lang.commands.antispam)
           .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
-          .addField(`${prefix}invite [GuildID] [create] or [allow/deny]`, lang.commands.invite)
+          .addField(`${prefix}invite`, lang.commands.invite)
           .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
-          .addField(`${prefix}image [nsfw|閲覧注意|anime|custom] [subreddit]`, lang.commands.image)
+          .addField(`${prefix}image [nsfw|anime|custom] [subreddit]`, lang.commands.image)
           .addField(`${prefix}lookup <User>`, lang.lookup.desc)
           .addField(lang.commands.others, lang.commands.athere)
         return await msg.channel.send(embed)
@@ -523,7 +519,6 @@ client.on('message', async msg => {
         let ignoredChannels = lang.no
         let autorole = lang.disabled
         let excludeLogging = lang.disabled
-        let invite = lang.disallowed
         let welcome_channel = lang.disabled
         let welcome_message = lang.disabled
         const muteSB = [lang.no]
@@ -537,7 +532,6 @@ client.on('message', async msg => {
         if (settings.disable_purge) disable_purge = lang.no
         if (settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`
         if (settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`
-        if (settings.invite) invite = lang.allowed
         if (settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`
         if (settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`
         if (settings.ignoredChannels.length != 0) {
@@ -579,7 +573,6 @@ client.on('message', async msg => {
           .addField(lang.serverinfo.disable_purge, disable_purge)
           .addField(lang.serverinfo.autorole, autorole)
           .addField(lang.serverinfo.excludeLogging, excludeLogging)
-          .addField(lang.serverinfo.invite, invite)
           .addField(lang.serverinfo.mute, muteSB.join('\n'))
           .addField(lang.serverinfo.welcome_channel, welcome_channel)
           .addField(lang.serverinfo.welcome_message, welcome_message)
@@ -681,6 +674,9 @@ client.on('message', async msg => {
           status = data.systemText.expression
           await msg.channel.send(status.replace('#', ''))
         }) ()
+      } else if (msg.content === settings.prefix + 'invite') {
+        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+        return await msg.channel.send(f(lang.invite_bot, s.inviteme))
       }
       if (msg.member.hasPermission(8) || msg.author == '<@254794124744458241>') {
         if (msg.content === settings.prefix + 'togglepurge' || msg.content.startsWith(settings.prefix + 'togglepurge ')) {
@@ -698,43 +694,6 @@ client.on('message', async msg => {
             }
           }
           await writeSettings(guildSettings, unsavedSettings, msg.channel, 'disable_purge')
-        } else if (msg.content.startsWith(settings.prefix + 'invite ') || msg.content === settings.prefix + 'invite') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-          !(async () => {
-            if (!args[1]) return await msg.channel.send(f(lang.invite_bot, s.inviteme))
-            if (args[1] === 'allow') {
-              settings.invite = true
-              return await writeSettings(guildSettings, settings, msg.channel, 'invite')
-            } else if (args[1] === 'deny') {
-              settings.invite = false
-              return await writeSettings(guildSettings, settings, msg.channel, 'invite')
-            }
-            if (/\D/.test(args[1])) return await msg.channel.send(lang.invalid_args)
-            if (/\d{19,}/.test(args[1])) return await msg.channel.send(lang.invalid_args)
-            if (!client.guilds.get(args[1])) return await msg.channel.send(lang.invalid_args)
-            const thatGuild = await util.readJSON(`./data/servers/${client.guilds.get(args[1]).id}/config.json`)
-            if (!thatGuild.invite) return await msg.channel.send(f(lang.disallowed_invite, `<@${client.guilds.get(args[1]).owner.user.id}>`))
-            try {
-              if (args[2] === 'create') {
-                try {
-                  await client.guilds.get(args[1]).channels.first().createInvite()
-                } catch (e) {
-                  await client.guilds.get(args[1]).channels.random().createInvite()
-                }
-              }
-              const invites = await client.guilds.get(args[1]).fetchInvites()
-              const inviteLinks = invites.map(invite => `https://discord.gg/${invite.code}`)
-              const embed = new Discord.RichEmbed()
-                .setTitle(lang.invites)
-                .setDescription(inviteLinks.join('\n'))
-                .setFooter(lang.invite_create)
-                .setTimestamp()
-              msg.channel.send(embed)
-            } catch (e) {
-              logger.error(e)
-              if (e.toString() === 'TypeError: Cannot read property \'fetchInvites\' of undefined') return await msg.channel.send(lang.noguild)
-            }
-          })()
         } else if (msg.content.startsWith(settings.prefix + 'shutdown ') || msg.content === settings.prefix + 'shutdown') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           if (msg.author == '<@254794124744458241>') {

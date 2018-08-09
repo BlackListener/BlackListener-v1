@@ -179,7 +179,7 @@
     "global": "Global Chat Channel",
     "group": "Server Group",
     "excludeLogging": "Disable logging channel",
-    "invite": "Is allowed show/create invites via command",
+    "invite": "Show bot invite link",
     "welcome_channel": "Channel of send welcome messages",
     "welcome_message": "Welcome message",
     "mute": "List of muted users"

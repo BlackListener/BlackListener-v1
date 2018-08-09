@@ -44,11 +44,9 @@ Server's prefix can be show up in mention the bot.
 | setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします。 | Yes |
 | deletemsg \[User\] | Delete messages, default is guild messages file. | メッセージを削除します。デフォルトはギルドのメッセージログです。 | Yes |
 | setgroup | __Incomplete feature__ | __未完成の機能__ | Yes |
-| image \<nsfw\|閲覧注意\|r18\> | Send nsfw images... very very be careful. | NSFW画像を送信します...かなりかなり気を付けてくださいね。 | No |
+| image \<nsfw\|r18\> | Send nsfw images... very very be careful. | NSFW画像を送信します...かなりかなり気を付けてくださいね。 | No |
 | image anime | Send anime images. | アニメ画像を送信します。 | No |
-| say \<Message\> | Send message by bot. | ボットからメッセージを送信します。 | No |
-| sayd \<Message\> | Send message and delete `sayd` message. | メッセージを送信、さらに送信された元のメッセージを削除します。 | No |
-| invite \[GuildID\] \[create\] or \[allow\/deny\] | Show or creates invite, if not specified, it displays bot invite. | 招待を表示または作成します。指定されない場合は、ボットの招待を表示します。 | No |
+| invite | Displays bot invite link. | ボットの招待リンクを表示します。 | No |
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
 | setnick \| setnickname \<NewNickname\> \[User\] | Set nickname; default user is this Bot. | ニックネームを設定します、デフォルトのユーザーはこのボットです。 | Yes |
 | listemojis \[escape\] | Displays all custom emojis on guild. | サーバーのすべてのカスタム絵文字を表示します。 | Yes |
