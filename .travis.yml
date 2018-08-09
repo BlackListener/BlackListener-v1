@@ -4,3 +4,8 @@ group: stable
 language: node_js
 script: "node index.js --travis-build"
 node_js: "node"
+cache:
+  yarn: true
+  directories:
+    - node_modules
+install: yarn
