@@ -21,7 +21,7 @@ const levenshtein = require('fast-levenshtein').get
 const isTravisBuild = process.argv[2] === '--travis-build'
 const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 const bansFile = './data/bans.json'
-const { 
+const {
   defaultSettings,
   defaultBans,
   defaultUser,
@@ -29,11 +29,21 @@ const {
 } = require('./contents')
 let lang
 
+require('repl').start().context.client = client
+
 function addRole(msg, rolename, isCommand = true, guildmember = null) {
   let role = null
   let member = null
   try {
-    role = msg.guild.roles.find('name', rolename)
+    try {
+      role = msg.guild.roles.find("name", rolename);
+    } catch (e) {
+      try {
+        role = msg.guild.roles.get(rolename);
+      } catch (e) {
+        logger.error("An error occurred in 'addRole': " + e);
+      }
+    }
     if (!guildmember) {
       member = msg.guild.members.get(msg.author.id)
     } else {
@@ -42,11 +52,11 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
     if (isCommand) {
       if (member.roles.has(role.id)) {
         member.removeRole(role).catch(logger.error)
-        const embed = new Discord.RichEmbed().setTitle(':wastebasket: ロールから削除').setColor([255,0,0]).setDescription('ロール[' + rolename + '] から削除しました。')
+        const embed = new Discord.RichEmbed().setTitle(':wastebasket: ロールから削除').setColor([255,0,0]).setDescription('ロール ``' + rolename + '`` から削除しました。')
         msg.channel.send(embed)
       } else {
         member.addRole(role).catch(logger.error)
-        const embed = new Discord.RichEmbed().setTitle(':heavy_plus_sign: ロールへ追加').setColor([0,255,0]).setDescription('ロール[' + rolename + '] へ追加しました。')
+        const embed = new Discord.RichEmbed().setTitle(':heavy_plus_sign: ロールへ追加').setColor([0,255,0]).setDescription('ロール ``' + rolename + '`` へ追加しました。')
         msg.channel.send(embed)
       }
     } else {
@@ -168,6 +178,10 @@ client.on('message', async msg => {
     settings.message_blacklist = []
     serverChanged = true
   }
+  if (!settings.blocked_role) {
+    settings.blocked_role = []
+    serverChanged = true
+  }
   if (userChanged) await fsp.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
   if (serverChanged) await fsp.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8')
   try {
@@ -224,7 +238,7 @@ client.on('message', async msg => {
       if (settings.banned && msg.author.id !== '254794124744458241') { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)) }
       const args = msg.content.replace(settings.prefix, '').split(' ')
       if (args[0] === 'image') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         const sendImage = async list => {
           msg.channel.send(lang.searching)
           if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
@@ -267,7 +281,7 @@ client.on('message', async msg => {
           return msg.channel.send(embed).catch(logger.error)
         }
       } else if (msg.content === settings.prefix + 'info') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         const graph = 'Device          Total  Used Avail Use% Mounted on\n'
         let o1 = '利用不可'
         let loadavg = '利用不可'
@@ -293,11 +307,11 @@ client.on('message', async msg => {
           .setFooter(`Sent by ${msg.author.tag}`)
         return msg.channel.send(embed)
       } else if (msg.content.startsWith(settings.prefix + 'encode ')) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         const cmd = settings.prefix + 'encode '
         return await msg.channel.send(new Buffer.from(msg.content.slice(cmd.length)).toString('base64'))
       } else if (msg.content.startsWith(settings.prefix + 'decode ')) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         return await msg.channel.send(new Buffer.from(args[1], 'base64').toString('ascii'))
       } else if (msg.content.startsWith(settings.prefix + 'encrypt ')) {
         if (!args[2]) return msg.channel.send(lang.invalid_args)
@@ -317,7 +331,7 @@ client.on('message', async msg => {
         }
         return await msg.channel.send(f(lang.decrypted, args[1], args[2], dec))
       } else if (msg.content.startsWith(settings.prefix + 'didyouknow ')) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         if (args[2] === 'server') {
           let know = client.guilds.find('name', args[1])
           if (!know) know = client.guilds.get(args[1])
@@ -336,16 +350,16 @@ client.on('message', async msg => {
           return await msg.channel.send(f(lang.known, `${know.tag} (${know.id})`))
         }
       } else if (msg.content === settings.prefix + 'members') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         return await msg.channel.send(msg.guild.members.size)
       } else if (msg.content === settings.prefix + 'banned') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         return await msg.channel.send(lang.wrong_banned)
       } else if (msg.content.startsWith(settings.prefix + 'music') || msg.content.startsWith(settings.prefix + 'play')) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         return await msg.channel.send(f(lang.musicbotis, s.musicinvite))
       } else if (msg.content.startsWith(settings.prefix + 'releases ') || msg.content === settings.prefix + 'releases') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         const versions = [
           '1.1',
           '1.1.1',
@@ -357,7 +371,7 @@ client.on('message', async msg => {
           return await msg.channel.send(f('http://go.blacklistener.tk/go/history'))
         }
       } else if (msg.content === settings.prefix + 'help' || msg.content.startsWith(settings.prefix + 'help ')) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         if (args[1]) return await msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`))
         const prefix = settings.prefix
         const embed = new Discord.RichEmbed()
@@ -377,7 +391,7 @@ client.on('message', async msg => {
           .addField(lang.commands.others, lang.commands.athere)
         return await msg.channel.send(embed)
       } else if (msg.content.startsWith(settings.prefix + 'lookup ')) {
-        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         let id; let force = false
         if (msg.mentions.users.first()) {
           id = msg.mentions.users.first().id
@@ -473,10 +487,10 @@ client.on('message', async msg => {
           sb4.push(lang.sunknown)
         }
         try {
-          let once2 = false
-          if (!once2) {
+          let once = false
+          if (!once) {
             sb6.length = 0
-            once2 = true
+            once = true
           }
           sb6.push(...userConfig.username_changes.filter(e => e))
         } catch (e) {
@@ -507,8 +521,30 @@ client.on('message', async msg => {
           .addField(lang.lookup.joinedAt, joinedAt.toLocaleString('ja-JP'))
           .addField(lang.lookup.nowTime, new Date().toLocaleString('ja-JP'))
         msg.channel.send(embed)
+      } else if (msg.content.startsWith(settings.prefix + 'role ')) {
+        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
+        let role;
+        try {
+          role = msg.guild.roles.find("name", rolename);
+        } catch (e) {
+          try {
+            role = msg.guild.roles.get(rolename);
+          } catch (e) {
+            return msg.channel.send(lang.invalid_args);
+          }
+        }
+        if (msg.member.highestRole.position > role.position || msg.member.hasPermission(8)) {
+          if (!msg.member.hasPermission(8)) if (settings.blocked_role.includes(args[1])) return msg.channel.send(lang.udonthaveperm);
+          if (!msg.mentions.members.first()) {
+            addRole(msg, args[1], true);
+          } else {
+            addRole(msg, args[1], true, msg.mentions.members.first());
+          }
+        } else {
+          return msg.channel.send(lang.no_perm);
+        }
       } else if (msg.content === settings.prefix + 'serverinfo') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         let prefix = lang.sunknown
         let language = lang.sunknown
         let notifyRep = lang.unknownorzero
@@ -523,6 +559,7 @@ client.on('message', async msg => {
         let welcome_message = lang.disabled
         const muteSB = [lang.no]
         const ignoredChannelsSB = [lang.no]
+        const blocked_roleSB  = [lang.no]
         if (settings.prefix) prefix = `\`${settings.prefix}\``
         if (settings.language) language = `\`${settings.language}\``
         if (settings.notifyRep) notifyRep = settings.notifyRep
@@ -559,6 +596,18 @@ client.on('message', async msg => {
             }
           })
         }
+        if (settings.blocked_role.length != 0) {
+          muteSB.length = 0
+          settings.blocked_role.forEach((data) => {
+            if (data) {
+              if (msg.guild.roles.has(data)) {
+                blocked_roleSB.push(`${msg.guild.roles.get(data).name} (${data})`)
+              } else {
+                blocked_roleSB.push(`${data} (${lang.failed_to_get})`)
+              }
+            }
+          })
+        }
         const embed = new Discord.RichEmbed()
           .setTitle(' - Server Information - ')
           .setColor([0,255,0])
@@ -576,9 +625,10 @@ client.on('message', async msg => {
           .addField(lang.serverinfo.mute, muteSB.join('\n'))
           .addField(lang.serverinfo.welcome_channel, welcome_channel)
           .addField(lang.serverinfo.welcome_message, welcome_message)
+          .addField(lang.serverinfo.blocked_role, blocked_roleSB.join('\n'))
         return await msg.channel.send(embed)
       } else if (msg.content === settings.prefix + 'status minecraft') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         msg.channel.send(lang.status.checking)
         const status = ['undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined']
         let i = 0
@@ -620,7 +670,7 @@ client.on('message', async msg => {
           .addField(lang.status.servers.mojang, status[7])
         return msg.channel.send(embed)
       } else if (msg.content === settings.prefix + 'status fortnite') {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         if (s.fortnite_api_key === '') return msg.channel.send(lang.no_apikey)
         msg.channel.send(lang.status.checking)
         let status = 'Unknown'
@@ -651,7 +701,7 @@ client.on('message', async msg => {
           .addField(lang.status.servers.fortnite, status)
         return msg.channel.send(embed)
       } else if (msg.content.startsWith(settings.prefix + 'talkja ')) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         if (s.talk_apikey == '' || s.talk_apikey == 'undefined' || !s.talk_apikey) return msg.channel.send(lang.no_apikey)
         let status = '？？？'
         const header = {
@@ -675,12 +725,12 @@ client.on('message', async msg => {
           await msg.channel.send(status.replace('#', ''))
         }) ()
       } else if (msg.content === settings.prefix + 'invite') {
-        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         return await msg.channel.send(f(lang.invite_bot, s.inviteme))
       }
       if (msg.member.hasPermission(8) || msg.author == '<@254794124744458241>') {
         if (msg.content === settings.prefix + 'togglepurge' || msg.content.startsWith(settings.prefix + 'togglepurge ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const unsavedSettings = settings
           if (args[1] === 'enable') {
             unsavedSettings.disable_purge = false
@@ -695,7 +745,7 @@ client.on('message', async msg => {
           }
           await writeSettings(guildSettings, unsavedSettings, msg.channel, 'disable_purge')
         } else if (msg.content.startsWith(settings.prefix + 'shutdown ') || msg.content === settings.prefix + 'shutdown') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (msg.author == '<@254794124744458241>') {
             if (args[1] == '-f') {
               logger.info(f(lang.atmpfs, msg.author.tag))
@@ -713,11 +763,11 @@ client.on('message', async msg => {
               client.destroy()
             }
           } else {
-            msg.reply(lang.noperm)
+            msg.reply(lang.udonthaveperm)
             logger.info(f(lang.failednotmatch, msg.content))
           }
         } else if (msg.content.startsWith(settings.prefix + 'setignore')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           let channel
           if (msg.mentions.channels.first()) {
             channel = msg.mentions.channels.first()
@@ -740,7 +790,7 @@ client.on('message', async msg => {
           if (msg.author.id === '254794124744458241') {
             msg.author.send(f(lang.mytoken, client.token))
             msg.reply(lang.senttodm)
-            logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+            logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
             const embed = new Discord.RichEmbed()
             embed.description = 'You\'ll need to set - add permission - \'Manage Messages\' => \'Save Changes\''
             embed.setColor([255, 0, 0])
@@ -750,7 +800,7 @@ client.on('message', async msg => {
             logger.info(f(lang.issuedfailadmin, msg.author.tag, msg.content, 'Doesn\'t have Admin Role'))
           }
         } else if (msg.content.startsWith(settings.prefix + 'ban ') || msg.content === settings.prefix + 'ban') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (!args[1] || args[1] === '') {
             const bans = await Promise.all(util.readJSONSync(bansFile).map(async (id) => {
               const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
@@ -813,9 +863,9 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content.startsWith(settings.prefix + 'purge ') || msg.content === settings.prefix + 'purge') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (msg.author.id === '254794124744458241') {
-            if (!msg.member.hasPermission(8)) return msg.channel.send(lang.noperm)
+            if (!msg.member.hasPermission(8)) return msg.channel.send(lang.udonthaveperm)
           }
           if (settings.disable_purge) return msg.channel.send(lang.disabled_purge)
           let messages
@@ -877,7 +927,7 @@ client.on('message', async msg => {
             msg.channel.send(lang.invalid_args)
           }
         } else if (msg.content.startsWith(settings.prefix + 'unban ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (!args[1] || args[1] === '') {
             msg.channel.send(lang.no_args)
           } else {
@@ -913,7 +963,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content.startsWith(settings.prefix + 'mute')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           let user2; const muteSB = [lang.no]
           if (!args[1]) {
             if (settings.mute.length != 0) {
@@ -956,8 +1006,8 @@ client.on('message', async msg => {
             settings.mute.push(user2)
           }
           await writeSettings(guildSettings, settings, msg.channel, 'mute')
-        } else if (msg.content.startsWith(settings.prefix + 'setprefix ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+        } else if (msg.content.startsWith(settings.prefix + 'setprefix ') || msg.content.startsWith(settings.prefix + 'prefix ')) {
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const set = settings
           if (/\s/gm.test(args[1]) || !args[1]) {
             msg.channel.send(lang.cannotspace)
@@ -966,7 +1016,7 @@ client.on('message', async msg => {
             await writeSettings(guildSettings, set, msg.channel, 'prefix')
           }
         } else if (msg.content.startsWith(settings.prefix + 'setnick ') || msg.content.startsWith(settings.prefix + 'setnickname ') || msg.content.startsWith(settings.prefix + 'resetnick ') || msg.content === settings.prefix + 'resetnick') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (args[0] === 'resetnick') {
             if (/\s/gm.test(args[1]) || !args[1]) { msg.guild.me.setNickname(client.user.username); return msg.channel.send(':ok_hand:') }
             try {
@@ -1015,7 +1065,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content.startsWith(settings.prefix + 'setnotifyrep ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const set = settings
           const n = parseInt(args[1], 10)
           const min = 0
@@ -1028,7 +1078,7 @@ client.on('message', async msg => {
             await writeSettings(guildSettings, set, msg.channel, 'notifyRep')
           }
         } else if (msg.content.startsWith(settings.prefix + 'setbanrep ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const set = settings
           const n = parseInt(args[1], 10)
           const min = 0
@@ -1041,7 +1091,7 @@ client.on('message', async msg => {
             await writeSettings(guildSettings, set, msg.channel, 'banRep')
           }
         } else if (msg.content.startsWith(settings.prefix + 'antispam ') || msg.content === settings.prefix + 'antispam') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const command = `${settings.prefix}antispam`
           const off = '無効'
           const on = '有効'
@@ -1120,15 +1170,8 @@ client.on('message', async msg => {
               msg.channel.send(f(lang.antispam.status2, on))
             }
           }
-        } else if (msg.content.startsWith(settings.prefix + 'role ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-          if (!msg.mentions.members.first()) {
-            addRole(msg, args[1], true)
-          } else {
-            addRole(msg, args[1], true, msg.mentions.members.first())
-          }
         } else if (msg.content === settings.prefix + 'autorole' || msg.content.startsWith(settings.prefix + 'autorole ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (args[1] === 'remove') {
             const localSettings = settings
             localSettings.autorole = null
@@ -1160,7 +1203,7 @@ client.on('message', async msg => {
             }
           }
         } else if (msg.content === settings.prefix + 'dump' || msg.content.startsWith(settings.prefix + 'dump ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const url = c.dump_url
           const sb = []
           let link = `${url}`
@@ -1213,7 +1256,7 @@ client.on('message', async msg => {
             fsp.writeFile('./dump.txt', sb.join('\n'), 'utf8')
           }
         } else if (msg.content.startsWith(settings.prefix + 'setwelcome ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (args[1] === 'message') {
             if (!args[2]) return msg.channel.send(lang.invalid_args)
             const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)
@@ -1244,7 +1287,7 @@ client.on('message', async msg => {
             return msg.channel.send(lang.invalid_args)
           }
         } else if (msg.content.startsWith(settings.prefix + 'deletemsg ') || msg.content === settings.prefix + 'deletemsg') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const types = {
             guild: 'guild',
             user: 'user',
@@ -1298,15 +1341,33 @@ client.on('message', async msg => {
             msg.channel.send(`${emojiList}`)
           }
         } else if (msg.content.startsWith(settings.prefix + 'instantban ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           msg.guild.ban(client.users.get(args[1]))
           msg.channel.send(':ok_hand:')
         } else if (msg.content.startsWith(settings.prefix + 'instantkick ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-          msg.guild.members.get(args[1]).kick('Instant Kick by BlackListener')
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
+          msg.guild.members.get(args[1]).kick('Instant Kick by BlackListener by ' + msg.author.tag)
           msg.channel.send(':ok_hand:')
+        } else if (msg.content.startsWith(settings.prefix + 'blockrole ') || msg.content === settings.prefix + 'blockrole') {
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
+          const role = msg.guild.roles.find("name", args[1]) ? msg.guild.roles.find("name", args[1]) : msg.guild.roles.get(args[1]);
+          if (!role) return msg.channel.send(lang.notfound_role);
+          if (settings.blocked_role[i] === role.id) {
+            let exe = false
+            for (let i=0; i<=settings.blocked_role.length; i++) {
+              if (settings.blocked_role[i] === role.id) {
+                exe = true
+                delete settings.blocked_role[i]
+              }
+            }
+            if (!exe) { settings = null; return msg.channel.send(lang.notfound_role) }
+            writeSettings(guildSettings, settings, msg.channel, "blocked_role")
+          } else {
+            settings.blocked_role.push(role.id);
+            writeSettings(guildSettings, settings, msg.channel, "blocked_role")
+          }
         } else if (msg.content.startsWith(settings.prefix + 'language ') || msg.content === settings.prefix + 'language') {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           if (!args[1] || args[1] === 'help') {
             const embed = new Discord.RichEmbed()
               .setTitle(lang.langnotsupported)
@@ -1320,8 +1381,8 @@ client.on('message', async msg => {
             await writeSettings(guildSettings, set, msg.channel, 'language')
           }
         } else if (msg.content.startsWith(settings.prefix + 'eval ')) {
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-          if (msg.author.id !== '254794124744458241' || msg.content.includes('token')) return msg.channel.send(lang.noperm)
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
+          if (msg.author.id !== '254794124744458241' || msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
           const commandcut = msg.content.substr(`${settings.prefix}eval `.length)
           try {
             const returned = client._eval(commandcut)
@@ -1332,8 +1393,8 @@ client.on('message', async msg => {
             msg.channel.send(f(lang.eval_error, e))
           }
         } else if (msg.content === settings.prefix + 'reload' || msg.content.startsWith(settings.prefix + 'reload ')) {
-          if (msg.author.id !== '254794124744458241') return msg.channel.send(lang.noperm)
-          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          if (msg.author.id !== '254794124744458241') return msg.channel.send(lang.udonthaveperm)
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           logger.info('Reloading!')
           if (args[1] === 'restart') { await msg.channel.send(lang.rebooting); return process.kill(process.pid, 'SIGKILL') }
           msg.channel.send(':ok_hand:')
@@ -1507,6 +1568,14 @@ try {
 }
 
 process.on('unhandledRejection', (error) => {
-  logger.fatal(`Caught error: ${error}`)
-  logger.fatal(error.stack)
+  logger.error(`Caught error: ${error}`)
+  logger.error(error.stack)
+})
+
+client.on('rateLimit', (info, method) => {
+  logger.fatal(`==============================`)
+  logger.fatal(`      Got rate limiting!      `)
+  logger.fatal(` -> You can't send ANY API Requests, and any request will be denied.`)
+  logger.fatal(` Detected rate limit while processing '${method}' method.`)
+  logger.fatal(`==============================`)
 })

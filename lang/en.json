@@ -54,8 +54,8 @@
   "youdonthavear": ":no_good: You don't have a admin permission.",
   "noperm": ":no_good: Sorry, you don't have a permission.",
   "failednotmatch": "┗━ Failed command because user doesn't match: {0}",
-  "issueduser": "{0} sent command: {1}",
-  "issuedadmin": "{0} sent admin command: {1}",
+  "issueduser": "{0} (Permission level: {2})sent command: {1}",
+  "issuedadmin": "{0} (Permission level: {2})sent admin command: {1}",
   "issuedfailadmin": "{0} sent failed admin command({2}): {1}",
   "processing_cmd": "┏━ Processing command: {0}, sender: {1} ({2})",
   "success": "┗━ Success: {0}, Shutting down",
@@ -182,7 +182,8 @@
     "invite": "Show bot invite link",
     "welcome_channel": "Channel of send welcome messages",
     "welcome_message": "Welcome message",
-    "mute": "List of muted users"
+    "mute": "List of muted users",
+    "blocked_role": "Can't use roles in role command"
   },
   "workspace": {
     "not_initialized": ":x: Your workspace is not yet available.\nPlease create a workspace in `{0}workspace init`.",

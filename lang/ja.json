@@ -54,8 +54,8 @@
   "youdonthavear": ":no_good: Adminロールを持っていません。",
   "noperm": ":no_good: すみません、あなたは権限がありません。",
   "failednotmatch": "┗━ ユーザーがマッチしないため失敗しました: {0}",
-  "issueduser": "{0} がコマンドを送信: {1}",
-  "issuedadmin": "{0} が管理コマンドを送信: {1}",
+  "issueduser": "{0} (権限レベル: {2})がコマンドを送信: {1}",
+  "issuedadmin": "{0} (権限レベル: {2})が管理コマンドを送信: {1}",
   "issuedfailadmin": "{0} が失敗管理コマンドを送信({2}): {1}",
   "processing_cmd": "┏━ コマンドを処理中: {0}, 送信元: {1} ({2})",
   "success": "┗━ 成功: {0}、シャットダウン中。",
@@ -185,7 +185,8 @@
     "invite": "コマンドで招待の表示・作成が許可されているか",
     "welcome_channel": "ウェルカムメッセージを送信するチャンネル",
     "welcome_message": "ウェルカムメッセージ",
-    "mute": "ミュートされた人たち"
+    "mute": "ミュートされた人たち",
+    "blocked_role": "roleコマンドで使用できない役職"
   },
   "workspace": {
     "not_initialized": ":x: ワークスペースはまだ使用可能な状態ではありません。\n`{0}workspace init` で作成してください。",
