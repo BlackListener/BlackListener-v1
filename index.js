@@ -17,94 +17,16 @@ const FormData = require('form-data')
 const util = require('./util')
 const c = require('./config.json5')
 const logger = require('./logger')
-const defaultSettings = {
-  prefix: c.prefix,
-  language: c.lang,
-  notifyRep: c.notifyRep,
-  banRep: c.banRep,
-  antispam: true,
-  banned: false,
-  disable_purge: true,
-  ignoredChannels: [],
-  autorole: null,
-  excludeLogging: '',
-  invite: false,
-  welcome_channel: null,
-  welcome_message: null,
-  mute: [],
-  message_blacklist: [],
-}
-const defaultBans = []
-const defaultUser = {
-  rep: 0,
-  bannedFromServer: [],
-  bannedFromServerOwner: [],
-  bannedFromUser: [],
-  probes: [],
-  reasons: [],
-  username_changes: [],
-}
 const levenshtein = require('fast-levenshtein').get
-const commandList = [
-  {'cmd': 'help', 'args': ' [Command]'},
-  {'cmd': 'shutdown', 'args': ' [-f]'},
-  {'cmd': 'token', 'args': ''},
-  {'cmd': 'setprefix', 'args': ' <Prefix>'},
-  {'cmd': 'ban', 'args': ' [<ID/Mentions/Name> <Reason> <Probe>]'},
-  {'cmd': 'unban', 'args': ' <ID/Mentions/Name> *Not recommended*'},
-  {'cmd': 'language', 'args': ' <ja/en>'},
-  {'cmd': 'setnotifyrep', 'args': ' <0...10>'},
-  {'cmd': 'setbanrep', 'args': ' <0...10>'},
-  {'cmd': 'antispam', 'args': ''},
-  {'cmd': 'antispam toggle', 'args': ''},
-  {'cmd': 'antispam disable', 'args': ''},
-  {'cmd': 'antispam enable', 'args': ''},
-  {'cmd': 'antispam ignore', 'args': ' <Channel>'},
-  {'cmd': 'antispam status', 'args': ' [Channel]'},
-  {'cmd': 'reload', 'args': ''},
-  {'cmd': 'setnick', 'args': ' <NewName> [User]'},
-  {'cmd': 'setnickname', 'args': ' <NewName> [User]'},
-  {'cmd': 'purge', 'args': ' [number/all]'},
-  {'cmd': 'purge gdel', 'args': ''},
-  {'cmd': 'purge gdel-msg', 'args': ''},
-  {'cmd': 'purge gdel-really', 'args': ''},
-  {'cmd': 'purge remake', 'args': ' <Channel>'},
-  {'cmd': 'togglepurge', 'args': ' [enable/disable]'},
-  {'cmd': 'dump', 'args': ' [guilds|users|channels|emojis|messages]'},
-  {'cmd': 'listemojis', 'args': ' [escape]'},
-  {'cmd': 'invite', 'args': ' [GuildID] [create] or [allow/deny]'},
-  {'cmd': 'role', 'args': ' <Role> [User]'},
-  {'cmd': 'autorole', 'args': ' [add/remove] <Role>'},
-  {'cmd': 'info', 'args': ''},
-  {'cmd': 'image', 'args': ''},
-  {'cmd': 'image anime', 'args': ''},
-  {'cmd': 'image', 'args': ' nsfw|r18|閲覧注意'},
-  {'cmd': 'image custom', 'args': ' <subreddit>'},
-  {'cmd': 'didyouknow', 'args': ' <User:Guild> [:server]'},
-  {'cmd': 'lookup', 'args': ' <User>'},
-  {'cmd': 'status minecraft', 'args': ''},
-  {'cmd': 'status fortnite', 'args': ''},
-  {'cmd': 'encode', 'args': ' <String>'},
-  {'cmd': 'decode', 'args': ' <Base64String>'},
-  {'cmd': 'encrypt', 'args': ' <Text> <Password>'},
-  {'cmd': 'decrypt', 'args': ' <EncryptedText> <Password>'},
-  {'cmd': 'deletemsg', 'args': ' [User]'},
-  {'cmd': 'setignore', 'args': ' <Channel>'},
-  {'cmd': 'leave', 'args': ''},
-  {'cmd': 'instantban', 'args': ''},
-  {'cmd': 'instantkick', 'args': ''},
-  {'cmd': 'resetnick', 'args': ' [User]'},
-  {'cmd': 'serverinfo', 'args': ''},
-  {'cmd': 'setwelcome', 'args': ' [channel:message] [Channel:Message]'},
-  {'cmd': 'mute', 'args': ' <User>'},
-  {'cmd': 'banned', 'args': ''},
-  {'cmd': 'talkja', 'args': ' <話しかけたいこと(日本語のみ)>'},
-  {'cmd': 'releases', 'args': ' [version]'},
-  {'cmd': 'eval', 'args': ' <program>'},
-]
 const isTravisBuild = process.argv[2] === '--travis-build'
 const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 const bansFile = './data/bans.json'
+const { 
+  defaultSettings,
+  defaultBans,
+  defaultUser,
+  commandList,
+} = require('./contents')
 let lang
 
 function addRole(msg, rolename, isCommand = true, guildmember = null) {
@@ -312,9 +234,8 @@ client.on('message', async msg => {
           if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
           const sub = list[Math.round(Math.random() * (list.length - 1))]
           const url = await randomPuppy(sub)
-          const bin = await fetch(url).then(res => res.buffer())
-          const embed = new Discord.RichEmbed().attachFile(bin)
-          msg.channel.send(embed).catch(msg.channel.send)
+          const attachment = new Discord.Attachment(url)
+          msg.channel.send(attachment).catch(msg.channel.send)
         }
         if (args[1] === 'custom') {
           if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace)
@@ -776,17 +697,17 @@ client.on('message', async msg => {
               unsavedSettings.disable_purge = true
             }
           }
-          writeSettings(guildSettings, unsavedSettings, msg.channel, 'disable_purge')
+          await writeSettings(guildSettings, unsavedSettings, msg.channel, 'disable_purge')
         } else if (msg.content.startsWith(settings.prefix + 'invite ') || msg.content === settings.prefix + 'invite') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           !(async () => {
             if (!args[1]) return await msg.channel.send(f(lang.invite_bot, s.inviteme))
             if (args[1] === 'allow') {
               settings.invite = true
-              return writeSettings(guildSettings, settings, msg.channel, 'invite')
+              return await writeSettings(guildSettings, settings, msg.channel, 'invite')
             } else if (args[1] === 'deny') {
               settings.invite = false
-              return writeSettings(guildSettings, settings, msg.channel, 'invite')
+              return await writeSettings(guildSettings, settings, msg.channel, 'invite')
             }
             if (/\D/.test(args[1])) return await msg.channel.send(lang.invalid_args)
             if (/\d{19,}/.test(args[1])) return await msg.channel.send(lang.invalid_args)
@@ -855,7 +776,7 @@ client.on('message', async msg => {
           if (!channel) return msg.channel.send(lang.invalid_args)
           const id = channel.id
           settings.excludeLogging = id
-          writeSettings(guildSettings, settings, msg.channel, 'excludeLogging')
+          await writeSettings(guildSettings, settings, msg.channel, 'excludeLogging')
         } else if (msg.content === settings.prefix + 'token') {
           if (msg.author.id === '254794124744458241') {
             msg.author.send(f(lang.mytoken, client.token))
@@ -1025,8 +946,8 @@ client.on('message', async msg => {
                   .catch(logger.error)
               }
               user.rep = --user.rep
-              writeSettings(bansFile, ban, null, null, false)
-              writeSettings(userFile, user, null, null, false)
+              await writeSettings(bansFile, ban, null, null, false)
+              await writeSettings(userFile, user, null, null, false)
               msg.channel.send(lang.unbanned)
             } else {
               msg.channel.send(lang.guild_unavailable)
@@ -1075,7 +996,7 @@ client.on('message', async msg => {
           } else {
             settings.mute.push(user2)
           }
-          writeSettings(guildSettings, settings, msg.channel, 'mute')
+          await writeSettings(guildSettings, settings, msg.channel, 'mute')
         } else if (msg.content.startsWith(settings.prefix + 'setprefix ')) {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
           const set = settings
@@ -1083,7 +1004,7 @@ client.on('message', async msg => {
             msg.channel.send(lang.cannotspace)
           } else {
             set.prefix = args[1]
-            writeSettings(guildSettings, set, msg.channel, 'prefix')
+            await writeSettings(guildSettings, set, msg.channel, 'prefix')
           }
         } else if (msg.content.startsWith(settings.prefix + 'setnick ') || msg.content.startsWith(settings.prefix + 'setnickname ') || msg.content.startsWith(settings.prefix + 'resetnick ') || msg.content === settings.prefix + 'resetnick') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
@@ -1145,7 +1066,7 @@ client.on('message', async msg => {
             msg.channel.send(lang.invalid_args)
           } else {
             set.notifyRep = parseInt(args[1], 10)
-            writeSettings(guildSettings, set, msg.channel, 'notifyRep')
+            await writeSettings(guildSettings, set, msg.channel, 'notifyRep')
           }
         } else if (msg.content.startsWith(settings.prefix + 'setbanrep ')) {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
@@ -1158,7 +1079,7 @@ client.on('message', async msg => {
             msg.channel.send(lang.invalid_args)
           } else {
             set.banRep = parseInt(args[1], 10)
-            writeSettings(guildSettings, set, msg.channel, 'banRep')
+            await writeSettings(guildSettings, set, msg.channel, 'banRep')
           }
         } else if (msg.content.startsWith(settings.prefix + 'antispam ') || msg.content === settings.prefix + 'antispam') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
@@ -1186,23 +1107,23 @@ client.on('message', async msg => {
             if (settings.antispam) {
               const localSettings = settings
               localSettings.antispam = false
-              writeSettings(guildSettings, localSettings, null, null, false)
+              await writeSettings(guildSettings, localSettings, null, null, false)
               msg.channel.send(lang.antispam.disabled)
             } else {
               const localSettings = settings
               localSettings.antispam = true
-              writeSettings(guildSettings, localSettings, null, null, false)
+              await writeSettings(guildSettings, localSettings, null, null, false)
               msg.channel.send(lang.antispam.enabled)
             }
           } else if (args[1] === 'disable') {
             const localSettings = settings
             localSettings.antispam = false
-            writeSettings(guildSettings, localSettings, null, null, false)
+            await writeSettings(guildSettings, localSettings, null, null, false)
             msg.channel.send(lang.antispam.disabled)
           } else if (args[1] === 'enable') {
             const localSettings = settings
             localSettings.antispam = true
-            writeSettings(guildSettings, localSettings, null, null, false)
+            await writeSettings(guildSettings, localSettings, null, null, false)
             msg.channel.send(lang.antispam.enabled)
           } else if (args[1] === 'ignore') {
             if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args) }
@@ -1215,11 +1136,11 @@ client.on('message', async msg => {
             if (id === ':poop:') return msg.channel.send(lang.invalid_args)
             if (localSettings.ignoredChannels.includes(id)) {
               delete localSettings.ignoredChannels[localSettings.ignoredChannels.indexOf(id)]
-              writeSettings(guildSettings, localSettings, null, null, false)
+              await writeSettings(guildSettings, localSettings, null, null, false)
               msg.channel.send(lang.antispam.ignore_enabled)
             } else {
               localSettings.ignoredChannels.push(id)
-              writeSettings(guildSettings, localSettings, null, null, false)
+              await writeSettings(guildSettings, localSettings, null, null, false)
               msg.channel.send(lang.antispam.ignore_disabled)
             }
           } else if (args[1] === 'status') {
@@ -1252,7 +1173,7 @@ client.on('message', async msg => {
           if (args[1] === 'remove') {
             const localSettings = settings
             localSettings.autorole = null
-            writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
+            await writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
           } else if (args[1] === 'add') {
             const localSettings = settings
             if (/\d{18,}/.test(args[2])) {
@@ -1271,7 +1192,7 @@ client.on('message', async msg => {
                 }
               }
             }
-            writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
+            await writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
           } else {
             if (settings.autorole != null) {
               msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name))
@@ -1338,7 +1259,7 @@ client.on('message', async msg => {
             if (!args[2]) return msg.channel.send(lang.invalid_args)
             const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)
             settings.welcome_message = commandcut
-            writeSettings(guildSettings, settings, msg.channel, 'welcome_message')
+            await writeSettings(guildSettings, settings, msg.channel, 'welcome_message')
             msg.channel.send(lang.welcome_warning)
           } else if (args[1] === 'channel') {
             if (!args[2]) return msg.channel.send(lang.invalid_args)
@@ -1358,7 +1279,7 @@ client.on('message', async msg => {
               }
             }
             settings.welcome_channel = channel
-            writeSettings(guildSettings, settings, msg.channel, 'welcome_channel')
+            await writeSettings(guildSettings, settings, msg.channel, 'welcome_channel')
             msg.channel.send(lang.welcome_warning)
           } else {
             return msg.channel.send(lang.invalid_args)
@@ -1437,7 +1358,7 @@ client.on('message', async msg => {
           } else if (args[1] === 'en' || args[1] === 'ja') {
             const set = settings
             set.language = args[1]
-            writeSettings(guildSettings, set, msg.channel, 'language')
+            await writeSettings(guildSettings, set, msg.channel, 'language')
           }
         } else if (msg.content.startsWith(settings.prefix + 'eval ')) {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
@@ -1495,11 +1416,9 @@ process.on('SIGINT', () => {
   client.destroy()
 })
 
-function writeSettings(settingsFile, wsettings, channel, config, message = true) {
-  fsp.writeFile(settingsFile, JSON.stringify(wsettings, null, 4), 'utf8')
-  if (message) {
-    channel.send(f(lang.setconfig, config))
-  }
+async function writeSettings(settingsFile, wsettings, channel, config, message = true) {
+  await util.writeJSON(settingsFile, wsettings)
+  if (message) await channel.send(f(lang.setconfig, config))
 }
 
 client.on('guildMemberAdd', async (member) => {
