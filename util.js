@@ -20,7 +20,7 @@ module.exports = {
     const data = this.stringify(json)
     return fs.writeFile(path, data, 'utf8')
   },
-  readJSONSync(path, _default) {
+  readJSONSync(path) {
     const data = _fs.readFileSync(path, 'utf8')
     return this.parse(data)
   },

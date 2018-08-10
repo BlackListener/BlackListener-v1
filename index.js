@@ -36,12 +36,12 @@ function addRole(msg, rolename, isCommand = true, guildmember = null) {
   let member = null
   try {
     try {
-      role = msg.guild.roles.find("name", rolename);
+      role = msg.guild.roles.find('name', rolename)
     } catch (e) {
       try {
-        role = msg.guild.roles.get(rolename);
+        role = msg.guild.roles.get(rolename)
       } catch (e) {
-        logger.error("An error occurred in 'addRole': " + e);
+        logger.error('An error occurred in \'addRole\': ' + e)
       }
     }
     if (!guildmember) {
@@ -120,7 +120,7 @@ client.on('message', async msg => {
   }
   const user = await util.readJSON(userFile, defaultUser)
   let settings = await util.readJSON(guildSettings, defaultSettings)
-  logger.debug("Loading " + guildSettings);
+  logger.debug('Loading ' + guildSettings)
   let userChanged = false; let serverChanged = false
   if (!user.bannedFromServer) {
     user.bannedFromServer = []
@@ -524,25 +524,25 @@ client.on('message', async msg => {
         msg.channel.send(embed)
       } else if (msg.content.startsWith(settings.prefix + 'role ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
-        let role;
+        let role
         try {
-          role = msg.guild.roles.find("name", args[1]);
+          role = msg.guild.roles.find('name', args[1])
         } catch (e) {
           try {
-            role = msg.guild.roles.get(args[1]);
+            role = msg.guild.roles.get(args[1])
           } catch (e) {
-            return msg.channel.send(lang.invalid_args);
+            return msg.channel.send(lang.invalid_args)
           }
         }
         if (msg.member.highestRole.position > role.position || msg.member.hasPermission(8)) {
-          if (!msg.member.hasPermission(8)) if (settings.blocked_role.includes(args[1])) return msg.channel.send(lang.udonthaveperm);
+          if (!msg.member.hasPermission(8)) if (settings.blocked_role.includes(args[1])) return msg.channel.send(lang.udonthaveperm)
           if (!msg.mentions.members.first()) {
-            addRole(msg, args[1], true);
+            addRole(msg, args[1], true)
           } else {
-            addRole(msg, args[1], true, msg.mentions.members.first());
+            addRole(msg, args[1], true, msg.mentions.members.first())
           }
         } else {
-          return msg.channel.send(lang.no_perm);
+          return msg.channel.send(lang.no_perm)
         }
       } else if (msg.content === settings.prefix + 'serverinfo') {
         logger.info(f(lang.issueduser, msg.author.tag, msg.content, msg.member.permissions.bitfield))
@@ -1351,8 +1351,8 @@ client.on('message', async msg => {
           msg.channel.send(':ok_hand:')
         } else if (msg.content.startsWith(settings.prefix + 'blockrole ') || msg.content === settings.prefix + 'blockrole') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
-          const role = msg.guild.roles.find("name", args[1]) ? msg.guild.roles.find("name", args[1]) : msg.guild.roles.get(args[1]);
-          if (!role) return msg.channel.send(lang.notfound_role);
+          const role = msg.guild.roles.find('name', args[1]) ? msg.guild.roles.find('name', args[1]) : msg.guild.roles.get(args[1])
+          if (!role) return msg.channel.send(lang.notfound_role)
           if (settings.blocked_role.includes(role.id)) {
             let exe = false
             for (let i=0; i<=settings.blocked_role.length; i++) {
@@ -1362,10 +1362,10 @@ client.on('message', async msg => {
               }
             }
             if (!exe) { settings = null; return msg.channel.send(lang.notfound_role) }
-            writeSettings(guildSettings, settings, msg.channel, "blocked_role")
+            writeSettings(guildSettings, settings, msg.channel, 'blocked_role')
           } else {
-            settings.blocked_role.push(role.id);
-            writeSettings(guildSettings, settings, msg.channel, "blocked_role")
+            settings.blocked_role.push(role.id)
+            writeSettings(guildSettings, settings, msg.channel, 'blocked_role')
           }
         } else if (msg.content.startsWith(settings.prefix + 'language ') || msg.content === settings.prefix + 'language') {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
@@ -1574,9 +1574,9 @@ process.on('unhandledRejection', (error) => {
 })
 
 client.on('rateLimit', (info, method) => {
-  logger.fatal(`==============================`)
-  logger.fatal(`      Got rate limiting!      `)
-  logger.fatal(` -> You can't send ANY API Requests, and any request will be denied.`)
+  logger.fatal('==============================')
+  logger.fatal('      Got rate limiting!      ')
+  logger.fatal(' -> You can\'t send ANY API Requests, and any request will be denied.')
   logger.fatal(` Detected rate limit while processing '${method}' method.`)
-  logger.fatal(`==============================`)
+  logger.fatal('==============================')
 })
