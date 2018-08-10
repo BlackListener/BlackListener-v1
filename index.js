@@ -525,10 +525,10 @@ client.on('message', async msg => {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
         let role;
         try {
-          role = msg.guild.roles.find("name", rolename);
+          role = msg.guild.roles.find("name", args[1]);
         } catch (e) {
           try {
-            role = msg.guild.roles.get(rolename);
+            role = msg.guild.roles.get(args[1]);
           } catch (e) {
             return msg.channel.send(lang.invalid_args);
           }
@@ -1352,7 +1352,7 @@ client.on('message', async msg => {
           logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
           const role = msg.guild.roles.find("name", args[1]) ? msg.guild.roles.find("name", args[1]) : msg.guild.roles.get(args[1]);
           if (!role) return msg.channel.send(lang.notfound_role);
-          if (settings.blocked_role[i] === role.id) {
+          if (settings.blocked_role.includes(role.id)) {
             let exe = false
             for (let i=0; i<=settings.blocked_role.length; i++) {
               if (settings.blocked_role[i] === role.id) {
