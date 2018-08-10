@@ -16,7 +16,7 @@ const isWindows = process.platform === 'win32'
 const FormData = require('form-data')
 const util = require('./util')
 const c = require('./config.json5')
-const logger = require('./logger')
+const logger = require('./logger').init()
 const levenshtein = require('fast-levenshtein').get
 const isTravisBuild = process.argv[2] === '--travis-build'
 const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
@@ -518,9 +518,9 @@ client.on('message', async msg => {
           .addField(lang.lookup.id, user2.id)
           .addField(lang.lookup.username_changes, sb6.join('\n'))
           .addField(lang.lookup.bot, isBot)
-          .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString('ja-JP'))
-          .addField(lang.lookup.joinedAt, joinedAt.toLocaleString('ja-JP'))
-          .addField(lang.lookup.nowTime, new Date().toLocaleString('ja-JP'))
+          .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString())
+          .addField(lang.lookup.joinedAt, joinedAt.toLocaleString())
+          .addField(lang.lookup.nowTime, new Date().toLocaleString())
         msg.channel.send(embed)
       } else if (msg.content.startsWith(settings.prefix + 'role ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content, msg.member.permissions.bitfield))
