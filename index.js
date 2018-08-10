@@ -120,7 +120,7 @@ client.on('message', async msg => {
   }
   const user = await util.readJSON(userFile, defaultUser)
   let settings = await util.readJSON(guildSettings, defaultSettings)
-  //logger.debug("Loading " + guildSettings);
+  logger.debug("Loading " + guildSettings);
   let userChanged = false; let serverChanged = false
   if (!user.bannedFromServer) {
     user.bannedFromServer = []

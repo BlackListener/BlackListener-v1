@@ -22,8 +22,7 @@ module.exports = {
     return console.error(`[ERROR] ${message}`)
   },
   debug(message) {
-    fs.appendFileSync("latest.log", `[DEBUG] ${message}\n`)
-    return console.debug(`[DEBUG] ${message}`)
+    return fs.appendFileSync("latest.log", `[DEBUG] ${message}\n`)
   },
   fatal(message) {
     fs.appendFileSync("latest.log", `[FATAL] ${message}\n`)
