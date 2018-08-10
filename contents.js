@@ -57,7 +57,7 @@ module.exports = {
     { 'cmd': 'togglepurge', 'args': ' [enable/disable]' },
     { 'cmd': 'dump', 'args': ' [guilds|users|channels|emojis|messages]' },
     { 'cmd': 'listemojis', 'args': ' [escape]' },
-    { 'cmd': 'invite', 'args': ' [GuildID] [create] or [allow/deny]' },
+    { 'cmd': 'invite', 'args': '' },
     { 'cmd': 'role', 'args': ' <Role> [User]' },
     { 'cmd': 'autorole', 'args': ' [add/remove] <Role>' },
     { 'cmd': 'info', 'args': '' },
