@@ -1,4 +1,4 @@
-# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/)
+# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/) [![Build Status](https://travis-ci.com/BlackListener/BlackListener.svg?branch=master)](https://travis-ci.com/BlackListener/BlackListener)
 
 Global Banning System for Discord.
 

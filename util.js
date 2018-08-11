@@ -1,6 +1,6 @@
 const _fs = require('fs')
 const fs = _fs.promises
-const logger = require('./logger')
+const logger = require('./logger').getLogger('util')
 
 module.exports = {
   async exists(path) {
@@ -8,15 +8,17 @@ module.exports = {
   },
   async initJSON(path, json) {
     if (await this.exists(path)) return
-    logger.log(`Creating ${path}`)
+    logger.info(`Creating ${path}`)
     return await this.writeJSON(path, json)
   },
   async readJSON(path, _default) {
+    logger.debug(`Reading from file: ${path}`)
     return await fs.readFile(path, 'utf8')
       .then(data => this.parse(data))
       .catch(err => _default ? null : err)
   },
   async writeJSON(path, json) {
+    logger.debug(`Writing file: ${path}`)
     const data = this.stringify(json)
     return fs.writeFile(path, data, 'utf8')
   },
@@ -34,4 +36,10 @@ module.exports = {
   stringify(json) {
     return JSON.stringify(json, null, 4)
   },
+}
+
+String.prototype.cmdcheck = function() {
+  for (let i = 0; i<arguments.length; ++i) {
+    return this.startsWith(`${arguments[i]} `) || this === arguments[i]
+  }
 }

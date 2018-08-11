@@ -9,4 +9,13 @@
   version: '1.1.2',
   extender_id: '471558776751652868',
   note: 'Please set this extender_id for BlackListener Extension(with-workspace branch) user ID.',
+  replprefix: '> ',
+  disablerepl: false,
+  consoleloglevel: 2,
+  // 0: trace
+  // 1: debug
+  // 2: info
+  // 3: warn
+  // 4: error
+  // 5: fatal
 }

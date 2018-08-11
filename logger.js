@@ -1,31 +1,67 @@
+require('json5/lib/register')
 const fs = require('fs')
+const config = require('./config.json5')
 
-module.exports = {
-  init() {
+class Logger {
+  initLog() {
     fs.writeFileSync('latest.log', `--- The log begin at ${new Date().toLocaleString()} ---\n`)
-    console.log('[INFO] The log file has initialized.')
+    this.info('The log file has initialized.', true)
     return this
-  },
-  log(message) {
-    return this.info(message)
-  },
-  info(message) {
-    fs.appendFileSync('latest.log', `[INFO] ${message}\n`)
-    return console.info(`[INFO] ${message}`)
-  },
-  warn(message) {
-    fs.appendFileSync('latest.log', `[WARN] ${message}\n`)
-    return console.warn(`[WARN] ${message}`)
-  },
-  error(message) {
-    fs.appendFileSync('latest.log', `[ERROR] ${message}\n`)
-    return console.error(`[ERROR] ${message}`)
-  },
-  debug(message) {
-    return fs.appendFileSync('latest.log', `[DEBUG] ${message}\n`)
-  },
-  fatal(message) {
-    fs.appendFileSync('latest.log', `[FATAL] ${message}\n`)
-    return console.error(`[FATAL] ${message}`)
-  },
+  }
+  getLogger(thread) {
+    this.info(`Added logger for: ${thread}`, true)
+    let newLogger = new Logger();
+    newLogger.thread = thread
+    return newLogger;
+  }
+  info(message, isLogger = false) {
+    let thread = this.thread
+    if (isLogger) thread = this.thread ? this.thread : 'logger'
+    fs.appendFileSync('latest.log', `[${thread}/INFO] ${message}\n`)
+    if (config.consoleloglevel > 2) return this
+    console.info(`[${thread}/INFO] ${message}`)
+    return this
+  }
+  warn(message, isLogger = false) {
+    let thread = this.thread
+    if (isLogger) thread = this.thread ? this.thread : 'logger'
+    fs.appendFileSync('latest.log', `[${thread}/WARN] ${message}\n`)
+    if (config.consoleloglevel > 3) return this
+    console.warn(`[${thread}/WARN] ${message}`)
+    return this
+  }
+  error(message, isLogger = false) {
+    let thread = this.thread
+    if (isLogger) thread = this.thread ? this.thread : 'logger'
+    fs.appendFileSync('latest.log', `[${thread}/ERROR] ${message}\n`)
+    if (config.consoleloglevel > 4) return this
+    console.error(`[${thread}/ERROR] ${message}`)
+    return this
+  }
+  debug(message, isLogger = false) {
+    let thread = this.thread
+    if (isLogger) thread = this.thread ? this.thread : 'logger'
+    fs.appendFileSync('latest.log', `[${thread}/DEBUG] ${message}\n`)
+    if (config.consoleloglevel > 1) return this
+    console.debug(`[${thread}/DEBUG] ${message}`)
+    return this
+  }
+  fatal(message, isLogger = false) {
+    let thread = this.thread
+    if (isLogger) thread = this.thread ? this.thread : 'logger'
+    fs.appendFileSync('latest.log', `[${thread}/FATAL] ${message}\n`)
+    if (config.consoleloglevel > 5) return this
+    console.error(`[${thread}/FATAL] ${message}`)
+    return this
+  }
+  trace(message, isLogger = false) {
+    let thread = this.thread
+    if (isLogger) thread = this.thread ? this.thread : 'logger'
+    fs.appendFileSync('latest.log', `[${thread}/TRACE] ${message}\n`)
+    if (config.consoleloglevel > 0) return this
+    console.trace(`[${thread}/TRACE] ${message}`)
+    return this
+  }
 }
+
+module.exports = new Logger()
