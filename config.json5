@@ -12,6 +12,7 @@
   replprefix: '> ',
   disablerepl: false,
   consoleloglevel: 2,
+  loglevel: 2, // This will be given priority.
   // 0: trace
   // 1: debug
   // 2: info

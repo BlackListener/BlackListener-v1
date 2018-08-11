@@ -17,6 +17,7 @@ class Logger {
   info(message, isLogger = false) {
     let thread = this.thread
     if (isLogger) thread = this.thread ? this.thread : 'logger'
+    if (config.loglevel > 2) return this
     fs.appendFileSync('latest.log', `[${thread}/INFO] ${message}\n`)
     if (config.consoleloglevel > 2) return this
     console.info(`[${thread}/INFO] ${message}`)
@@ -25,6 +26,7 @@ class Logger {
   warn(message, isLogger = false) {
     let thread = this.thread
     if (isLogger) thread = this.thread ? this.thread : 'logger'
+    if (config.loglevel > 3) return this
     fs.appendFileSync('latest.log', `[${thread}/WARN] ${message}\n`)
     if (config.consoleloglevel > 3) return this
     console.warn(`[${thread}/WARN] ${message}`)
@@ -33,6 +35,7 @@ class Logger {
   error(message, isLogger = false) {
     let thread = this.thread
     if (isLogger) thread = this.thread ? this.thread : 'logger'
+    if (config.loglevel > 4) return this
     fs.appendFileSync('latest.log', `[${thread}/ERROR] ${message}\n`)
     if (config.consoleloglevel > 4) return this
     console.error(`[${thread}/ERROR] ${message}`)
@@ -41,6 +44,7 @@ class Logger {
   debug(message, isLogger = false) {
     let thread = this.thread
     if (isLogger) thread = this.thread ? this.thread : 'logger'
+    if (config.loglevel > 1) return this
     fs.appendFileSync('latest.log', `[${thread}/DEBUG] ${message}\n`)
     if (config.consoleloglevel > 1) return this
     console.debug(`[${thread}/DEBUG] ${message}`)
@@ -49,6 +53,7 @@ class Logger {
   fatal(message, isLogger = false) {
     let thread = this.thread
     if (isLogger) thread = this.thread ? this.thread : 'logger'
+    if (config.loglevel > 5) return this
     fs.appendFileSync('latest.log', `[${thread}/FATAL] ${message}\n`)
     if (config.consoleloglevel > 5) return this
     console.error(`[${thread}/FATAL] ${message}`)
@@ -57,6 +62,7 @@ class Logger {
   trace(message, isLogger = false) {
     let thread = this.thread
     if (isLogger) thread = this.thread ? this.thread : 'logger'
+    if (config.loglevel > 0) return this
     fs.appendFileSync('latest.log', `[${thread}/TRACE] ${message}\n`)
     if (config.consoleloglevel > 0) return this
     console.trace(`[${thread}/TRACE] ${message}`)
