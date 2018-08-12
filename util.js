@@ -38,8 +38,3 @@ module.exports = {
   },
 }
 
-String.prototype.cmdcheck = function() {
-  for (let i = 0; i<arguments.length; ++i) {
-    return this.startsWith(`${arguments[i]} `) || this === arguments[i]
-  }
-}

@@ -1,5 +1,5 @@
 require('json5/lib/register')
-const logger = require('./logger').initLog().getLogger('main')
+const logger = require('./logger').getLogger('main')
 logger.info('Initializing')
 const f = require('string-format')
 const now = require('performance-now')
@@ -99,6 +99,11 @@ client.on('ready', async () => {
 })
 
 client.on('message', async msg => {
+  msg.content.cmdcheck = function() {
+    for (let i = 0; i<arguments.length; ++i) {
+      return this.startsWith(`${arguments[i]} `) || this === arguments[i]
+    }
+  }
   if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
   const guildSettings = `./data/servers/${msg.guild.id}/config.json`
@@ -1584,23 +1589,23 @@ client.on('rateLimit', (info, method) => {
 
 if (!c.disablerepl) {
   const help = function() {
-    console.log('end() -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
+    console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
+    console.log('.kill -> Suicides this process')
     console.log('client -> A \'Discord.Client()\'')
-    console.log('kill() -> Suicides this process')
     return
   }
   const replServer = require('repl').start(c.replprefix ? c.replprefix : '> ')
-  replServer.context.help = help
-  replServer.context.client = client
-  replServer.context.kill = function() {
+  replServer.defineCommand('help', help)
+  replServer.defineCommand('kill', function() {
     process.kill(process.pid, 'SIGKILL')
-  }
-  replServer.context.end = function() {
+  })
+  replServer.defineCommand('end', function() {
     setTimeout(() => {
       logger.info('Exiting')
       process.exit()
-    }, 5000)
+    }, 5000);
     client.destroy()
-  }
+  })
+  replServer.context.client = client
 }
 if (c.disablerepl) logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.json5.')
