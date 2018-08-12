@@ -99,7 +99,7 @@ client.on('ready', async () => {
 })
 
 client.on('message', async msg => {
-  msg.content.cmdcheck = function() {
+  String.prototype.cmdcheck = function() {
     for (let i = 0; i<arguments.length; ++i) {
       return this.startsWith(`${arguments[i]} `) || this === arguments[i]
     }
