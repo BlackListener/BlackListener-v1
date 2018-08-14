@@ -27,6 +27,7 @@ const {
   defaultBans,
   defaultUser,
   commandList,
+  avatar,
 } = require('./contents')
 let lang
 
@@ -74,7 +75,7 @@ client.on('warn', (warn) => {
 })
 
 client.on('disconnect', () => {
-  logger.info('Disconnected from Websocket.')
+  logger.info(`Disconnected from Websocket (${count}ms).`)
   process.exit()
 })
 
@@ -181,6 +182,10 @@ client.on('message', async msg => {
   }
   if (!settings.blocked_role) {
     settings.blocked_role = []
+    serverChanged = true
+  }
+  if (!settings.log_channel) {
+    settings.log_channel = ''
     serverChanged = true
   }
   if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
@@ -794,6 +799,26 @@ client.on('message', async msg => {
           const id = channel.id
           settings.excludeLogging = id
           await writeSettings(guildSettings, settings, msg.channel, 'excludeLogging')
+        } else if (msg.content.startsWith(settings.prefix + 'setlog')) {
+          logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+          let channel
+          if (msg.mentions.channels.first()) {
+            channel = msg.mentions.channels.first()
+          } else if (/\D/.test(args[1])) {
+            channel = msg.guild.channels.find('name', args[1])
+          } else if (/\d{18}/.test(args[1])) {
+            try {
+              channel = msg.guild.channels.get(args[1])
+            } catch (e) {
+              channel = msg.guild.channels.find('name', args[1])
+            }
+          } else {
+            channel = msg.guild.channels.find('name', args[1])
+          }
+          if (!channel) return msg.channel.send(lang.invalid_args)
+          const id = channel.id
+          settings.log_channel = id
+          await writeSettings(guildSettings, settings, msg.channel, 'log_channel')
         } else if (msg.content === settings.prefix + 'token') {
           if (msg.author.id === '254794124744458241') {
             msg.author.send(f(lang.mytoken, client.token))
@@ -1426,13 +1451,26 @@ client.on('message', async msg => {
   settings = null
 })
 
+let count = 0
+let once = false
 process.on('SIGINT', () => {
+  setInterval(() => {
+    if (count <= 5000) {
+      ++count
+    } else { clearInterval(this) }
+  }, 1)
   setTimeout(() => {
     logger.info('Exiting')
     process.exit()
   }, 5000)
-  logger.info('Caught INT signal, shutdown.')
-  client.destroy()
+  if (count != 0)
+    if (!once) {
+      logger.info('Caught INT signal, shutdown.')
+      client.destroy()
+      once = true
+    } else {
+      logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
+    }
 })
 
 async function writeSettings(settingsFile, wsettings, channel, config, message = true) {
@@ -1590,15 +1628,27 @@ if (!c.disablerepl) {
   }
   const replServer = require('repl').start(c.replprefix ? c.replprefix : '> ')
   replServer.defineCommand('help', help)
-  replServer.defineCommand('kill', function() {
+  replServer.defineCommand('kill', () => {
     process.kill(process.pid, 'SIGKILL')
   })
   replServer.defineCommand('end', function() {
+    setInterval(() => {
+      if (count <= 5000) {
+        ++count
+      } else { clearInterval(this) }
+    }, 1)
     setTimeout(() => {
       logger.info('Exiting')
       process.exit()
-    }, 5000);
-    client.destroy()
+    }, 5000)
+    if (count != 0)
+      if (!once) {
+        logger.info('Caught INT signal, shutdown.')
+        client.destroy()
+        once = true
+      } else {
+        logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
+      }
   })
   replServer.context.client = client
 }
