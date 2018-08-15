@@ -44,7 +44,7 @@ class Logger {
     const date = `${CYAN}${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}${SET}`
     let thread = this.thread; let color = this.color
     if (isLogger) { thread = 'logger'; color = PURPLE }
-    fs.appendFileSync('latest.log', `${date} ${color}${thread} ${level} ${GREEN}${message}${SET}`)
+    fs.appendFileSync('latest.log', `${date} ${color}${thread} ${level} ${GREEN}${message}${SET}\n`)
     console.info(`${date} ${color}${thread} ${level} ${GREEN}${message}${SET}`)
   }
   info(message, isLogger = false) {
