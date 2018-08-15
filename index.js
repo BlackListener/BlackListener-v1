@@ -69,8 +69,9 @@ client.on('message', async msg => {
   util.checkConfig(user, settings, userFile, guildSettings)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
-      fs.appendFile(userMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
-      fs.appendFile(serverMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`)
+      const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
+      fs.appendFile(userMessagesFile, log_message)
+      fs.appendFile(serverMessagesFile, log_message)
     }
   } catch (e) {
     logger.error(`Error while logging message (${guildSettings}) (${e})`)

@@ -69,27 +69,8 @@ if (test) {
   logger.info('--- T E S T S ---')
   logger.warn('You are using incomplete feature.')
   logger.warn('Some commands are cannot test.')
-  const config = require('../config.json5')
   const lang = require('../lang/en.json')
-  const testSettings = {
-    prefix: config.prefix,
-    language: config.lang,
-    notifyRep: config.notifyRep,
-    banRep: config.banRep,
-    antispam: true,
-    banned: false,
-    disable_purge: true,
-    ignoredChannels: [],
-    autorole: null,
-    excludeLogging: '',
-    invite: false,
-    welcome_channel: null,
-    welcome_message: null,
-    mute: [],
-    message_blacklist: [],
-    blocked_role: [],
-    log_channel: '',
-  }
+  const { defaultSettings } = require('./contents')
   const testmsg = {
     'channel': {
       send() {
@@ -106,7 +87,7 @@ if (test) {
     },
   }
   const tests = {}
-  if (commands.help(testSettings, testmsg, lang)) tests.help = true
+  if (commands.help(defaultSettings, testmsg, lang)) tests.help = true
   let success = 0; let fails = 0
   const total = Object.keys(tests).length
   for (let i=0;i<total;++i) {

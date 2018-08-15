@@ -44,9 +44,8 @@ module.exports = {
     return JSON.stringify(json, null, 4)
   },
   cmdcheck() {
-    const cmd = arguments[0]
     for (let i=0; i<arguments.length;++i) {
-      if (i !== 0) if (cmd === arguments[i]) return true
+      if (i !== 0) if (arguments[0] === arguments[i]) return true
     }
     return false
   },
@@ -55,8 +54,7 @@ module.exports = {
     if (channel) await channel.send(f(lang.setconfig, config))
   },
   addRole(msg, rolename, isCommand = true, guildmember = null) {
-    let role = null
-    let member = null
+    let role; let member
     try {
       try {
         role = msg.guild.roles.find('name', rolename)
@@ -67,27 +65,22 @@ module.exports = {
           logger.error('An error occurred in \'addRole\': ' + e)
         }
       }
-      if (!guildmember) {
-        member = msg.guild.members.get(msg.author.id)
-      } else {
-        member = msg.guild.members.get(guildmember.id)
-      }
+      if (!guildmember) { member = msg.guild.members.get(msg.author.id) } else { member = msg.guild.members.get(guildmember.id) }
       if (isCommand) {
-        if (member.roles.has(role.id)) {
-          member.removeRole(role).catch(logger.error)
-          const embed = new Discord.RichEmbed().setTitle(':wastebasket: ロールから削除').setColor([255,0,0]).setDescription('ロール ``' + rolename + '`` から削除しました。')
-          msg.channel.send(embed)
-        } else {
-          member.addRole(role).catch(logger.error)
-          const embed = new Discord.RichEmbed().setTitle(':heavy_plus_sign: ロールへ追加').setColor([0,255,0]).setDescription('ロール ``' + rolename + '`` へ追加しました。')
+        const build = function(title, message) {
+          const embed = new Discord.RichEmbed().setTitle(title).setColor([255,0,0]).setDescription('役職 ``' + rolename + '`` ' + message)
           msg.channel.send(embed)
         }
-      } else {
-        member.addRole(role).catch(logger.error)
-      }
+        if (member.roles.has(role.id)) {
+          member.removeRole(role).catch(logger.error)
+          build(':wastebasket: 役職を剥奪しました', ' から削除しました。')
+        } else {
+          member.addRole(role).catch(logger.error)
+          build(':heavy_plus_sign: 役職を付与しました', ' を付与しました')
+        }
+      } else { member.addRole(role).catch(logger.error) }
     } catch (e) {
-      msg.channel.send(lang.role_error)
-      logger.error(e)
+      msg.channel.send(lang.role_error); logger.error(e)
     }
   },
   async checkConfig(user, settings, userFile, guildSettings) {

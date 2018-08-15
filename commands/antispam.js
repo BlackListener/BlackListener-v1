@@ -5,6 +5,11 @@ const f = require('string-format')
 module.exports = async function(settings, msg, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const command = `${settings.prefix}antispam`
+  const write = async function(value) {
+    const localSettings = settings
+    localSettings.antispam = value
+    await util.writeSettings(guildSettings, localSettings, null, null, false)
+  }
   if (!args[1] || args[1] === 'help') {
     let status
     if (settings.antispam) {
@@ -24,29 +29,21 @@ module.exports = async function(settings, msg, lang, guildSettings) {
     msg.channel.send(embed)
   } else if (args[1] === 'toggle') {
     if (settings.antispam) {
-      const localSettings = settings
-      localSettings.antispam = false
-      await util.writeSettings(guildSettings, localSettings, null, null, false)
+      await write(false)
       msg.channel.send(lang.antispam.disabled)
     } else {
-      const localSettings = settings
-      localSettings.antispam = true
-      await util.writeSettings(guildSettings, localSettings, null, null, false)
+      await write(true)
       msg.channel.send(lang.antispam.enabled)
     }
   } else if (args[1] === 'disable') {
-    const localSettings = settings
-    localSettings.antispam = false
-    await util.writeSettings(guildSettings, localSettings, null, null, false)
+    await write(false)
     msg.channel.send(lang.antispam.disabled)
   } else if (args[1] === 'enable') {
-    const localSettings = settings
-    localSettings.antispam = true
-    await util.writeSettings(guildSettings, localSettings, null, null, false)
+    await write(true)
     msg.channel.send(lang.antispam.enabled)
   } else if (args[1] === 'ignore') {
-    if (!msg.mentions.channels.first()) { settings = null; return msg.channel.send(lang.invalid_args) }
-    if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace) }
+    if (!msg.mentions.channels.first()) { return msg.channel.send(lang.invalid_args) }
+    if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
     const localSettings = settings
     let user2 = msg.mentions.channels.first()
     if (!user2) user2 = msg.guild.channels.find('name', args[2])
@@ -73,11 +70,8 @@ module.exports = async function(settings, msg, lang, guildSettings) {
       return msg.channel.send(f(lang.antispam.disabled_channels, sb.join('\n')))
     }
     const id = msg.mentions.channels.first().id
-    if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace) }
-    if (settings.ignoredChannels.includes(id)) {
-      msg.channel.send(f(lang.antispam.status2, lang.disabled))
-    } else {
-      msg.channel.send(f(lang.antispam.status2, lang.enabled))
-    }
+    if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
+    if (settings.ignoredChannels.includes(id)) return msg.channel.send(f(lang.antispam.status2, lang.disabled))
+    msg.channel.send(f(lang.antispam.status2, lang.enabled))
   }
 }
