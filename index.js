@@ -27,7 +27,6 @@ const {
   defaultBans,
   defaultUser,
   commandList,
-  avatar,
 } = require('./contents')
 let lang
 
@@ -1196,9 +1195,9 @@ client.on('message', async msg => {
             const id = msg.mentions.channels.first().id
             if (/\s/.test(args[2]) || !args[2]) { settings = null; return msg.channel.send(lang.cannotspace) }
             if (settings.ignoredChannels.includes(id)) {
-              msg.channel.send(f(lang.antispam.status2, off))
+              msg.channel.send(f(lang.antispam.status2, lang.disabled))
             } else {
-              msg.channel.send(f(lang.antispam.status2, on))
+              msg.channel.send(f(lang.antispam.status2, lang.enabled))
             }
           }
         } else if (util.cmdcheck(cmd, 'autorole')) {

@@ -1,5 +1,4 @@
 const config = require('./config.json5')
-const fs = require('fs')
 
 module.exports = {
   defaultSettings: {
@@ -90,5 +89,4 @@ module.exports = {
     { 'cmd': 'eval', 'args': ' <Program>' },
     { 'cmd': 'blockrole', 'args': ' <Role>'},
   ],
-  avatar: Buffer.from(fs.readFileSync('avatar'), 'base64').toString('ascii').replace(/\n/gm, ''),
 }

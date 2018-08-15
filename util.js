@@ -37,11 +37,11 @@ module.exports = {
     return JSON.stringify(json, null, 4)
   },
   cmdcheck() {
-    const cmd = arguments[0];
+    const cmd = arguments[0]
     for (let i=0; i<arguments.length;++i) {
-      if (i !== 0) if (cmd === arguments[i]) return true;
+      if (i !== 0) if (cmd === arguments[i]) return true
     }
-    return false;
+    return false
   },
 }
 

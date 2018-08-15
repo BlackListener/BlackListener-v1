@@ -13,9 +13,9 @@ class Logger {
       this.initLog()
     }
     this.info(`Added logger for: ${thread}`, true)
-    let newLogger = new Logger();
+    const newLogger = new Logger()
     newLogger.thread = thread
-    return newLogger;
+    return newLogger
   }
   info(message, isLogger = false) {
     let thread = this.thread
