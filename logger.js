@@ -1,5 +1,16 @@
 const fs = require('fs')
 const config = require('./config.json5')
+const DARKGRAY='\033[1;30m'
+const RED='\033[0;31m'
+const LIGHTRED='\033[1;31m'
+const GREEN='\033[0;32m'
+const YELLOW='\033[1;33m'
+const BLUE='\033[0;34m'
+const PURPLE='\033[0;35m'
+const LIGHTPURPLE='\033[1;35m'
+const CYAN='\033[0;36m'
+const WHITE='\033[1;37m'
+const SET='\033[0m'
 
 class Logger {
   initLog() {
@@ -8,67 +19,54 @@ class Logger {
     this.info('The log file has initialized.', true)
     return this
   }
-  getLogger(thread) {
+  getLogger(thread, color = 'yellow') {
     if (!this.initialized) {
       this.initLog()
     }
-    this.info(`Added logger for: ${thread}`, true)
     const newLogger = new Logger()
     newLogger.thread = thread
+    switch (color) {
+      case 'yellow': newLogger.color = YELLOW; break
+      case 'darkgray': newLogger.color = DARKGRAY; break
+      case 'red': newLogger.color = RED; break
+      case 'lightred': newLogger.color = LIGHTRED; break
+      case 'green': newLogger.color = GREEN; break
+      case 'lightpurple': newLogger.color = LIGHTPURPLE; break
+      case 'white': newLogger.color = WHITE; break
+      case 'cyan': newLogger.color = CYAN; break
+      case 'purple': newLogger.color = PURPLE; break
+    }
+    this.info(`Registered logger for: ${thread}`, true)
     return newLogger
   }
+  out(message, level, isLogger) {
+    const originaldate = new Date()
+    const date = `${CYAN}${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}${SET}`
+    let thread = this.thread; let color = this.color
+    if (isLogger) { thread = 'logger'; color = PURPLE }
+    fs.appendFileSync('latest.log', `${date} ${color}${thread} ${level} ${GREEN}${message}${SET}`)
+    console.info(`${date} ${color}${thread} ${level} ${GREEN}${message}${SET}`)
+  }
   info(message, isLogger = false) {
-    let thread = this.thread
-    if (isLogger) thread = 'logger'
-    if (config.loglevel > 2) return this
-    fs.appendFileSync('latest.log', `[${thread}/INFO] ${message}\n`)
-    if (config.consoleloglevel > 2) return this
-    console.info(`[${thread}/INFO] ${message}`)
-    return this
-  }
-  warn(message, isLogger = false) {
-    let thread = this.thread
-    if (isLogger) thread = 'logger'
-    if (config.loglevel > 3) return this
-    fs.appendFileSync('latest.log', `[${thread}/WARN] ${message}\n`)
-    if (config.consoleloglevel > 3) return this
-    console.warn(`[${thread}/WARN] ${message}`)
-    return this
-  }
-  error(message, isLogger = false) {
-    let thread = this.thread
-    if (isLogger) thread = 'logger'
-    if (config.loglevel > 4) return this
-    fs.appendFileSync('latest.log', `[${thread}/ERROR] ${message}\n`)
-    if (config.consoleloglevel > 4) return this
-    console.error(`[${thread}/ERROR] ${message}`)
+    this.out(message, `${BLUE}info`, isLogger)
     return this
   }
   debug(message, isLogger = false) {
-    let thread = this.thread
-    if (isLogger) thread = 'logger'
-    if (config.loglevel > 1) return this
-    fs.appendFileSync('latest.log', `[${thread}/DEBUG] ${message}\n`)
-    if (config.consoleloglevel > 1) return this
-    console.debug(`[${thread}/DEBUG] ${message}`)
+    if (config.debug) {
+      this.out(message, `${CYAN}debug`, isLogger)
+    }
+    return this
+  }
+  warn(message, isLogger = false) {
+    this.out(message, `${YELLOW}warn`, isLogger)
+    return this
+  }
+  error(message, isLogger = false) {
+    this.out(message, `${RED}error`, isLogger)
     return this
   }
   fatal(message, isLogger = false) {
-    let thread = this.thread
-    if (isLogger) thread = 'logger'
-    if (config.loglevel > 5) return this
-    fs.appendFileSync('latest.log', `[${thread}/FATAL] ${message}\n`)
-    if (config.consoleloglevel > 5) return this
-    console.error(`[${thread}/FATAL] ${message}`)
-    return this
-  }
-  trace(message, isLogger = false) {
-    let thread = this.thread
-    if (isLogger) thread = 'logger'
-    if (config.loglevel > 0) return this
-    fs.appendFileSync('latest.log', `[${thread}/TRACE] ${message}\n`)
-    if (config.consoleloglevel > 0) return this
-    console.trace(`[${thread}/TRACE] ${message}`)
+    this.out(message, `${LIGHTRED}fatal`, isLogger)
     return this
   }
 }

@@ -1,5 +1,5 @@
 {
-  prefix: 'b:',
+  prefix: 'a:',
   github: 'https://github.com/rht0910/BlackListener/',
   lang: 'en',
   notifyRep: 1,
@@ -11,12 +11,5 @@
   note: 'Please set this extender_id for BlackListener Extension(with-workspace branch) user ID.',
   replprefix: '> ',
   disablerepl: false,
-  consoleloglevel: 2,
-  loglevel: 2, // This will be given priority.
-  // 0: trace
-  // 1: debug
-  // 2: info
-  // 3: warn
-  // 4: error
-  // 5: fatal
+  debug: false,
 }
