@@ -2,12 +2,15 @@ const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.json5')
 
 module.exports = function(client) {
+  let count = 0
+  let once = false
   client.on('warn', (warn) => {
     logger.warn(`Got Warning from Client: ${warn}`)
   })
 
   client.on('disconnect', () => {
     logger.info(`Disconnected from Websocket (${count}ms).`)
+    if (count === 0) logger.fatal('Looks like doesn\'t connecting to Server.')
     process.exit()
   })
 
@@ -33,8 +36,6 @@ module.exports = function(client) {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   })
 
-  let count = 0
-  let once = false
   process.on('SIGINT', () => {
     setInterval(() => {
       if (count <= 5000) {

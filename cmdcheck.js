@@ -6,7 +6,14 @@ const isWindows = process.platform === 'win32'
 const {commandList} = require('./contents')
 const c = require('./config.json5')
 const util = require('./util')
-const s = require('./secret.json5')
+const isTravisBuild = process.argv[2] === '--travis-build'
+let s;
+try {
+  s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
+} catch (e) {
+  logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\', exiting')
+  process.exit(1);
+}
 
 module.exports = async function(settings, msg, lang, cmd, args, guildSettings, user, bans) {
   const client = msg.client
@@ -152,7 +159,7 @@ module.exports = async function(settings, msg, lang, cmd, args, guildSettings, u
           const sb = []
           const cmd = `${args[0]} ${args[1]}`.replace(' undefined', '')
           for (let i = 0; i < commandList.length; i++) {
-            commandList[i].no = levenshtein(`${cmd}`, commandList[i].cmd)
+            commandList[i].no = levenshtein(`${args[0]}`, commandList[i].cmd)
           }
           commandList.sort((a, b) => {
             return a.no - b.no

@@ -8,8 +8,8 @@ const mkdirp = require('mkdirp')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
 const util = require('./util')
+const isTravisBuild = process.argv[2] === '--travis-build';
 const c = require('./config.json5')
-const isTravisBuild = process.argv[2] === '--travis-build'
 const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 const bansFile = './data/bans.json'
 const {
@@ -238,14 +238,6 @@ client.on('userUpdate', async (olduser, newuser) => {
   if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
 })
 
-try {
-  logger.info('Logging in...')
-  client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
-    .catch(logger.error)
-} catch (e) {
-  logger.error(e)
-}
-
 let once = false; let count = 0
 if (!c.disablerepl) {
   const help = function() {
@@ -281,3 +273,9 @@ if (!c.disablerepl) {
   replServer.context.client = client
 }
 if (c.disablerepl) logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.json5.')
+
+try {
+  logger.info('Logging in...')
+  client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
+    .catch(logger.error)
+} catch (e) { logger.fatal(e) }

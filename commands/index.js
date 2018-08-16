@@ -50,7 +50,7 @@ try {
     'invite': require('./invite'),
     async exists(cmd) {
       logger.debug(`Checking ../plugins/commands/${cmd}.js`)
-      return await util.exists(`../plugins/commands/${cmd}.js`)
+      return await util.exists(`./plugins/commands/${cmd}.js`)
     },
     async run(cmd, settings, msg, lang, guildSettings, config) {
       if (await util.exists(`./plugins/commands/${cmd}.js`)) {
@@ -70,8 +70,15 @@ if (test) {
   logger.warn('You are using incomplete feature.')
   logger.warn('Some commands are cannot test.')
   const lang = require('../lang/en.json')
-  const { defaultSettings } = require('./contents')
+  const { defaultSettings } = require('../contents')
+  const fakeclient = {
+    _eval() { return true },
+    'users': {
+      find() { return "unknown" },
+    },
+  }
   const testmsg = {
+    'client': fakeclient,
     'channel': {
       send() {
         return true
@@ -85,9 +92,18 @@ if (test) {
         },
       },
     },
+    'content': "<prefix> 1.1.1",
+    'author': {
+      'id': '254794124744458241',
+    },
   }
   const tests = {}
   if (commands.help(defaultSettings, testmsg, lang)) tests.help = true
+  if (commands.encode(defaultSettings, testmsg)) tests.encode = true
+  if (commands.decode(testmsg, 'c29tZSBzdHJpbmc=')) tests.decode = true
+  if (commands.didyouknow(defaultSettings, testmsg, lang)) tests.didyouknow = true
+  if (commands.eval(defaultSettings, testmsg, lang)) tests.eval = true
+  if (commands.releases(defaultSettings, testmsg, lang)) tests.releases = true
   let success = 0; let fails = 0
   const total = Object.keys(tests).length
   for (let i=0;i<total;++i) {

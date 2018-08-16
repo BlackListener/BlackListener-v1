@@ -4,7 +4,7 @@ const f = require('string-format')
 module.exports = function(settings, msg, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
-  if (msg.author == '<@254794124744458241>') {
+  if (msg.author.id == '254794124744458241') {
     if (args[1] == '-f') {
       logger.info(f(lang.atmpfs, msg.author.tag))
       msg.channel.send(lang.bye)

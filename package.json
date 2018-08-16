@@ -4,6 +4,7 @@
   "description": "Global Banning System for Discord.",
   "main": "index.js",
   "dependencies": {
+    "chalk": "^2.4.1",
     "dblapi.js": "^2.1.0",
     "discord.js": "^11.3.2",
     "fast-levenshtein": "^2.0.6",
