@@ -14,137 +14,137 @@ module.exports = async function(settings, msg, lang, cmd, args, guildSettings, u
     if (settings.banned && msg.author.id !== '254794124744458241') { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)) }
     if (cmd === 'image') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['image'](settings, msg, lang)
+      return commands['image'](settings, msg, lang)
     } else if (msg.content === settings.prefix + 'info') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['info'](msg, lang, isWindows)
+      return commands['info'](msg, lang, isWindows)
     } else if (msg.content.startsWith(settings.prefix + 'encode ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['encode'](settings, msg)
+      return commands['encode'](settings, msg)
     } else if (msg.content.startsWith(settings.prefix + 'decode ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['decode'](msg, args[1])
+      return commands['decode'](msg, args[1])
     } else if (msg.content.startsWith(settings.prefix + 'encrypt ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['encrypt'](settings, msg, lang)
+      return commands['encrypt'](settings, msg, lang)
     } else if (msg.content.startsWith(settings.prefix + 'decrypt ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['decrypt'](settings, msg, lang)
+      return commands['decrypt'](settings, msg, lang)
     } else if (msg.content.startsWith(settings.prefix + 'didyouknow ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['didyouknow'](settings, msg, lang)
+      return commands['didyouknow'](settings, msg, lang)
     } else if (msg.content === settings.prefix + 'members') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['members'](msg)
+      return commands['members'](msg)
     } else if (util.cmdcheck(cmd, 'play', 'music')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['play'](msg, lang)
+      return commands['play'](msg, lang)
     } else if (util.cmdcheck(cmd, 'releases')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['releases'](msg, lang)
+      return commands['releases'](msg, lang)
     } else if (util.cmdcheck(cmd, 'help')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['help'](settings, msg, lang)
+      return commands['help'](settings, msg, lang)
     } else if (msg.content.startsWith(settings.prefix + 'lookup ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['lookup'](settings, msg, lang)
+      return commands['lookup'](settings, msg, lang)
     } else if (msg.content.startsWith(settings.prefix + 'role ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['role'](settings, msg, lang)
+      return commands['role'](settings, msg, lang)
     } else if (util.cmdcheck(cmd, 'listemojis')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['listemojis'](settings, msg)
+      return commands['listemojis'](settings, msg)
     } else if (msg.content === settings.prefix + 'serverinfo') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['serverinfo'](settings, msg, lang)
+      return commands['serverinfo'](settings, msg, lang)
     } else if (msg.content === settings.prefix + 'status minecraft') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['status minecraft'](msg, lang)
+      return commands['status minecraft'](msg, lang)
     } else if (msg.content === settings.prefix + 'status fortnite') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['status fortnite'](s, msg, lang)
+      return commands['status fortnite'](s, msg, lang)
     } else if (msg.content.startsWith(settings.prefix + 'talkja ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      commands['talkja'](settings, s, msg, lang)
+      return commands['talkja'](settings, s, msg, lang)
     } else if (msg.content === settings.prefix + 'invite') {
       logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-      commands['invite'](msg, lang)
+      return commands['invite'](msg, lang)
     }
     if (msg.member.hasPermission(8) || msg.author == '<@254794124744458241>') {
       if (util.cmdcheck(cmd, 'togglepurge')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['togglepurge'](settings, msg, guildSettings)
+        return commands['togglepurge'](settings, msg, guildSettings)
       } else if (util.cmdcheck(cmd, 'shutdown')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['shutdown'](settings, msg, lang)
+        return commands['shutdown'](settings, msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'setignore ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setignore'](settings, msg, lang, guildSettings)
+        return commands['setignore'](settings, msg, lang, guildSettings)
       } else if (msg.content.startsWith(settings.prefix + 'setlog ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setlog'](settings, msg, lang, guildSettings)
+        return commands['setlog'](settings, msg, lang, guildSettings)
       } else if (msg.content === settings.prefix + 'token') {
-        commands['token'](msg, lang)
+        return commands['token'](msg, lang)
       } else if (util.cmdcheck(cmd, 'ban')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['ban'](settings, msg, lang, user, bans)
+        return commands['ban'](settings, msg, lang, user, bans)
       } else if (util.cmdcheck(cmd, 'purge')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['purge'](settings, msg, lang)
+        return commands['purge'](settings, msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'unban ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['unban'](settings, msg, lang, bans)
+        return commands['unban'](settings, msg, lang, bans)
       } else if (msg.content.startsWith(settings.prefix + 'mute')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['mute'](settings, msg, lang, guildSettings)
+        return commands['mute'](settings, msg, lang, guildSettings)
       } else if (msg.content.startsWith(settings.prefix + 'setprefix ') || msg.content.startsWith(settings.prefix + 'prefix ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setprefix'](settings, msg, lang, guildSettings)
+        return commands['setprefix'](settings, msg, lang, guildSettings)
       } else if (msg.content.startsWith(settings.prefix + 'setnick ') || msg.content.startsWith(settings.prefix + 'setnickname ') || util.cmdcheck(cmd, 'resetnick')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setnick'](settings, msg, lang)
+        return commands['setnick'](settings, msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'setnotifyrep ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setnotifyrep'](settings, msg, lang, guildSettings)
+        return commands['setnotifyrep'](settings, msg, lang, guildSettings)
       } else if (msg.content.startsWith(settings.prefix + 'setbanrep ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setbanrep'](settings, msg, lang, guildSettings)
+        return commands['setbanrep'](settings, msg, lang, guildSettings)
       } else if (util.cmdcheck(cmd, 'antispam')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['antispam'](settings, msg, lang, guildSettings)
+        return commands['antispam'](settings, msg, lang, guildSettings)
       } else if (util.cmdcheck(cmd, 'autorole')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['autorole'](settings, msg, lang, guildSettings)
+        return commands['autorole'](settings, msg, lang, guildSettings)
       } else if (util.cmdcheck(cmd, 'dump')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['dump'](settings, msg, lang, c)
+        return commands['dump'](settings, msg, lang, c)
       } else if (msg.content.startsWith(settings.prefix + 'setwelcome ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['setwelcome'](settings, msg, lang, guildSettings)
+        return commands['setwelcome'](settings, msg, lang, guildSettings)
       } else if (util.cmdcheck(cmd, 'deletemsg')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['deletemsg'](settings, msg, lang, c)
+        return commands['deletemsg'](settings, msg, lang, c)
       } else if (msg.content === settings.prefix + 'leave') {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['leave'](msg, lang)
+        return commands['leave'](msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'instantban ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['instantban'](settings, msg)
+        return commands['instantban'](settings, msg)
       } else if (msg.content.startsWith(settings.prefix + 'instantkick ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['instantkick'](settings, msg)
+        return commands['instantkick'](settings, msg)
       } else if (util.cmdcheck(cmd, 'blockrole')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['blockrole'](settings, msg, lang, guildSettings)
+        return commands['blockrole'](settings, msg, lang, guildSettings)
       } else if (util.cmdcheck(cmd, 'language')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['language'](settings, msg, lang, guildSettings)
+        return commands['language'](settings, msg, lang, guildSettings)
       } else if (msg.content.startsWith(settings.prefix + 'eval ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['eval'](settings, msg, lang)
+        return commands['eval'](settings, msg, lang)
       } else if (msg.content === settings.prefix + 'reload' || msg.content.startsWith(settings.prefix + 'reload ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        commands['reload'](msg, lang)
+        return commands['reload'](msg, lang)
       } else {
         if (await commands.exists(args[0])) {
           commands.run(args[0], settings, msg, lang, guildSettings, c)
