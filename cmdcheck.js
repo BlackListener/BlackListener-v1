@@ -7,12 +7,12 @@ const {commandList} = require('./contents')
 const c = require('./config.json5')
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
-let s;
+let s
 try {
   s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 } catch (e) {
   logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\', exiting')
-  process.exit(1);
+  process.exit(1)
 }
 
 module.exports = async function(settings, msg, lang, cmd, args, guildSettings, user, bans) {

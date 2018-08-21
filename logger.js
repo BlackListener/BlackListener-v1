@@ -48,25 +48,25 @@ class Logger {
     console.info(`${date} ${color}${thread} ${level} ` + chalk.green(message))
   }
   info(message, isLogger = false) {
-    this.out(message, chalk.blue(`info`), isLogger)
+    this.out(message, chalk.blue('info'), isLogger)
     return this
   }
   debug(message, isLogger = false) {
     if (config.debug) {
-      this.out(message, chalk.cyan(`debug`), isLogger)
+      this.out(message, chalk.cyan('debug'), isLogger)
     }
     return this
   }
   warn(message, isLogger = false) {
-    this.out(message, chalk.yellow(`warn`), isLogger)
+    this.out(message, chalk.yellow('warn'), isLogger)
     return this
   }
   error(message, isLogger = false) {
-    this.out(message, chalk.red(`error`), isLogger)
+    this.out(message, chalk.red('error'), isLogger)
     return this
   }
   fatal(message, isLogger = false) {
-    this.out(message, chalk.redBright.bold(`fatal`), isLogger)
+    this.out(message, chalk.redBright.bold('fatal'), isLogger)
     return this
   }
 }

@@ -74,7 +74,7 @@ if (test) {
   const fakeclient = {
     _eval() { return true },
     'users': {
-      find() { return "unknown" },
+      find() { return 'unknown' },
     },
   }
   const testmsg = {
@@ -92,7 +92,7 @@ if (test) {
         },
       },
     },
-    'content': "<prefix> 1.1.1",
+    'content': '<prefix> 1.1.1',
     'author': {
       'id': '254794124744458241',
     },

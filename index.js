@@ -8,7 +8,7 @@ const mkdirp = require('mkdirp')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
 const util = require('./util')
-const isTravisBuild = process.argv[2] === '--travis-build';
+const isTravisBuild = process.argv[2] === '--travis-build'
 const c = require('./config.json5')
 const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 const bansFile = './data/bans.json'
