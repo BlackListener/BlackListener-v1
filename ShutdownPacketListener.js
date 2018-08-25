@@ -1,26 +1,24 @@
 const EventEmitter = require('events').EventEmitter
-const util = require('util')
 class ShutdownPacketListener extends EventEmitter {
   constructor() {
     super()
     return this
   }
-}
-util.inherits(ShutdownPacketListener, EventEmitter)
-
-ShutdownPacketListener.prototype.received = function(logger, rl) {
-  logger.info('Packet received, Shutting down!')
-  for (const i in clients){
-    const socket = clients[i].socket
-    socket.end()
+  received(logger, rl) {
+    logger.info('Packet received, Shutting down!')
+    for (const i in clients){
+      const socket = clients[i].socket
+      socket.end()
+    }
+    server.close()
+    rl.close()
+    global.client.destroy()
+    process.nextTick(() => {
+      this.emit('received')
+    })
   }
-  server.close()
-  rl.close()
-  global.client.destroy()
-  process.nextTick(() => {
-    this.emit('received')
-  })
 }
+//util.inherits(ShutdownPacketListener, EventEmitter)
 
 const logger = require('./logger').getLogger('ShutdownPacketListener', 'red')
 const net = require('net')
@@ -44,7 +42,7 @@ server.on('connection', (socket) => {
     socket.write('[Server] Shutting down, you are being logged.\n')
   }
   logger.warn(`Triggered shutdown by ${socket.remoteAddress}`)
-  ShutdownPacketListener.prototype.received(logger, rl)
+  new ShutdownPacketListener().received(logger, rl)
   //const status = server.getConnections.length + '/' + server.maxConnections
   const key = socket.remoteAddress + ':' + socket.remotePort
   clients[key] = new Client(socket)
