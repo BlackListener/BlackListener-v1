@@ -4,32 +4,55 @@ logger.info('Initializing')
 const f = require('string-format')
 const Discord = require('discord.js')
 const client = new Discord.Client()
-const mkdirp = require('mkdirp')
+const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
 const c = require('./config.json5')
-const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
-const bansFile = './data/bans.json'
+global.client = client
+
+if (process.env.ENABLE_RCON) {
+  logger.warn('Remote control is enabled.')
+    .warn('Be careful for unexpected shutdown! (Use firewall to refuse from attack)')
+    .info('Listener will be startup with 5123 port.')
+  require('./ShutdownPacketListener')(client)
+} else {
+  logger.info('Remote control is disabled.')
+    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
+}
+
+if (process.env.BL_PREFIX) {
+  logger.info('BL_PREFIX is present.')
+  c.prefix = process.env.BL_PREFIX
+}
+logger.info(`Default prefix: ${c.prefix}`)
+
+let s
+try {
+  s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
+} catch (e) {
+  logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\'')
+  process.exit(1)
+}
 const {
   defaultSettings,
   defaultBans,
   defaultUser,
 } = require('./contents')
 const cmdcheck = require('./cmdcheck')
-const registerEvents = require('./register')
+
+require('./register')(client)
+
 let lang
 
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
-
-registerEvents(client)
 
 client.on('ready', async () => {
   await mkdirp('./data/servers')
   await mkdirp('./data/users')
   await mkdirp('./plugins/commands')
-  util.initJSON(bansFile, defaultBans).catch(logger.error)
+  util.initJSON('./data/bans.json', defaultBans).catch(logger.error)
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
@@ -62,11 +85,11 @@ client.on('message', async msg => {
     } catch (e) {logger.error(e)}
   }
   const user = await util.readJSON(userFile, defaultUser)
-  let settings = await util.readJSON(guildSettings, defaultSettings)
+  const settings = await util.readJSON(guildSettings, defaultSettings)
   logger.debug('Loading ' + guildSettings)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const cmd = args[0]
-  util.checkConfig(user, settings, userFile, guildSettings)
+  await util.checkConfig(user, settings, userFile, guildSettings)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
       const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
@@ -85,7 +108,7 @@ client.on('message', async msg => {
     }
   }
   // --- End of Sync
-  const bans = await util.readJSON(bansFile)
+
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
     msg.delete(0)
@@ -93,7 +116,6 @@ client.on('message', async msg => {
   // --- End of Mute
   if (!msg.author.bot) {
     lang = await util.readJSON(`./lang/${settings.language}.json`) // Processing message is under of this
-    util.configure(lang)
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
@@ -118,9 +140,8 @@ client.on('message', async msg => {
       logger.error(`Error while processing anti-spam. (${guildSettings})`)
     }
     // --- End of Anti-spam
-    cmdcheck(settings, msg, lang, cmd, args, guildSettings, user, bans)
+    cmdcheck(settings, msg, lang, cmd, args, guildSettings, user)
   }
-  settings = null
 })
 
 client.on('guildMemberAdd', async (member) => {
@@ -161,6 +182,10 @@ client.on('guildMemberAdd', async (member) => {
     message = message.replace('{id}', `${member.user.id}`)
     message = message.replace('{username}', `${member.user.username}`)
     message = message.replace('{tag}', `${member.user.tag}`)
+    message = message.replace('{users}', `${member.guild.members.size}`)
+    message = message.replace('{createdAt}', `${member.createdAt.toLocaleTimeString()}`)
+    message = message.replace('{joinedAt}', `${member.joinedAt.toLocaleTimeString()}`)
+    message = message.replace('{avatarURL}', `${member.user.avatarURL}`)
     member.guild.channels.get(serverSetting.welcome_channel).send(message)
   }
 })

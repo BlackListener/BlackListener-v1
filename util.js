@@ -3,13 +3,8 @@ const fs = _fs.promises
 const logger = require('./logger').getLogger('util')
 const Discord = require('discord.js')
 const f = require('string-format')
-let once = false; let lang
 
 module.exports = {
-  configure(lang) {
-    this.lang = lang
-    return this
-  },
   async exists(path) {
     return await fs.access(path).then(() => true).catch(() => false)
   },
@@ -51,9 +46,10 @@ module.exports = {
   },
   async writeSettings(settingsFile, wsettings, channel, config) {
     await this.writeJSON(settingsFile, wsettings)
-    if (channel) await channel.send(f(lang.setconfig, config))
+    if (channel) await channel.send(f(require(`./lang/${wsettings.language}.json`).setconfig, config))
   },
-  addRole(msg, rolename, isCommand = true, guildmember = null) {
+  addRole(msg, rolename, isCommand = true, guildmember = null, language) {
+    const lang = require(`./lang/${language}.json`)
     let role; let member
     try {
       try {
@@ -85,7 +81,6 @@ module.exports = {
   },
   async checkConfig(user, settings, userFile, guildSettings) {
     try {
-      once = true
       let userChanged = false; let serverChanged = false
       if (!user.bannedFromServer) {
         user.bannedFromServer = []
@@ -154,13 +149,8 @@ module.exports = {
       if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
       if (serverChanged) await fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8')
     } catch (e) {
-      if (!once) {
-        logger.error(`Something went wrong, retrying: ${e}`)
-          .error(e)
-      } else {
-        logger.error(`Something went wrong, giving up: ${e}`)
-          .error(e)
-      }
+      logger.error(`Something went wrong: ${e}`)
+        .error(e)
     }
   },
 }

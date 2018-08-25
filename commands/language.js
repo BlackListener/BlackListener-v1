@@ -10,8 +10,7 @@ module.exports = async function(settings, msg, lang, guildSettings) {
       .addField(':flag_us: English - English', 'en')
     msg.channel.send(embed)
   } else if (args[1] === 'en' || args[1] === 'ja') {
-    const set = settings
-    set.language = args[1]
-    await util.writeSettings(guildSettings, set, msg.channel, 'language')
+    settings.language = args[1]
+    await util.writeSettings(guildSettings, settings, msg.channel, 'language')
   }
 }

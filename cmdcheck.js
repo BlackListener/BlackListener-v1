@@ -7,15 +7,9 @@ const {commandList} = require('./contents')
 const c = require('./config.json5')
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
-let s
-try {
-  s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
-} catch (e) {
-  logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\', exiting')
-  process.exit(1)
-}
+const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 
-module.exports = async function(settings, msg, lang, cmd, args, guildSettings, user, bans) {
+module.exports = async function(settings, msg, lang, cmd, args, guildSettings, user) {
   const client = msg.client
   if (msg.content.startsWith(settings.prefix)) {
     if (settings.banned && msg.author.id !== '254794124744458241') { settings = null; return msg.channel.send(f(lang.error, lang.errors.server_banned)) }
@@ -94,13 +88,13 @@ module.exports = async function(settings, msg, lang, cmd, args, guildSettings, u
         return commands['token'](msg, lang)
       } else if (util.cmdcheck(cmd, 'ban')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        return commands['ban'](settings, msg, lang, user, bans)
+        return commands['ban'](settings, msg, lang, user)
       } else if (util.cmdcheck(cmd, 'purge')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
         return commands['purge'](settings, msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'unban ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
-        return commands['unban'](settings, msg, lang, bans)
+        return commands['unban'](settings, msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'mute')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
         return commands['mute'](settings, msg, lang, guildSettings)

@@ -3,10 +3,10 @@ const randomPuppy = require('random-puppy')
 const logger = require('../logger').getLogger('commands:image', 'blue')
 
 module.exports = async function(settings, msg, lang) {
+  if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const sendImage = async list => {
     msg.channel.send(lang.searching)
-    if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
     const sub = list[Math.round(Math.random() * (list.length - 1))]
     const url = await randomPuppy(sub)
     const attachment = new Discord.Attachment(url)

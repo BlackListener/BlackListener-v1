@@ -1,17 +1,19 @@
 const Discord = require('discord.js')
 const util = require('../util')
 const bansFile = './data/bans.json'
-const { defaultUser } = require('../contents.js')
+const { defaultUser, defaultBans } = require('../contents.js')
 const fs = require('fs').promises
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
-module.exports = async function(settings, msg, lang, user, bans) {
+module.exports = async function(settings, msg, lang, user) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (!args[1] || args[1] === '') {
     const bans = await Promise.all(util.readJSONSync(bansFile).map(async (id) => {
-      const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
-      return `${user.tag} (${id})`
+      if (id) {
+        const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
+        return `${user.tag} (${id})`
+      }
     }))
     const embed = new Discord.RichEmbed()
       .setTitle(lang.banned_users)
@@ -25,6 +27,7 @@ module.exports = async function(settings, msg, lang, user, bans) {
         let user2
         let fetchedBans
         let attach
+        const bans = await util.readJSON(bansFile, defaultBans)
         const reason = args[2]
         if (args[3] !== '--force') { if (user.bannedFromServerOwner.includes(msg.guild.ownerID) && user.bannedFromServer.includes(msg.guild.id) && user.bannedFromUser.includes(msg.author.id)) return msg.channel.send(lang.already_banned) }
         if (msg.mentions.users.first()) {

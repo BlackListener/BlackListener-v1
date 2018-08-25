@@ -1,16 +1,19 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.json5')
+global.loadConfig = function() {
+  return c.push(require('./pluginconfig.json5'))
+}
 
 module.exports = function(client) {
   let count = 0
   let once = false
+
   client.on('warn', (warn) => {
     logger.warn(`Got Warning from Client: ${warn}`)
   })
 
   client.on('disconnect', () => {
     logger.info(`Disconnected from Websocket (${count}ms).`)
-    if (count === 0) logger.fatal('Looks like doesn\'t connecting to Server.')
     process.exit()
   })
 
@@ -19,14 +22,14 @@ module.exports = function(client) {
   })
 
   process.on('unhandledRejection', (error) => {
-    logger.error(`Caught error: ${error}`)
+    logger.error(`Unhandled error: ${error}`)
     logger.error(error.stack)
   })
 
   client.on('rateLimit', (info, method) => {
     logger.fatal('==============================')
       .fatal('      Got rate limiting!      ')
-      .fatal(` -> RateLimit: ${info.limit} seconds remaining`)
+      .fatal(` -> ${info.limit} seconds remaining`)
       .fatal(` Detected rate limit while processing '${method}' method.`)
       .fatal(` Rate limit information: ${JSON.stringify(info)} `)
       .fatal('==============================')

@@ -4,6 +4,14 @@ Global Banning System for Discord.
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
+## Startup options
+ - You can change default prefix without editing config, and other things!
+ - If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
+ - If you set ``ENABLE_RCON``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
+   - Listener will start with port: 5123
+   - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
+ - Start with both options: ``BL_PREFIX="a:" ENABLE_RCON=true node index.js``
+
 ## All Commands (Too long!)
 
 __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
@@ -43,7 +51,6 @@ Server's prefix can be show up in mention the bot.
 | encrypt/decrypt \<String\> \<Password\> | Encrypt / Decrypt message. | メッセージを暗号化/復号化します。 | No |
 | setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします。 | Yes |
 | deletemsg \[User\] | Delete messages, default is guild messages file. | メッセージを削除します。デフォルトはギルドのメッセージログです。 | Yes |
-| setgroup | __Incomplete feature__ | __未完成の機能__ | Yes |
 | image \<nsfw\|r18\> | Send nsfw images... very very be careful. | NSFW画像を送信します...かなりかなり気を付けてくださいね。 | No |
 | image anime | Send anime images. | アニメ画像を送信します。 | No |
 | invite | Displays bot invite link. | ボットの招待リンクを表示します。 | No |
@@ -64,6 +71,10 @@ Server's prefix can be show up in mention the bot.
  - `{id}` ... User ID
  - `{username}` ... User name
  - `{rep}` ... Reputation
+ - `{users}` ... Size of that guild
+ - `{createdAt}` ... Created that account date
+ - `{joinedAt}` ... Joined that account date
+ - `{avatarURL}` ... Avatar URL
 
 ---
 
