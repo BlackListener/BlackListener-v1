@@ -32,7 +32,6 @@ function Client(socket){
 }
 
 Client.prototype.writeData = function(){
-  const socket = this.socket
 }
 
 const clients = {}

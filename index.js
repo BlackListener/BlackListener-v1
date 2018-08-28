@@ -49,6 +49,7 @@ let lang
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('ready', async () => {
+  await mkdirp('./crash-reports')
   await mkdirp('./data/servers')
   await mkdirp('./data/users')
   await mkdirp('./plugins/commands')
@@ -57,7 +58,7 @@ client.on('ready', async () => {
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   }, 10000)
-  logger.info('Bot has Fully startup.')
+  logger.info(`BlackListener v${c.version} (build: ${c.build}) has fully startup.`)
   if (isTravisBuild) {
     logger.info('Shutting down...')
     await client.destroy()

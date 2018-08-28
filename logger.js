@@ -31,6 +31,7 @@ class Logger {
     return newLogger
   }
   out(message, level, isLogger) {
+    global.thread = this.thread
     const originaldate = new Date()
     const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
     let thread = this.thread
