@@ -77,7 +77,7 @@ ${arguments}
     })
     fs.writeFile(file, data, 'utf8').then(() => {
       logger.fatal(`Crash Report has been writed to ${file}`)
-      process.exit(1)
+      process.exit(0)
     })
   })
 
