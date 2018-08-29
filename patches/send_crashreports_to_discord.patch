@@ -1,0 +1,28 @@
+diff --git a/register.js b/register.js
+index 3945808..53cba37 100644
+--- a/register.js
++++ b/register.js
+@@ -70,15 +70,19 @@ ${arguments}
+     zlib Version: ${process.versions.zlib}
+     OpenSSL Version: ${process.versions.openssl}
+ `
++    setTimeout(() => {
++      process.exit(0)
++    }, 5000)
++    global.client.guilds.get("460812821412708352").channels.get("484183865976553493").send(data).then(() => {
++      logger.info('Crash report has been sent!')
++      process.exit(0)
++    })
+     logger.fatal(`Unhandled error: ${error}`)
+     logger.fatal(error.stack)
+     logger.fatal('Attempting to disconnect from websocket')
+-    global.client.destroy().then(() => {
+-      logger.info('Disconnected from websocket.')
+-    })
++    global.client.destroy()
+     fs.writeFile(file, data, 'utf8').then(() => {
+       logger.fatal(`Crash Report has been writed to ${file}`)
+-      process.exit(0)
+     })
+   })
+ 
