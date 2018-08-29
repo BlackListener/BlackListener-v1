@@ -85,8 +85,8 @@ client.on('message', async msg => {
       await util.initJSON(guildSettings, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const user = Object.assign(await util.readJSON(userFile, defaultUser), guildSettings)
-  const settings = Object.assign(await util.readJSON(guildSettings, defaultSettings), guildSettings)
+  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
+  const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
   logger.debug('Loading ' + guildSettings)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const cmd = args[0]
