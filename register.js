@@ -21,6 +21,7 @@ module.exports = function(client) {
   })
 
   process.on('unhandledRejection', (error) => {
+    if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
     const date = new Date()
     const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
     const file = `./crash-reports/crash-${format}.txt`
@@ -32,12 +33,12 @@ module.exports = function(client) {
 --- BlackListener Crash Report ---
 
 Time: ${format}
-Description: Uncaught error. Error(s) detected in V8 engine. Please contact to developer.
+Description: Unhandled Rejection(Exception/Error in Promise).
 
 ${error.stack}
 
 --- Process Details ---
-    Thread: ${global.thread}
+    Last Called Logger Thread: ${global.thread} (not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Build: ${c.build}
@@ -93,12 +94,12 @@ ${arguments}
 --- BlackListener Crash Report ---
 
 Time: ${format}
-Description: Uncaught error. Error(s) detected in V8 engine. Please contact to developer.
+Description: Uncaught error.
 
 ${error.stack}
 
 --- Process Details ---
-    Thread: ${global.thread}
+    Last Called Logger Thread: ${global.thread} (not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Build: ${c.build}
@@ -112,7 +113,7 @@ ${arguments}
     Custom Prefix: ${process.env.BL_PREFIX ? process.env.BL_PREFIX : 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
-    Average ping of websocket: ${global.client.ping}
+    Average ping of websocket: ${Math.floor(global.client.ping * 100) / 100}
     Last ping of websocket: ${global.client.pings[0]}
     Ready at: ${global.client.readyAt.toLocaleString()}
 
