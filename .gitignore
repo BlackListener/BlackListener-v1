@@ -8,10 +8,10 @@
 /data/
 
 # Dumped file
-/dump.txt
+dump.txt
 
 # Logs
-/latest.log
+latest.log
 
 # Plugins folder
 /plugins/

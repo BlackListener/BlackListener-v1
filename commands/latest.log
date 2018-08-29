@@ -1,21 +1,22 @@
---- The log begin at 2018-8-16 16:30:28 ---
-[36m2018-7-16 16:30:28.629[39m [0;35mlogger [34minfo[39m [32mThe log file has initialized.[39m
-[32m[39m[36m2018-7-16 16:30:28.631[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: util[39m
-[32m[39m[36m2018-7-16 16:30:28.734[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: plugins[39m
-[32m[39m[36m2018-7-16 16:30:28.735[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:lookup[39m
-[32m[39m[36m2018-7-16 16:30:28.751[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:shutdown[39m
-[32m[39m[36m2018-7-16 16:30:28.752[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:token[39m
-[32m[39m[36m2018-7-16 16:30:28.753[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:ban[39m
-[32m[39m[36m2018-7-16 16:30:28.754[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:purge[39m
-[32m[39m[36m2018-7-16 16:30:28.754[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:unban[39m
-[32m[39m[36m2018-7-16 16:30:28.755[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:setnick[39m
-[32m[39m[36m2018-7-16 16:30:28.757[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:autorole[39m
-[32m[39m[36m2018-7-16 16:30:28.758[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:setwelcome[39m
-[32m[39m[36m2018-7-16 16:30:28.760[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:eval[39m
-[32m[39m[36m2018-7-16 16:30:28.770[39m [0;35mlogger [34minfo[39m [32mRegistered logger for: commands:image[39m
-[32m[39m[36m2018-7-16 16:30:28.771[39m [0;36mplugins [34minfo[39m [32m--- T E S T S ---[39m
-[32m[39m[36m2018-7-16 16:30:28.771[39m [0;36mplugins [33mwarn[39m [32mYou are using incomplete feature.[39m
-[32m[39m[36m2018-7-16 16:30:28.772[39m [0;36mplugins [33mwarn[39m [32mSome commands are cannot test.[39m
-[32m[39m[36m2018-7-16 16:30:28.774[39m [1;35mcommands:eval [34minfo[39m [32mEval by undefined (254794124744458241), result: true[39m
-[32m[39m[36m2018-7-16 16:30:28.774[39m [0;36mplugins [34minfo[39m [32mTest: Total: 5 Success: 5, Fails: 0[39m
+--- The log begin at 2018-8-29 10:21:06 ---
+[36m2018-7-29 10:21:6.834[39m [35mlogger[39m [34minfo[39m [32mThe log file has initialized.[39m
+[32m[39m[36m2018-7-29 10:21:6.837[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: util[39m
+[32m[39m[36m2018-7-29 10:21:6.940[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: plugins[39m
+[32m[39m[36m2018-7-29 10:21:6.942[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:lookup[39m
+[32m[39m[36m2018-7-29 10:21:6.958[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:shutdown[39m
+[32m[39m[36m2018-7-29 10:21:6.959[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:token[39m
+[32m[39m[36m2018-7-29 10:21:6.961[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:ban[39m
+[32m[39m[36m2018-7-29 10:21:6.961[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:purge[39m
+[32m[39m[36m2018-7-29 10:21:6.962[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:unban[39m
+[32m[39m[36m2018-7-29 10:21:6.963[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:setnick[39m
+[32m[39m[36m2018-7-29 10:21:6.965[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:autorole[39m
+[32m[39m[36m2018-7-29 10:21:6.966[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:setwelcome[39m
+[32m[39m[36m2018-7-29 10:21:6.969[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:eval[39m
+[32m[39m[36m2018-7-29 10:21:6.978[39m [35mlogger[39m [34minfo[39m [32mRegistered logger for: commands:image[39m
+[32m[39m[36m2018-7-29 10:21:6.979[39m [36mplugins[39m [34minfo[39m [32m--- T E S T S ---[39m
+[32m[39m[36m2018-7-29 10:21:6.979[39m [36mplugins[39m [1m[33mwarn[39m[22m [32mYou are using incomplete feature.[39m
+[32m[39m[36m2018-7-29 10:21:6.980[39m [36mplugins[39m [1m[33mwarn[39m[22m [32mSome commands are cannot test.[39m
+[32m[39m[36m2018-7-29 10:21:6.982[39m [1m[35mcommands:eval[39m[22m [34minfo[39m [32mEval by undefined (254794124744458241), result: An error occurred in eval: {0} (SyntaxError: Unexpected token >)[39m
+[32m[39m[36m2018-7-29 10:21:6.982[39m [36mcommands:token[39m [34minfo[39m [32mundefined sent admin command: <prefix>help help help help help help help help me[39m
+[32m[39m[36m2018-7-29 10:21:6.986[39m [36mplugins[39m [34minfo[39m [32mTest: Total: 10 Success: 10, Fails: 0[39m
 [32m[39m

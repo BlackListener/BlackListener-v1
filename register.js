@@ -38,7 +38,7 @@ Description: Unhandled Rejection(Exception/Error in Promise).
 ${error.stack}
 
 --- Process Details ---
-    Last Called Logger Thread: ${global.thread} (not current thread)
+    Last Called Logger Thread: ${global.thread} (may not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Build: ${c.build}
@@ -99,7 +99,7 @@ Description: Uncaught error.
 ${error.stack}
 
 --- Process Details ---
-    Last Called Logger Thread: ${global.thread} (not current thread)
+    Last Called Logger Thread: ${global.thread} (may not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Build: ${c.build}

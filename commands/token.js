@@ -16,4 +16,5 @@ module.exports = function(msg, lang) {
     msg.reply(lang.youdonthavear)
     logger.info(f(lang.issuedfailadmin, msg.author.tag, msg.content, 'Doesn\'t have Admin Role'))
   }
+  return true
 }

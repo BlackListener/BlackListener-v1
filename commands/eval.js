@@ -12,4 +12,5 @@ module.exports = function(settings, msg, lang) {
     logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.eval_error} (${e})`)
     msg.channel.send(f(lang.eval_error, e))
   }
+  return true
 }

@@ -54,7 +54,7 @@ try {
     },
     async run(cmd, settings, msg, lang, guildSettings, config) {
       if (await util.exists(`./plugins/commands/${cmd}.js`)) {
-        logger.info(`Loading plugin: commands/${cmd}.js`)
+        logger.debug(`Loading plugin: commands/${cmd}.js`)
         return require(`../plugins/commands/${cmd}.js`)(settings, msg, lang, guildSettings, config)
       }
     },
@@ -66,50 +66,68 @@ try {
 }
 
 if (test) {
-  logger.info('--- T E S T S ---')
-  logger.warn('You are using incomplete feature.')
-  logger.warn('Some commands are cannot test.')
-  const lang = require('../lang/en.json')
-  const { defaultSettings } = require('../contents')
-  const fakeclient = {
-    _eval() { return true },
-    'users': {
-      find() { return 'unknown' },
-    },
-  }
-  const testmsg = {
-    'client': fakeclient,
-    'channel': {
-      send() {
-        return true
-      },
-    },
-    'mentions': {
-      'channels': [],
+  (async function() {
+    logger.info('--- T E S T S ---')
+    logger.warn('You are using incomplete feature.')
+    logger.warn('Some commands are cannot test.')
+    const lang = require('../lang/en.json')
+    const { defaultSettings } = require('../contents')
+    const fakeclient = {
+      _eval() { return true },
       'users': {
-        first() {
-          return 'TNT'
+        find() { return 'unknown' },
+      },
+    }
+    const testmsg = {
+      'client': fakeclient,
+      'channel': {
+        send() {
+          return true
         },
       },
-    },
-    'content': '<prefix> 1.1.1',
-    'author': {
-      'id': '254794124744458241',
-    },
-  }
-  const tests = {}
-  if (commands.help(defaultSettings, testmsg, lang)) tests.help = true
-  if (commands.encode(defaultSettings, testmsg)) tests.encode = true
-  if (commands.decode(testmsg, 'c29tZSBzdHJpbmc=')) tests.decode = true
-  if (commands.didyouknow(defaultSettings, testmsg, lang)) tests.didyouknow = true
-  if (commands.eval(defaultSettings, testmsg, lang)) tests.eval = true
-  if (commands.releases(defaultSettings, testmsg, lang)) tests.releases = true
-  let success = 0; let fails = 0
-  const total = Object.keys(tests).length
-  for (let i=0;i<total;++i) {
-    if (Object.values(tests)[i]) { success++ } else { fails++ }
-  }
-  logger.info(`Test: Total: ${total} Success: ${success}, Fails: ${fails}`)
+      'mentions': {
+        'channels': [],
+        'users': {
+          first() {
+            return 'TNT'
+          },
+        },
+      },
+      'content': '<prefix>help help help help help help help help me',
+      'author': {
+        'id': '254794124744458241',
+        send() {
+          return true
+        },
+      },
+      reply() {
+        return true
+      },
+      async delete() {
+        Promise.resolve()
+      },
+      'guild': {
+        leave() { return true },
+      },
+    }
+    const tests = {}
+    if (commands.help(defaultSettings, testmsg, lang)) tests.help = true
+    if (commands.encode(defaultSettings, testmsg)) tests.encode = true
+    if (commands.decode(testmsg, 'c29tZSBzdHJpbmc=')) tests.decode = true
+    if (commands.didyouknow(defaultSettings, testmsg, lang)) tests.didyouknow = true
+    if (commands.eval(defaultSettings, testmsg, lang)) tests.eval = true
+    if (commands.releases(defaultSettings, testmsg, lang)) tests.releases = true
+    if (commands.token(testmsg, lang)) tests.token = true
+    if (commands.togglepurge(defaultSettings, testmsg, '460812821412708353')) tests.togglepurge = true
+    if (await commands.play(testmsg, lang)) tests.play = true
+    if (await commands.leave(testmsg, lang)) tests.leave = true
+    let success = 0; let fails = 0
+    const total = Object.keys(tests).length
+    for (let i=0;i<total;++i) {
+      if (Object.values(tests)[i]) { success++ } else { fails++ }
+    }
+    logger.info(`Test: Total: ${total} Success: ${success}, Fails: ${fails}`)
+  }) ()
 }
 
 module.exports = commands

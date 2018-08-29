@@ -20,4 +20,5 @@ module.exports = function(settings, msg, lang) {
   } else {
     return msg.channel.send(f(lang.known, `${know.tag} (${know.id})`))
   }
+  return true
 }

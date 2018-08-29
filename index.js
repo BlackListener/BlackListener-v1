@@ -32,7 +32,7 @@ let s
 try {
   s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
 } catch (e) {
-  logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\'')
+  logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.json5\'')
   process.exit(1)
 }
 const {
