@@ -1,0 +1,30 @@
+diff --git a/register.js b/register.js
+index 94824b7..0db2014 100644
+--- a/register.js
++++ b/register.js
+@@ -70,10 +70,13 @@ ${arguments}
+     zlib Version: ${process.versions.zlib}
+     OpenSSL Version: ${process.versions.openssl}
+ `
+-    logger.fatal(`Unhandled error: ${error}`)
+-    logger.fatal(error.stack)
++    global.client.guilds.get('460812821412708352').channels.get('484357084037513216').send(data).then(() => {
++      logger.info('Error report has been sent!')
++    })
++    logger.error(`Unhandled Rejection: ${error}`)
++    logger.error(error.stack)
+     fs.writeFile(file, data, 'utf8').then(() => {
+-      logger.fatal(`Error Report has been writed to ${file}`)
++      logger.info(`Error Report has been writed to ${file}`)
+     })
+   })
+ 
+@@ -127,7 +130,7 @@ ${arguments}
+     OpenSSL Version: ${process.versions.openssl}
+ `
+     require('fs').writeFileSync(file, data, 'utf8')
+-    global.client.guilds.get("460812821412708352").channels.get("484183865976553493").send(data).then(() => {
++    global.client.guilds.get('460812821412708352').channels.get('484183865976553493').send(data).then(() => {
+       process.exit(1)
+     })
+   })

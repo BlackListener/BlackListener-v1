@@ -50,10 +50,10 @@ class Logger {
     const originaldate = new Date()
     const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
     let thread = this.thread
-    global.logger = {};
+    global.logger = {}
     eval(`global.logger.coloredlevel = chalk.${color}('${level}')`)
     if (isLogger) { this.thread_raw = 'logger'; thread = chalk.hex('#800080')(this.thread_raw) }
-    let data;
+    let data
     if (this.style === 'maven') {
       level = level.replace('warn', 'warning')
       eval(`global.logger.coloredlevel2 = chalk.${color}.bold('${level.toUpperCase()}')`)

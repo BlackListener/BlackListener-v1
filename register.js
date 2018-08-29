@@ -24,13 +24,13 @@ module.exports = function(client) {
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
     const date = new Date()
     const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
-    const file = `./crash-reports/crash-${format}.txt`
+    const file = `./error-reports/error-${format}.txt`
     let arguments = ''
     process.argv.forEach((val, index) => {
       arguments += `    arguments[${index}]: ${val}\n`
     })
     const data = `
---- BlackListener Crash Report ---
+--- BlackListener Error Report ---
 
 Time: ${format}
 Description: Unhandled Rejection(Exception/Error in Promise).
@@ -72,13 +72,8 @@ ${arguments}
 `
     logger.fatal(`Unhandled error: ${error}`)
     logger.fatal(error.stack)
-    logger.fatal('Attempting to disconnect from websocket')
-    global.client.destroy().then(() => {
-      logger.info('Disconnected from websocket.')
-    })
     fs.writeFile(file, data, 'utf8').then(() => {
-      logger.fatal(`Crash Report has been writed to ${file}`)
-      process.exit(0)
+      logger.fatal(`Error Report has been writed to ${file}`)
     })
   })
 
@@ -132,7 +127,9 @@ ${arguments}
     OpenSSL Version: ${process.versions.openssl}
 `
     require('fs').writeFileSync(file, data, 'utf8')
-    process.exit(1)
+    global.client.guilds.get("460812821412708352").channels.get("484183865976553493").send(data).then(() => {
+      process.exit(1)
+    })
   })
 
   client.on('rateLimit', (info, method) => {
