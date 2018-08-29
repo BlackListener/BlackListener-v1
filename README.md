@@ -4,6 +4,9 @@ Global Banning System for Discord.
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
+## Important
+**We're disabled GitHub's Issues, and we have [bug tracker](https://bugs.rht0910.tk), Please use this!**
+
 ## Startup options
  - You can change default prefix without editing config, and other things!
  - If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.

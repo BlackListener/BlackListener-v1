@@ -6,6 +6,13 @@ class Logger {
   initLog() {
     this.initialized = true
     fs.writeFileSync('latest.log', `--- The log begin at ${new Date().toLocaleString()} ---\n`)
+    if (config.logger.style === 'maven') {
+      this.style = 'maven'
+    } else if (config.logger.style === 'npm') {
+      this.style = 'npm'
+    } else {
+      this.style = 'original'
+    }
     this.info('The log file has initialized.', true)
     return this
   }
@@ -13,52 +20,75 @@ class Logger {
     if (!this.initialized) {
       this.initLog()
     }
-    const newLogger = new Logger()
-    newLogger.thread = thread
+    const self = new Logger()
+    self.thread = thread
+    self.thread_raw = thread
+    if (config.logger.style === 'maven') {
+      self.style = 'maven'
+    } else if (config.logger.style === 'npm') {
+      self.style = 'npm'
+    } else {
+      self.style = 'original'
+    }
     switch (color) {
-      case 'yellow': newLogger.thread = chalk.bold.yellow(thread); break
-      case 'darkgray': newLogger.thread = chalk.gray(thread); break
-      case 'red': newLogger.thread = chalk.red(thread); break
-      case 'lightred': newLogger.thread = chalk.bold.red(thread); break
-      case 'green': newLogger.thread = chalk.green(thread); break
-      case 'lightpurple': newLogger.thread = chalk.bold.hex('#800080')(thread); break
-      case 'white': newLogger.thread = chalk.white(thread); break
-      case 'cyan': newLogger.thread = chalk.cyan(thread); break
-      case 'purple': newLogger.thread = chalk.hex('#800080')(thread); break
-      case 'blue': newLogger.thread = chalk.blue(thread); break
+      case 'yellow': self.thread = chalk.bold.yellow(thread); break
+      case 'darkgray': self.thread = chalk.gray(thread); break
+      case 'red': self.thread = chalk.red(thread); break
+      case 'lightred': self.thread = chalk.bold.red(thread); break
+      case 'green': self.thread = chalk.green(thread); break
+      case 'lightpurple': self.thread = chalk.bold.hex('#800080')(thread); break
+      case 'white': self.thread = chalk.white(thread); break
+      case 'cyan': self.thread = chalk.cyan(thread); break
+      case 'purple': self.thread = chalk.hex('#800080')(thread); break
+      case 'blue': self.thread = chalk.blue(thread); break
     }
     this.info(`Registered logger for: ${thread}`, true)
-    return newLogger
+    return self
   }
-  out(message, level, isLogger) {
+  out(message, level, color, isLogger) {
     global.thread = this.thread
     const originaldate = new Date()
     const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
     let thread = this.thread
-    if (isLogger) { thread = 'logger'; thread = chalk.hex('#800080')(thread) }
-    fs.appendFileSync('latest.log', `${date} ${thread}${chalk.reset()} ${level} ` + chalk.green(`${message}\n`) + chalk.reset())
-    console.info(`${date} ${thread}${chalk.reset()} ${level}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`)
+    global.logger = {};
+    eval(`global.logger.coloredlevel = chalk.${color}('${level}')`)
+    if (isLogger) { this.thread_raw = 'logger'; thread = chalk.hex('#800080')(this.thread_raw) }
+    let data;
+    if (this.style === 'maven') {
+      level = level.replace('warn', 'warning')
+      eval(`global.logger.coloredlevel2 = chalk.${color}.bold('${level.toUpperCase()}')`)
+      data = `[${global.logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
+    } else if (this.style === 'npm') {
+      level = level.replace('error', 'ERR!')
+      level = level.replace('warn', 'WARN')
+      eval(`global.logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow('${level}') : level === 'info' ? chalk.green('${level}') : chalk.${color}('${level}')`)
+      data = `${chalk.white('BlackListener')} ${global.logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
+    } else {
+      data = `${date} ${thread}${chalk.reset()} ${global.logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
+    }
+    fs.appendFileSync('latest.log', `${data}\n`)
+    console.info(data)
   }
   info(message, isLogger = false) {
-    this.out(message, chalk.blue('info'), isLogger)
+    this.out(message, 'info', 'blue', isLogger)
     return this
   }
   debug(message, isLogger = false) {
-    if (config.debug) {
-      this.out(message, chalk.cyan('debug'), isLogger)
+    if (config.logger.debug) {
+      this.out(message, 'debug', 'cyan', isLogger)
     }
     return this
   }
   warn(message, isLogger = false) {
-    this.out(message, chalk.bold.yellow('warn'), isLogger)
+    this.out(message, 'warn', 'bold.yellow', isLogger)
     return this
   }
   error(message, isLogger = false) {
-    this.out(message, chalk.red('error'), isLogger)
+    this.out(message, 'error', 'red', isLogger)
     return this
   }
   fatal(message, isLogger = false) {
-    this.out(message, chalk.redBright.bold('fatal'), isLogger)
+    this.out(message, 'fatal', 'redBright.bold', isLogger)
     return this
   }
 }
