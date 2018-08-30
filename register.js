@@ -77,7 +77,7 @@ ${arguments}
     logger.fatal(`Unhandled error: ${error}`)
     logger.fatal(error.stack)
     fs.writeFile(file, data, 'utf8').then(() => {
-      logger.fatal(`Error Report has been writed to ${file}`)
+      logger.info(`Error Report has been writed to ${file}`)
     })
   })
 

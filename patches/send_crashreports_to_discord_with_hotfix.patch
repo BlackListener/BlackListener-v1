@@ -14,8 +14,7 @@ index 94824b7..0db2014 100644
 +    logger.error(`Unhandled Rejection: ${error}`)
 +    logger.error(error.stack)
      fs.writeFile(file, data, 'utf8').then(() => {
--      logger.fatal(`Error Report has been writed to ${file}`)
-+      logger.info(`Error Report has been writed to ${file}`)
+       logger.info(`Error Report has been writed to ${file}`)
      })
    })
  
