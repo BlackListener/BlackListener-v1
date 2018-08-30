@@ -3,8 +3,9 @@ const Discord = require('discord.js')
 const fetch = require('node-fetch')
 const FormData = require('form-data')
 const now = require('performance-now')
+const s = require('../config.yml')
 
-module.exports = async function(s, msg, lang) {
+module.exports = async function(msg, settings, lang) {
   if (s.fortnite_api_key === '') return msg.channel.send(lang.no_apikey)
   msg.channel.send(lang.status.checking)
   let status = 'Unknown'

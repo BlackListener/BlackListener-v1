@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const logger = require('../logger').getLogger('commands:token', 'cyan')
 const f = require('string-format')
 
-module.exports = function(msg, lang) {
+module.exports = function(msg, settings, lang) {
   if (msg.author.id === '254794124744458241') {
     logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
     msg.author.send(f(lang.mytoken, msg.client.token))

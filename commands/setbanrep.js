@@ -1,6 +1,6 @@
 const util = require('../util')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const set = settings
   const n = parseInt(args[1], 10)

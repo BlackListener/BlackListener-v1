@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 const logger = require('../logger').getLogger('commands:lookup', 'purple')
 const util = require('../util')
 
-module.exports = async function(settings, msg, lang) {
+module.exports = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   let id; let force = false

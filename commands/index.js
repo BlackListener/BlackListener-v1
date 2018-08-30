@@ -51,10 +51,10 @@ try {
       logger.debug(`Checking ../plugins/commands/${cmd}.js`)
       return await util.exists(`./plugins/commands/${cmd}.js`)
     },
-    async run(cmd, settings, msg, lang, guildSettings, config) {
+    async run(cmd, settings, msg, lang, guildSettings) {
       if (await util.exists(`./plugins/commands/${cmd}.js`)) {
         logger.debug(`Loading plugin: commands/${cmd}.js`)
-        return require(`../plugins/commands/${cmd}.js`)(settings, msg, lang, guildSettings, config)
+        return require(`../plugins/commands/${cmd}.js`)(settings, msg, lang, guildSettings)
       }
     },
   }

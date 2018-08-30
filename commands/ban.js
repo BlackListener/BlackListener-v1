@@ -5,7 +5,7 @@ const { defaultUser, defaultBans } = require('../contents.js')
 const fs = require('fs').promises
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
-module.exports = async function(settings, msg, lang, user) {
+module.exports = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (!args[1] || args[1] === '') {
@@ -29,6 +29,8 @@ module.exports = async function(settings, msg, lang, user) {
         let attach
         const bans = await util.readJSON(bansFile, defaultBans)
         const reason = args[2]
+        const userFile = `./data/users/${msg.author.id}/config.json`
+        const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
         if (args[3] !== '--force') { if (user.bannedFromServerOwner.includes(msg.guild.ownerID) && user.bannedFromServer.includes(msg.guild.id) && user.bannedFromUser.includes(msg.author.id)) return msg.channel.send(lang.already_banned) }
         if (msg.mentions.users.first()) {
           user2 = msg.mentions.users.first()

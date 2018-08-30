@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const util = require('../util')
 const f = require('string-format')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const command = `${settings.prefix}antispam`
   const write = async function(value) {

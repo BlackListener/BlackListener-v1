@@ -1,6 +1,6 @@
 const f = require('string-format')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const versions = [
     '1.1',

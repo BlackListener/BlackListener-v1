@@ -1,7 +1,7 @@
 const logger = require('../logger').getLogger('commands:eval', 'lightpurple')
 const f = require('string-format')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   if (msg.author.id !== '254794124744458241' || msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
   const commandcut = msg.content.substr(`${settings.prefix}eval `.length)
   try {

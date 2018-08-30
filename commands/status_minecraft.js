@@ -3,7 +3,7 @@ const now = require('performance-now')
 const Discord = require('discord.js')
 const fetch = require('node-fetch')
 
-module.exports = async function(msg, lang) {
+module.exports = async function(msg, settings, lang) {
   msg.channel.send(lang.status.checking)
   const status = ['undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined']
   let i = 0

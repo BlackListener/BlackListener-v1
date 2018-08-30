@@ -1,6 +1,8 @@
 const fetch = require('node-fetch')
+const isTravisBuild = process.argv[2] === '--travis-build'
+const s = isTravisBuild ? require('../travis.yml') : require('../secret.yml')
 
-module.exports = async function(settings, s, msg, lang) {
+module.exports = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (s.talk_apikey == '' || s.talk_apikey == 'undefined' || !s.talk_apikey) return msg.channel.send(lang.no_apikey)
   let status = '？？？'

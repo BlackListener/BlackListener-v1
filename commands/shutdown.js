@@ -1,7 +1,7 @@
 const logger = require('../logger').getLogger('commands:shutdown', 'darkgray')
 const f = require('string-format')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (msg.author.id == '254794124744458241') {

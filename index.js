@@ -90,8 +90,6 @@ client.on('message', async msg => {
   const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
   const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
   logger.debug('Loading ' + guildSettings)
-  const args = msg.content.replace(settings.prefix, '').split(' ')
-  const cmd = args[0]
   await util.checkConfig(user, settings, userFile, guildSettings)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
@@ -143,7 +141,7 @@ client.on('message', async msg => {
       logger.error(`Error while processing anti-spam. (${guildSettings})`)
     }
     // --- End of Anti-spam
-    cmdcheck(settings, msg, lang, cmd, args, guildSettings, user)
+    cmdcheck(settings, msg, lang, guildSettings)
   }
 })
 

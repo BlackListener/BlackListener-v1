@@ -2,7 +2,7 @@ const f = require('string-format')
 const util = require('../util')
 const logger = require('../logger').getLogger('commands:autorole', 'green')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'remove') {
     const localSettings = settings

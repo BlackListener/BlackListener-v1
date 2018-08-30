@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const util = require('../util')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   let user2; const muteSB = [lang.no]

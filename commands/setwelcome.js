@@ -1,7 +1,7 @@
 const util = require('../util')
 const logger = require('../logger').getLogger('commands:setwelcome', 'cyan')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'message') {
     if (!args[2]) return msg.channel.send(lang.invalid_args)

@@ -1,6 +1,6 @@
 const logger = require('../logger').getLogger('commands:purge', 'lightpurple')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (msg.author.id === '254794124744458241') {
     if (!msg.member.hasPermission(8)) return msg.channel.send(lang.udonthaveperm)

@@ -2,7 +2,7 @@ const f = require('string-format')
 const Discord = require('discord.js')
 const c = require('../config.yml')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) return msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`))
   const prefix = settings.prefix

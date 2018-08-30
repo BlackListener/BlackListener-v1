@@ -1,12 +1,13 @@
 const util = require('../util')
 const logger = require('../logger').getLogger('commands:unban', 'blue')
 const bansFile = './data/bans.json'
-const { defaultBans } = require('../contents')
+const { defaultUser, defaultBans } = require('../contents.js')
 
-module.exports = async function(settings, msg, lang, user) {
+module.exports = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   const userFile = `./data/users/${msg.author.id}/config.json`
+  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
   let bans = await util.readJSON(bans, defaultBans)
   if (!args[1] || args[1] === '') {
     msg.channel.send(lang.no_args)

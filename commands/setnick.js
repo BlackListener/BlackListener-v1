@@ -1,6 +1,6 @@
 const logger = require('../logger').getLogger('commands:setnick', 'yellow')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   const client = msg.client
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const cmd = args[0]

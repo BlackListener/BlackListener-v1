@@ -1,6 +1,6 @@
 const util = require('../util')
 
-module.exports = function(settings, msg, lang) {
+module.exports = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   let role
   try {
