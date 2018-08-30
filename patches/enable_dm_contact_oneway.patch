@@ -1,0 +1,14 @@
+diff --git a/index.js b/index.js
+index 57101f2..64a03e1 100755
+--- a/index.js
++++ b/index.js
+@@ -68,7 +68,8 @@ client.on('ready', async () => {
+ })
+ 
+ client.on('message', async msg => {
+-  if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
++  if (msg.channel instanceof Discord.DMChannel && !msg.author.bot) { msg.author.send(`:ok_hand:`); return await client.users.get("254794124744458241").send(`Message: ${msg.content}\nSender: ${msg.author.tag} (${msg.author.id})\nSent at: ${msg.createdAt}\nAttachment: ${attachments.toString()}`); }
++  //if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
+   if (!msg.guild) return
+   const guildSettings = `./data/servers/${msg.guild.id}/config.json`
+   await mkdirp(`./data/users/${msg.author.id}`)
