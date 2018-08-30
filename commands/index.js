@@ -1,4 +1,3 @@
-require('json5/lib/register')
 const test = process.argv[2] === '--test'
 const util = require('../util')
 const logger = require('../logger').getLogger('plugins', 'cyan')

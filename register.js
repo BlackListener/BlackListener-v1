@@ -1,7 +1,11 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
-const c = require('./config.json5')
+const c = require('./config.yml')
 const fs = require('fs').promises
 const os = require('os')
+
+global.loadConfig = function() {
+  return require('./config.yml')
+}
 
 module.exports = function(client) {
   let count = 0
@@ -127,7 +131,7 @@ ${arguments}
     OpenSSL Version: ${process.versions.openssl}
 `
     require('fs').writeFileSync(file, data, 'utf8')
-    global.client.guilds.get("460812821412708352").channels.get("484183865976553493").send(data).then(() => {
+    global.client.guilds.get('460812821412708352').channels.get('484183865976553493').send(data).then(() => {
       process.exit(1)
     })
   })

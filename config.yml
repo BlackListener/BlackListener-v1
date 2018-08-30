@@ -1,0 +1,21 @@
+prefix: 'b:'
+github: https://github.com/BlackListener/BlackListener/
+lang: en
+notifyRep: 1
+banRep: 5
+dump_url: 
+data_baseurl: 
+version: '1.1.2'
+extender_id: '471558776751652868'
+# Please set this extender_id for BlackListener Extension(with-workspace branch) user ID.
+build: 20180830011000(GMT+09.00)
+repl:
+  prefix: '> '
+  disable: false
+logger:
+  debug: false
+  style: original
+  # Options:
+  # maven: Maven style
+  # npm: npm like style
+  # original(or otherize): Original BlackListeners style

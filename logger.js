@@ -1,5 +1,5 @@
 const fs = require('fs')
-const config = require('./config.json5')
+const config = require('./config.yml')
 const chalk = require('chalk')
 
 class Logger {

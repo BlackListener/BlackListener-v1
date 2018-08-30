@@ -4,10 +4,10 @@ const commands = require('./commands/index')
 const levenshtein = require('fast-levenshtein').get
 const isWindows = process.platform === 'win32'
 const {commandList} = require('./contents')
-const c = require('./config.json5')
+const c = require('./config.yml')
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
-const s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
+const s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 
 module.exports = async function(settings, msg, lang, cmd, args, guildSettings, user) {
   const client = msg.client

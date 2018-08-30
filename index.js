@@ -1,4 +1,5 @@
-require('json5/lib/register')
+require('./yaml') // Assign extension .yml for YAML
+const YAML = require('yaml').default
 const logger = require('./logger').getLogger('main', 'green')
 logger.info('Initializing')
 const f = require('string-format')
@@ -9,7 +10,7 @@ const DBL = require('dblapi.js')
 const fs = require('fs').promises
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
-const c = require('./config.json5')
+const c = require('./config.yml')
 global.client = client
 
 if (process.env.ENABLE_RCON) {
@@ -30,9 +31,9 @@ logger.info(`Default prefix: ${c.prefix}`)
 
 let s
 try {
-  s = isTravisBuild ? require('./travis.json5') : require('./secret.json5')
+  s = isTravisBuild ? require('./travis.json5') : require('./secret.yml')
 } catch (e) {
-  logger.fatal('Not found \'secret.json5\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.json5\'')
+  logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.json5\'')
   process.exit(1)
 }
 const {
@@ -269,14 +270,14 @@ client.on('userUpdate', async (olduser, newuser) => {
 })
 
 let once = false; let count = 0
-if (!c.disablerepl) {
+if (!c.repl.disable) {
   const help = function() {
     console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
     console.log('.kill -> Kill this process')
     console.log('client -> A \'Discord.Client()\'')
     return
   }
-  const replServer = require('repl').start(c.replprefix ? c.replprefix : '> ')
+  const replServer = require('repl').start(c.repl.prefix ? c.repl.prefix : '> ')
   replServer.defineCommand('help', help)
   replServer.defineCommand('kill', () => {
     process.kill(process.pid, 'SIGKILL')
@@ -305,8 +306,7 @@ if (!c.disablerepl) {
       }
   })
   replServer.context.client = client
-}
-if (c.disablerepl) logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.json5.')
+} else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.json5.') }
 
 try {
   logger.info('Logging in...')

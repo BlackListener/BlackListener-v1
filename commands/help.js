@@ -1,6 +1,6 @@
 const f = require('string-format')
 const Discord = require('discord.js')
-const c = require('../config.json5')
+const c = require('../config.yml')
 
 module.exports = function(settings, msg, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')

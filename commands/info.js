@@ -3,7 +3,7 @@ const util = require('../util')
 const {promisify} = require('util')
 const exec = promisify(require('child_process').exec)
 const os = require('os')
-const c = require('../config.json5')
+const c = require('../config.yml')
 
 module.exports = async function(msg, lang, isWindows) {
   const s = await util.exists('./secret.json5') ? require('../secret.json5') : require('../travis.json5')

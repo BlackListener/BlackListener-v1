@@ -1,4 +1,4 @@
-const config = require('./config.json5')
+const config = require('./config.yml')
 
 module.exports = {
   defaultSettings: {
