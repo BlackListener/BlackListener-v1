@@ -1,7 +1,13 @@
 const Discord = require('discord.js')
 const util = require('../util')
 
-module.exports = async function(msg, settings, lang, guildSettings) {
+module.exports.name = 'mute'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   let user2; const muteSB = [lang.no]

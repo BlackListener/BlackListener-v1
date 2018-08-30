@@ -6,7 +6,9 @@ const os = require('os')
 const c = require('../config.yml')
 const isWindows = process.platform === 'win32'
 
-module.exports = async function(msg, settings, lang) {
+module.exports.name = 'info'
+
+module.exports.run = async function(msg, settings, lang) {
   const s = await util.exists('./secret.json5') ? require('../secret.json5') : require('../travis.json5')
   const client = msg.client
   const graph = 'Device    Total  Used Avail Use% Mounted on\n'

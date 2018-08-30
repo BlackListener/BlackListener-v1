@@ -5,7 +5,9 @@ const FormData = require('form-data')
 const now = require('performance-now')
 const s = require('../config.yml')
 
-module.exports = async function(msg, settings, lang) {
+module.exports.name = 'status'
+
+module.exports.run = async function(msg, settings, lang) {
   const cmd = settings.prefix + 'status '
   const service = msg.content.slice(cmd.length)
   if (service === 'minecraft') {

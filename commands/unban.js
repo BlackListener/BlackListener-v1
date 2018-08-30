@@ -3,7 +3,13 @@ const logger = require('../logger').getLogger('commands:unban', 'blue')
 const bansFile = './data/bans.json'
 const { defaultUser, defaultBans } = require('../contents.js')
 
-module.exports = async function(msg, settings, lang) {
+module.exports.name = 'unban'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   const userFile = `./data/users/${msg.author.id}/config.json`

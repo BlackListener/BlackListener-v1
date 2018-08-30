@@ -1,6 +1,8 @@
 const Discord = require('discord.js')
 
-module.exports = function(msg, settings, lang) {
+module.exports.name = 'serverinfo'
+
+module.exports.run = function(msg, settings, lang) {
   const client = msg.client
   let prefix = lang.sunknown
   let language = lang.sunknown

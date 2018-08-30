@@ -1,6 +1,12 @@
 const util = require('../util')
 
-module.exports = async function(msg, settings, lang, guildSettings) {
+module.exports.name = 'blockrole'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const role = msg.guild.roles.find('name', args[1]) ? msg.guild.roles.find('name', args[1]) : msg.guild.roles.get(args[1])
   if (!role) return msg.channel.send(lang.notfound_role)

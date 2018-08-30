@@ -69,12 +69,6 @@ module.exports = {
   stringifyYAML(yaml) {
     return YAML.stringify(yaml)
   },
-  cmdcheck() {
-    for (let i=0; i<arguments.length;++i) {
-      if (i !== 0) if (arguments[0] === arguments[i]) return true
-    }
-    return false
-  },
   async writeSettings(settingsFile, wsettings, channel, config) {
     await this.writeJSON(settingsFile, wsettings)
     if (channel) await channel.send(f(require(`./lang/${wsettings.language}.json`).setconfig, config))

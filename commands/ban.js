@@ -5,7 +5,13 @@ const { defaultUser, defaultBans } = require('../contents.js')
 const fs = require('fs').promises
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
-module.exports = async function(msg, settings, lang) {
+module.exports.name = 'ban'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (!args[1] || args[1] === '') {

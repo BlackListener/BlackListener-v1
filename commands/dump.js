@@ -3,7 +3,13 @@ const fs = require('fs').promises
 const f = require('string-format')
 const config = require('../config.yml')
 
-module.exports = async function(msg, settings, lang) {
+module.exports.name = 'dump'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const url = config.dump_url
   const client = msg.client

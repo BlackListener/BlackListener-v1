@@ -41,7 +41,7 @@ const {
   defaultBans,
   defaultUser,
 } = require('./contents')
-const cmdcheck = require('./cmdcheck')
+const dispatcher = require('./dispatcher')
 
 require('./register')(client)
 
@@ -141,7 +141,7 @@ client.on('message', async msg => {
       logger.error(`Error while processing anti-spam. (${guildSettings})`)
     }
     // --- End of Anti-spam
-    cmdcheck(settings, msg, lang, guildSettings)
+    dispatcher(settings, msg, lang, guildSettings)
   }
 })
 

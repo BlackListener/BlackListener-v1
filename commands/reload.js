@@ -1,5 +1,10 @@
-module.exports = async function(msg, settings, lang) {
-  if (msg.author.id !== '254794124744458241') return msg.channel.send(lang.udonthaveperm)
+module.exports.name = 'reload'
+
+module.exports.isAllowed = msg => {
+  return msg.author.id == '254794124744458241'
+}
+
+module.exports.run = async function(msg, settings, lang) {
   await msg.channel.send(lang.rebooting)
   return process.kill(process.pid, 'SIGKILL')
 }

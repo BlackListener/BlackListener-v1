@@ -2,7 +2,9 @@ const Discord = require('discord.js')
 const randomPuppy = require('random-puppy')
 const logger = require('../logger').getLogger('commands:image', 'blue')
 
-module.exports = async function(msg, settings, lang) {
+module.exports.name = 'image'
+
+module.exports.run = async function(msg, settings, lang) {
   if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const sendImage = async list => {
