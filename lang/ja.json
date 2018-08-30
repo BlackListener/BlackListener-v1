@@ -47,7 +47,8 @@
     "ok": "正常",
     "unstable": "不安定",
     "down": "ダウン",
-    "unknown": "ステータス情報の利用不可"
+    "unknown": "ステータス情報の利用不可",
+    "invalid": "サービス名が正しくありません。(minecraft または fortnite)"
   },
   "senttodm": "DMへ送りました。DMを見てください！",
   "mytoken": "トークンは {0} です。",

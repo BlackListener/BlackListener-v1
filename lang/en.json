@@ -47,7 +47,8 @@
     "ok": "OK",
     "unstable": "Unstable",
     "down": "Down",
-    "unknown": "Unavailable status information"
+    "unknown": "Unavailable status information",
+    "invalid": "Invalid service name. (minecraft or fortnite)"
   },
   "senttodm": "Sent to DM!",
   "mytoken": "Token is {0}.",

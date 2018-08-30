@@ -56,12 +56,9 @@ module.exports = async function(settings, msg, lang, guildSettings) {
     } else if (msg.content === settings.prefix + 'serverinfo') {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
       return commands['serverinfo'](msg, settings, lang)
-    } else if (msg.content === settings.prefix + 'status minecraft') {
+    } else if (msg.content.startsWith(settings.prefix + 'status ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      return commands['status minecraft'](msg, settings, lang)
-    } else if (msg.content === settings.prefix + 'status fortnite') {
-      logger.info(f(lang.issueduser, msg.author.tag, msg.content))
-      return commands['status fortnite'](msg, settings, lang)
+      return commands['status'](msg, settings, lang)
     } else if (msg.content.startsWith(settings.prefix + 'talkja ')) {
       logger.info(f(lang.issueduser, msg.author.tag, msg.content))
       return commands['talkja'](msg, settings, lang)
