@@ -2,6 +2,7 @@ const f = require('string-format')
 const logger = require('./logger').getLogger('commands', 'yellow')
 const commands = require('./commands')
 const levenshtein = require('fast-levenshtein').get
+const util = require('./util')
 
 module.exports = async function(settings, msg, lang, guildSettings) {
   if (msg.content === `<@${msg.client.user.id}>` || msg.content === `<@!${msg.client.user.id}>`)
@@ -14,6 +15,8 @@ module.exports = async function(settings, msg, lang, guildSettings) {
         logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
         commands[cmd](msg, settings, lang, guildSettings)
       } else msg.channel.send(lang.udonthaveperm)
+    } else if (util.exists(`./plugins/commands/${cmd}.js`)) {
+      require(`./plugins/commands/${cmd}.js`).run(msg, settings, lang, guildSettings)
     } else {
       const commandList = Object.keys(commands).map(cmd => ({ cmd }))
       const sb = []
