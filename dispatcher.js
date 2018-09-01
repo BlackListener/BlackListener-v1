@@ -11,7 +11,7 @@ module.exports = async function(settings, msg, lang, guildSettings) {
     if (settings.banned) return msg.channel.send(f(lang.error, lang.errors.server_banned))
     if (commands[cmd]) {
       if (!commands[cmd].isAllowed || commands[cmd].isAllowed(msg)) {
-        logger.info(f(lang.issueduser, msg.author.tag, msg.content))
+        logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
         commands[cmd](msg, settings, lang, guildSettings)
       } else msg.channel.send(lang.udonthaveperm)
     } else {

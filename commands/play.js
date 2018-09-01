@@ -5,6 +5,6 @@ module.exports.name = 'play'
 module.exports.alias = ['music']
 
 module.exports.run = async function(msg, settings, lang) {
-  const s = await util.exists('./secret.json5') ? require('../secret.json5') : require('../travis.json5')
+  const s = await util.exists('./secret.yml') ? require('../secret.yml') : require('../travis.yml')
   return msg.channel.send(f(lang.musicbotis, s.musicinvite))
 }
