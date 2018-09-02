@@ -22,6 +22,6 @@ module.exports.run = function(msg, settings, lang) {
       util.addRole(msg, args[1], true, msg.mentions.members.first(), settings.language)
     }
   } else {
-    return msg.channel.send(lang.no_perm)
+    return msg.channel.send(lang.udonthaveperm)
   }
 }

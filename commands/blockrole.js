@@ -9,7 +9,7 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const role = msg.guild.roles.find('name', args[1]) ? msg.guild.roles.find('name', args[1]) : msg.guild.roles.get(args[1])
-  if (!role) return msg.channel.send(lang.notfound_role)
+  if (!role) return msg.channel.send(lang.role_error)
   if (settings.blocked_role.includes(role.id)) {
     let exe = false
     for (let i=0; i<=settings.blocked_role.length; i++) {
@@ -18,7 +18,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
         delete settings.blocked_role[i]
       }
     }
-    if (!exe) { settings = null; return msg.channel.send(lang.notfound_role) }
+    if (!exe) { settings = null; return msg.channel.send(lang.role_error) }
     await util.writeSettings(guildSettings, settings, msg.channel, 'blocked_role')
   } else {
     settings.blocked_role.push(role.id)

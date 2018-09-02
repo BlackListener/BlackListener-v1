@@ -9,7 +9,6 @@ module.exports.isAllowed = msg => {
 }
 
 module.exports.run = function(msg, settings, lang) {
-  logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
   msg.author.send(f(lang.mytoken, msg.client.token))
   msg.reply(lang.senttodm)
   msg.delete(5000).catch(() => {
