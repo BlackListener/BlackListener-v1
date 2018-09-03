@@ -72,7 +72,7 @@
     "status2": "Status: {0}",
     "disabled_channels": "Disabled channels list:\n{0}"
   },
-  "contains_spam": ":x: Detected spamming.",
+  "includes_spam": ":x: Deleted spamming. (You can disable it in `b:antispam disable`)",
   "no_command": "`{0}` is not BlackListener command.",
   "didyoumean": "Did you mean? {0}",
   "error": "Errored while processing: Error: {0}",

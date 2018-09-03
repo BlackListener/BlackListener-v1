@@ -74,8 +74,11 @@ ${arguments}
     zlib Version: ${process.versions.zlib}
     OpenSSL Version: ${process.versions.openssl}
 `
-    logger.fatal(`Unhandled error: ${error}`)
-    logger.fatal(error.stack)
+    global.client.guilds.get('460812821412708352').channels.get('484357084037513216').send(data).then(() => {
+      logger.info('Error report has been sent!')
+    })
+    logger.error(`Unhandled Rejection: ${error}`)
+    logger.error(error.stack)
     fs.writeFile(file, data, 'utf8').then(() => {
       logger.info(`Error Report has been writed to ${file}`)
     })

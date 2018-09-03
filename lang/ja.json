@@ -72,7 +72,7 @@
     "status2": "ステータス: {0}",
     "disabled_channels": "無効なチャンネル一覧:\n{0}"
   },
-  "contains_spam": ":x: スパムを検出しました。",
+  "includes_spam": ":x: スパムを削除しました。 (`b:antispam disable` で無効化できます)",
   "no_command": "`{0}` はBlackListenerコマンドではありません。",
   "didyoumean": "これはもしかして？ {0}",
   "error": "エラーが発生したため、要求は実行されませんでした。エラー: {0}",

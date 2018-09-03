@@ -31,7 +31,7 @@ logger.info(`Default prefix: ${c.prefix}`)
 
 let s
 try {
-  s = isTravisBuild ? require('./travis.json5') : require('./secret.yml')
+  s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 } catch (e) {
   logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.json5\'')
   process.exit(1)
