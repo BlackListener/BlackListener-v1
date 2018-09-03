@@ -3,10 +3,6 @@ const c = require('./config.yml')
 const fs = require('fs').promises
 const os = require('os')
 
-global.loadConfig = function() {
-  return require('./config.yml')
-}
-
 module.exports = function(client) {
   let count = 0
   let once = false
@@ -81,7 +77,7 @@ ${arguments}
     zlib Version: ${process.versions.zlib}
     OpenSSL Version: ${process.versions.openssl}
 `
-    global.client.guilds.get('460812821412708352').channels.get('484357084037513216').send(data).then(() => {
+    client.guilds.get('460812821412708352').channels.get('484357084037513216').send(data).then(() => {
       logger.info('Error report has been sent!')
     })
     logger.error(`Unhandled Rejection: ${error}`)
@@ -143,7 +139,7 @@ ${arguments}
     OpenSSL Version: ${process.versions.openssl}
 `
     require('fs').writeFileSync(file, data, 'utf8')
-    global.client.guilds.get('460812821412708352').channels.get('484183865976553493').send(data).then(() => {
+    client.guilds.get('460812821412708352').channels.get('484183865976553493').send(data).then(() => {
       process.exit(1)
     })
   })

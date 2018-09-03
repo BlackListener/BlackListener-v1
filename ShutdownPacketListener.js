@@ -1,4 +1,5 @@
 const EventEmitter = require('events').EventEmitter
+const client = require('./client/index')
 class ShutdownPacketListener extends EventEmitter {
   constructor() {
     super()
@@ -12,7 +13,7 @@ class ShutdownPacketListener extends EventEmitter {
     }
     server.close()
     rl.close()
-    global.client.destroy()
+    client.destroy()
     process.nextTick(() => {
       this.emit('received')
     })

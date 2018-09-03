@@ -1,6 +1,7 @@
 const fs = require('fs')
 const config = require('./config.yml')
 const chalk = require('chalk')
+const { share } = require('./share')
 
 class Logger {
   /**
@@ -69,25 +70,25 @@ class Logger {
    * @private 
    */
   out(message, level, color, isLogger) {
-    global.thread = this.thread
+    share.thread = this.thread
     const originaldate = new Date()
     const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
     let thread = this.thread
-    global.logger = {}
-    eval(`global.logger.coloredlevel = chalk.${color}('${level}')`)
+    share.logger = {}
+    eval(`share.logger.coloredlevel = chalk.${color}('${level}')`)
     if (isLogger) { this.thread_raw = 'logger'; thread = chalk.hex('#800080')(this.thread_raw) }
     let data
     if (this.style === 'maven') {
       level = level.replace('warn', 'warning')
-      eval(`global.logger.coloredlevel2 = chalk.${color}.bold('${level.toUpperCase()}')`)
-      data = `[${global.logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
+      eval(`share.logger.coloredlevel2 = chalk.${color}.bold('${level.toUpperCase()}')`)
+      data = `[${share.logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
     } else if (this.style === 'npm') {
       level = level.replace('error', 'ERR!')
       level = level.replace('warn', 'WARN')
-      eval(`global.logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow('${level}') : level === 'info' ? chalk.green('${level}') : chalk.${color}('${level}')`)
-      data = `${chalk.white('BlackListener')} ${global.logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
+      eval(`share.logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow('${level}') : level === 'info' ? chalk.green('${level}') : chalk.${color}('${level}')`)
+      data = `${chalk.white('BlackListener')} ${share.logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     } else {
-      data = `${date} ${thread}${chalk.reset()} ${global.logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
+      data = `${date} ${thread}${chalk.reset()} ${share.logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     }
     fs.appendFileSync('latest.log', `${data}\n`)
     console.info(data)
