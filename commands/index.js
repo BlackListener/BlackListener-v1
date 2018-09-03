@@ -47,6 +47,7 @@ try {
     'image': require('./image'),
     'info': require('./info'),
     'invite': require('./invite'),
+    'save': require('./save'),
     async exists(cmd) {
       logger.debug(`Checking ../plugins/commands/${cmd}.js`)
       return await util.exists(`./plugins/commands/${cmd}.js`)

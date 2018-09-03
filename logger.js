@@ -3,6 +3,11 @@ const config = require('./config.yml')
 const chalk = require('chalk')
 
 class Logger {
+  /**
+   * Do not call this method twice.
+   * 
+   * @returns {Logger} A Logger instance
+   */
   initLog() {
     this.initialized = true
     fs.writeFileSync('latest.log', `--- The log begin at ${new Date().toLocaleString()} ---\n`)
@@ -16,6 +21,15 @@ class Logger {
     this.info('The log file has initialized.', true)
     return this
   }
+
+  /**
+   * Set thread name and color.
+   * 
+   * @example const logger = require('./logger').getLogger("example", "red")
+   * @param {string} thread Thread name
+   * @param {string} color yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
+   * @returns {Logger} A Logger instance
+   */
   getLogger(thread, color = 'yellow') {
     if (!this.initialized) {
       this.initLog()
@@ -45,6 +59,15 @@ class Logger {
     this.info(`Registered logger for: ${thread}`, true)
     return self
   }
+  /**
+   * 
+   * @param {*} message 
+   * @param {string} level 
+   * @param {string} color 
+   * @param {boolean} isLogger
+   * @returns {void} <void>
+   * @private 
+   */
   out(message, level, color, isLogger) {
     global.thread = this.thread
     const originaldate = new Date()
@@ -69,24 +92,94 @@ class Logger {
     fs.appendFileSync('latest.log', `${data}\n`)
     console.info(data)
   }
+  /**
+   * Outputs info level message.
+   * 
+   * @example logger.info("foo")
+   * 
+   * 
+   * @example logger.info("foo").error("bar")
+   * 
+   * 
+   * @param {*} message 
+   * @param {boolean} isLogger Don't use this
+   * 
+   * @returns {Logger} A Logger instance
+   */
   info(message, isLogger = false) {
     this.out(message, 'info', 'blue', isLogger)
     return this
   }
+  /**
+   * Outputs debug level message.
+   * 
+   * @example logger.debug("foo")
+   * 
+   * 
+   * @example logger.debug("foo").error("bar")
+   * 
+   * 
+   * @param {*} message 
+   * @param {boolean} isLogger Don't use this
+   * 
+   * @returns {Logger} A Logger instance
+   */
   debug(message, isLogger = false) {
     if (config.logger.debug) {
       this.out(message, 'debug', 'cyan', isLogger)
     }
     return this
   }
+  /**
+   * Outputs warn level message.
+   * 
+   * @example logger.warn("foo")
+   * 
+   * 
+   * @example logger.warn("foo").error("bar")
+   * 
+   * 
+   * @param {*} message 
+   * @param {boolean} isLogger Don't use this
+   * 
+   * @returns {Logger} A Logger instance
+   */
   warn(message, isLogger = false) {
     this.out(message, 'warn', 'bold.yellow', isLogger)
     return this
   }
+  /**
+   * Outputs error level message.
+   * 
+   * @example logger.error("foo")
+   * 
+   * 
+   * @example logger.error("foo").debug("bar")
+   * 
+   * 
+   * @param {*} message 
+   * @param {boolean} isLogger Don't use this
+   * 
+   * @returns {Logger} A Logger instance
+   */
   error(message, isLogger = false) {
     this.out(message, 'error', 'red', isLogger)
     return this
   }
+  /**
+   * Outputs fatal level message.
+   * 
+   * @example logger.fatal("foo")
+   * 
+   * 
+   * @example logger.fatal("foo").error("bar")
+   * 
+   * 
+   * @param {*} message 
+   * @param {boolean} isLogger Don't use this
+   * 
+   * @returns {Logger} A Logger instance
+   */
   fatal(message, isLogger = false) {
     this.out(message, 'fatal', 'redBright.bold', isLogger)
     return this

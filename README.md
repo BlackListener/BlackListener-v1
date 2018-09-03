@@ -5,15 +5,18 @@ Global Banning System for Discord.
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
 ## Important
-**We're disabled GitHub's Issues, and we have [bug tracker](https://bugs.rht0910.tk), Please use this!**
+
+__**This branch is including experimental features, may corrupt BlackListener's data!**__
+**Please move your data folder before using it.**
 
 ## Startup options
- - You can change default prefix without editing config, and other things!
- - If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
- - If you set ``ENABLE_RCON``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
-   - Listener will start with port: 5123
-   - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
- - Start with both options: ``BL_PREFIX="a:" ENABLE_RCON=true node index.js``
+
+- You can change default prefix without editing config, and other things!
+- If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
+- If you set ``ENABLE_RCON``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
+  - Listener will start with port: 5123
+  - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
+- Start with both options: ``BL_PREFIX="a:" ENABLE_RCON=true node index.js``
 
 ## All Commands (Too long!)
 
@@ -21,7 +24,7 @@ __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
 Server's prefix can be show up in mention the bot.
 
- - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
+- Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
 | ------- | ---------------- | ---------------- | - |
@@ -68,16 +71,17 @@ Server's prefix can be show up in mention the bot.
 
 ---
 
-**Welcome message Placeholder**
- - `{user}` ... Mention user
- - `{tag}` ... `User#0000`
- - `{id}` ... User ID
- - `{username}` ... User name
- - `{rep}` ... Reputation
- - `{users}` ... Size of that guild
- - `{createdAt}` ... Created that account date
- - `{joinedAt}` ... Joined that account date
- - `{avatarURL}` ... Avatar URL
+### Welcome message Placeholder
+
+- `{user}` ... Mention user
+- `{tag}` ... `User#0000`
+- `{id}` ... User ID
+- `{username}` ... User name
+- `{rep}` ... Reputation
+- `{users}` ... Size of that guild
+- `{createdAt}` ... Created that account date
+- `{joinedAt}` ... Joined that account date
+- `{avatarURL}` ... Avatar URL
 
 ---
 
@@ -90,12 +94,13 @@ If you're banned 5 times, you'll added 5 rep.
 Most servers are using default settings(maybe), notify reputations is `1`, default ban reputation is `3`.
 
 Also you can't ban that users:
- - Not cached in Bot
- - @Mentions is (currently) not supported
- - A unknown error
- - User has been deleted by Discord (`Deleted user ???????`)
- - You are banned from this Bot
- - Server has banned from bot
+
+- Not cached in Bot
+- @Mentions is (currently) not supported
+- A unknown error
+- User has been deleted by Discord (`Deleted user ???????`)
+- You are banned from this Bot
+- Server has banned from bot
 
 ---
 
@@ -108,16 +113,17 @@ Also you can't ban that users:
 ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`1`で、デフォルトの自動BAN評価値は`3`です。
 
 そしてこれらのユーザーはBANできません:
- - Botにキャッシュされていない
- - @メンション はサポートされていません。
- - 不明なエラー
- - Discordにユーザーを削除されています (`Deleted user ???????`)
- - 執行者がBotからBANされている
- - サーバーがBotからBANされている
+
+- Botにキャッシュされていない
+- @メンション はサポートされていません。
+- 不明なエラー
+- Discordにユーザーを削除されています (`Deleted user ???????`)
+- 実行者がBotからBANされている
+- サーバーがBotからBANされている
 
 ## Length of downtime
 
- - __The downtime is very tiny, This is only restart the bot.__
- - __If short downtime, most errors are JSON Parse errors. Cannot be resolved by user, please contact to the bot owner.__
- - __If loooooong (1 hours or later) downtime, this is a critical server error, already we always working to resolve a problem.__
- - __If extremely (3 days or later) longest downtime, we are always very working to resolve the problem, the errors are networking problem.__
+- __The downtime is very tiny, This is only restart the bot.__
+- __If short downtime, most errors are JSON Parse errors. Cannot be resolved by user, please contact to the bot owner.__
+- __If loooooong (1 hours or later) downtime, this is a critical server error, already we always working to resolve a problem.__
+- __If extremely (3 days or later) longest downtime, we are always very working to resolve the problem, the errors are networking problem.__

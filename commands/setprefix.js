@@ -1,4 +1,5 @@
-const util = require('../util')
+const cs = require('../config/ConfigStore')
+const f = require('string-format')
 
 module.exports = async function(settings, msg, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
@@ -7,6 +8,7 @@ module.exports = async function(settings, msg, lang, guildSettings) {
     msg.channel.send(lang.cannotspace)
   } else {
     set.prefix = args[1]
-    await util.writeSettings(guildSettings, set, msg.channel, 'prefix')
+    cs.store(guildSettings, set)
+    msg.channel.send(f(lang.setconfig, set))
   }
 }

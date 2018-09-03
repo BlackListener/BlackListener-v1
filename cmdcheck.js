@@ -140,6 +140,9 @@ module.exports = async function(settings, msg, lang, cmd, args, guildSettings, u
       } else if (util.cmdcheck(cmd, 'language')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
         return commands['language'](settings, msg, lang, guildSettings)
+      } else if (msg.content === settings.prefix + 'save') {
+        logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
+        return commands['save'](msg, lang)
       } else if (msg.content.startsWith(settings.prefix + 'eval ')) {
         logger.info(f(lang.issuedadmin, msg.author.tag, msg.content))
         return commands['eval'](settings, msg, lang)

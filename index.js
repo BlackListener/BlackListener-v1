@@ -1,7 +1,7 @@
 require('./yaml') // Assign extension .yml for YAML
-const YAML = require('yaml').default
 const logger = require('./logger').getLogger('main', 'green')
 logger.info('Initializing')
+const cs = require('./config/ConfigStore')
 const f = require('string-format')
 const Discord = require('discord.js')
 const client = new Discord.Client()
@@ -87,8 +87,8 @@ client.on('message', async msg => {
       await util.initJSON(guildSettings, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
-  const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
+  const user = cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile, defaultUser)))
+  const settings = cs.use(guildSettings, Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings)))
   logger.debug('Loading ' + guildSettings)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const cmd = args[0]
@@ -118,7 +118,7 @@ client.on('message', async msg => {
   }
   // --- End of Mute
   if (!msg.author.bot) {
-    lang = await util.readJSON(`./lang/${settings.language}.json`) // Processing message is under of this
+    lang = await util.readJSON(`./lang/${settings.language}.json`)
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
@@ -161,8 +161,8 @@ client.on('guildMemberAdd', async (member) => {
       await util.initJSON(serverFile, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const serverSetting = await util.readJSON(serverFile)
-  const userSetting = await util.readJSON(userFile)
+  const serverSetting = cs.use(serverFile, Object.assign(defaultSettings, await util.readJSON(serverFile)))
+  const userSetting = cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile)))
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
@@ -224,7 +224,7 @@ function getDateTime()
 
 client.on('userUpdate', async (olduser, newuser) => {
   const userFile = `./data/users/${olduser.id}/config.json`
-  const user = await util.readJSON(userFile, defaultUser)
+  const user = cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile, defaultUser)))
   let userChanged = false
   try {
     if (!user.bannedFromServer) {
@@ -263,7 +263,7 @@ client.on('userUpdate', async (olduser, newuser) => {
     logger.error(`Error while null checking (${e})`)
   }
   try {
-    if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
+    if (userChanged) cs.store(userFile, user)
     if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
   } catch (e) {
     logger.error(e.stack)

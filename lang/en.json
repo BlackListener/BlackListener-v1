@@ -213,5 +213,6 @@
   "eval_error": "An error occurred in eval: {0}",
   "deprecated": "This command is __**deprecated**__ .\nPlease find replacements in `help <Command>`.",
   "invalidVersion": ":x: Specified invalid version.",
-  "build": "Build: {0}"
+  "build": "Build: {0}",
+  "saved": "Saved all pending saves."
 }

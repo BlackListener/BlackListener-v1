@@ -10,6 +10,11 @@ global.loadConfig = function() {
 module.exports = function(client) {
   let count = 0
   let once = false
+  let errors = 0
+
+  setInterval(() => {
+    errors = 0
+  }, 1500)
 
   client.on('warn', (warn) => {
     logger.warn(`Got Warning from Client: ${warn}`)
@@ -25,6 +30,8 @@ module.exports = function(client) {
   })
 
   process.on('unhandledRejection', (error) => {
+    if (errors >= 2) { logger.fatal('Error loop detected, exiting'); process.exit(1) }
+    errors++
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
     const date = new Date()
     const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
@@ -85,6 +92,8 @@ ${arguments}
   })
 
   process.on('uncaughtException', (error) => {
+    if (errors >= 2) { logger.fatal('Error loop detected, exiting'); process.exit(1) }
+    errors++
     const date = new Date()
     const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
     const file = `./crash-reports/crash-${format}.txt`
