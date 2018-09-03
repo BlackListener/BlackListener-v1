@@ -1,8 +1,15 @@
 const fs = require('fs').promises
 const Discord = require('discord.js')
 const f = require('string-format')
+const config = require('../config.yml')
 
-module.exports = async function(settings, msg, lang, config) {
+module.exports.name = 'deletemsg'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   const types = {

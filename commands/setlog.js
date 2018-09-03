@@ -1,6 +1,12 @@
 const util = require('../util')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports.name = 'setlog'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   let channel
   if (msg.mentions.channels.first()) {

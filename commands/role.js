@@ -1,6 +1,8 @@
 const util = require('../util')
 
-module.exports = function(settings, msg, lang) {
+module.exports.name = 'role'
+
+module.exports.run = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   let role
   try {
@@ -20,6 +22,6 @@ module.exports = function(settings, msg, lang) {
       util.addRole(msg, args[1], true, msg.mentions.members.first(), settings.language)
     }
   } else {
-    return msg.channel.send(lang.no_perm)
+    return msg.channel.send(lang.udonthaveperm)
   }
 }

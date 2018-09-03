@@ -16,6 +16,6 @@ latest.log
 # Plugins folder
 /plugins/
 
-# Crash reports
+# Crash, error reports
 /crash-reports/
 /error-reports/

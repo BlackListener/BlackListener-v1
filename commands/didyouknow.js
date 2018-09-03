@@ -1,6 +1,8 @@
 const f = require('string-format')
 
-module.exports = function(settings, msg, lang) {
+module.exports.name = 'didyouknow'
+
+module.exports.run = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (args[2] === 'server') {
@@ -20,5 +22,4 @@ module.exports = function(settings, msg, lang) {
   } else {
     return msg.channel.send(f(lang.known, `${know.tag} (${know.id})`))
   }
-  return true
 }

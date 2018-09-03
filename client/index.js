@@ -1,22 +1,22 @@
-require('../yaml') // Assign extension .yml for YAML
-const logger = require('../logger').getLogger('main', 'green')
+require('./yaml') // Assign extension .yml for YAML
+const logger = require('./logger').getLogger('main', 'green')
 logger.info('Initializing')
-const cs = require('../config/ConfigStore')
 const f = require('string-format')
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
-const util = require('../util')
+const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
 const c = require('./config.yml')
+global.client = client
 
 if (process.env.ENABLE_RCON) {
   logger.warn('Remote control is enabled.')
     .warn('Be careful for unexpected shutdown! (Use firewall to refuse from attack)')
     .info('Listener will be startup with 5123 port.')
-  require('../ShutdownPacketListener')(client)
+  require('./ShutdownPacketListener')(client)
 } else {
   logger.info('Remote control is disabled.')
     .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
@@ -39,10 +39,10 @@ const {
   defaultSettings,
   defaultBans,
   defaultUser,
-} = require('../contents')
-const cmdcheck = require('../cmdcheck')
+} = require('./contents')
+const dispatcher = require('./dispatcher')
 
-require('../register')(client)
+require('./register')(client)
 
 let lang
 
@@ -86,11 +86,9 @@ client.on('message', async msg => {
       await util.initJSON(guildSettings, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const user = cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile, defaultUser)))
-  const settings = cs.use(guildSettings, Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings)))
+  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
+  const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
   logger.debug('Loading ' + guildSettings)
-  const args = msg.content.replace(settings.prefix, '').split(' ')
-  const cmd = args[0]
   await util.checkConfig(user, settings, userFile, guildSettings)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
@@ -117,7 +115,7 @@ client.on('message', async msg => {
   }
   // --- End of Mute
   if (!msg.author.bot) {
-    lang = await util.readJSON(`./lang/${settings.language}.json`)
+    lang = await util.readJSON(`./lang/${settings.language}.json`) // Processing message is under of this
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
@@ -142,7 +140,7 @@ client.on('message', async msg => {
       logger.error(`Error while processing anti-spam. (${guildSettings})`)
     }
     // --- End of Anti-spam
-    cmdcheck(settings, msg, lang, cmd, args, guildSettings, user)
+    dispatcher(settings, msg, lang, guildSettings)
   }
 })
 
@@ -160,8 +158,8 @@ client.on('guildMemberAdd', async (member) => {
       await util.initJSON(serverFile, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const serverSetting = cs.use(serverFile, Object.assign(defaultSettings, await util.readJSON(serverFile)))
-  const userSetting = cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile)))
+  const serverSetting = await util.readJSON(serverFile)
+  const userSetting = await util.readJSON(userFile)
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
@@ -223,7 +221,7 @@ function getDateTime()
 
 client.on('userUpdate', async (olduser, newuser) => {
   const userFile = `./data/users/${olduser.id}/config.json`
-  const user = cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile, defaultUser)))
+  const user = await util.readJSON(userFile, defaultUser)
   let userChanged = false
   try {
     if (!user.bannedFromServer) {
@@ -262,7 +260,7 @@ client.on('userUpdate', async (olduser, newuser) => {
     logger.error(`Error while null checking (${e})`)
   }
   try {
-    if (userChanged) cs.store(userFile, user)
+    if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
     if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
   } catch (e) {
     logger.error(e.stack)
@@ -313,5 +311,3 @@ try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
     .catch(logger.error)
 } catch (e) { logger.fatal(e) }
-
-module.exports = client

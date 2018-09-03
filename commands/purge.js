@@ -1,10 +1,13 @@
 const logger = require('../logger').getLogger('commands:purge', 'lightpurple')
 
-module.exports = function(settings, msg, lang) {
+module.exports.name = 'purge'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  if (msg.author.id === '254794124744458241') {
-    if (!msg.member.hasPermission(8)) return msg.channel.send(lang.udonthaveperm)
-  }
   if (settings.disable_purge) return msg.channel.send(lang.disabled_purge)
   let messages
   if (args[1] === '' || !args[1] || args[1] === 'all') {
