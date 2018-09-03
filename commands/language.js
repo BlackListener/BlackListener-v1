@@ -1,7 +1,13 @@
 const util = require('../util')
 const Discord = require('discord.js')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports.name = 'language'
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (!args[1] || args[1] === 'help') {
     const embed = new Discord.RichEmbed()

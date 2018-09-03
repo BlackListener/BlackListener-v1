@@ -1,6 +1,14 @@
 const logger = require('../logger').getLogger('commands:setnick', 'yellow')
 
-module.exports = function(settings, msg, lang) {
+module.exports.name = 'setnick'
+
+module.exports.alias = ['setnickname', 'resetnick']
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = function(msg, settings, lang) {
   const client = msg.client
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const cmd = args[0]

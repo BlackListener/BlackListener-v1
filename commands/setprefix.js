@@ -1,6 +1,14 @@
 const util = require('../util')
 
-module.exports = async function(settings, msg, lang, guildSettings) {
+module.exports.name = 'setprefix'
+
+module.exports.alias = ['prefix']
+
+module.exports.isAllowed = msg => {
+  return msg.member.hasPermission(8)
+}
+
+module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const set = settings
   if (/\s/gm.test(args[1]) || !args[1]) {
