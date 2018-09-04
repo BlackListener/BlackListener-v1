@@ -1,7 +1,7 @@
 const fs = require('fs')
 const config = require('./config.yml')
 const chalk = require('chalk')
-const { share } = require('./share')
+const share = require('./share')
 
 class Logger {
   /**

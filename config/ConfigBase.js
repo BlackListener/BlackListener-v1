@@ -1,7 +1,9 @@
+const ds = require('./DataStore')
+
 class ConfigBase {
   constructor() {
-    this.initialized = true;
+    ds.initialized = true
   }
 }
 
-module.exports = ConfigBase;
+module.exports = ConfigBase

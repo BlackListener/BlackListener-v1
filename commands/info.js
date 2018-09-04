@@ -5,11 +5,12 @@ const exec = promisify(require('child_process').exec)
 const os = require('os')
 const c = require('../config.yml')
 const isWindows = process.platform === 'win32'
+const share = require('../share')
 
 module.exports.name = 'info'
 
 module.exports.run = async function(msg, settings, lang) {
-  const s = await util.exists('./secret.json5') ? require('../secret.json5') : require('../travis.json5')
+  const s = await util.exists(share.rootDir + '/secret.yml') ? require(share.rootDir + '/secret.yml') : require(share.rootDir + '/travis.yml')
   const client = msg.client
   const graph = 'Device    Total  Used Avail Use% Mounted on\n'
   let o1 = '利用不可'

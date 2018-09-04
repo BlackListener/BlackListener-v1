@@ -1,12 +1,9 @@
 const share = {
-  _thread: '',
-  _logger: {},
-  get thread() {
-    return this._thread
-  },
-  get logger() {
-    return this._logger
-  },
+  thread: '',
+  logger: {},
+  rootDir: __dirname,
+  client: null,
+  e/*xperimental*/: false,
 }
 
 module.exports = share

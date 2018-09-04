@@ -14,7 +14,7 @@
     "autorole": "Set up to automatically assign a position at the time of participation.",
     "image": "Displays NSFW images.",
     "others": "Help of other commands,",
-    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html).",
+    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html)."
   },
   "status": {
     "servers": {
@@ -168,5 +168,6 @@
   "eval_error": "An error occurred in eval: {0}",
   "invalidVersion": ":x: Specified invalid version.",
   "build": "Build: {0}",
-  "saved": "Saved all pending saves."
+  "saved": "Saved all pending saves.",
+  "setconfig": "Saved config: {0}"
 }

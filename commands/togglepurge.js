@@ -1,4 +1,5 @@
-const util = require('../util')
+const cs = require('../config/ConfigStore')
+const f = require('string-format')
 
 module.exports.name = 'togglepurge'
 
@@ -20,5 +21,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       unsavedSettings.disable_purge = true
     }
   }
-  await util.writeSettings(guildSettings, unsavedSettings, msg.channel, 'disable_purge')
+  cs.store(guildSettings, unsavedSettings)
+  msg.channel.send(f(lang.setconfig, 'disable_purge'))
 }

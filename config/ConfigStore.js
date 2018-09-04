@@ -1,13 +1,14 @@
-const ConfigBase = require('./ConfigBase')
-//const fs = require('fs').promises
+const IllegalStateException = require('../error/IllegalStateException')
+const ds = require('./DataStore')
+const fs = require('fs').promises
 
 /**
  * Data caching
  */
-class ConfigStore extends ConfigBase {
+class ConfigStore {
   constructor() {
-    super()
-    this.stored = []
+    if (!ds.initialized) throw new IllegalStateException('Initialization state is false.')
+    ds.storedData = []
   }
 
   /**
@@ -19,11 +20,10 @@ class ConfigStore extends ConfigBase {
    * @param {JSON} data: JSON Data(do not JSON.stringify())
    * @returns {void} <void>
    */
-  store(file, data) { // 1-1. Run <prefix>language ja // 2-1. Run <prefix>setprefix a-
-    this.stored[file] = data // 1-2. Store data // 2-2. Store data
-    console.log('stored:' + JSON.stringify(this.stored[file]))
-    // 1-3. Expected: ... "language":"ja", ...
-    // 2-3. Expected: {"prefix":"a-", ...
+  store(file, data) {
+    data = JSON.parse(JSON.stringify(data))
+    ds.storedData[file] = data
+    if (ds.storedData.length >= 100) this.write()
   }
 
   /**
@@ -31,20 +31,13 @@ class ConfigStore extends ConfigBase {
    * 
    * This function is async.
    * 
-   * Called on save command or auto save.
-   * 
    * @returns {void} <void>
    */
-  write() {
-    console.log(JSON.stringify(Object.values(this.stored)))
-    // 1-4. expected data: ... "language":"ja", ...
-    // 1-5. but it returns unexpected data: ... "language":"en", ...
-    // 2-4. expected data: {"prefix":"a-", ...
-    // 2-5. but it returns unexpected data: {"prefix":"a:", ...
-    for (let i=0; i<=Object.keys(this.stored).length; i++) {
-      if (this.stored[Object.keys(this.stored)[i]]) console.log(JSON.stringify(this.stored[Object.keys(this.stored)[i]]))
-      // 1-6, 2-6. If returned expected value, please write "fs.writeFile(...)"
+  async write() {
+    for (let i=0, len = Object.values(ds.storedData).length; i<=len; i++) {
+      if (ds.storedData[Object.keys(ds.storedData)[i]]) await fs.writeFile(Object.keys(ds.storedData)[i], JSON.stringify(ds.storedData[Object.keys(ds.storedData)[i]], null, 4))
     }
+    ds.storedData = []
   }
 
   /**
@@ -56,10 +49,11 @@ class ConfigStore extends ConfigBase {
    * @returns {JSON} Merged array
    */
   use(file, arr = null) {
-    if(this.stored && this.stored[file]) {
-      return arr ? Object.assign({}, this.stored[file], arr) : this.stored[file]
+    if(ds.storedData && ds.storedData[file]) {
+      const json = JSON.parse(JSON.stringify(arr ? Object.assign({}, arr, ds.storedData[file]) : ds.storedData[file]))
+      return json
     }
-    return arr ? arr : {}
+    return arr || {}
   }
 }
 

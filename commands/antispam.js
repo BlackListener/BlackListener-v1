@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
-const util = require('../util')
 const f = require('string-format')
+const cs = require('../config/ConfigStore')
 
 module.exports.name = 'antispam'
 
@@ -14,7 +14,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   const write = async function(value) {
     const localSettings = settings
     localSettings.antispam = value
-    await util.writeSettings(guildSettings, localSettings, null, null, false)
+    cs.store(guildSettings, localSettings)
   }
   if (!args[1] || args[1] === 'help') {
     let status
@@ -58,11 +58,11 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     if (id === ':poop:') return msg.channel.send(lang.invalid_args)
     if (localSettings.ignoredChannels.includes(id)) {
       delete localSettings.ignoredChannels[localSettings.ignoredChannels.indexOf(id)]
-      await util.writeSettings(guildSettings, localSettings, null, null, false)
+      cs.store(guildSettings, localSettings)
       msg.channel.send(lang.antispam.ignore_enabled)
     } else {
       localSettings.ignoredChannels.push(id)
-      await util.writeSettings(guildSettings, localSettings, null, null, false)
+      cs.store(guildSettings, localSettings)
       msg.channel.send(lang.antispam.ignore_disabled)
     }
   } else if (args[1] === 'status') {

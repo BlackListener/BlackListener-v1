@@ -1,5 +1,5 @@
-const logger = require('./logger').getLogger('plugins', 'cyan')
 const fs = require('fs')
+const IllegalStateException = require('./error/IllegalStateException')
 
 const commands = {}
 
@@ -11,8 +11,8 @@ for (const file of files) {
   commands[command.name] = command.run
   if (!command.alias) continue
   for (const alias of command.alias) {
-    if (commands[alias]) logger.fatal(`The alias ${alias} is already used.`)
-    commands[alias] = command
+    if (commands[alias]) throw new IllegalStateException(`The alias ${alias} is already used.`)
+    commands[alias] = command.run
   }
 }
 

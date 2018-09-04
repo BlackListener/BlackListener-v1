@@ -1,4 +1,5 @@
-const util = require('../util')
+const cs = require('../config/ConfigStore')
+const f = require('string-format')
 
 module.exports.name = 'setlog'
 
@@ -25,5 +26,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   if (!channel) return msg.channel.send(lang.invalid_args)
   const id = channel.id
   settings.log_channel = id
-  await util.writeSettings(guildSettings, settings, msg.channel, 'log_channel')
+  cs.store(guildSettings, settings)
+  msg.channel.send(f(lang.setconfig, 'log_channel'))
 }

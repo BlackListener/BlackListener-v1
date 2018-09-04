@@ -1,16 +1,28 @@
-require('./yaml') // Assign extension .yml for YAML
-const logger = require('./logger').getLogger('main', 'green')
+const share = require('../share')
+const root = share.rootDir
+const sleep = require('sleep').sleep
+require(root + '/yaml') // Assign extension .yml for YAML
+const logger = require(root + '/logger').getLogger('main', 'green')
 logger.info('Initializing')
+if (process.versions.node.startsWith('11.')) {
+  share.e/*xperimental*/ = true
+  logger.warn('Detected Node.js v11.x, Process will attempt to use new features.')
+  logger.warn('Starting in 10 seconds')
+  sleep(10)
+}
 const f = require('string-format')
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
-const util = require('./util')
+const util = require(root + '/util')
 const isTravisBuild = process.argv[2] === '--travis-build'
-const c = require('./config.yml')
-global.client = client
+const c = require(root + '/config.yml')
+const ds = require(root + '/config/DataStore')
+ds.initialized = true
+const cs = require(root + '/config/ConfigStore')
+share.client = client
 
 if (process.env.ENABLE_RCON) {
   logger.warn('Remote control is enabled.')
@@ -30,7 +42,7 @@ logger.info(`Default prefix: ${c.prefix}`)
 
 let s
 try {
-  s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
+  s = isTravisBuild ? require(root + '/travis.yml') : require(root + '/secret.yml')
 } catch (e) {
   logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.json5\'')
   process.exit(1)
@@ -39,22 +51,22 @@ const {
   defaultSettings,
   defaultBans,
   defaultUser,
-} = require('./contents')
-const dispatcher = require('./dispatcher')
+} = require(root + '/contents')
+const dispatcher = require(root + '/dispatcher')
 
-require('./register')(client)
+require(root + '/register')(client)
 
 let lang
 
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('ready', async () => {
-  await mkdirp('./error-reports')
-  await mkdirp('./crash-reports')
-  await mkdirp('./data/servers')
-  await mkdirp('./data/users')
-  await mkdirp('./plugins/commands')
-  util.initJSON('./data/bans.json', defaultBans).catch(logger.error)
+  await mkdirp(root + '/error-reports')
+  await mkdirp(root + '/crash-reports')
+  await mkdirp(root + '/data/servers')
+  await mkdirp(root + '/data/users')
+  await mkdirp(root + '/plugins/commands')
+  util.initJSON(root + '/data/bans.json', defaultBans).catch(logger.error)
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
@@ -70,12 +82,12 @@ client.on('ready', async () => {
 client.on('message', async msg => {
   if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
-  const guildSettings = `./data/servers/${msg.guild.id}/config.json`
-  await mkdirp(`./data/users/${msg.author.id}`)
-  await mkdirp(`./data/servers/${msg.guild.id}`)
-  const userMessagesFile = `./data/users/${msg.author.id}/messages.log`
-  const serverMessagesFile = `./data/servers/${msg.guild.id}/messages.log`
-  const userFile = `./data/users/${msg.author.id}/config.json`
+  const guildSettings = `${root}/data/servers/${msg.guild.id}/config.json`
+  await mkdirp(`${root}/data/users/${msg.author.id}`)
+  await mkdirp(`${root}/data/servers/${msg.guild.id}`)
+  const userMessagesFile = `${root}/data/users/${msg.author.id}/messages.log`
+  const serverMessagesFile = `${root}/data/servers/${msg.guild.id}/messages.log`
+  const userFile = `${root}/data/users/${msg.author.id}/config.json`
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
   try {
     await util.initJSON(userFile, defaultUser)
@@ -86,8 +98,8 @@ client.on('message', async msg => {
       await util.initJSON(guildSettings, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
-  const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
+  const user = await cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile)))
+  const settings = await cs.use(guildSettings, Object.assign(defaultSettings, await util.readJSON(guildSettings)))
   logger.debug('Loading ' + guildSettings)
   await util.checkConfig(user, settings, userFile, guildSettings)
   try {
@@ -115,7 +127,7 @@ client.on('message', async msg => {
   }
   // --- End of Mute
   if (!msg.author.bot) {
-    lang = await util.readJSON(`./lang/${settings.language}.json`) // Processing message is under of this
+    lang = await util.readJSON(`${root}/lang/${settings.language}.json`)
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
@@ -145,10 +157,10 @@ client.on('message', async msg => {
 })
 
 client.on('guildMemberAdd', async (member) => {
-  const userFile = `./data/users/${member.user.id}/config.json`
-  const serverFile = `./data/servers/${member.guild.id}/config.json`
-  await mkdirp(`./data/users/${member.user.id}`)
-  await mkdirp(`./data/servers/${member.guild.id}`)
+  const userFile = `${root}/data/users/${member.user.id}/config.json`
+  const serverFile = `${root}/data/servers/${member.guild.id}/config.json`
+  await mkdirp(`${root}/data/users/${member.user.id}`)
+  await mkdirp(`${root}/data/servers/${member.guild.id}`)
   try {
     await util.initJSON(userFile, defaultUser)
     await util.initJSON(serverFile, defaultSettings)
@@ -200,10 +212,10 @@ client.on('messageUpdate', async (old, msg) => {
     } else {
       parentName = ''
     }
-    await mkdirp(`./data/users/${msg.author.id}`)
-    await mkdirp(`./data/servers/${msg.guild.id}`)
-    const editUserMessagesFile = `./data/users/${msg.author.id}/editedMessages.log`
-    const editServerMessagesFile = `./data/servers/${msg.guild.id}/editedMessages.log`
+    await mkdirp(`${root}/data/users/${msg.author.id}`)
+    await mkdirp(`${root}/data/servers/${msg.guild.id}`)
+    const editUserMessagesFile = `${root}/data/users/${msg.author.id}/editedMessages.log`
+    const editServerMessagesFile = `${root}/data/servers/${msg.guild.id}/editedMessages.log`
     fs.appendFile(editUserMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
     fs.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
   }
@@ -220,7 +232,7 @@ function getDateTime()
 }
 
 client.on('userUpdate', async (olduser, newuser) => {
-  const userFile = `./data/users/${olduser.id}/config.json`
+  const userFile = `${root}/data/users/${olduser.id}/config.json`
   const user = await util.readJSON(userFile, defaultUser)
   let userChanged = false
   try {
@@ -289,14 +301,12 @@ if (!c.repl.disable) {
     setTimeout(() => {
       logger.info('Exiting without disconnect')
       process.exit()
-    }, 5000)
-    setTimeout(() => {
-      logger.warn('Force exiting without disconnect')
-      process.kill(process.pid, 'SIGKILL')
     }, 10000)
     if (count != 0)
       if (!once) {
-        logger.info('Caught INT signal, shutdown.')
+        logger.info('Writing all pending saves')
+        cs.write()
+        logger.info('Disconnecting')
         client.destroy()
         once = true
       } else {
@@ -311,3 +321,5 @@ try {
   client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
     .catch(logger.error)
 } catch (e) { logger.fatal(e) }
+
+module.exports = client

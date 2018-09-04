@@ -1,6 +1,6 @@
 const f = require('string-format')
-const util = require('../util')
 const logger = require('../logger').getLogger('commands:autorole', 'green')
+const cs = require('../config/ConfigStore')
 
 module.exports.name = 'autorole'
 
@@ -13,7 +13,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   if (args[1] === 'remove') {
     const localSettings = settings
     localSettings.autorole = null
-    await util.writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
+    cs.store(guildSettings, localSettings)
+    msg.channel.send(f(lang.setconfig, 'autorole'))
   } else if (args[1] === 'add') {
     const localSettings = settings
     if (/\d{18,}/.test(args[2])) {
@@ -32,7 +33,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
         }
       }
     }
-    await util.writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
+    cs.store(guildSettings, localSettings)
+    msg.channel.send(f(lang.setconfig, 'autorole'))
   } else {
     if (settings.autorole != null) {
       msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name))

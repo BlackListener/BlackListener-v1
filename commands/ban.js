@@ -4,6 +4,7 @@ const bansFile = './data/bans.json'
 const { defaultUser, defaultBans } = require('../contents.js')
 const fs = require('fs').promises
 const logger = require('../logger').getLogger('commands:ban', 'blue')
+const share = require('../share')
 
 module.exports.name = 'ban'
 
@@ -15,17 +16,28 @@ module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (!args[1] || args[1] === '') {
-    const bans = await Promise.all(util.readJSONSync(bansFile).map(async (id) => {
+    const promise = Promise.all(util.readJSONSync(bansFile).map(async (id) => {
       if (id) {
         const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
         return `${user.tag} (${id})`
       }
     }))
-    const embed = new Discord.RichEmbed()
-      .setTitle(lang.banned_users)
-      .setColor([0,255,0])
-      .setDescription(bans.join('\n') || 'まだ誰もBANしていません')
-    msg.channel.send(embed)
+    if (share.e) {
+      promise.finally((bans) => {
+        const embed = new Discord.RichEmbed()
+          .setTitle(lang.banned_users)
+          .setColor([0,255,0])
+          .setDescription(bans.join('\n') || 'まだ誰もBANしていません')
+        msg.channel.send(embed)
+      })
+    } else {
+      const embed = new Discord.RichEmbed()
+        .setTitle(lang.banned_users)
+        .setColor([0,255,0])
+        .setDescription(bans.join('\n') || 'まだ誰もBANしていません')
+      msg.channel.send(embed)
+      const bans = await promise
+    }
   } else {
     if (msg.guild && msg.guild.available && !msg.author.bot) {
       !(async () => {
@@ -73,10 +85,14 @@ module.exports.run = async function(msg, settings, lang) {
         await fs.writeFile(bansFile, JSON.stringify(bans, null, 4), 'utf8')
         await fs.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8')
         if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned)
-        msg.guild.ban(userid, { 'reason': reason })
+        const promise = msg.guild.ban(userid, { 'reason': reason })
           .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
           .catch(logger.error)
-        return msg.channel.send(lang.banned)
+        if (share.e) promise.finally(() => { return msg.channel.send(lang.banned) })
+        else {
+          await promise
+          return msg.channel.send(lang.banned)
+        }
       })()
     }
   }

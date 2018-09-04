@@ -17,6 +17,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   } else {
     set.prefix = args[1]
     cs.store(guildSettings, set)
-    msg.channel.send(f(lang.setconfig, set))
+    msg.channel.send(f(lang.setconfig, 'prefix'))
   }
 }

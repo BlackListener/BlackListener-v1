@@ -16,11 +16,7 @@ module.exports.run = async function(msg, settings, lang) {
   const sb = []
   let link = `${url}`
   let nowrite
-  if (args[1] === 'users') {
-    client.users.forEach((user) => {
-      sb.push(`${user.tag} (${user.id})`)
-    })
-  } else if (args[1] === 'channels') {
+  if (args[1] === 'channels') {
     client.channels.forEach((channel) => {
       sb.push(`<${channel.guild.name}><${channel.guild.id}> ${channel.name} (${channel.id}) [${channel.type}]`)
     })
@@ -41,9 +37,9 @@ module.exports.run = async function(msg, settings, lang) {
     client.emojis.forEach((emoji) => {
       sb.push(`<${emoji.guild.name}><${emoji.guild.id}> ${emoji.name} (${emoji.id}) [isAnimated:${emoji.animated}] [ ${emoji.url} ]`)
     })
-  } else if (!args[1] || args[1] === 'guilds') {
-    client.guilds.forEach((guild) => {
-      sb.push(`${guild.name} (${guild.id}) [ ${config.data_baseurl}/servers/${guild.id}/messages.log ]`)
+  } else if (!args[1] || args[1] === 'users') {
+    client.users.forEach((user) => {
+      sb.push(`${user.tag} (${user.id})`)
     })
   }
   const image1 = 'https://img.rht0910.tk/upload/2191111432/72932264/bump.png'

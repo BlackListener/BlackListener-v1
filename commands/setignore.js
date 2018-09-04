@@ -1,4 +1,5 @@
-const util = require('../util')
+const cs = require('../config/ConfigStore')
+const f = require('string-format')
 
 module.exports.name = 'setignore'
 
@@ -25,5 +26,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   if (!channel) return msg.channel.send(lang.invalid_args)
   const id = channel.id
   settings.excludeLogging = id
-  await util.writeSettings(guildSettings, settings, msg.channel, 'excludeLogging')
+  cs.store(guildSettings, settings)
+  msg.channel.send(f(lang.setconfig, 'exclude_logging'))
 }

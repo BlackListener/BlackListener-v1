@@ -8,6 +8,7 @@ module.exports.run = function(msg, settings, lang) {
     '1.1',
     '1.1.1',
     '1.1.2',
+    '1.2',
   ]
   if (!versions.includes(args[1])) return msg.channel.send(lang.invalidVersion)
   if (args[1]) {

@@ -1,4 +1,5 @@
-const util = require('../util')
+const cs = require('../config/ConfigStore')
+const f = require('string-format')
 
 module.exports.name = 'setnotifyrep'
 
@@ -17,6 +18,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(lang.invalid_args)
   } else {
     set.notifyRep = parseInt(args[1], 10)
-    await util.writeSettings(guildSettings, set, msg.channel, 'notifyRep')
+    cs.store(guildSettings, set)
+    msg.channel.send(f(lang.setconfig, 'notifyRep'))
   }
 }

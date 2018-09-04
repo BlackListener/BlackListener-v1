@@ -1,4 +1,5 @@
 const util = require('../util')
+const cs = require('../config/ConfigStore')
 const logger = require('../logger').getLogger('commands:unban', 'blue')
 const bansFile = './data/bans.json'
 const { defaultUser, defaultBans } = require('../contents.js')
@@ -41,8 +42,8 @@ module.exports.run = async function(msg, settings, lang) {
           .catch(logger.error)
       }
       user.rep = --user.rep
-      await util.writeSettings(bansFile, bans, null, null, false)
-      await util.writeSettings(userFile, user, null, null, false)
+      cs.store(bansFile, bans)
+      cs.store(userFile, user)
       msg.channel.send(lang.unbanned)
     } else {
       msg.channel.send(lang.guild_unavailable)

@@ -7,6 +7,6 @@ module.exports.isAllowed = msg => {
 }
 
 module.exports.run = function(msg, lang) {
-  cs.write()
   msg.channel.send(lang.saved)
+  cs.write()
 }
