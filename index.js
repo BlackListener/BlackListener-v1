@@ -1,5 +1,5 @@
-<<<<<<< HEAD
 require('./client/index')
+<<<<<<< HEAD
 =======
 require('./yaml') // Assign extension .yml for YAML
 const YAML = require('yaml').default
@@ -316,3 +316,5 @@ try {
     .catch(logger.error)
 } catch (e) { logger.fatal(e) }
 >>>>>>> 9bf1027... json5 -> yml
+=======
+>>>>>>> bbac326... reverse merge 2

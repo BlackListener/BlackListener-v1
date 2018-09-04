@@ -11,11 +11,13 @@ for (const file of files) {
   commands[command.name] = command.run
   if (!command.alias) continue
   for (const alias of command.alias) {
-<<<<<<< HEAD
     if (commands[alias]) throw new IllegalStateException(`The alias ${alias} is already used.`)
+<<<<<<< HEAD
 =======
     if (commands[alias]) logger.fatal(`The alias ${alias} is already used.`)
 >>>>>>> 4508b68... bug fix
+=======
+>>>>>>> bbac326... reverse merge 2
     commands[alias] = command.run
   }
 }
