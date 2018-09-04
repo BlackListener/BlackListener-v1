@@ -4,11 +4,11 @@ const sleep = require('sleep').sleep
 require(root + '/yaml') // Assign extension .yml for YAML
 const logger = require(root + '/logger').getLogger('main', 'green')
 logger.info('Initializing')
-if (process.versions.node.startsWith('11.')) {
+if (process.versions.node.startsWith('10.') || process.versions.node.startsWith('11.')) {
   share.e/*xperimental*/ = true
-  logger.warn('Detected Node.js v11.x, Process will attempt to use new features.')
-  logger.warn('Starting in 10 seconds')
-  sleep(10)
+  logger.warn('Detected Node.js v10.x or v11.x, Process will attempt to use new features.')
+  logger.warn('Starting in 3 seconds')
+  sleep(3)
 }
 const f = require('string-format')
 const Discord = require('discord.js')
