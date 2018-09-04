@@ -10,7 +10,7 @@ const share = require('../share')
 module.exports.name = 'info'
 
 module.exports.run = async function(msg, settings, lang) {
-  const s = await util.exists(share.rootDir + '/secret.yml')
+  const s = require(share.rootDir + '/secret.yml')
   const client = msg.client
   const graph = 'Device    Total  Used Avail Use% Mounted on\n'
   let o1 = '利用不可'
