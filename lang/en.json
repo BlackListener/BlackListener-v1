@@ -14,7 +14,7 @@
     "autorole": "Set up to automatically assign a position at the time of participation.",
     "image": "Displays NSFW images.",
     "others": "Help of other commands,",
-    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html).",
+    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html)."
   },
   "status": {
     "servers": {
