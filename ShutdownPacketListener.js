@@ -7,8 +7,9 @@ const rl = readline.createInterface(process.stdin, process.stdout)
 const clients = {}
 
 class ShutdownPacketListener extends EventEmitter {
-  constructor() {
+  constructor(client) {
     super()
+    this.client = client
     return this
   }
   received(logger, rl) {
