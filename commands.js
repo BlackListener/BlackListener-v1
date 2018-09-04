@@ -12,7 +12,7 @@ for (const file of files) {
   if (!command.alias) continue
   for (const alias of command.alias) {
     if (commands[alias]) logger.fatal(`The alias ${alias} is already used.`)
-    commands[alias] = command
+    commands[alias] = command.run
   }
 }
 
