@@ -33,7 +33,7 @@ let s
 try {
   s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 } catch (e) {
-  logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.json5\'')
+  logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
   process.exit(1)
 }
 const {
@@ -305,7 +305,7 @@ if (!c.repl.disable) {
       }
   })
   replServer.context.client = client
-} else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.json5.') }
+} else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
 try {
   logger.info('Logging in...')
