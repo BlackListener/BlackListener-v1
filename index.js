@@ -12,6 +12,15 @@ const isTravisBuild = process.argv[2] === '--travis-build'
 const c = require('./config.yml')
 global.client = client
 
+const getDateTime = function() {
+  const date = new Date()
+  return [
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+  ].join( '/' ) + ' ' + date.toLocaleTimeString()
+}
+
 if (process.env.ENABLE_RCON) {
   logger.warn('Remote control is enabled.')
     .warn('Be careful for unexpected shutdown! (Use firewall to refuse from attack)')
@@ -208,16 +217,6 @@ client.on('messageUpdate', async (old, msg) => {
     fs.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
   }
 })
-
-function getDateTime()
-{
-  const date = new Date()
-  return [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-  ].join( '/' ) + ' ' + date.toLocaleTimeString()
-}
 
 client.on('userUpdate', async (olduser, newuser) => {
   const userFile = `./data/users/${olduser.id}/config.json`
