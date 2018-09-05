@@ -167,5 +167,6 @@
   "no_apikey": "API key are not set, cannot use this command.",
   "eval_error": "An error occurred in eval: {0}",
   "invalidVersion": ":x: Specified invalid version.",
-  "build": "Build: {0}"
+  "build": "Build: {0}",
+  "setconfig": "Saved settings: {0}"
 }

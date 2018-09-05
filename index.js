@@ -1,5 +1,4 @@
 require('./yaml') // Assign extension .yml for YAML
-const YAML = require('yaml').default
 const logger = require('./logger').getLogger('main', 'green')
 logger.info('Initializing')
 const f = require('string-format')
