@@ -10,12 +10,6 @@ module.exports.name = 'info'
 
 module.exports.run = async function(msg, settings, lang) {
   const s = require(share.rootDir + '/secret.yml')
-<<<<<<< HEAD
-=======
-  const s = await util.exists('./secret.yml') ? require('../secret.yml') : require('../travis.yml')
->>>>>>> 9bf1027... json5 -> yml
-=======
->>>>>>> 3275a89... merge
   const client = msg.client
   const graph = 'Device    Total  Used Avail Use% Mounted on\n'
   let o1 = '利用不可'
