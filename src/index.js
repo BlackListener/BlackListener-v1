@@ -54,11 +54,6 @@ let lang
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('ready', async () => {
-  await mkdirp(`${__dirname}/../error-reports`)
-  await mkdirp(`${__dirname}/../crash-reports`)
-  await mkdirp(`${__dirname}/../data/servers`)
-  await mkdirp(`${__dirname}/../data/users`)
-  await mkdirp(`${__dirname}/../plugins/commands`)
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)

@@ -4,21 +4,11 @@
 # Bot tokens, invite links file.
 secret.yml
 
-# Data folder.
-/data
-
 # Dumped file
 dump.txt
 
 # Logs
 latest.log
-
-# Plugins folder
-/plugins/
-
-# Crash, error reports
-/crash-reports/
-/error-reports/
 
 # Pid file
 blacklistener.pid
