@@ -3,7 +3,7 @@ const share = {
   logger: {},
   rootDir: __dirname,
   client: null,
-  e/*xperimental*/: false,
+  e: true, // use try...catch...finally or not
 }
 
 module.exports = share

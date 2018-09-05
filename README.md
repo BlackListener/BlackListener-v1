@@ -9,6 +9,10 @@ Global Banning System for Discord.
 __**This branch is including experimental features, may corrupt BlackListener's data!**__
 **Please move your data folder before using it.**
 
+**This bot can't use on node v8, please use node v10 instead.**
+
+__**There is no way JSON to YAML Convertion.**__
+
 ## Startup options
 
 - You can change default prefix without editing config, and other things!
@@ -120,10 +124,3 @@ Also you can't ban that users:
 - Discordにユーザーを削除されています (`Deleted user ???????`)
 - 実行者がBotからBANされている
 - サーバーがBotからBANされている
-
-## Length of downtime
-
-- __The downtime is very tiny, This is only restart the bot.__
-- __If short downtime, most errors are JSON Parse errors. Cannot be resolved by user, please contact to the bot owner.__
-- __If loooooong (1 hours or later) downtime, this is a critical server error, already we always working to resolve a problem.__
-- __If extremely (3 days or later) longest downtime, we are always very working to resolve the problem, the errors are networking problem.__

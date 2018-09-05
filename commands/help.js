@@ -19,7 +19,7 @@ module.exports.run = function(msg, settings, lang) {
     .addField(`${prefix}antispam`, lang.commands.antispam)
     .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
     .addField(`${prefix}invite`, lang.commands.invite)
-    .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
+    .addField(`${prefix}role <role> [user] | ${prefix}autorole [add/remove] <role>`, `${lang.commands.role} | ${lang.commands.autorole}`)
     .addField(`${prefix}image [nsfw|anime|custom] [subreddit]`, lang.commands.image)
     .addField(`${prefix}lookup <User>`, lang.lookup.desc)
     .addField(lang.commands.others, lang.commands.athere)

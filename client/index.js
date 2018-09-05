@@ -15,6 +15,14 @@ const c = require(root + '/config.yml')
 const ds = require(root + '/config/DataStore')
 ds.initialized = true
 const cs = require(root + '/config/ConfigStore')
+const getDateTime = function() {
+  const date = new Date()
+  return [
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+  ].join( '/' ) + ' ' + date.toLocaleTimeString()
+}
 share.client = client
 
 if (process.env.ENABLE_RCON) {
@@ -59,7 +67,7 @@ client.on('ready', async () => {
   await mkdirp(root + '/data/servers')
   await mkdirp(root + '/data/users')
   await mkdirp(root + '/plugins/commands')
-  util.initJSON(root + '/data/bans.json', defaultBans).catch(logger.error)
+  util.initYAML(root + '/data/bans.yml', defaultBans).catch(logger.error)
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
@@ -75,26 +83,25 @@ client.on('ready', async () => {
 client.on('message', async msg => {
   if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
-  const guildSettings = `${root}/data/servers/${msg.guild.id}/config.json`
+  const guildSettings = `${root}/data/servers/${msg.guild.id}/config.yml`
   await mkdirp(`${root}/data/users/${msg.author.id}`)
   await mkdirp(`${root}/data/servers/${msg.guild.id}`)
   const userMessagesFile = `${root}/data/users/${msg.author.id}/messages.log`
   const serverMessagesFile = `${root}/data/servers/${msg.guild.id}/messages.log`
-  const userFile = `${root}/data/users/${msg.author.id}/config.json`
+  const userFile = `${root}/data/users/${msg.author.id}/config.yml`
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
   try {
-    await util.initJSON(userFile, defaultUser)
-    await util.initJSON(guildSettings, defaultSettings)
+    await util.initYAML(userFile, defaultUser)
+    await util.initYAML(guildSettings, defaultSettings)
   } catch (e) {
     try {
-      await util.initJSON(userFile, defaultUser)
-      await util.initJSON(guildSettings, defaultSettings)
+      await util.initYAML(userFile, defaultUser)
+      await util.initYAML(guildSettings, defaultSettings)
     } catch (e) {logger.error(e)}
   }
-  const user = await cs.use(userFile, Object.assign(defaultUser, await util.readJSON(userFile)))
-  const settings = await cs.use(guildSettings, Object.assign(defaultSettings, await util.readJSON(guildSettings)))
+  const user = await cs.use(userFile, Object.assign(defaultUser, await util.readYAML(userFile)))
+  const settings = await cs.use(guildSettings, Object.assign(defaultSettings, await util.readYAML(guildSettings)))
   logger.debug('Loading ' + guildSettings)
-  await util.checkConfig(user, settings, userFile, guildSettings)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
       const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
@@ -150,21 +157,16 @@ client.on('message', async msg => {
 })
 
 client.on('guildMemberAdd', async (member) => {
-  const userFile = `${root}/data/users/${member.user.id}/config.json`
-  const serverFile = `${root}/data/servers/${member.guild.id}/config.json`
+  const userFile = `${root}/data/users/${member.user.id}/config.yml`
+  const serverFile = `${root}/data/servers/${member.guild.id}/config.yml`
   await mkdirp(`${root}/data/users/${member.user.id}`)
   await mkdirp(`${root}/data/servers/${member.guild.id}`)
   try {
-    await util.initJSON(userFile, defaultUser)
-    await util.initJSON(serverFile, defaultSettings)
-  } catch (e) {
-    try {
-      await util.initJSON(userFile, defaultUser)
-      await util.initJSON(serverFile, defaultSettings)
-    } catch (e) {logger.error(e)}
-  }
-  const serverSetting = await util.readJSON(serverFile)
-  const userSetting = await util.readJSON(userFile)
+    await util.initYAML(userFile, defaultUser)
+    await util.initYAML(serverFile, defaultSettings)
+  } catch (e) {logger.error(e)}
+  const serverSetting = await util.readYAML(serverFile)
+  const userSetting = await util.readYAML(userFile)
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
@@ -178,8 +180,8 @@ client.on('guildMemberAdd', async (member) => {
     (async function () {
       const role = await member.guild.roles.get(serverSetting.autorole)
       member.addRole(role)
-      logger.info(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`)
-    }) ()
+      client.channels.get(serverSetting.log_message).send(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`)
+    }())
   }
   if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
     let message = serverSetting.welcome_message.replace('{user}', `<@${member.user.id}>`)
@@ -196,7 +198,7 @@ client.on('guildMemberAdd', async (member) => {
 })
 
 client.on('messageUpdate', async (old, msg) => {
-  const settings = await util.readJSON(`./data/servers/${msg.guild.id}/config.json`, defaultSettings)
+  const settings = await util.readYAML(`./data/servers/${msg.guild.id}/config.yml`, defaultSettings)
   if (old.content === msg.content) return
   if (msg.channel.id !== settings.excludeLogging) {
     let parentName
@@ -209,72 +211,15 @@ client.on('messageUpdate', async (old, msg) => {
     await mkdirp(`${root}/data/servers/${msg.guild.id}`)
     const editUserMessagesFile = `${root}/data/users/${msg.author.id}/editedMessages.log`
     const editServerMessagesFile = `${root}/data/servers/${msg.guild.id}/editedMessages.log`
-    fs.appendFile(editUserMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
-    fs.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
-  }
-})
-
-function getDateTime()
-{
-  const date = new Date()
-  return [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-  ].join( '/' ) + ' ' + date.toLocaleTimeString()
-}
-
-client.on('userUpdate', async (olduser, newuser) => {
-  const userFile = `${root}/data/users/${olduser.id}/config.json`
-  const user = await util.readJSON(userFile, defaultUser)
-  let userChanged = false
-  try {
-    if (!user.bannedFromServer) {
-      user.bannedFromServer = []
-      userChanged = true
-    }
-    if (!user.bannedFromServerOwner) {
-      user.bannedFromServerOwner = []
-      userChanged = true
-    }
-    if (!user.bannedFromUser) {
-      user.bannedFromUser = []
-      userChanged = true
-    }
-    if (!user.probes) {
-      user.probes = []
-      userChanged = true
-    }
-    if (!user.reasons) {
-      user.reasons = []
-      userChanged = true
-    }
-    if (!user.tag_changes) {
-      user.tag_changes = []
-      userChanged = true
-    }
-    if (!user.avatar_changes) {
-      user.avatar_changes = []
-      userChanged = true
-    }
-    if (!user.username_changes) {
-      user.username_changes =[]
-      userChanged = true
-    }
-  } catch (e) {
-    logger.error(`Error while null checking (${e})`)
-  }
-  try {
-    if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
-    if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
-  } catch (e) {
-    logger.error(e.stack)
+    const template = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`
+    fs.appendFile(editUserMessagesFile, template)
+    fs.appendFile(editServerMessagesFile, template)
   }
 })
 
 let once = false; let count = 0
 if (!c.repl.disable) {
-  const help = function() {
+  const help = () => {
     console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
     console.log('.kill -> Kill this process')
     console.log('client -> A \'Discord.Client()\'')
@@ -282,19 +227,12 @@ if (!c.repl.disable) {
   }
   const replServer = require('repl').start(c.repl.prefix || '> ')
   replServer.defineCommand('help', help)
-  replServer.defineCommand('kill', () => {
-    process.kill(process.pid, 'SIGKILL')
-  })
-  replServer.defineCommand('end', function() {
+  replServer.defineCommand('kill', () => {process.kill(process.pid, 'SIGKILL')})
+  replServer.defineCommand('end', () => {
     setInterval(() => {
-      if (count <= 5000) {
-        ++count
-      } else { clearInterval(this) }
+      if (count <= 10000) ++count; else clearInterval(this)
     }, 1)
-    setTimeout(() => {
-      logger.info('Exiting without disconnect')
-      process.exit()
-    }, 10000)
+    setTimeout(() => {logger.info('Exiting without disconnect');process.exit()}, 10000)
     if (count != 0)
       if (!once) {
         logger.info('Writing all pending saves')
@@ -303,16 +241,14 @@ if (!c.repl.disable) {
         client.destroy()
         once = true
       } else {
-        logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
+        logger.info('Already you tried exit, Program will exit at time out(' + (10000 - count) / 1000 + ' seconds left) or disconnected')
       }
   })
   replServer.context.client = client
 } else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
-try {
-  logger.info('Logging in...')
-  client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
-    .catch(logger.error)
-} catch (e) { logger.fatal(e) }
+logger.info('Logging in...')
+client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
+  .catch(logger.error)
 
 module.exports = client

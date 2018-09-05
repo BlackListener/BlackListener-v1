@@ -47,7 +47,7 @@ module.exports.run = async function(msg, settings, lang) {
   const sb6 = [lang.no]
   let isBot = lang.no
   try {
-    userConfig = await util.readJSON(`./data/users/${id}/config.json`)
+    userConfig = await util.readYAML(`./data/users/${id}/config.yml`)
     user2 = client.users.get(id)
   } catch (e) {
     logger.error(e)
