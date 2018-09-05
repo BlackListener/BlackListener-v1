@@ -11,29 +11,27 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'remove') {
-    const localSettings = settings
-    localSettings.autorole = null
-    cs.store(guildSettings, localSettings)
+    settings.autorole = null
+    cs.store(guildSettings, settings)
     msg.channel.send(f(lang.setconfig, 'autorole'))
   } else if (args[1] === 'add') {
-    const localSettings = settings
     if (/\d{18,}/.test(args[2])) {
-      localSettings.autorole = args[2]
+      settings.autorole = args[2]
     } else {
       try {
         const role = msg.mentions.roles.first().id.toString()
-        localSettings.autorole = role
+        settings.autorole = role
       } catch (e) {
         try {
           const role = msg.guild.roles.find('name', args[2]).id
-          localSettings.autorole = role
+          settings.autorole = role
         } catch (e) {
           msg.channel.send(lang.invalid_args)
           logger.error(e)
         }
       }
     }
-    cs.store(guildSettings, localSettings)
+    cs.store(guildSettings, settings)
     msg.channel.send(f(lang.setconfig, 'autorole'))
   } else {
     if (settings.autorole != null) {
