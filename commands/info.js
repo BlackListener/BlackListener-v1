@@ -1,6 +1,5 @@
 const Discord = require('discord.js')
-const {promisify} = require('util')
-const exec = promisify(require('child_process').exec)
+const exec = require('util').promisify(require('child_process').exec)
 const os = require('os')
 const c = require('../config.yml')
 const isWindows = process.platform === 'win32'

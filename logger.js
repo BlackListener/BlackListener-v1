@@ -32,9 +32,7 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   getLogger(thread, color = 'yellow') {
-    if (!this.initialized) {
-      this.initLog()
-    }
+    if (!this.initialized) this.initLog()
     const self = new Logger()
     self.thread = thread
     self.thread_raw = thread
