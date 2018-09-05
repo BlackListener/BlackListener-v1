@@ -8,11 +8,6 @@ module.exports = {
   async exists(path) {
     return await fs.access(path).then(() => true).catch(() => false)
   },
-  async initJSON(path, json) {
-    if (await this.exists(path)) return
-    logger.info(`Creating ${path}`)
-    return await this.writeJSON(path, json)
-  },
   async initYAML(path, json) {
     if (await this.exists(path)) return
     logger.info(`Creating ${path}`)
@@ -22,12 +17,6 @@ module.exports = {
     logger.debug(`Reading from file: ${path}`)
     return await fs.readFile(path, 'utf8')
       .then(data => this.parseYAML(data))
-      .catch(err => _default ? null : err)
-  },
-  async readJSON(path, _default) {
-    logger.debug(`Reading from file: ${path}`)
-    return await fs.readFile(path, 'utf8')
-      .then(data => this.parse(data))
       .catch(err => _default ? null : err)
   },
   async writeJSON(path, json) {
@@ -40,30 +29,16 @@ module.exports = {
     const data = this.stringifyYAML(yaml)
     return fs.writeFile(path, data, 'utf8')
   },
-  readJSONSync(path) {
-    const data = _fs.readFileSync(path, 'utf8')
-    return this.parse(data)
-  },
   readYAMLSync(path) {
     const data = _fs.readFileSync(path, 'utf8')
     return this.parseYAML(data)
-  },
-  writeJSONSync(path, json) {
-    const data = this.stringify(json)
-    _fs.writeFileSync(path, data, 'utf8')
   },
   writeYAMLSync(path, yaml) {
     const data = this.stringifyYAML(yaml)
     _fs.writeFileSync(path, data, 'utf8')
   },
-  parse(json) {
-    return JSON.parse(json)
-  },
   parseYAML(yaml) {
     return YAML.parse(yaml)
-  },
-  stringify(json) {
-    return JSON.stringify(json, null, 4)
   },
   stringifyYAML(yaml) {
     return YAML.stringify(yaml)

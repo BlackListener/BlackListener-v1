@@ -127,7 +127,7 @@ client.on('message', async msg => {
   }
   // --- End of Mute
   if (!msg.author.bot) {
-    lang = await util.readJSON(`${root}/lang/${settings.language}.json`)
+    lang = require(`${root}/lang/${settings.language}.json`)
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
