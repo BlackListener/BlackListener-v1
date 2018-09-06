@@ -1,4 +1,4 @@
-# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/) [![Build Status](https://travis-ci.com/BlackListener/BlackListener.svg?branch=master)](https://travis-ci.com/BlackListener/BlackListener)
+# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/) [![Build Status](https://travis-ci.com/BlackListener/BlackListener.svg?branch=master)](https://travis-ci.com/BlackListener/BlackListener) [![Maintainability](https://api.codeclimate.com/v1/badges/3ee5dd92d017350ff96f/maintainability)](https://codeclimate.com/github/BlackListener/BlackListener/maintainability)
 
 Global Banning System for Discord.
 
