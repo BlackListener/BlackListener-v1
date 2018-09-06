@@ -67,13 +67,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     }
   } else if (args[1] === 'status') {
     if (!msg.mentions.channels.first()) {
-      const sb = []
-      settings.ignoredChannels.forEach((channel) => {
-        if (channel != null) {
-          sb.push(`<#${channel}>`)
-        }
-      })
-      return msg.channel.send(f(lang.antispam.disabled_channels, sb.join('\n')))
+      const channels = settings.ignoredChannels.map((channel) => `<#${channel}>`)
+      return msg.channel.send(f(lang.antispam.disabled_channels, channels.join('\n')))
     }
     const id = msg.mentions.channels.first().id
     if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }

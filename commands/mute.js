@@ -10,23 +10,18 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
-  let user2; const muteSB = [lang.no]
+  let user2
   if (!args[1]) {
-    if (settings.mute.length != 0) {
-      muteSB.length = 0
-      settings.mute.forEach((data) => {
-        if (data) {
-          if (client.users.has(data)) {
-            muteSB.push(`<@${data}> (${client.users.get(data).tag})`)
-          } else {
-            muteSB.push(`<@${data}> ${data} (${lang.failed_to_get})`)
-          }
-        }
-      })
-    }
+    const mutes = settings.mute.map((data) => {
+      if (client.users.has(data)) {
+        return `<@${data}> (${client.users.get(data).tag})`
+      } else {
+        return `<@${data}> ${data} (${lang.failed_to_get})`
+      }
+    })
     return msg.channel.send(new Discord.RichEmbed()
       .setTitle(lang.serverinfo.mute)
-      .addField(lang.serverinfo.mute, muteSB.join('\n'))
+      .addField(lang.serverinfo.mute, mutes.join('\n') || lang.no)
     )
   }
   try {
