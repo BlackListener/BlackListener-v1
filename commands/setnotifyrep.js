@@ -2,6 +2,8 @@ const { setrep } = require('./functions')
 
 module.exports.name = 'setnotifyrep'
 
+module.exports.alias = ['notifyrep']
+
 module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }

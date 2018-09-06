@@ -2,6 +2,8 @@ const { setrep } = require('./functions')
 
 module.exports.name = 'setbanrep'
 
+module.exports.alias = ['banrep']
+
 module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }

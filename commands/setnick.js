@@ -2,7 +2,7 @@ const logger = require('../logger').getLogger('commands:setnick', 'yellow')
 
 module.exports.name = 'setnick'
 
-module.exports.alias = ['setnickname', 'resetnick']
+module.exports.alias = ['setnickname', 'resetnick', 'nick']
 
 module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
