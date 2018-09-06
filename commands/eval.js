@@ -7,11 +7,11 @@ module.exports.isAllowed = msg => {
   return msg.author.id == '254794124744458241'
 }
 
-module.exports.run = function(msg, settings, lang) {
+module.exports.run = async function(msg, settings, lang) {
   if (msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
   const commandcut = msg.content.substr(`${settings.prefix}eval `.length)
   try {
-    const returned = eval(commandcut)
+    const returned = await (eval(`(async () => {${commandcut}})()`))
     logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`)
     msg.channel.send(`:ok_hand: (${returned})`)
   } catch (e) {

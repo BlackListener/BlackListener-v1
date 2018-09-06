@@ -26,7 +26,6 @@ class ShutdownPacketListener extends EventEmitter {
     })
   }
 }
-//util.inherits(ShutdownPacketListener, EventEmitter
 
 function Client(socket){
   this.socket = socket
