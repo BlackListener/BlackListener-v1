@@ -2,6 +2,8 @@ const f = require('string-format')
 const Discord = require('discord.js')
 const c = require('../config.yml')
 
+module.exports.args = '[Command]'
+
 module.exports.name = 'help'
 
 module.exports.run = function(msg, settings, lang) {

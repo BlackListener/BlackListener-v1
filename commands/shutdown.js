@@ -1,6 +1,8 @@
 const logger = require('../logger').getLogger('commands:shutdown', 'darkgray')
 const f = require('string-format')
 
+module.exports.args = '[-f]'
+
 module.exports.name = 'shutdown'
 
 module.exports.isAllowed = (msg, owners) => {

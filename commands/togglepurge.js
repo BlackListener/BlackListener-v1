@@ -1,5 +1,7 @@
 const util = require('../util')
 
+module.exports.args = '[enable/disable]'
+
 module.exports.name = 'togglepurge'
 
 module.exports.isAllowed = msg => {

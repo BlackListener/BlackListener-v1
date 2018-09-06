@@ -1,5 +1,7 @@
 const util = require('../util')
 
+module.exports.args = '<0...10>'
+
 module.exports.name = 'setbanrep'
 
 module.exports.isAllowed = msg => {

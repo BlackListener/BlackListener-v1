@@ -1,3 +1,5 @@
+module.exports.args = '<User>'
+
 module.exports.name = 'instantban'
 
 module.exports.isAllowed = msg => {

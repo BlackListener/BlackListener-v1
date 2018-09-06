@@ -2,6 +2,15 @@ const Discord = require('discord.js')
 const util = require('../util')
 const f = require('string-format')
 
+module.exports.args = [
+  '',
+  'toggle',
+  'disable',
+  'enable',
+  'ignore <Channel>',
+  'status [Channel]',
+]
+
 module.exports.name = 'antispam'
 
 module.exports.isAllowed = msg => {

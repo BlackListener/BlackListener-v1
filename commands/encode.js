@@ -1,3 +1,5 @@
+module.exports.args = '<String>'
+
 module.exports.name = 'encode'
 
 module.exports.run = function(msg, settings) {

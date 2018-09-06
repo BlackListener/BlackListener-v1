@@ -1,5 +1,7 @@
 const util = require('../util')
 
+module.exports.args = '<Role>'
+
 module.exports.name = 'blockrole'
 
 module.exports.isAllowed = msg => {

@@ -1,5 +1,7 @@
 const util = require('../util')
 
+module.exports.args = '<Role> [User]'
+
 module.exports.name = 'role'
 
 module.exports.run = function(msg, settings, lang) {

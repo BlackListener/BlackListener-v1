@@ -3,6 +3,8 @@ const Discord = require('discord.js')
 const logger = require('../logger').getLogger('commands:lookup', 'purple')
 const util = require('../util')
 
+module.exports.args = '<User>'
+
 module.exports.name = 'lookup'
 
 module.exports.run = async function(msg, settings, lang) {

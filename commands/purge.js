@@ -1,5 +1,13 @@
 const logger = require('../logger').getLogger('commands:purge', 'lightpurple')
 
+module.exports.args = [
+  '[number/all]',
+  'gdel',
+  'gdel-msg',
+  'gdel-really',
+  'remake <Channel>',
+]
+
 module.exports.name = 'purge'
 
 module.exports.isAllowed = msg => {

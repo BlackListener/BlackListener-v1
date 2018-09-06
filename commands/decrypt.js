@@ -1,6 +1,8 @@
 const f = require('string-format')
 const crypto = require('crypto')
 
+module.exports.args = '<EncryptedText> <Password>'
+
 module.exports.name = 'decrypt'
 
 module.exports.run = function(msg, settings, lang) {

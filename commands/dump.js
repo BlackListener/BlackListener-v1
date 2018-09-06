@@ -3,6 +3,8 @@ const fs = require('fs').promises
 const f = require('string-format')
 const config = require('../config.yml')
 
+module.exports.args = '[guilds|users|channels|emojis|messages]'
+
 module.exports.name = 'dump'
 
 module.exports.isAllowed = msg => {

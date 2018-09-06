@@ -2,6 +2,8 @@ const f = require('string-format')
 const util = require('../util')
 const logger = require('../logger').getLogger('commands:autorole', 'green')
 
+module.exports.args = '[add/remove] <Role>'
+
 module.exports.name = 'autorole'
 
 module.exports.isAllowed = msg => {

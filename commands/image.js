@@ -2,6 +2,13 @@ const Discord = require('discord.js')
 const randomPuppy = require('random-puppy')
 const logger = require('../logger').getLogger('commands:image', 'blue')
 
+module.exports.args = [
+  '',
+  'anime',
+  'nsfw|r18',
+  'custom <subreddit>',
+]
+
 module.exports.name = 'image'
 
 module.exports.run = async function(msg, settings, lang) {

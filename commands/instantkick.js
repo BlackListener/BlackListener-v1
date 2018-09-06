@@ -1,3 +1,5 @@
+module.exports.args = '<User>'
+
 module.exports.name = 'instantkick'
 
 module.exports.isAllowed = msg => {

@@ -1,6 +1,8 @@
 const logger = require('../logger').getLogger('commands:eval', 'lightpurple')
 const f = require('string-format')
 
+module.exports.args = '<Program>'
+
 module.exports.name = 'eval'
 
 module.exports.isAllowed = (msg, owners) => {

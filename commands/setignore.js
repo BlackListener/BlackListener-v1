@@ -1,5 +1,7 @@
 const util = require('../util')
 
+module.exports.args = '<Channel>'
+
 module.exports.name = 'setignore'
 
 module.exports.isAllowed = msg => {

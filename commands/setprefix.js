@@ -1,5 +1,7 @@
 const util = require('../util')
 
+module.exports.args = '<Prefix>'
+
 module.exports.name = 'setprefix'
 
 module.exports.alias = ['prefix']

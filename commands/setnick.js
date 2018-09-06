@@ -1,5 +1,7 @@
 const logger = require('../logger').getLogger('commands:setnick', 'yellow')
 
+module.exports.args = '<NewName> [User]'
+
 module.exports.name = 'setnick'
 
 module.exports.alias = ['setnickname', 'resetnick']

@@ -1,3 +1,5 @@
+module.exports.args = '[escape]'
+
 module.exports.name = 'listemojis'
 
 module.exports.run = function(msg, settings) {

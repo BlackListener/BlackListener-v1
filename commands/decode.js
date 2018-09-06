@@ -1,3 +1,5 @@
+module.exports.args = '<Base64String>'
+
 module.exports.name = 'decode'
 
 module.exports.run = function(msg, settings) {

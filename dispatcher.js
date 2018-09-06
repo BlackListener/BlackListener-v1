@@ -19,10 +19,10 @@ module.exports = async function(settings, msg, lang, guildSettings) {
     } else if (await util.exists(`./plugins/commands/${cmd}.js`)) {
       require(`./plugins/commands/${cmd}.js`).run(msg, settings, lang, guildSettings)
     } else {
-      const commandList = Object.keys(commands).map(cmd => ({ cmd }))
+      const commandList = Object.keys(commands).map(cmd => ({ cmd, args: commands[cmd].args }))
       for (const item of commandList) item.no = levenshtein(cmd, item.cmd)
       const cmds = commandList.sort((a, b) => a.no - b.no).filter(item => item.no <= 2)
-      const list = cmds.map(item => `・\`${settings.prefix}${item.cmd}${item.args || ''}\``)
+      const list = cmds.map(item => `・\`${settings.prefix}${item.cmd} ${item.args || ''}\``)
       msg.channel.send(f(lang.no_command, settings.prefix, cmd))
       if (list.length) msg.channel.send(f(lang.didyoumean, list.join('\n')))
     }

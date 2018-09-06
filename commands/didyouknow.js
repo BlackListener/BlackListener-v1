@@ -1,5 +1,7 @@
 const f = require('string-format')
 
+module.exports.args = '<User:Guild> [:server]'
+
 module.exports.name = 'didyouknow'
 
 module.exports.run = function(msg, settings, lang) {
