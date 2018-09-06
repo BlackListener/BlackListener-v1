@@ -3,7 +3,8 @@ const logger = require('./logger').getLogger('commands', 'yellow')
 const commands = require('./commands')
 const levenshtein = require('fast-levenshtein').get
 const util = require('./util')
-const config = require('./config.yml')
+const isTravisBuild = process.argv[2] === '--travis-build'
+const s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 
 module.exports = async function(settings, msg, lang, guildSettings) {
   if (msg.content === `<@${msg.client.user.id}>` || msg.content === `<@!${msg.client.user.id}>`)
@@ -12,7 +13,7 @@ module.exports = async function(settings, msg, lang, guildSettings) {
     const [cmd] = msg.content.replace(settings.prefix, '').split(' ')
     if (settings.banned) return msg.channel.send(f(lang.error, lang.errors.server_banned))
     if (commands[cmd]) {
-      if (!commands[cmd].isAllowed || commands[cmd].isAllowed(msg, config.owners)) {
+      if (!commands[cmd].isAllowed || commands[cmd].isAllowed(msg, s.owners)) {
         logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
         commands[cmd](msg, settings, lang, guildSettings)
       } else msg.channel.send(lang.udonthaveperm)
