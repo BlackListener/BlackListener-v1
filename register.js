@@ -53,7 +53,7 @@ ${arguments}
     Launched in PID: ${process.pid}
 
     Remote control: ${process.env.ENABLE_RCON ? 'Enabled' : 'Disabled'}
-    Custom Prefix: ${process.env.BL_PREFIX ? process.env.BL_PREFIX : 'Disabled; using default value: '+c.prefix}
+    Custom Prefix: ${process.env.BL_PREFIX || 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
     Average ping of websocket: ${global.client.ping}
@@ -112,7 +112,7 @@ ${arguments}
     Launched in PID: ${process.pid}
 
     Remote control: ${process.env.ENABLE_RCON ? 'Enabled' : 'Disabled'}
-    Custom Prefix: ${process.env.BL_PREFIX ? process.env.BL_PREFIX : 'Disabled; using default value: '+c.prefix}
+    Custom Prefix: ${process.env.BL_PREFIX || 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
     Average ping of websocket: ${Math.floor(global.client.ping * 100) / 100}

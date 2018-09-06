@@ -1,7 +1,7 @@
 const net = require('net')
 const options = {}
-options.host = process.argv[2] ? process.argv[2] : '127.0.0.1'
-options.port = process.argv[3] ? process.argv[3] : '5123'
+options.host = process.argv[2] || '127.0.0.1'
+options.port = process.argv[3] || '5123'
 
 const client = net.connect(options)
 

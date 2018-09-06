@@ -274,7 +274,7 @@ if (!c.repl.disable) {
     console.log('client -> A \'Discord.Client()\'')
     return
   }
-  const replServer = require('repl').start(c.repl.prefix ? c.repl.prefix : '> ')
+  const replServer = require('repl').start(c.repl.prefix || '> ')
   replServer.defineCommand('help', help)
   replServer.defineCommand('kill', () => {
     process.kill(process.pid, 'SIGKILL')
