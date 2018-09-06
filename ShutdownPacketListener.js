@@ -1,13 +1,15 @@
 const EventEmitter = require('events').EventEmitter
 const logger = require('./logger').getLogger('ShutdownPacketListener', 'red')
 const net = require('net')
-const readline = require('readline')
 const server = net.createServer()
+server.maxConnections = 1
+const readline = require('readline')
 const rl = readline.createInterface(process.stdin, process.stdout)
 const clients = {}
 class ShutdownPacketListener extends EventEmitter {
-  constructor() {
+  constructor(client) {
     super()
+    this.client = client
     return this
   }
   received(logger, rl) {
@@ -18,14 +20,12 @@ class ShutdownPacketListener extends EventEmitter {
     }
     server.close()
     rl.close()
-    global.client.destroy()
+    this.client.destroy()
     process.nextTick(() => {
       this.emit('received')
     })
   }
 }
-//util.inherits(ShutdownPacketListener, EventEmitter)
-server.maxConnections = 1
 
 function Client(socket){
   this.socket = socket

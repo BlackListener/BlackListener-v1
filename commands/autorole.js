@@ -1,6 +1,6 @@
 const f = require('string-format')
-const util = require('../util')
 const logger = require('../logger').getLogger('commands:autorole', 'green')
+const cs = require('../config/ConfigStore')
 
 module.exports.name = 'autorole'
 
@@ -11,33 +11,24 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'remove') {
-    const localSettings = settings
-    localSettings.autorole = null
-    await util.writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
+    settings.autorole = null
+    cs.store(guildSettings, settings)
+    msg.channel.send(f(lang.setconfig, 'autorole'))
   } else if (args[1] === 'add') {
-    const localSettings = settings
     if (/\d{18,}/.test(args[2])) {
-      localSettings.autorole = args[2]
+      settings.autorole = args[2]
     } else {
       try {
-        const role = msg.mentions.roles.first().id.toString()
-        localSettings.autorole = role
-      } catch (e) {
-        try {
-          const role = msg.guild.roles.find('name', args[2]).id
-          localSettings.autorole = role
-        } catch (e) {
-          msg.channel.send(lang.invalid_args)
-          logger.error(e)
-        }
+        settings.autorole = msg.mentions.roles.first().id.toString() || msg.guild.roles.find('name', args[2]).id
+      } catch(e) {
+        msg.channel.send(lang.invalid_args); logger.error(e)
       }
     }
-    await util.writeSettings(guildSettings, localSettings, msg.channel, 'autorole')
+    cs.store(guildSettings, settings)
+    msg.channel.send(f(lang.setconfig, 'autorole'))
   } else {
-    if (settings.autorole != null) {
+    if (settings.autorole != null || settings.autorole === true)
       msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name))
-    } else if (!settings.autorole) {
-      msg.channel.send(lang.autorole_disabled)
-    }
+    else if (!settings.autorole) msg.channel.send(lang.autorole_disabled)
   }
 }

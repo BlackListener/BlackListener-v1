@@ -1,20 +1,17 @@
 const Discord = require('discord.js')
-const util = require('../util')
-const {promisify} = require('util')
-const exec = promisify(require('child_process').exec)
+const exec = require('util').promisify(require('child_process').exec)
 const os = require('os')
 const c = require('../config.yml')
 const isWindows = process.platform === 'win32'
+const share = require('../share')
 
 module.exports.name = 'info'
 
 module.exports.run = async function(msg, settings, lang) {
-  const s = await util.exists('./secret.yml') ? require('../secret.yml') : require('../travis.yml')
+  const invite = require(share.rootDir + '/secret.yml').inviteme
   const client = msg.client
   const graph = 'Device    Total  Used Avail Use% Mounted on\n'
-  let o1 = '利用不可'
-  let loadavg = '利用不可'
-  const invite = s.inviteme
+  let o1 = '利用不可'; let loadavg = '利用不可'
   if (!isWindows) {
     const { stdout } = await exec('df -h | grep /dev/sda')
     o1 = stdout
@@ -32,7 +29,7 @@ module.exports.run = async function(msg, settings, lang) {
     .addField(lang.info.servers, `${client.guilds.size}`)
     .addField(lang.info.users, `${client.users.size}`)
     .addField(lang.info.createdBy, `${client.users.get('254794124744458241').tag} (${client.users.get('254794124744458241').id})`)
-    .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)`)
+    .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[Discord Bots](https://discordbots.org/bot/456966161079205899)`)
     .setFooter(`Sent by ${msg.author.tag}`)
   return msg.channel.send(embed)
 }

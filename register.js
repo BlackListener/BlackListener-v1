@@ -2,14 +2,21 @@ const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.yml')
 const fs = require('fs').promises
 const os = require('os')
-
-global.loadConfig = function() {
-  return require('./config.yml')
+const share = require('./share')
+const cs = require('./config/ConfigStore')
+const getDateTime = function() {
+  const date = new Date()
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
 }
 
 module.exports = function(client) {
   let count = 0
   let once = false
+  let errors = 0
+
+  setInterval(() => {
+    errors = 0
+  }, 1500)
 
   client.on('warn', (warn) => {
     logger.warn(`Got Warning from Client: ${warn}`)
@@ -25,9 +32,10 @@ module.exports = function(client) {
   })
 
   process.on('unhandledRejection', (error) => {
+    if (errors >= 2) { logger.fatal('Error loop detected, exiting'); process.exit(1) }
+    errors++
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
-    const date = new Date()
-    const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
+    const format = getDateTime()
     const file = `./error-reports/error-${format}.txt`
     let arguments = ''
     process.argv.forEach((val, index) => {
@@ -42,7 +50,7 @@ Description: Unhandled Rejection(Exception/Error in Promise).
 ${error.stack}
 
 --- Process Details ---
-    Last Called Logger Thread: ${global.thread} (may not current thread)
+    Last Called Logger Thread: ${share.thread} (may not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Build: ${c.build}
@@ -56,9 +64,9 @@ ${arguments}
     Custom Prefix: ${process.env.BL_PREFIX ? process.env.BL_PREFIX : 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
-    Average ping of websocket: ${global.client.ping}
-    Last ping of websocket: ${global.client.pings[0]}
-    Ready at: ${global.client.readyAt.toLocaleString()}
+    Average ping of websocket: ${share.client.ping}
+    Last ping of websocket: ${share.client.pings[0]}
+    Ready at: ${share.client.readyAt.toLocaleString()}
 
 --- System Details ---
     CPU Architecture: ${process.arch}
@@ -74,7 +82,7 @@ ${arguments}
     zlib Version: ${process.versions.zlib}
     OpenSSL Version: ${process.versions.openssl}
 `
-    global.client.guilds.get('460812821412708352').channels.get('484357084037513216').send(data).then(() => {
+    client.guilds.get('460812821412708352').channels.get('484357084037513216').send(data).then(() => {
       logger.info('Error report has been sent!')
     })
     logger.error(`Unhandled Rejection: ${error}`)
@@ -85,8 +93,9 @@ ${arguments}
   })
 
   process.on('uncaughtException', (error) => {
-    const date = new Date()
-    const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
+    if (errors >= 2) { logger.fatal('Error loop detected, exiting'); process.exit(1) }
+    errors++
+    const format = getDateTime()
     const file = `./crash-reports/crash-${format}.txt`
     let arguments = ''
     process.argv.forEach((val, index) => {
@@ -101,7 +110,7 @@ Description: Uncaught error.
 ${error.stack}
 
 --- Process Details ---
-    Last Called Logger Thread: ${global.thread} (may not current thread)
+    Last Called Logger Thread: ${share.thread} (may not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Build: ${c.build}
@@ -115,9 +124,9 @@ ${arguments}
     Custom Prefix: ${process.env.BL_PREFIX ? process.env.BL_PREFIX : 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
-    Average ping of websocket: ${Math.floor(global.client.ping * 100) / 100}
-    Last ping of websocket: ${global.client.pings[0]}
-    Ready at: ${global.client.readyAt.toLocaleString()}
+    Average ping of websocket: ${Math.floor(share.client.ping * 100) / 100}
+    Last ping of websocket: ${share.client.pings[0]}
+    Ready at: ${share.client.readyAt.toLocaleString()}
 
 --- System Details ---
     CPU Architecture: ${process.arch}
@@ -134,7 +143,7 @@ ${arguments}
     OpenSSL Version: ${process.versions.openssl}
 `
     require('fs').writeFileSync(file, data, 'utf8')
-    global.client.guilds.get('460812821412708352').channels.get('484183865976553493').send(data).then(() => {
+    client.guilds.get('460812821412708352').channels.get('484183865976553493').send(data).then(() => {
       process.exit(1)
     })
   })
@@ -154,21 +163,24 @@ ${arguments}
 
   process.on('SIGINT', () => {
     setInterval(() => {
-      if (count <= 5000) {
+      if (count <= 10000) {
         ++count
       } else { clearInterval(this) }
     }, 1)
     setTimeout(() => {
       logger.info('Exiting')
       process.exit()
-    }, 5000)
+    }, 10000)
     if (count != 0)
       if (!once) {
-        logger.info('Caught INT signal, shutdown.')
+        logger.info('Caught INT signal')
+        logger.info('Writing all pending saves')
+        cs.write()
+        logger.info('Disconnecting')
         client.destroy()
         once = true
       } else {
-        logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
+        logger.info('Already you tried CTRL+C. Program will exit at time out(' + (10000 - count) / 1000 + ' seconds left) or disconnected')
       }
   })
 }

@@ -1,5 +1,6 @@
-const util = require('../util')
+const cs = require('../config/ConfigStore')
 const Discord = require('discord.js')
+const f = require('string-format')
 
 module.exports.name = 'language'
 
@@ -17,6 +18,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(embed)
   } else if (args[1] === 'en' || args[1] === 'ja') {
     settings.language = args[1]
-    await util.writeSettings(guildSettings, settings, msg.channel, 'language')
+    cs.store(guildSettings, settings)
+    msg.channel.send(f(lang.setconfig, 'language'))
   }
 }

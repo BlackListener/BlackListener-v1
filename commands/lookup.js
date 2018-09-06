@@ -2,6 +2,15 @@ const f = require('string-format')
 const Discord = require('discord.js')
 const logger = require('../logger').getLogger('commands:lookup', 'purple')
 const util = require('../util')
+const userCheck = function(msg, lang, args) {
+  const client = msg.client
+  try {
+    return client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
+  } catch (e) {
+    logger.error(e)
+    return msg.channel.send(f(lang.unknown, args[1]))
+  }
+}
 
 module.exports.name = 'lookup'
 
@@ -15,47 +24,11 @@ module.exports.run = async function(msg, settings, lang) {
     if (args[2] === '--force') { force = true; id = lang.sunknown }
     if (!force) {
       if (/\D/gm.test(args[1])) {
-        try {
-          id = client.users.find('username', args[1]).id
-        } catch (e) {
-          try {
-            id = msg.guild.members.find('nickname', args[1]).id
-          } catch (e) {
-            logger.error(e)
-            return msg.channel.send(f(lang.unknown, args[1]))
-          }
-        }
+        id = userCheck(msg, lang, args)
       } else if (/\d{18}/.test(args[1])) {
-        let ok = false
-        try {
-          id = client.users.get(args[1]).id
-          ok = true
-        } catch (e) {
-          try {
-            if (!ok) {
-              id = client.users.find('username', args[1]).id
-              ok = true
-            }
-          } catch (e) {
-            try {
-              if (!ok) id = msg.guild.members.find('nickname', args[1]).id
-            } catch (e) {
-              msg.channel.send(f(lang.unknown, args[1]))
-              return logger.error(e)
-            }
-          }
-        }
+        id = client.users.get(args[1]) || userCheck(msg, lang, args)
       } else {
-        try {
-          id = client.users.find('username', args[1]).id
-        } catch (e) {
-          try {
-            id = msg.guild.members.find('nickname', args[1]).id
-          } catch (e) {
-            logger.error(e)
-            return msg.channel.send(f(lang.unknown, args[1]))
-          }
-        }
+        id = userCheck(msg, lang, args)
       }
     }
   }
@@ -68,7 +41,7 @@ module.exports.run = async function(msg, settings, lang) {
   const sb6 = [lang.no]
   let isBot = lang.no
   try {
-    userConfig = await util.readJSON(`./data/users/${id}/config.json`)
+    userConfig = await util.readYAML(`./data/users/${id}/config.yml`)
     user2 = client.users.get(id)
   } catch (e) {
     logger.error(e)
@@ -116,8 +89,8 @@ module.exports.run = async function(msg, settings, lang) {
   }
   if (!sb6.length) sb6.push(lang.no)
   const desc = force ? lang.lookup.desc + ' ・ ' + f(lang.unknown, args[1]) : lang.lookup.desc
-  const nick = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).nickname : lang.nul
-  const joinedAt = msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt : lang.sunknown
+  const nick = msg.guild.members.get(user2.id).nickname || lang.nul
+  const joinedAt = msg.guild.members.get(user2.id).joinedAt.toLocaleString() || lang.sunknown
   const embed = new Discord.RichEmbed()
     .setTitle(lang.lookup.title)
     .setColor([0,255,0])
@@ -134,7 +107,7 @@ module.exports.run = async function(msg, settings, lang) {
     .addField(lang.lookup.username_changes, sb6.join('\n'))
     .addField(lang.lookup.bot, isBot)
     .addField(lang.lookup.createdAt, user2.createdAt.toLocaleString())
-    .addField(lang.lookup.joinedAt, joinedAt.toLocaleString())
+    .addField(lang.lookup.joinedAt, joinedAt)
     .addField(lang.lookup.nowTime, new Date().toLocaleString())
   msg.channel.send(embed)
 }

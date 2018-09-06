@@ -20,7 +20,8 @@
     "eslint": "^5.4.0"
   },
   "scripts": {
-    "test": "node index.js --travis-build"
+    "test": "node index.js --travis-build",
+    "lint": "node travis/lint.js"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,7 @@
 const util = require('../util')
+const cs = require('../config/ConfigStore')
 const logger = require('../logger').getLogger('commands:unban', 'blue')
-const bansFile = './data/bans.json'
+const bansFile = './data/bans.yml'
 const { defaultUser, defaultBans } = require('../contents.js')
 
 module.exports.name = 'unban'
@@ -12,9 +13,9 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
-  const userFile = `./data/users/${msg.author.id}/config.json`
-  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
-  let bans = await util.readJSON(bansFile, defaultBans)
+  const userFile = `./data/users/${msg.author.id}/config.yml`
+  const user = Object.assign(defaultUser, await util.readYAML(userFile, defaultUser))
+  let bans = await util.readYAML(bansFile, defaultBans)
   if (!args[1] || args[1] === '') {
     msg.channel.send(lang.no_args)
   } else {
@@ -41,8 +42,8 @@ module.exports.run = async function(msg, settings, lang) {
           .catch(logger.error)
       }
       user.rep = --user.rep
-      await util.writeSettings(bansFile, bans, null, null, false)
-      await util.writeSettings(userFile, user, null, null, false)
+      cs.store(bansFile, bans)
+      cs.store(userFile, user)
       msg.channel.send(lang.unbanned)
     } else {
       msg.channel.send(lang.guild_unavailable)
