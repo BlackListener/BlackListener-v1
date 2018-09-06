@@ -48,14 +48,8 @@ module.exports = {
     let role; let member
     try {
       try {
-        role = msg.guild.roles.find('name', rolename)
-      } catch (e) {
-        try {
-          role = msg.guild.roles.get(rolename)
-        } catch (e) {
-          logger.error('An error occurred in \'addRole\': ' + e)
-        }
-      }
+        role = msg.guild.roles.find('name', rolename) || msg.guild.roles.get(rolename)
+      } catch(e) { logger.error('An error occurred in \'addRole\': ' + e) }
       if (!guildmember) { member = msg.guild.members.get(msg.author.id) } else { member = msg.guild.members.get(guildmember.id) }
       if (isCommand) {
         const build = function(title, message) {
@@ -70,9 +64,6 @@ module.exports = {
           build(':heavy_plus_sign: 役職を付与しました', ' を付与しました')
         }
       } else { member.addRole(role).catch(logger.error) }
-    } catch (e) {
-      msg.channel.send(lang.role_error); logger.error(e)
-    }
-
+    } catch (e) { msg.channel.send(lang.role_error); logger.error(e) }
   },
 }

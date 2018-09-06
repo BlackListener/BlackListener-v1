@@ -16,9 +16,9 @@ module.exports.run = async function(msg, settings, lang) {
   }
   if (args[1] === 'custom') {
     if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace)
-    return await sendImage([args[2]])
+    await sendImage([args[2]])
   } else if (args[1] === 'anime') {
-    return await sendImage([
+    await sendImage([
       'Undertale',
       'awwnime',
       'Gunime',
@@ -45,6 +45,6 @@ module.exports.run = async function(msg, settings, lang) {
   } else {
     const embed = new Discord.RichEmbed().setImage('https://i.imgur.com/rc8mMFi.png').setTitle('引数が').setColor([0,255,0])
       .setDescription(':thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:')
-    return msg.channel.send(embed).catch(logger.error)
+    msg.channel.send(embed).catch(logger.error)
   }
 }

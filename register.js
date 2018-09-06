@@ -4,6 +4,10 @@ const fs = require('fs').promises
 const os = require('os')
 const share = require('./share')
 const cs = require('./config/ConfigStore')
+const getDateTime = function() {
+  const date = new Date()
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
+}
 
 module.exports = function(client) {
   let count = 0
@@ -31,8 +35,7 @@ module.exports = function(client) {
     if (errors >= 2) { logger.fatal('Error loop detected, exiting'); process.exit(1) }
     errors++
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
-    const date = new Date()
-    const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
+    const format = getDateTime()
     const file = `./error-reports/error-${format}.txt`
     let arguments = ''
     process.argv.forEach((val, index) => {
@@ -92,8 +95,7 @@ ${arguments}
   process.on('uncaughtException', (error) => {
     if (errors >= 2) { logger.fatal('Error loop detected, exiting'); process.exit(1) }
     errors++
-    const date = new Date()
-    const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
+    const format = getDateTime()
     const file = `./crash-reports/crash-${format}.txt`
     let arguments = ''
     process.argv.forEach((val, index) => {
