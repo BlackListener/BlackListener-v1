@@ -57,7 +57,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     const id = user2 ? user2.id : ':poop:'
     if (id === ':poop:') return msg.channel.send(lang.invalid_args)
     if (localSettings.ignoredChannels.includes(id)) {
-      delete localSettings.ignoredChannels[localSettings.ignoredChannels.indexOf(id)]
+      localSettings.ignoredChannels.splice(localSettings.ignoredChannels.indexOf(id), 1)
       await util.writeSettings(guildSettings, localSettings, null, null, false)
       msg.channel.send(lang.antispam.ignore_enabled)
     } else {

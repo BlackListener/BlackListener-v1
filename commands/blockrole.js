@@ -15,7 +15,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     for (let i=0; i<=settings.blocked_role.length; i++) {
       if (settings.blocked_role[i] === role.id) {
         exe = true
-        delete settings.blocked_role[i]
+        settings.blocked_role.splice(i, 1)
       }
     }
     if (!exe) { settings = null; return msg.channel.send(lang.role_error) }
