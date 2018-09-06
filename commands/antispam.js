@@ -17,12 +17,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     await util.writeSettings(guildSettings, localSettings, null, null, false)
   }
   if (!args[1] || args[1] === 'help') {
-    let status
-    if (settings.antispam) {
-      status = lang.enabled
-    } else {
-      status = lang.disabled
-    }
+    const status = settings.antispam ? lang.enabled : lang.disabled
     const embed = new Discord.RichEmbed()
       .setTitle(' - AntiSpam - ')
       .setDescription(f(lang.antispam.description, status))
@@ -34,13 +29,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       .setTimestamp()
     msg.channel.send(embed)
   } else if (args[1] === 'toggle') {
-    if (settings.antispam) {
-      await write(false)
-      msg.channel.send(lang.antispam.disabled)
-    } else {
-      await write(true)
-      msg.channel.send(lang.antispam.enabled)
-    }
+    await write(!settings.antispam)
+    msg.channel.send(lang.antispam[!settings.antispam ? 'disabled' : 'enabled'])
   } else if (args[1] === 'disable') {
     await write(false)
     msg.channel.send(lang.antispam.disabled)

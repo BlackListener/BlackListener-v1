@@ -10,7 +10,6 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
-  let user2
   if (!args[1]) {
     const mutes = settings.mute.map((data) => {
       if (client.users.has(data)) {
@@ -24,6 +23,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       .addField(lang.serverinfo.mute, mutes.join('\n') || lang.no)
     )
   }
+  let user2
   try {
     user2 = client.users.find('username', args[1]).id
   } catch (e) {

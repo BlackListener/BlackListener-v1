@@ -4,30 +4,19 @@ module.exports.name = 'serverinfo'
 
 module.exports.run = function(msg, settings, lang) {
   const client = msg.client
-  let prefix = lang.sunknown
-  let language = lang.sunknown
-  let notifyRep = lang.unknownorzero
-  let banRep = lang.unknownorzero
-  let antispam = lang.disabled
-  let banned = lang.no
-  let disable_purge = lang.yes
-  let autorole = lang.disabled
-  let excludeLogging = lang.disabled
-  let welcome_channel = lang.disabled
-  let welcome_message = lang.disabled
-  if (settings.prefix) prefix = `\`${settings.prefix}\``
-  if (settings.language) language = `\`${settings.language}\``
-  if (settings.notifyRep) notifyRep = settings.notifyRep
-  if (settings.banRep) banRep = settings.banRep
-  if (settings.antispam) antispam = lang.enabled
-  if (settings.banned) banned = lang.yes
-  if (settings.disable_purge) disable_purge = lang.no
-  if (settings.autorole) autorole = `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]`
-  if (settings.excludeLogging) excludeLogging = `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)`
-  if (settings.welcome_channel) welcome_channel = `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})`
-  if (settings.welcome_message) welcome_message = `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)`
+  const prefix = settings.prefix ? `\`${settings.prefix}\`` : lang.sunknown
+  const language = settings.language ? `\`${settings.language}\`` : lang.sunknown
+  const notifyRep = settings.notifyRep || lang.unknownorzero
+  const banRep = settings.banRep || lang.unknownorzero
+  const antispam = settings.antispam ? lang.enabled : lang.disabled
+  const banned = settings.banned ? lang.yes : lang.no
+  const disable_purge = settings.disable_purge ? lang.no : lang.yes
+  const autorole = settings.autorole ? `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]` : lang.disabled
+  const excludeLogging = settings.excludeLogging ? `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)` : lang.disabled
+  const welcome_channel = settings.welcome_channel ? `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})` : lang.disabled
+  const welcome_message = settings.welcome_message ? `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)` : lang.disabled
   const ignoredChannels = settings.ignoredChannels.map((data) => {
-    if (msg.guild.channels.get(data)) {
+    if (msg.guild.channels.has(data)) {
       return `<#${data}> (${msg.guild.channels.get(data).name}) (${data})`
     } else {
       return `<#${data}> ${data} (${lang.failed_to_get})`
