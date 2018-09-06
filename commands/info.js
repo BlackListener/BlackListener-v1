@@ -1,15 +1,15 @@
 const Discord = require('discord.js')
-const util = require('../util')
 const {promisify} = require('util')
 const exec = promisify(require('child_process').exec)
 const os = require('os')
 const c = require('../config.yml')
 const isWindows = process.platform === 'win32'
+const isTravisBuild = process.argv[2] === '--travis-build'
+const s = isTravisBuild ? require('../travis.yml') : require('../secret.yml')
 
 module.exports.name = 'info'
 
 module.exports.run = async function(msg, settings, lang) {
-  const s = await util.exists('./secret.yml') ? require('../secret.yml') : require('../travis.yml')
   const client = msg.client
   const graph = 'Device    Total  Used Avail Use% Mounted on\n'
   let o1 = '利用不可'
