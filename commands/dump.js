@@ -14,7 +14,7 @@ module.exports.run = async function(msg, settings, lang) {
   const url = config.dump_url
   const client = msg.client
   const sb = []
-  let link = `${url}`
+  let link = url
   let nowrite
   if (args[1] === 'users') {
     client.users.forEach((user) => {

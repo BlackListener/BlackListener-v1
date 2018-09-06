@@ -6,6 +6,6 @@ module.exports.run = function(msg, settings) {
   if (args[1] === 'escape') {
     msg.channel.send(`\`\`\`${emojiList}\`\`\``)
   } else {
-    msg.channel.send(`${emojiList}`)
+    msg.channel.send(emojiList)
   }
 }
