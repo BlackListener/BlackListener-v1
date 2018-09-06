@@ -4,6 +4,8 @@ module.exports.args = '<0...10>'
 
 module.exports.name = 'setnotifyrep'
 
+module.exports.alias = ['notifyrep']
+
 module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }

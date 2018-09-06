@@ -2,6 +2,8 @@ const util = require('../util')
 
 module.exports.name = 'setlog'
 
+module.exports.alias = ['log']
+
 module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }
