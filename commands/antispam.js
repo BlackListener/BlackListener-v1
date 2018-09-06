@@ -1,6 +1,9 @@
 const Discord = require('discord.js')
 const f = require('string-format')
 const cs = require('../config/ConfigStore')
+const spacecheck = function(args, msg, lang) {
+  if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
+}
 
 module.exports.name = 'antispam'
 
@@ -47,13 +50,13 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     await write(true)
     msg.channel.send(lang.antispam.enabled)
   } else if (args[1] === 'ignore') {
+    spacecheck(args, msg, lang)
     if (!msg.mentions.channels.first()) { return msg.channel.send(lang.invalid_args) }
-    if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
     let user2 = msg.mentions.channels.first()
     if (!user2) user2 = msg.guild.channels.find('name', args[2])
     if (!user2) user2 = msg.guild.channels.get(args[2])
-    const id = user2 ? user2.id : ':poop:'
-    if (id === ':poop:') return msg.channel.send(lang.invalid_args)
+    const id = user2 ? user2.id : false
+    if (id === false) return msg.channel.send(lang.invalid_args)
     if (settings.ignoredChannels.includes(id)) {
       delete settings.ignoredChannels[settings.ignoredChannels.indexOf(id)]
       cs.store(guildSettings, settings)
@@ -64,18 +67,16 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       msg.channel.send(lang.antispam.ignore_disabled)
     }
   } else if (args[1] === 'status') {
-    if (!msg.mentions.channels.first()) {
-      const sb = []
-      settings.ignoredChannels.forEach((channel) => {
-        if (channel != null) {
-          sb.push(`<#${channel}>`)
-        }
-      })
-      return msg.channel.send(f(lang.antispam.disabled_channels, sb.join('\n')))
+    if (msg.mentions.channels.first()) {
+      const id = msg.mentions.channels.first().id
+      spacecheck(args, msg, lang)
+      if (settings.ignoredChannels.includes(id)) return msg.channel.send(f(lang.antispam.status2, lang.disabled))
+      return msg.channel.send(f(lang.antispam.status2, lang.enabled))
     }
-    const id = msg.mentions.channels.first().id
-    if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
-    if (settings.ignoredChannels.includes(id)) return msg.channel.send(f(lang.antispam.status2, lang.disabled))
-    msg.channel.send(f(lang.antispam.status2, lang.enabled))
+    const sb = []
+    settings.ignoredChannels.forEach((channel) => {
+      if (channel != null) sb.push(`<#${channel}>`)
+    })
+    msg.channel.send(f(lang.antispam.disabled_channels, sb.join('\n')))
   }
 }

@@ -3,7 +3,6 @@ const root = share.rootDir
 require(root + '/yaml') // Assign extension .yml for YAML
 const logger = require(root + '/logger').getLogger('main', 'green')
 logger.info('Initializing')
-const f = require('string-format')
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
@@ -15,14 +14,7 @@ const c = require(root + '/config.yml')
 const ds = require(root + '/config/DataStore')
 ds.initialized = true
 const cs = require(root + '/config/ConfigStore')
-const getDateTime = function() {
-  const date = new Date()
-  return [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-  ].join( '/' ) + ' ' + date.toLocaleTimeString()
-}
+const { getDateTime, ban, banMember, initYAML } = require('./functions')
 share.client = client
 
 if (process.env.ENABLE_RCON) {
@@ -91,16 +83,22 @@ client.on('message', async msg => {
   const userFile = `${root}/data/users/${msg.author.id}/config.yml`
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
   try {
-    await util.initYAML(userFile, defaultUser)
-    await util.initYAML(guildSettings, defaultSettings)
+    await initYAML(userFile, guildSettings)
   } catch (e) {
-    try {
-      await util.initYAML(userFile, defaultUser)
-      await util.initYAML(guildSettings, defaultSettings)
-    } catch (e) {logger.error(e)}
+    logger.error(e)
+  }
+  const defaultSettingsHandler = {
+    get: function(target, name){
+      let settings = name in target ? target[name] : true
+      if (settings === true) {
+        settings = defaultSettings[name]
+        cs.store(guildSettings, settings)
+      }
+      return settings
+    },
   }
   const user = await cs.use(userFile, Object.assign(defaultUser, await util.readYAML(userFile)))
-  const settings = await cs.use(guildSettings, Object.assign(defaultSettings, await util.readYAML(guildSettings)))
+  const settings = await cs.use(guildSettings, new Proxy(await util.readYAML(guildSettings), defaultSettingsHandler))
   logger.debug('Loading ' + guildSettings)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
@@ -132,9 +130,7 @@ client.on('message', async msg => {
     // --- Begin of Auto-ban
     if (!settings.banned) {
       if (settings.banRep <= user.rep && settings.banRep != 0) {
-        msg.guild.ban(msg.author)
-          .then(() => logger.info(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
-          .catch(logger.error)
+        ban(msg, lang, user)
       }
     }
     // --- End of Auto-ban
@@ -162,16 +158,14 @@ client.on('guildMemberAdd', async (member) => {
   await mkdirp(`${root}/data/users/${member.user.id}`)
   await mkdirp(`${root}/data/servers/${member.guild.id}`)
   try {
-    await util.initYAML(userFile, defaultUser)
-    await util.initYAML(serverFile, defaultSettings)
+    await initYAML(userFile, serverFile)
   } catch (e) {logger.error(e)}
   const serverSetting = await util.readYAML(serverFile)
   const userSetting = await util.readYAML(userFile)
+  lang = require(`${root}/lang/${serverSetting.language}.json`)
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
-      member.guild.ban(member)
-        .then(() => logger.info(f(lang.autobanned, member.user.tag, member.id, member.guild.name, member.guild.id)))
-        .catch(logger.error)
+      banMember(lang, member)
     } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
       member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`)
     }

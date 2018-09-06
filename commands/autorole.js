@@ -19,25 +19,16 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       settings.autorole = args[2]
     } else {
       try {
-        const role = msg.mentions.roles.first().id.toString()
-        settings.autorole = role
-      } catch (e) {
-        try {
-          const role = msg.guild.roles.find('name', args[2]).id
-          settings.autorole = role
-        } catch (e) {
-          msg.channel.send(lang.invalid_args)
-          logger.error(e)
-        }
+        settings.autorole = msg.mentions.roles.first().id.toString() || msg.guild.roles.find('name', args[2]).id
+      } catch(e) {
+        msg.channel.send(lang.invalid_args); logger.error(e)
       }
     }
     cs.store(guildSettings, settings)
     msg.channel.send(f(lang.setconfig, 'autorole'))
   } else {
-    if (settings.autorole != null) {
+    if (settings.autorole != null || settings.autorole === true)
       msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name))
-    } else if (!settings.autorole) {
-      msg.channel.send(lang.autorole_disabled)
-    }
+    else if (!settings.autorole) msg.channel.send(lang.autorole_disabled)
   }
 }

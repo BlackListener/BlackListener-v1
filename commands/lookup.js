@@ -2,6 +2,15 @@ const f = require('string-format')
 const Discord = require('discord.js')
 const logger = require('../logger').getLogger('commands:lookup', 'purple')
 const util = require('../util')
+const userCheck = function(msg, lang, args) {
+  const client = msg.client
+  try {
+    return client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
+  } catch (e) {
+    logger.error(e)
+    return msg.channel.send(f(lang.unknown, args[1]))
+  }
+}
 
 module.exports.name = 'lookup'
 
@@ -15,26 +24,11 @@ module.exports.run = async function(msg, settings, lang) {
     if (args[2] === '--force') { force = true; id = lang.sunknown }
     if (!force) {
       if (/\D/gm.test(args[1])) {
-        try {
-          id = client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
-        } catch (e) {
-          logger.error(e)
-          return msg.channel.send(f(lang.unknown, args[1]))
-        }
+        id = userCheck(msg, lang, args)
       } else if (/\d{18}/.test(args[1])) {
-        try {
-          id = client.users.get(args[1]).id || client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
-        } catch (e) {
-          msg.channel.send(f(lang.unknown, args[1]))
-          return logger.error(e)
-        }
+        id = client.users.get(args[1]) || userCheck(msg, lang, args)
       } else {
-        try {
-          id = client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
-        } catch (e) {
-          logger.error(e)
-          return msg.channel.send(f(lang.unknown, args[1]))
-        }
+        id = userCheck(msg, lang, args)
       }
     }
   }
