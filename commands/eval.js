@@ -3,8 +3,8 @@ const f = require('string-format')
 
 module.exports.name = 'eval'
 
-module.exports.isAllowed = msg => {
-  return msg.author.id == '254794124744458241'
+module.exports.isAllowed = (msg, owners) => {
+  return owners.includes(msg.author.id)
 }
 
 module.exports.run = async function(msg, settings, lang) {

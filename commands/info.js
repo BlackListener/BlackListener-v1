@@ -20,6 +20,7 @@ module.exports.run = async function(msg, settings, lang) {
     o1 = stdout
     loadavg = Math.floor(os.loadavg()[0] * 100) / 100
   }
+  const owner = client.users.get(c.owners[0])
   const embed = new Discord.RichEmbed()
     .setTitle('Bot info')
     .setTimestamp()
@@ -31,7 +32,7 @@ module.exports.run = async function(msg, settings, lang) {
     .addField(lang.info.loadavg, `${loadavg}`)
     .addField(lang.info.servers, `${client.guilds.size}`)
     .addField(lang.info.users, `${client.users.size}`)
-    .addField(lang.info.createdBy, `${client.users.get('254794124744458241').tag} (${client.users.get('254794124744458241').id})`)
+    .addField(lang.info.createdBy, `${owner.tag} (${owner.id})`)
     .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)`)
     .setFooter(`Sent by ${msg.author.tag}`)
   return msg.channel.send(embed)
