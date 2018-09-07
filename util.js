@@ -17,7 +17,7 @@ module.exports = {
     logger.debug(`Reading from file: ${path}`)
     return await fs.readFile(path, 'utf8')
       .then(data => this.parse(data))
-      .catch(err => _default ? null : err)
+      .catch(err => _default || err)
   },
   async writeJSON(path, json) {
     logger.debug(`Writing file: ${path}`)
