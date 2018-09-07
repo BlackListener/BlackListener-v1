@@ -27,7 +27,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   }
   let user2
   try {
-    user2 = client.users.find('username', args[1]).id
+    user2 = client.users.find(n => n.username === args[1]).id
   } catch (e) {
     try {
       user2 = client.users.get(args[1]).id

@@ -21,7 +21,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     if (!args[2]) return msg.channel.send(lang.invalid_args)
     let channel
     try {
-      channel = msg.guild.channels.find('name', args[2]).id
+      channel = msg.guild.channels.find(n => n.name === args[2]).id || msg.guild.channels.get(args[2]).id || msg.mentions.channels.first().id
     } catch (e) {
       try {
         channel = msg.guild.channels.get(args[2]).id

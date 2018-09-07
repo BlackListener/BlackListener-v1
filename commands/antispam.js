@@ -51,7 +51,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
     const localSettings = settings
     let user2 = msg.mentions.channels.first()
-    if (!user2) user2 = msg.guild.channels.find('name', args[2])
+    if (!user2) user2 = msg.guild.channels.find(n => n.name === args[2])
     if (!user2) user2 = msg.guild.channels.get(args[2])
     const id = user2 ? user2.id : ':poop:'
     if (id === ':poop:') return msg.channel.send(lang.invalid_args)

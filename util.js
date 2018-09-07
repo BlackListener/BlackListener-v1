@@ -47,14 +47,8 @@ module.exports = {
     let role; let member
     try {
       try {
-        role = msg.guild.roles.find('name', rolename)
-      } catch (e) {
-        try {
-          role = msg.guild.roles.get(rolename)
-        } catch (e) {
-          logger.error('An error occurred in \'addRole\': ' + e)
-        }
-      }
+        role = msg.guild.roles.find(n => n.name === rolename) || msg.guild.roles.get(rolename)
+      } catch(e) { logger.error('An error occurred in \'addRole\': ' + e) }
       if (!guildmember) { member = msg.guild.members.get(msg.author.id) } else { member = msg.guild.members.get(guildmember.id) }
       if (isCommand) {
         const build = function(title, message) {

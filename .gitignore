@@ -25,3 +25,6 @@ blacklistener.pid
 
 # Local file(GCP side)
 gitpull.log
+
+# npm package-lock.json
+package-lock.json

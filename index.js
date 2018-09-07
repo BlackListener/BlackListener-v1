@@ -1,5 +1,5 @@
-require('./pidcheck')
 require('./yaml') // Assign extension .yml for YAML
+require('./pidcheck')
 const logger = require('./logger').getLogger('main', 'green')
 logger.info('Initializing')
 const f = require('string-format')
@@ -309,8 +309,6 @@ if (!c.repl.disable) {
   })
 } else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
-try {
-  logger.info('Logging in...')
-  client.login(Buffer.from(Buffer.from(Buffer.from(s.token, 'base64').toString('ascii'), 'base64').toString('ascii'), 'base64').toString('ascii'))
-    .catch(logger.error)
-} catch (e) { logger.fatal(e) }
+logger.info('Logging in...')
+client.login(s.token)
+  .catch(e => logger.error(e))

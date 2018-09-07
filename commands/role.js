@@ -8,7 +8,7 @@ module.exports.run = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   let role
   try {
-    role = msg.guild.roles.find('name', args[1])
+    role = msg.guild.roles.find(n => n.name === args[1])
   } catch (e) {
     try {
       role = msg.guild.roles.get(args[1])

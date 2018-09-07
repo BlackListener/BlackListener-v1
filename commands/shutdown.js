@@ -1,6 +1,5 @@
 const logger = require('../logger').getLogger('commands:shutdown', 'darkgray')
 const f = require('string-format')
-const cs = require('../config/ConfigStore')
 
 module.exports.args = '[-f]'
 
@@ -17,7 +16,6 @@ module.exports.run = function(msg, settings, lang) {
     logger.info(f(lang.atmpfs, msg.author.tag))
     msg.channel.send(lang.bye)
     client.destroy()
-    cs.store()
     require('fs').unlinkSync('../blacklistener.pid')
   } else if (args[1] == '-r') {
     (async () => {
@@ -30,7 +28,6 @@ module.exports.run = function(msg, settings, lang) {
     logger.info(f(lang.success, msg.content))
     msg.channel.send(lang.bye)
     client.destroy()
-    cs.store()
     require('fs').unlinkSync('../blacklistener.pid')
   }
 }

@@ -10,7 +10,7 @@ module.exports.isAllowed = msg => {
 
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  const role = msg.guild.roles.find('name', args[1]) || msg.guild.roles.get(args[1])
+  const role = msg.guild.roles.find(n => n.name === args[1]) ? msg.guild.roles.find(n => n.name === args[1]) : msg.guild.roles.get(args[1])
   if (!role) return msg.channel.send(lang.role_error)
   if (settings.blocked_role.includes(role.id)) {
     let exe = false

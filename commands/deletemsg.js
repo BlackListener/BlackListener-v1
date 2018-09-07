@@ -27,15 +27,11 @@ module.exports.run = async function(msg, settings, lang) {
   } else if (msg.mentions.users.first()) {
     user2 = msg.mentions.users.first()
   } else if (/\D/gm.test(args[1])) {
-    user2 = client.users.find('username', args[1])
+    user2 = client.users.find(n => n.username === args[1])
   } else if (/\d{18}/.test(args[1])) {
-    try {
-      user2 = client.users.get(args[1])
-    } catch (e) {
-      user2 = client.users.find('username', args[1])
-    }
+    user2 = client.users.get(args[1]) || client.users.find(n => n.username === args[1])
   } else {
-    user2 = client.users.find('username', args[1])
+    user2 = client.users.find(n => n.username === args[1])
   }
   if (!user2) return msg.channel.send(lang.invalid_args)
   const id = user2.id

@@ -25,7 +25,7 @@ module.exports.run = async function(msg, settings, lang) {
       if (/[0-9]................./.test(args[1])) {
         user2 = client.users.get(args[1])
       } else {
-        user2 = client.users.find('username', args[1])
+        user2 = client.users.find(n => n.username === args[1])
       }
       if (msg.mentions.users.first()) user2 = msg.mentions.users.first()
       if (!user2) { settings = null; return msg.channel.send(lang.invalid_user) }
