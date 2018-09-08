@@ -7,6 +7,8 @@ global.loadConfig = function() {
   return require('./config.yml')
 }
 
+const codeblock = code => '```' + code + '```'
+
 module.exports = function(client) {
   let count = 0
   let once = false
@@ -74,9 +76,8 @@ ${arguments}
     zlib Version: ${process.versions.zlib}
     OpenSSL Version: ${process.versions.openssl}
 `
-    global.client.channels.get('484357084037513216').send(data).then(() => {
-      logger.info('Error report has been sent!')
-    })
+    global.client.channels.get('484357084037513216').send(codeblock(data))
+      .then(() => logger.info('Error report has been sent!'))
     logger.error(`Unhandled Rejection: ${error}`)
     logger.error(error.stack)
     fs.writeFile(file, data, 'utf8').then(() => {
@@ -134,9 +135,8 @@ ${arguments}
     OpenSSL Version: ${process.versions.openssl}
 `
     require('fs').writeFileSync(file, data, 'utf8')
-    global.client.channels.get('484183865976553493').send(data).then(() => {
-      process.exit(1)
-    })
+    global.client.channels.get('484183865976553493').send(codeblock(data))
+      .then(() => process.exit(1))
   })
 
   client.on('rateLimit', (info, method) => {
