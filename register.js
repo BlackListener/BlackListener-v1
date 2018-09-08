@@ -81,7 +81,7 @@ module.exports = function(client) {
     logger.fatal('Got Disconnected from Websocket, Reconnecting!')
   })
 
-  process.on('unhandledRejection', (error) => {
+  process.on('unhandledRejection', (error = {}) => {
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
     const { report, file } = makeReport(client, error, 'error')
     client.channels.get('484357084037513216').send(codeblock(report))
@@ -93,7 +93,7 @@ module.exports = function(client) {
     })
   })
 
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', (error = {}) => {
     const { report, file } = makeReport(client, error, 'crash')
     require('fs').writeFileSync(file, report, 'utf8')
     client.channels.get('484183865976553493').send(codeblock(report))

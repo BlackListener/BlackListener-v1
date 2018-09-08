@@ -49,17 +49,17 @@ class Logger {
     const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
     let thread = this.thread
     global.logger = {}
-    global.logger.coloredlevel = chalk[color]('${level}')
+    global.logger.coloredlevel = chalk[color](level)
     if (isLogger) { this.thread_raw = 'logger'; thread = chalk.hex('#800080')(this.thread_raw) }
     let data
     if (this.style === 'maven') {
       level = level.replace('warn', 'warning')
-      global.logger.coloredlevel2 = chalk[color].bold('${level.toUpperCase()}')
+      global.logger.coloredlevel2 = chalk[color].bold(level.toUpperCase())
       data = `[${global.logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
     } else if (this.style === 'npm') {
       level = level.replace('error', 'ERR!')
       level = level.replace('warn', 'WARN')
-      global.logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow('${level}') : level === 'info' ? chalk.green('${level}') : chalk[color]('${level}')
+      global.logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow(level) : level === 'info' ? chalk.green(level) : chalk[color](level)
       data = `${chalk.white('BlackListener')} ${global.logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     } else {
       data = `${date} ${thread}${chalk.reset()} ${global.logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
