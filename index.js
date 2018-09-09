@@ -68,7 +68,7 @@ client.on('ready', async () => {
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   }, 10000)
-  logger.info(`BlackListener v${c.version} (build: ${c.build}) has fully startup.`)
+  logger.info(`BlackListener v${c.version} has fully startup.`)
   if (isTravisBuild) {
     logger.info('Shutting down...')
     await client.destroy()

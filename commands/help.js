@@ -11,7 +11,7 @@ module.exports.run = function(msg, settings, lang) {
   if (args[1]) return msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`))
   const prefix = settings.prefix
   const embed = new Discord.RichEmbed()
-    .setTitle(f(lang.commands.title, c.version, f(lang.build, c.build)))
+    .setTitle(f(lang.commands.title, c.version))
     .setTimestamp()
     .setColor([0,255,0])
     .addField(`${prefix}setprefix`, lang.commands.setprefix)

@@ -2,6 +2,7 @@ const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.yml')
 const fs = require('fs').promises
 const os = require('os')
+const git = require('simple-git/promise')()
 
 global.loadConfig = function() {
   return require('./config.yml')
@@ -10,13 +11,14 @@ global.loadConfig = function() {
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
 
-function makeReport(client, error, type) {
+async function makeReport(client, error, type) {
   const date = new Date()
   const description = type === 'error'
     ? 'Unhandled Rejection(Exception/Error in Promise).'
     : 'Uncaught error.'
   const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
   const argv = process.argv.map((val, index) => `arguments[${index}]: ${val}`)
+  const commit = await git.revparse(['HEAD'])
   const data =  `
 --- BlackListener ${ucfirst(type)} Report ---
 
@@ -29,7 +31,7 @@ ${error.stack}
     Last Called Logger Thread: ${global.thread} (may not current thread)
 
     BlackListener Version: ${c.version}
-    BlackListener Build: ${c.build}
+    BlackListener Commit: ${commit}
 
     Arguments: ${process.argv.length}
     ${argv.join('\n    ')}
@@ -81,9 +83,9 @@ module.exports = function(client) {
     logger.fatal('Got Disconnected from Websocket, Reconnecting!')
   })
 
-  process.on('unhandledRejection', (error = {}) => {
+  process.on('unhandledRejection', async (error = {}) => {
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
-    const { report, file } = makeReport(client, error, 'error')
+    const { report, file } = await makeReport(client, error, 'error')
     client.channels.get('484357084037513216').send(codeblock(report))
       .then(() => logger.info('Error report has been sent!'))
     logger.error(`Unhandled Rejection: ${error}`)
@@ -93,8 +95,8 @@ module.exports = function(client) {
     })
   })
 
-  process.on('uncaughtException', (error = {}) => {
-    const { report, file } = makeReport(client, error, 'crash')
+  process.on('uncaughtException', async (error = {}) => {
+    const { report, file } = await makeReport(client, error, 'crash')
     require('fs').writeFileSync(file, report, 'utf8')
     client.channels.get('484183865976553493').send(codeblock(report))
       .then(() => process.exit(1))
