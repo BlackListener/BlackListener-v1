@@ -19,6 +19,11 @@ module.exports = {
     quotes: [2, 'single'],
     semi: [2, 'never'],
     'prefer-arrow-callback': 2,
-    'no-use-before-define': ['error', { 'functions': true, 'classes': true }]
+    'no-use-before-define': ['error', { 'functions': true, 'classes': true }],
+
+    // codeclimate
+    'max-lines': [1, 250],
+    'max-lines-per-function': [1, 25],
+    'complexity': [1, 5]
   }
 }
