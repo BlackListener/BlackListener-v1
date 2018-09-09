@@ -58,11 +58,6 @@ let lang
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('ready', async () => {
-  await mkdirp('./error-reports')
-  await mkdirp('./crash-reports')
-  await mkdirp('./data/servers')
-  await mkdirp('./data/users')
-  await mkdirp('./plugins/commands')
   util.initJSON('./data/bans.json', defaultBans).catch(logger.error)
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
