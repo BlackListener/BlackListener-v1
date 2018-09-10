@@ -19,7 +19,8 @@ class ShutdownPacketListener extends EventEmitter {
     }
     server.close()
     rl.close()
-    global.client.destroy()
+    this.client.destroy()
+    require('fs').unlinkSync('./blacklistener.pid')
     process.nextTick(() => {
       this.emit('received')
     })

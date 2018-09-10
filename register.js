@@ -128,7 +128,10 @@ module.exports = function(client) {
     }, 5000)
     if (count != 0)
       if (!once) {
-        logger.info('Caught INT signal, shutdown.')
+        logger.info('Caught INT signal')
+        logger.info('Removing pid file')
+        require('fs').unlinkSync('./blacklistener.pid')
+        logger.info('Disconnecting')
         client.destroy()
         once = true
       } else {

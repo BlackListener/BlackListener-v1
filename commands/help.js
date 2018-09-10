@@ -12,19 +12,11 @@ module.exports.run = async function(msg, settings, lang) {
   if (args[1]) {
     const commands = require('../lang/commands/ja.json')
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command))
-<<<<<<< HEAD
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')
       .setDescription(
         commands[args[1]]
         + `\nエイリアス: ${util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).join('\n') : lang.no) : '?'}`
-=======
-    const embed = Discord.RichEmbed()
-      .setTitle('About this command')
-      .setDescription(
-        commands[args[1]]
-        + `\nエイリアス: ${require(`./${args[1]}`).alias.join('\n')}`
->>>>>>> bb3b800... modified some files
         + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
       .setTimestamp()
     return msg.channel.send(embed)

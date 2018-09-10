@@ -1,3 +1,4 @@
+require('./pidcheck')
 require('./yaml') // Assign extension .yml for YAML
 const logger = require('./logger').getLogger('main', 'green')
 logger.info('Initializing')
