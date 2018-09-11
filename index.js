@@ -274,12 +274,7 @@ if (!c.repl.disable) {
     console.log('client -> A \'Discord.Client()\'')
     return
   }
-  const replServer = require('repl').start(c.repl.prefix || '> ')
-  replServer.defineCommand('help', help)
-  replServer.defineCommand('kill', () => {
-    process.kill(process.pid, 'SIGKILL')
-  })
-  replServer.defineCommand('end', function() {
+  const exit = function() {
     setInterval(() => {
       if (count <= 5000) {
         ++count
@@ -301,8 +296,16 @@ if (!c.repl.disable) {
       } else {
         logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
       }
-  })
+  }
+  const replServer = require('repl').start(c.repl.prefix || '> ')
+  replServer.defineCommand('help', help)
+  replServer.defineCommand('kill', () => process.kill(process.pid, 'SIGKILL'))
+  replServer.defineCommand('end', exit)
   replServer.context.client = client
+  replServer.on('exit', () => {
+    logger.info('Exited repl server. now exiting process...')
+    exit()
+  })
 } else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
 try {
