@@ -16,7 +16,7 @@ module.exports.run = async function(msg, settings, lang) {
       .setTitle('About this command')
       .setDescription(
         commands[args[1]]
-        + `\n\n使用方法: ${settings.prefix}${args[1]} ${util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).args ? require(`./${args[1]}`).args.join('\n') : '') : '<?>'}`
+        + `\n\n使用方法: ${settings.prefix}${args[1]} ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).args ? require(`./${args[1]}`).args.join('\n') : '') : '<?>'}`
         + `\nエイリアス: ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).alias.join('\n') : lang.no) : '?'}`
         + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
       .setTimestamp()
