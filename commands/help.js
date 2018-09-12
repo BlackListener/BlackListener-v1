@@ -11,7 +11,7 @@ module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) {
     const commands = require('../lang/commands/ja.json')
-    if (!commands[args[1]]) return msg.channel.send(f(lang.no_command))
+    if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')
       .setDescription(
