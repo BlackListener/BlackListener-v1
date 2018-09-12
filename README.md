@@ -17,6 +17,8 @@ Global Banning System for Discord.
 
 __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
+This bot has in-bot help, but currently supports only Japanese(but if you send PR, to be good things happen)!
+
 Server's prefix can be show up in mention the bot.
 
 - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
@@ -29,7 +31,6 @@ Server's prefix can be show up in mention the bot.
 | ban \<UserID\/Name\> \<Reason\> \<Probe on __Attachment__\> | Attempt BAN | BANします | Yes |
 | unban \<UserID\/Name\> | Attempt UnBAN | Unbanします | Yes |
 | language \<ja\/en\> | Change language | 言語を変更します | Yes |
-| log | Send all logs to DM(Not working) | すべてのログをDMに送信します(動作しません) | No, bot owner only |
 | setprefix \<prefix\> | Set prefix. | 接頭語を設定します。 | Yes |
 | setnotifyrep \<0...10\> | Set notify reputation | 通知する評価値を設定します | Yes |
 | setbanrep \<0...10\> | Set auto ban reputation | 自動BANする評価値を設定します | Yes |
@@ -42,7 +43,7 @@ Server's prefix can be show up in mention the bot.
 | role \<Role\> [user] | Add/Remove role from [user], default [user] is sender. | [ユーザー]から役職を追加/削除します。[ユーザー] はデフォルトでは実行者です。 | Yes |
 | autorole \[add \<role\>\/remove\] | Settings for autorole | 自動役職の設定 | Yes |
 | status \<fortnite\|minecraft\> | Displays service status | サービスのステータスを表示します。 | No |
-| lookup \<User\> | Displays User information. Cannot display bot information. | ユーザー情報を表示します。ボットの情報は表示できません。 | Yes |
+| lookup \<User\> | Displays User information. | ユーザー情報を表示します。 | Yes |
 | didyouknow \<User\> | Tests if bot know specificed user | ボットが指定されたユーザーを知っているかテストします | No |
 | setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします | Yes |
 | image \<nsfw\|r18\|anime\> | Send nsfw images... be careful. | NSFW画像を送信します...気を付けてくださいね。 | No |
@@ -51,9 +52,6 @@ Server's prefix can be show up in mention the bot.
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
 | setnick \| setnickname \<NewNickname\> \[User\] | Set nickname; default user is this Bot. | ニックネームを設定します、デフォルトのユーザーはこのボットです。 | Yes |
 | listemojis \[escape\] | Displays all custom emojis on guild. | サーバーのすべてのカスタム絵文字を表示します。 | Yes |
-| leave | Leave from guild. | ギルドから抜けます。 | Yes |
-| instantban | Ban from guild, not an global ban | サーバーからBANします、グローバルBANではありません | Yes |
-| instantkick | Kick from guild | サーバーからKickします | Yes |
 | setwelcome \<message:channel\> \<Message:Channel\> | Set welcome message | ウェルカムメッセージを設定します | Yes |
 ... and more commands on [documentation](http://docs.blacklistener.tk/) !
 

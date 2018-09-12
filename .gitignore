@@ -5,7 +5,7 @@
 /secret.yml
 
 # Data folder.
-/data/
+/data
 
 # Dumped file
 dump.txt
@@ -19,3 +19,9 @@ latest.log
 # Crash, error reports
 /crash-reports/
 /error-reports/
+
+# Pid file
+blacklistener.pid
+
+# Local file(GCP side)
+gitpull.log

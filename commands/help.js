@@ -1,14 +1,26 @@
 const f = require('string-format')
 const Discord = require('discord.js')
 const c = require('../config.yml')
+const util = require('../util')
 
 module.exports.args = '[Command]'
 
 module.exports.name = 'help'
 
-module.exports.run = function(msg, settings, lang) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  if (args[1]) return msg.channel.send(f(`http://go.blacklistener.tk/go/commands/${args[1]}`))
+  if (args[1]) {
+    const commands = require('../lang/commands/ja.json')
+    if (!commands[args[1]]) return msg.channel.send(f(lang.no_command))
+    const embed = new Discord.RichEmbed()
+      .setTitle('About this command')
+      .setDescription(
+        commands[args[1]]
+        + `\nエイリアス: ${util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).join('\n') : lang.no) : '?'}`
+        + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
+      .setTimestamp()
+    return msg.channel.send(embed)
+  }
   const prefix = settings.prefix
   const embed = new Discord.RichEmbed()
     .setTitle(f(lang.commands.title, c.version))
