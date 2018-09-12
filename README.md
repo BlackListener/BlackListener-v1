@@ -4,24 +4,22 @@ Global Banning System for Discord.
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
-## Important
-**We're disabled GitHub's Issues, and we have [bug tracker](https://bugs.rht0910.tk), Please use this!**
-
 ## Startup options
- - You can change default prefix without editing config, and other things!
- - If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
- - If you set ``ENABLE_RCON``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
-   - Listener will start with port: 5123
-   - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
- - Start with both options: ``BL_PREFIX="a:" ENABLE_RCON=true node index.js``
 
-## All Commands (Too long!)
+- You can change default prefix without editing config, and other things!
+- If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
+- If you set ``ENABLE_RCON``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
+  - Listener will start with port: 5123
+  - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
+- Start with both options: ``BL_PREFIX="a:" ENABLE_RCON=true node index.js``
+
+## Common Commands (Too long!)
 
 __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
 Server's prefix can be show up in mention the bot.
 
- - Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
+- Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
 | ------- | ---------------- | ---------------- | - |
@@ -40,21 +38,14 @@ Server's prefix can be show up in mention the bot.
 | reload | Reload the guild config. | ギルドの設定をリロードします。 | Yes |
 | purge \[all\] | Delete 100 messages. | 100のメッセージを削除します。 | Yes |
 | purge \<number\> | Delete messages of specified numbers | 指定された数メッセージを削除します | Yes |
-| purge gdel | guildDelete\[0\]. Remove all channels, and create only one channel. | guildDelete[0]。 すべてのチャンネルを削除します、そして1つだけチャンネルを作成します。 | Yes |
-| purge gdel-msg | guildDelete\[1\]. Remove messages of all channels. | guildDelete[1]。すべてのチャンネルからメッセージを削除します。 | Yes |
-| purge gdel-really | guildDelete\[2\]. Remove all channels, and **not** creating any channels. | guildDelete[2]。すべてのチャンネルを削除します。そして、チャンネルは作成しません。 | Yes |
-| purge remake \<Channel\> | Remake specified channel. | 指定されたチャンネルを再作成します。 | Yes |
 | togglepurge \[enable/disable\] | The `purge` command can not be used as it is, so use it for use. | `purge`コマンドはこのままでは使用できないのでこれを使用して使えるようにします。 | Yes |
 | role \<Role\> [user] | Add/Remove role from [user], default [user] is sender. | [ユーザー]から役職を追加/削除します。[ユーザー] はデフォルトでは実行者です。 | Yes |
 | autorole \[add \<role\>\/remove\] | Settings for autorole | 自動役職の設定 | Yes |
 | status \<fortnite\|minecraft\> | Displays service status | サービスのステータスを表示します。 | No |
 | lookup \<User\> | Displays User information. Cannot display bot information. | ユーザー情報を表示します。ボットの情報は表示できません。 | Yes |
 | didyouknow \<User\> | Tests if bot know specificed user | ボットが指定されたユーザーを知っているかテストします | No |
-| encode/decode \<String\> | Encode / Decode message, in base64. | メッセージをBase64でエンコード/デコードします。 | No |
-| encrypt/decrypt \<String\> \<Password\> | Encrypt / Decrypt message. | メッセージを暗号化/復号化します。 | No |
-| setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします。 | Yes |
-| deletemsg \[User\] | Delete messages, default is guild messages file. | メッセージを削除します。デフォルトはギルドのメッセージログです。 | Yes |
-| image \<nsfw\|r18\> | Send nsfw images... very very be careful. | NSFW画像を送信します...かなりかなり気を付けてくださいね。 | No |
+| setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします | Yes |
+| image \<nsfw\|r18\|anime\> | Send nsfw images... be careful. | NSFW画像を送信します...気を付けてくださいね。 | No |
 | image anime | Send anime images. | アニメ画像を送信します。 | No |
 | invite | Displays bot invite link. | ボットの招待リンクを表示します。 | No |
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
@@ -68,16 +59,17 @@ Server's prefix can be show up in mention the bot.
 
 ---
 
-**Welcome message Placeholder**
- - `{user}` ... Mention user
- - `{tag}` ... `User#0000`
- - `{id}` ... User ID
- - `{username}` ... User name
- - `{rep}` ... Reputation
- - `{users}` ... Size of that guild
- - `{createdAt}` ... Created that account date
- - `{joinedAt}` ... Joined that account date
- - `{avatarURL}` ... Avatar URL
+### Welcome message Placeholder
+
+- `{user}` ... Mention user
+- `{tag}` ... `User#0000`
+- `{id}` ... User ID
+- `{username}` ... User name
+- `{rep}` ... Reputation
+- `{users}` ... Size of that guild
+- `{createdAt}` ... Created that account date
+- `{joinedAt}` ... Joined that account date
+- `{avatarURL}` ... Avatar URL
 
 ---
 
@@ -90,12 +82,13 @@ If you're banned 5 times, you'll added 5 rep.
 Most servers are using default settings(maybe), notify reputations is `1`, default ban reputation is `3`.
 
 Also you can't ban that users:
- - Not cached in Bot
- - @Mentions is (currently) not supported
- - A unknown error
- - User has been deleted by Discord (`Deleted user ???????`)
- - You are banned from this Bot
- - Server has banned from bot
+
+- Not cached in Bot
+- @Mentions is (currently) not supported
+- A unknown error
+- User has been deleted by Discord (`Deleted user ???????`)
+- You are banned from this Bot
+- Server has banned from bot
 
 ---
 
@@ -108,16 +101,15 @@ Also you can't ban that users:
 ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`1`で、デフォルトの自動BAN評価値は`3`です。
 
 そしてこれらのユーザーはBANできません:
- - Botにキャッシュされていない
- - @メンション はサポートされていません。
- - 不明なエラー
- - Discordにユーザーを削除されています (`Deleted user ???????`)
- - 執行者がBotからBANされている
- - サーバーがBotからBANされている
+
+- Botにキャッシュされていない
+- @メンション はサポートされていません。
+- 不明なエラー
+- Discordにユーザーを削除されています (`Deleted user ???????`)
+- 執行者がBotからBANされている
+- サーバーがBotからBANされている
 
 ## Length of downtime
 
- - __The downtime is very tiny, This is only restart the bot.__
- - __If short downtime, most errors are JSON Parse errors. Cannot be resolved by user, please contact to the bot owner.__
- - __If loooooong (1 hours or later) downtime, this is a critical server error, already we always working to resolve a problem.__
- - __If extremely (3 days or later) longest downtime, we are always very working to resolve the problem, the errors are networking problem.__
+- __The downtime is very tiny, This is only restart the bot.__
+- __If very long downtime(e.g. 1 days), we're having problem with Google Cloud Platform, please wait until problem is resolved.__
