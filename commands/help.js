@@ -10,8 +10,13 @@ module.exports.name = 'help'
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) {
+<<<<<<< HEAD
     const commands = require('../lang/commands/ja.json')
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
+=======
+    const commands = require(`../lang/commands/${settings.language}.json`)
+    if (!commands[args[1]]) return msg.channel.send(f(lang.no_command))
+>>>>>>> 0c2bf1a... require(translated file)
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')
       .setDescription(
