@@ -21,9 +21,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const command = `${settings.prefix}antispam`
   const write = async function(value) {
-    const localSettings = settings
-    localSettings.antispam = value
-    await util.writeSettings(guildSettings, localSettings, null, null, false)
+    settings.antispam = value
+    await util.writeSettings(guildSettings, settings, null, null, false)
   }
   if (!args[1] || args[1] === 'help') {
     const status = settings.antispam ? lang.enabled : lang.disabled
@@ -49,19 +48,18 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   } else if (args[1] === 'ignore') {
     if (!msg.mentions.channels.first()) { return msg.channel.send(lang.invalid_args) }
     if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
-    const localSettings = settings
     let user2 = msg.mentions.channels.first()
     if (!user2) user2 = msg.guild.channels.find(n => n.name === args[2])
     if (!user2) user2 = msg.guild.channels.get(args[2])
     const id = user2 ? user2.id : ':poop:'
     if (id === ':poop:') return msg.channel.send(lang.invalid_args)
-    if (localSettings.ignoredChannels.includes(id)) {
-      localSettings.ignoredChannels.splice(localSettings.ignoredChannels.indexOf(id), 1)
-      await util.writeSettings(guildSettings, localSettings, null, null, false)
+    if (settings.ignoredChannels.includes(id)) {
+      settings.ignoredChannels.splice(settings.ignoredChannels.indexOf(id), 1)
+      await util.writeSettings(guildSettings, settings, null, null, false)
       msg.channel.send(lang.antispam.ignore_enabled)
     } else {
-      localSettings.ignoredChannels.push(id)
-      await util.writeSettings(guildSettings, localSettings, null, null, false)
+      settings.ignoredChannels.push(id)
+      await util.writeSettings(guildSettings, settings, null, null, false)
       msg.channel.send(lang.antispam.ignore_disabled)
     }
   } else if (args[1] === 'status') {
