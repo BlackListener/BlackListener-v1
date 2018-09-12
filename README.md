@@ -17,7 +17,7 @@ Global Banning System for Discord.
 
 __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
-This bot has in-bot help, but currently supports only Japanese(but if you send PR, to be good things happen)!
+This bot has in-bot help, but currently supports only English, Japanese.
 
 Server's prefix can be show up in mention the bot.
 
