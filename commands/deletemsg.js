@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 const f = require('string-format')
 const config = require('../config.yml')
 
-module.exports.args = '[User]'
+module.exports.args = ['[User]']
 
 module.exports.name = 'deletemsg'
 

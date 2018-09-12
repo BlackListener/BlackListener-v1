@@ -2,6 +2,15 @@ const Discord = require('discord.js')
 const fs = require('fs').promises
 const f = require('string-format')
 const config = require('../config.yml')
+//const url = config.dump_url
+
+module.exports.args = [
+  '[guilds]',
+  '[users]',
+  '[channels]',
+  '[emojis]',
+  '[messages]',
+]
 
 module.exports.args = '[guilds|users|channels|emojis|messages]'
 

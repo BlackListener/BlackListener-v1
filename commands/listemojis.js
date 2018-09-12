@@ -1,4 +1,4 @@
-module.exports.args = '[escape]'
+module.exports.args = ['[escape]']
 
 module.exports.name = 'listemojis'
 

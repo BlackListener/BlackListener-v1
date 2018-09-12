@@ -1,7 +1,7 @@
 const util = require('../util')
 const Discord = require('discord.js')
 
-module.exports.args = '<ja/en>'
+module.exports.args = ['<ja/en>']
 
 module.exports.name = 'language'
 

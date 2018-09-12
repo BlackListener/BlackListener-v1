@@ -1,7 +1,7 @@
 const util = require('../util')
 const logger = require('../logger').getLogger('commands:setwelcome', 'cyan')
 
-module.exports.args = '[channel:message] [Channel:Message]'
+module.exports.args = ['[channel:message] [Channel:Message]']
 
 module.exports.name = 'setwelcome'
 

@@ -1,6 +1,6 @@
 const f = require('string-format')
 
-module.exports.args = '[Version]'
+module.exports.args = ['[Version]']
 
 module.exports.name = 'releases'
 

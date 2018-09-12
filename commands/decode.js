@@ -1,4 +1,4 @@
-module.exports.args = '<Base64String>'
+module.exports.args = ['<Base64String>']
 
 module.exports.name = 'decode'
 

@@ -3,21 +3,21 @@ const Discord = require('discord.js')
 const c = require('../config.yml')
 const util = require('../util')
 
-module.exports.args = '[Command]'
+module.exports.args = ['[Command]']
 
 module.exports.name = 'help'
 
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) {
-    const commands = require('../lang/commands/ja.json')
+    const commands = require(`../lang/commands/${settings.language}.json`)
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')
       .setDescription(
         commands[args[1]]
-        + `\n\nUsage: ${settings.prefix}${args[1]} ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).args || '') : '<?>'}`
-        + `\nAliases: ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).alias.join('\n') : lang.no) : '?'}`
+        + `\n\nUsage: ${settings.prefix}${args[1]} ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).args ? require(`./${args[1]}`).args.join('\n') : '') : '<?>'}`
+        + `\nAlias: ${util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).alias.join('\n') : lang.no) : '?'}`
         + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
       .setTimestamp()
     return msg.channel.send(embed)

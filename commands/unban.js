@@ -3,7 +3,7 @@ const logger = require('../logger').getLogger('commands:unban', 'blue')
 const bansFile = './data/bans.json'
 const { defaultUser, defaultBans } = require('../contents.js')
 
-module.exports.args = '<ID/Mentions/Name> *Not recommended*'
+module.exports.args = ['<ID/Mentions/Name>']
 
 module.exports.name = 'unban'
 

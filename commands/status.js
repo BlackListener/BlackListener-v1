@@ -5,7 +5,7 @@ const FormData = require('form-data')
 const now = require('performance-now')
 const s = require('../config.yml')
 
-module.exports.args = '[minecraft|fortnite]'
+module.exports.args = ['[minecraft]', '[fortnite]']
 
 module.exports.name = 'status'
 

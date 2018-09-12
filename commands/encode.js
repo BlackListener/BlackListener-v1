@@ -1,4 +1,4 @@
-module.exports.args = '<String>'
+module.exports.args = ['<String>']
 
 module.exports.name = 'encode'
 

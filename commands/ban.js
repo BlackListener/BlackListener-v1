@@ -5,7 +5,7 @@ const { defaultUser, defaultBans } = require('../contents.js')
 const fs = require('fs').promises
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
-module.exports.args = '[<ID/Mentions/Name> <Reason> <Probe>]'
+module.exports.args = ['[<ID/Mentions/Name> <Reason> <Probe>]']
 
 module.exports.name = 'ban'
 

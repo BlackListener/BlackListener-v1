@@ -1,6 +1,6 @@
 const util = require('../util')
 
-module.exports.args = '<Role>'
+module.exports.args = ['<Role>']
 
 module.exports.name = 'blockrole'
 

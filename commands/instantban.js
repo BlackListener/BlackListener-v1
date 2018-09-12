@@ -1,4 +1,4 @@
-module.exports.args = '<User>'
+module.exports.args = ['<User>']
 
 module.exports.name = 'instantban'
 

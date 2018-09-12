@@ -1,6 +1,6 @@
 const util = require('../util')
 
-module.exports.args = '<Channel>'
+module.exports.args = ['<Channel>']
 
 module.exports.name = 'setignore'
 
