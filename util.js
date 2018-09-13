@@ -6,6 +6,7 @@ const f = require('string-format')
 
 module.exports = {
   async exists(path) {
+    logger.debug(`Checking: ${require.resolve(path)}`)
     return await fs.access(path).then(() => true).catch(() => false)
   },
   async initJSON(path, json) {
