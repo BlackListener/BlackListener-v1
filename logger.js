@@ -6,7 +6,7 @@ const share = require('./share')
 class Logger {
   /**
    * Do not call this method twice.
-   * 
+   *
    * @returns {Logger} A Logger instance
    */
   initLog() {
@@ -25,7 +25,7 @@ class Logger {
 
   /**
    * Set thread name and color.
-   * 
+   *
    * @example const logger = require('./logger').getLogger("example", "red")
    * @param {string} thread Thread name
    * @param {string} color yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
@@ -59,51 +59,50 @@ class Logger {
     return self
   }
   /**
-   * 
+   *
    * @param {*} message Message of this log
    * @param {string} level error, warn, fatal, info, debug
    * @param {string} color color of chalk
    * @param {boolean} isLogger Is this called by myself?
    * @returns {void} <void>
-   * @private 
+   * @private
    */
   out(message, level, color, isLogger) {
     share.thread = this.thread
     const originaldate = new Date()
     const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
     let thread = this.thread
-    share.logger = {}
-    share.logger.coloredlevel = chalk`{${color} ${level}}`
+    const logger = {}
+    logger.coloredlevel = chalk`{${color} ${level}}`
     if (isLogger) { this.thread_raw = 'logger'; thread = chalk.hex('#800080')(this.thread_raw) }
     let data
     if (this.style === 'maven') {
       level = level.replace('warn', 'warning')
-      share.logger.coloredlevel2 = chalk`{${color}.bold ${level.toUpperCase()}}`
-      data = `[${share.logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
+      logger.coloredlevel2 = chalk`{${color}.bold ${level.toUpperCase()}}`
+      data = `[${logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
     } else if (this.style === 'npm') {
       level = level.replace('error', 'ERR!')
       level = level.replace('warn', 'WARN')
-      share.logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow(level) : level === 'info' ? chalk.green(level) : chalk[color](level)
-      data = `${chalk.white('BlackListener')} ${share.logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
+      logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow(level) : level === 'info' ? chalk.green(level) : chalk[color](level)
+      data = `${chalk.white('BlackListener')} ${logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     } else {
-      data = `${date} ${thread}${chalk.reset()} ${share.logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
+      data = `${date} ${thread}${chalk.reset()} ${logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     }
-    share.log.push({date: new Date(), level: level, thread: this.thread_raw, message: message})
     fs.appendFileSync('latest.log', `${data}\n`)
     console.info(data)
   }
   /**
    * Outputs info level message.
-   * 
+   *
    * @example logger.info("foo")
-   * 
-   * 
+   *
+   *
    * @example logger.info("foo").error("bar")
-   * 
-   * 
-   * @param {*} message 
+   *
+   *
+   * @param {*} message
    * @param {boolean} isLogger Don't use this
-   * 
+   *
    * @returns {Logger} A Logger instance
    */
   info(message, isLogger = false) {
@@ -112,16 +111,16 @@ class Logger {
   }
   /**
    * Outputs debug level message.
-   * 
+   *
    * @example logger.debug("foo")
-   * 
-   * 
+   *
+   *
    * @example logger.debug("foo").error("bar")
-   * 
-   * 
-   * @param {*} message 
+   *
+   *
+   * @param {*} message
    * @param {boolean} isLogger Don't use this
-   * 
+   *
    * @returns {Logger} A Logger instance
    */
   debug(message, isLogger = false) {
@@ -132,16 +131,16 @@ class Logger {
   }
   /**
    * Outputs warn level message.
-   * 
+   *
    * @example logger.warn("foo")
-   * 
-   * 
+   *
+   *
    * @example logger.warn("foo").error("bar")
-   * 
-   * 
-   * @param {*} message 
+   *
+   *
+   * @param {*} message
    * @param {boolean} isLogger Don't use this
-   * 
+   *
    * @returns {Logger} A Logger instance
    */
   warn(message, isLogger = false) {
@@ -150,16 +149,16 @@ class Logger {
   }
   /**
    * Outputs error level message.
-   * 
+   *
    * @example logger.error("foo")
-   * 
-   * 
+   *
+   *
    * @example logger.error("foo").debug("bar")
-   * 
-   * 
-   * @param {*} message 
+   *
+   *
+   * @param {*} message
    * @param {boolean} isLogger Don't use this
-   * 
+   *
    * @returns {Logger} A Logger instance
    */
   error(message, isLogger = false) {
@@ -168,16 +167,16 @@ class Logger {
   }
   /**
    * Outputs fatal level message.
-   * 
+   *
    * @example logger.fatal("foo")
-   * 
-   * 
+   *
+   *
    * @example logger.fatal("foo").error("bar")
-   * 
-   * 
-   * @param {*} message 
+   *
+   *
+   * @param {*} message
    * @param {boolean} isLogger Don't use this
-   * 
+   *
    * @returns {Logger} A Logger instance
    */
   fatal(message, isLogger = false) {

@@ -11,8 +11,6 @@ const fs = require('fs').promises
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'
 const c = require('./config.yml')
-const share = require('./share')
-share.client = client
 
 const getDateTime = function() {
   const date = new Date()
