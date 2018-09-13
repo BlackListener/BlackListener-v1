@@ -18,7 +18,11 @@ module.exports = async function(settings, msg, lang, guildSettings) {
         commands[cmd](msg, settings, lang, guildSettings)
       } else msg.channel.send(lang.udonthaveperm)
     } else if (await util.exists(`./plugins/commands/${cmd}.js`)) {
-      require(`./plugins/commands/${cmd}.js`).run(msg, settings, lang, guildSettings)
+      const plugin = require(`./plugins/commands/${cmd}.js`)
+      if (!plugin.isAllowed || plugin.isAllowed(msg, s.owners)) {
+        logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
+        plugin.run(msg, settings, lang, guildSettings)
+      } else msg.channel.send(lang.udonthaveperm)
     } else {
       const commandList = Object.keys(commands).map(cmd => ({ cmd, args: commands[cmd].args }))
       for (const item of commandList) item.no = levenshtein(cmd, item.cmd)
