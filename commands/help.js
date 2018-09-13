@@ -2,6 +2,7 @@ const f = require('string-format')
 const Discord = require('discord.js')
 const c = require('../config.yml')
 const util = require('../util')
+const { command } = require('../commands')
 
 module.exports.args = ['[Command]']
 
@@ -16,8 +17,8 @@ module.exports.run = async function(msg, settings, lang) {
       .setTitle('About this command')
       .setDescription(
         commands[args[1]]
-        + `\n\nUsage: ${settings.prefix}${args[1]} ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).args ? require(`./${args[1]}`).args.join('\n') : '') : '<?>'}`
-        + `\nAlias: ${util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).alias.join('\n') : lang.no) : '?'}`
+        + `\n\nUsage: ${settings.prefix}${args[1]} ${await util.exists(`./commands/${args[1]}.js`) ? (command[args[1]].args ? command[args[1]].args.join('\n') : '') : '<?>'}`
+        + `\nAlias: ${util.exists(`./commands/${args[1]}.js`) ? (command[args[1]].alias ? command[args[1]].alias.join('\n') : lang.no) : '?'}`
         + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
       .setTimestamp()
     return msg.channel.send(embed)
