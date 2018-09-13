@@ -12,7 +12,7 @@ module.exports.run = async function(msg, settings, lang) {
   if (args[1]) {
     const commands = require(`../lang/commands/${settings.language}.json`)
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
-    const help = await util.readJSON(`./commands/${args[1]}.js`, {})
+    const help = await util.readJSON(`${__dirname}/commands/${args[1]}.js`, {})
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')
       .setDescription(
