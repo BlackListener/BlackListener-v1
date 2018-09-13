@@ -192,7 +192,7 @@ client.on('guildMemberAdd', async (member) => {
     message = message.replace(/{username}/gm, member.user.username)
     message = message.replace(/{tag}/gm, member.user.tag)
     message = message.replace(/{users}/gm, member.guild.members.size)
-    message = message.replace(/{createdAt}/gm, member.createdAt.user.toLocaleTimeString())
+    message = message.replace(/{createdAt}/gm, member.user.createdAt.toLocaleTimeString())
     message = message.replace(/{joinedAt}/gm, member.joinedAt.toLocaleTimeString())
     message = message.replace(/{avatarURL}/gm, member.user.avatarURL)
     member.guild.channels.get(serverSetting.welcome_channel).send(message)
