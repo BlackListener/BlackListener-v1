@@ -17,7 +17,7 @@ module.exports.run = async function(msg, settings, lang) {
       .setDescription(
         commands[args[1]]
         + `\n\nUsage: ${settings.prefix}${args[1]} ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).args ? require(`./${args[1]}`).args.join('\n') : '') : '<?>'}`
-        + `\nAlias: ${util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).alias.join('\n') : lang.no) : '?'}`
+        + `\nAlias: ${await util.exists(`./commands/${args[1]}.js`) ? (require(`./${args[1]}`).alias ? require(`./${args[1]}`).alias.join('\n') : lang.no) : '?'}`
         + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
       .setTimestamp()
     return msg.channel.send(embed)
