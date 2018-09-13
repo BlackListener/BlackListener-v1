@@ -73,6 +73,9 @@ module.exports = function(client) {
 
   client.on('disconnect', () => {
     logger.info(`Disconnected from Websocket (${count}ms).`)
+    if (count === 0)
+      logger.fatal('May wrong your bot token, Is bot token has changed or Base64 encoded?')
+        .fatal('Base64 is deprecated since this commit => a0cd0b542a435b7c36b9035e268fdeedd26d4261')
     process.exit()
   })
 
