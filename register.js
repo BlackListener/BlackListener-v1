@@ -2,11 +2,8 @@ const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.yml')
 const fs = require('fs').promises
 const os = require('os')
+const share = require('./share')
 const git = require('simple-git/promise')()
-
-global.loadConfig = function() {
-  return require('./config.yml')
-}
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -28,7 +25,7 @@ Description: ${description}
 ${error.stack}
 
 --- Process Details ---
-    Last Called Logger Thread: ${global.thread} (may not current thread)
+    Last Called Logger Thread: ${share.thread} (may not current thread)
 
     BlackListener Version: ${c.version}
     BlackListener Commit: ${commit}
