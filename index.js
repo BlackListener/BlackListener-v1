@@ -58,6 +58,7 @@ let lang
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('ready', async () => {
+  await require('./versioncheck')()
   await mkdirp('./error-reports')
   await mkdirp('./crash-reports')
   await mkdirp('./data/servers')
@@ -69,6 +70,12 @@ client.on('ready', async () => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   }, 10000)
   logger.info(`BlackListener v${c.version} has fully startup.`)
+  if (isTravisBuild) {
+    logger.info('Shutting down...')
+    await client.destroy()
+    fs.unlink('./blacklistener.pid').catch(true)
+    process.exit()
+  }
 })
 
 client.on('message', async msg => {
