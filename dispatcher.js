@@ -1,6 +1,6 @@
 const f = require('string-format')
 const logger = require('./logger').getLogger('commands', 'yellow')
-const commands = require('./commands')
+const { commands } = require('./commands')
 const levenshtein = require('fast-levenshtein').get
 const util = require('./util')
 const isTravisBuild = process.argv[2] === '--travis-build'

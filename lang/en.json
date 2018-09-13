@@ -168,5 +168,9 @@
   "eval_error": "An error occurred in eval: {0}",
   "invalidVersion": ":x: Specified invalid version.",
   "commit": "Commit: {0}",
-  "setconfig": "Saved settings: {0}"
+  "setconfig": "Saved settings: {0}",
+  "load": {
+    "loaded": "Command loaded: {0}",
+    "error": "Failed to load command: {0}"
+  }
 }

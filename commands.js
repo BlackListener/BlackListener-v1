@@ -5,15 +5,23 @@ const commands = {}
 
 const files = fs.readdirSync('./commands/')
 
-for (const file of files) {
-  if (!file.endsWith('.js')) continue
+function setCommand(file, reload) {
+  if (reload) delete require.cache[require.resolve(`./commands/${file}`)]
   const command = require(`./commands/${file}`)
   commands[command.name] = command.run
-  if (!command.alias) continue
+  if (!command.alias) return
   for (const alias of command.alias) {
-    if (commands[alias]) logger.fatal(`The alias ${alias} is already used.`)
+    if (commands[alias] && !reload)
+      logger.fatal(`The alias ${alias} is already used.`)
     commands[alias] = command.run
   }
 }
 
-module.exports = commands
+for (const file of files) if (file.endsWith('.js')) setCommand(file)
+
+module.exports = {
+  commands,
+  load(file) {
+    setCommand(file, true)
+  },
+}
