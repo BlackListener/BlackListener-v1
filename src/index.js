@@ -42,6 +42,7 @@ try {
   s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 } catch (e) {
   logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
+    .fatal('Hint: Place secret.yml at src folder.')
   process.exit(1)
 }
 const {
