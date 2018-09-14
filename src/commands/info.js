@@ -19,7 +19,10 @@ module.exports.run = async function(msg, settings, lang) {
     o1 = stdout
     loadavg = Math.floor(os.loadavg()[0] * 100) / 100
   }
-  const owner = client.users.get(s.owners[0])
+  let owner = ''
+  s.owners.forEach(aowner => {
+    if (aowner.tag && aowner.id) owner += `${aowner.tag} (${aowner.id})\n`
+  })
   const embed = new Discord.RichEmbed()
     .setTitle('Bot info')
     .setTimestamp()
