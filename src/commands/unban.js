@@ -1,6 +1,6 @@
 const util = require('../util')
 const logger = require('../logger').getLogger('commands:unban', 'blue')
-const bansFile = './data/bans.json'
+const bansFile = __dirname + '/../data/bans.json'
 const { defaultUser, defaultBans } = require('../contents.js')
 
 module.exports.args = ['<ID/Mentions/Name>']
@@ -14,7 +14,7 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
-  const userFile = `./data/users/${msg.author.id}/config.json`
+  const userFile = `${__dirname}/../data/users/${msg.author.id}/config.json`
   const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
   let bans = await util.readJSON(bansFile, defaultBans)
   if (!args[1] || args[1] === '') {

@@ -18,21 +18,21 @@ module.exports.run = async function(msg, settings, lang) {
     if (!force) {
       if (/\D/gm.test(args[1])) {
         try {
-          id = client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
+          id = client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
         } catch (e) {
           logger.error(e)
           return msg.channel.send(f(lang.unknown, args[1]))
         }
       } else if (/\d{18}/.test(args[1])) {
         try {
-          id = client.users.get(args[1]).id || client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
+          id = client.users.get(args[1]).id || client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
         } catch (e) {
           msg.channel.send(f(lang.unknown, args[1]))
           return logger.error(e)
         }
       } else {
         try {
-          id = client.users.find('username', args[1]).id || msg.guild.members.find('nickname', args[1]).id
+          id = client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
         } catch (e) {
           logger.error(e)
           return msg.channel.send(f(lang.unknown, args[1]))

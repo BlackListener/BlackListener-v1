@@ -17,8 +17,8 @@ module.exports = async function(settings, msg, lang, guildSettings) {
         logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
         commands[cmd](msg, settings, lang, guildSettings)
       } else msg.channel.send(lang.udonthaveperm)
-    } else if (await util.exists(`./plugins/commands/${cmd}.js`)) {
-      const plugin = require(`./plugins/commands/${cmd}.js`)
+    } else if (await util.exists(`${__dirname}/plugins/commands/${cmd}.js`)) {
+      const plugin = require(`${__dirname}/plugins/commands/${cmd}.js`)
       if (!plugin.isAllowed || plugin.isAllowed(msg, s.owners)) {
         logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
         plugin.run(msg, settings, lang, guildSettings)
