@@ -2,7 +2,6 @@ const git = require('simple-git/promise')()
 const logger = require('./logger').getLogger('VersionCheck', 'darkgray')
 
 async function check() {
-  logger.info('Checking for version...')
   await git.fetch()
   const status = await git.status()
   const latest = await (git.tags()).latest

@@ -12,7 +12,7 @@ repl:
   prefix: '> '
   disable: false
 logger:
-  debug: true
+  debug: false
   style: original
   # Options:
   # maven: Maven style

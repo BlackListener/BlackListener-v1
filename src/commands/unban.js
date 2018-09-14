@@ -40,7 +40,7 @@ module.exports.run = async function(msg, settings, lang) {
       for (let i=0; i<=client.guilds.length; i++) {
         client.guilds[i].unban(user2)
           .then(user2 => logger.info(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
-          .catch(logger.error)
+          .catch(e => logger.error(e))
       }
       user.rep = --user.rep
       await util.writeSettings(bansFile, bans, null, null, false)

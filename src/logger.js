@@ -31,8 +31,9 @@ class Logger {
    * @param {string} color yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
    * @returns {Logger} A Logger instance
    */
-  getLogger(thread, color = 'yellow') {
-    if (!this.initialized) this.initLog()
+  getLogger(thread, color = 'yellow', init = true) {
+    if (!init) this.initLog = () => {}
+    if (!this.initialized && init) this.initLog()
     const self = new Logger()
     self.thread = thread
     self.thread_raw = thread
@@ -184,5 +185,9 @@ class Logger {
     return this
   }
 }
+
+process.on('message', message => {
+  if (message === 'noinit') Logger.prototype.initLog = () => {}
+})
 
 module.exports = new Logger()

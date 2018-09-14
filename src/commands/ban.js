@@ -77,7 +77,7 @@ module.exports.run = async function(msg, settings, lang) {
         if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned)
         msg.guild.ban(userid, { 'reason': reason })
           .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
-          .catch(logger.error)
+          .catch(e => logger.error(e))
         return msg.channel.send(lang.banned)
       })()
     }

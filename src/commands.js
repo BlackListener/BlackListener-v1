@@ -3,7 +3,7 @@ const fs = require('fs')
 
 const commands = {}
 
-const files = fs.readdirSync('./commands/')
+const files = fs.readdirSync(__dirname + '/commands/')
 
 function setCommand(file, reload) {
   if (reload) delete require.cache[require.resolve(`./commands/${file}`)]

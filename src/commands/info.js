@@ -3,7 +3,7 @@ const exec = require('util').promisify(require('child_process').exec)
 const os = require('os')
 const c = require('../config.yml')
 const isWindows = process.platform === 'win32'
-const isTravisBuild = process.argv[2] === '--travis-build'
+const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require('../travis.yml') : require('../secret.yml')
 
 module.exports.name = 'info'
