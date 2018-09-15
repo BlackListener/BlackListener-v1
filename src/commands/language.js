@@ -1,4 +1,3 @@
-const util = require('../util')
 const Discord = require('discord.js')
 const f = require('string-format')
 
@@ -10,7 +9,7 @@ module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }
 
-module.exports.run = async function(msg, settings, lang, guildSettings) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (!args[1] || args[1] === 'help') {
     const embed = new Discord.RichEmbed()
@@ -20,7 +19,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(embed)
   } else if (args[1] === 'en' || args[1] === 'ja') {
     settings.language = args[1]
-    await util.writeJSON(guildSettings, settings)
     await msg.channel.send(f(lang.setconfig, 'language'))
   }
 }

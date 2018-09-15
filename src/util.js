@@ -7,11 +7,6 @@ module.exports = {
   async exists(path) {
     return await fs.access(path).then(() => true).catch(() => false)
   },
-  async initJSON(path, json) {
-    if (await this.exists(path)) return
-    logger.info(`Creating ${path}`)
-    return await this.writeJSON(path, json)
-  },
   async readJSON(path, _default) {
     logger.debug(`Reading from file: ${path}`)
     return await fs.readFile(path, 'utf8')
@@ -60,80 +55,6 @@ module.exports = {
       } else { member.addRole(role).catch(e => logger.error(e)) }
     } catch (e) {
       msg.channel.send(lang.role_error); logger.error(e)
-    }
-  },
-  async checkConfig(user, settings, userFile, guildSettings) {
-    try {
-      let userChanged = false; let serverChanged = false
-      if (!user.bannedFromServer) {
-        user.bannedFromServer = []
-        userChanged = true
-      }
-      if (!user.bannedFromServerOwner) {
-        user.bannedFromServerOwner = []
-        userChanged = true
-      }
-      if (!user.bannedFromUser) {
-        user.bannedFromUser = []
-        userChanged = true
-      }
-      if (!user.probes) {
-        user.probes = []
-        userChanged = true
-      }
-      if (!user.reasons) {
-        user.reasons = []
-        userChanged = true
-      }
-      if (!user.tag_changes) {
-        user.tag_changes = []
-        userChanged = true
-      }
-      if (!user.avatar_changes) {
-        user.avatar_changes = []
-        userChanged = true
-      }
-      if (!user.username_changes) {
-        user.username_changes =[]
-        userChanged = true
-      }
-      if (!settings.banned) {
-        settings.banned = false
-        serverChanged = true
-      }
-      if (!settings.excludeLogging) {
-        settings.excludeLogging = ''
-        serverChanged = true
-      }
-      if (!settings.welcome_channel) {
-        settings.welcome_channel = null
-        serverChanged = true
-      }
-      if (!settings.welcome_message) {
-        settings.welcome_message = null
-        serverChanged = true
-      }
-      if (!settings.mute) {
-        settings.mute = []
-        serverChanged = true
-      }
-      if (!settings.message_blacklist) {
-        settings.message_blacklist = []
-        serverChanged = true
-      }
-      if (!settings.blocked_role) {
-        settings.blocked_role = []
-        serverChanged = true
-      }
-      if (!settings.log_channel) {
-        settings.log_channel = ''
-        serverChanged = true
-      }
-      if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
-      if (serverChanged) await fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8')
-    } catch (e) {
-      logger.error(`Something went wrong: ${e}`)
-        .error(e)
     }
   },
 }

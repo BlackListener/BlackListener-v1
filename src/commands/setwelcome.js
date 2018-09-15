@@ -1,4 +1,3 @@
-const util = require('../util')
 const logger = require('../logger').getLogger('commands:setwelcome', 'cyan')
 const f = require('string-format')
 
@@ -12,13 +11,12 @@ module.exports.isAllowed = msg => {
 
 module.exports.alias = ['welcome']
 
-module.exports.run = async function(msg, settings, lang, guildSettings) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'message') {
     if (!args[2]) return msg.channel.send(lang.invalid_args)
     const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)
     settings.welcome_message = commandcut
-    await util.writeJSON(guildSettings, settings)
     await msg.channel.send(f(lang.setconfig, 'welcome_message'))
     msg.channel.send(lang.welcome_warning)
   } else if (args[1] === 'channel') {
@@ -39,7 +37,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       }
     }
     settings.welcome_channel = channel
-    await util.writeJSON(guildSettings, settings)
     await msg.channel.send(f(lang.setconfig, 'welcome_channel'))
     msg.channel.send(lang.welcome_warning)
   } else {

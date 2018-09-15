@@ -1,4 +1,3 @@
-const util = require('../util')
 const f = require('string-format')
 
 module.exports.args = ['<0...10>']
@@ -11,7 +10,7 @@ module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }
 
-module.exports.run = async function(msg, settings, lang, guildSettings) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const n = parseInt(args[1], 10)
   const min = 0
@@ -21,7 +20,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(lang.invalid_args)
   } else {
     settings.banRep = parseInt(args[1], 10)
-    await util.writeJSON(guildSettings, settings)
     await msg.channel.send(f(lang.setconfig, 'banRep'))
   }
 }

@@ -8,7 +8,7 @@ const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
-const util = require('./util')
+const data = require('./data')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
 
@@ -45,11 +45,6 @@ try {
     .fatal('Hint: Place secret.yml at src folder.')
   process.exit(1)
 }
-const {
-  defaultSettings,
-  defaultBans,
-  defaultUser,
-} = require('./contents')
 const dispatcher = require('./dispatcher')
 
 require('./register')(client)
@@ -64,7 +59,6 @@ client.on('ready', async () => {
   await mkdirp(`${__dirname}/../data/servers`)
   await mkdirp(`${__dirname}/../data/users`)
   await mkdirp(`${__dirname}/../plugins/commands`)
-  util.initJSON(`${__dirname}/../data/bans.json`, defaultBans).catch(e => logger.error(e))
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
@@ -81,26 +75,13 @@ client.on('ready', async () => {
 client.on('message', async msg => {
   if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
-  const guildSettings = `${__dirname}/../data/servers/${msg.guild.id}/config.json`
   await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
   await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
   const userMessagesFile = `${__dirname}/../data/users/${msg.author.id}/messages.log`
   const serverMessagesFile = `${__dirname}/../data/servers/${msg.guild.id}/messages.log`
-  const userFile = `${__dirname}/../data/users/${msg.author.id}/config.json`
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
-  try {
-    await util.initJSON(userFile, defaultUser)
-    await util.initJSON(guildSettings, defaultSettings)
-  } catch (e) {
-    try {
-      await util.initJSON(userFile, defaultUser)
-      await util.initJSON(guildSettings, defaultSettings)
-    } catch (e) {logger.error(e)}
-  }
-  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
-  const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
-  logger.debug('Loading ' + guildSettings)
-  await util.checkConfig(user, settings, userFile, guildSettings)
+  const user = await data.user(msg.author.id)
+  const settings = await data.server(msg.guild.id)
   try {
     if (msg.channel.id !== settings.excludeLogging) {
       const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
@@ -108,7 +89,7 @@ client.on('message', async msg => {
       fs.appendFile(serverMessagesFile, log_message)
     }
   } catch (e) {
-    logger.error(`Error while logging message (${guildSettings}) (${e})`)
+    logger.error(`Error while logging message (${e})`)
   }
   // --- Begin of Sync
   if (msg.content === settings.prefix + 'sync') return
@@ -126,7 +107,7 @@ client.on('message', async msg => {
   }
   // --- End of Mute
   if (!msg.author.bot) {
-    lang = await util.readJSON(`${__dirname}/lang/${settings.language}.json`) // Processing message is under of this
+    lang = require(`${__dirname}/lang/${settings.language}.json`) // Processing message is under of this
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
@@ -148,29 +129,18 @@ client.on('message', async msg => {
         }
       }
     } catch (e) {
-      logger.error(`Error while processing anti-spam. (${guildSettings})`)
+      logger.error('Error while processing anti-spam.')
     }
     // --- End of Anti-spam
-    dispatcher(settings, msg, lang, guildSettings)
+    dispatcher(settings, msg, lang)
   }
 })
 
 client.on('guildMemberAdd', async (member) => {
-  const userFile = `${__dirname}/../data/users/${member.user.id}/config.json`
-  const serverFile = `${__dirname}/../data/servers/${member.guild.id}/config.json`
   await mkdirp(`${__dirname}/../data/users/${member.user.id}`)
   await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
-  try {
-    await util.initJSON(userFile, defaultUser)
-    await util.initJSON(serverFile, defaultSettings)
-  } catch (e) {
-    try {
-      await util.initJSON(userFile, defaultUser)
-      await util.initJSON(serverFile, defaultSettings)
-    } catch (e) {logger.error(e)}
-  }
-  const serverSetting = await util.readJSON(serverFile)
-  const userSetting = await util.readJSON(userFile)
+  const serverSetting = await data.server(member.guild.id)
+  const userSetting = await data.user(member.user.id)
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
@@ -202,7 +172,7 @@ client.on('guildMemberAdd', async (member) => {
 })
 
 client.on('messageUpdate', async (old, msg) => {
-  const settings = await util.readJSON(`${__dirname}/../data/servers/${msg.guild.id}/config.json`, defaultSettings)
+  const settings = await data.server(msg.guild.id)
   if (old.content === msg.content) return
   if (msg.channel.id !== settings.excludeLogging) {
     let parentName
@@ -221,51 +191,9 @@ client.on('messageUpdate', async (old, msg) => {
 })
 
 client.on('userUpdate', async (olduser, newuser) => {
-  const userFile = `${__dirname}/../data/users/${olduser.id}/config.json`
-  const user = await util.readJSON(userFile, defaultUser)
-  let userChanged = false
-  try {
-    if (!user.bannedFromServer) {
-      user.bannedFromServer = []
-      userChanged = true
-    }
-    if (!user.bannedFromServerOwner) {
-      user.bannedFromServerOwner = []
-      userChanged = true
-    }
-    if (!user.bannedFromUser) {
-      user.bannedFromUser = []
-      userChanged = true
-    }
-    if (!user.probes) {
-      user.probes = []
-      userChanged = true
-    }
-    if (!user.reasons) {
-      user.reasons = []
-      userChanged = true
-    }
-    if (!user.tag_changes) {
-      user.tag_changes = []
-      userChanged = true
-    }
-    if (!user.avatar_changes) {
-      user.avatar_changes = []
-      userChanged = true
-    }
-    if (!user.username_changes) {
-      user.username_changes =[]
-      userChanged = true
-    }
-  } catch (e) {
-    logger.error(`Error while null checking (${e})`)
-  }
-  try {
-    if (userChanged) await util.writeJSON(userFile, user)
-    if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
-  } catch (e) {
-    logger.error(e.stack)
-  }
+  if (olduser.username === newuser.username) return
+  const user = await data.user(olduser.id)
+  user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
 })
 
 let once = false; let count = 0

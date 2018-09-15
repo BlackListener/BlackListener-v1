@@ -1,7 +1,5 @@
-const util = require('../util')
+const data = require('../data')
 const logger = require('../logger').getLogger('commands:unban', 'blue')
-const bansFile = __dirname + '/../data/bans.json'
-const { defaultUser, defaultBans } = require('../contents.js')
 
 module.exports.args = ['<ID/Mentions/Name>']
 
@@ -14,9 +12,8 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
-  const userFile = `${__dirname}/../data/users/${msg.author.id}/config.json`
-  const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
-  let bans = await util.readJSON(bansFile, defaultBans)
+  const user = await data.user(msg.author.id)
+  const bans = await data.bans()
   if (!args[1] || args[1] === '') {
     msg.channel.send(lang.no_args)
   } else {
@@ -33,7 +30,7 @@ module.exports.run = async function(msg, settings, lang) {
       for (let i=0; i<=bans.length; i++) {
         if (bans[i] == user2.id) {
           exe = true
-          bans = bans.splice(i, 1)
+          bans.splice(i, 1)
         }
       }
       if (!exe) { settings = null; return msg.channel.send(lang.notfound_user) }
@@ -43,8 +40,6 @@ module.exports.run = async function(msg, settings, lang) {
           .catch(e => logger.error(e))
       }
       user.rep = --user.rep
-      await util.writeJSON(bansFile, bans)
-      await util.writeJSON(userFile, user)
       msg.channel.send(lang.unbanned)
     } else {
       msg.channel.send(lang.guild_unavailable)

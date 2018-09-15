@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const util = require('../util')
 const f = require('string-format')
 
 module.exports.args = [
@@ -17,13 +16,9 @@ module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }
 
-module.exports.run = async function(msg, settings, lang, guildSettings) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const command = `${settings.prefix}antispam`
-  const write = async function(value) {
-    settings.antispam = value
-    await util.writeJSON(guildSettings, settings)
-  }
   if (!args[1] || args[1] === 'help') {
     const status = settings.antispam ? lang.enabled : lang.disabled
     const embed = new Discord.RichEmbed()
@@ -37,13 +32,13 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       .setTimestamp()
     msg.channel.send(embed)
   } else if (args[1] === 'toggle') {
-    await write(!settings.antispam)
+    settings.antispam = !settings.antispam
     msg.channel.send(lang.antispam[!settings.antispam ? 'disabled' : 'enabled'])
   } else if (args[1] === 'disable') {
-    await write(false)
+    settings.antispam = false
     msg.channel.send(lang.antispam.disabled)
   } else if (args[1] === 'enable') {
-    await write(true)
+    settings.antispam = true
     msg.channel.send(lang.antispam.enabled)
   } else if (args[1] === 'ignore') {
     if (!msg.mentions.channels.first()) { return msg.channel.send(lang.invalid_args) }
@@ -55,11 +50,9 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     if (id === ':poop:') return msg.channel.send(lang.invalid_args)
     if (settings.ignoredChannels.includes(id)) {
       settings.ignoredChannels.splice(settings.ignoredChannels.indexOf(id), 1)
-      await util.writeJSON(guildSettings, settings)
       msg.channel.send(lang.antispam.ignore_enabled)
     } else {
       settings.ignoredChannels.push(id)
-      await util.writeJSON(guildSettings, settings)
       msg.channel.send(lang.antispam.ignore_disabled)
     }
   } else if (args[1] === 'status') {

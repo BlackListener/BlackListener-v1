@@ -1,7 +1,7 @@
 const f = require('string-format')
 const Discord = require('discord.js')
 const logger = require('../logger').getLogger('commands:lookup', 'purple')
-const util = require('../util')
+const data = require('../data')
 
 module.exports.args = ['<User>']
 
@@ -43,7 +43,7 @@ module.exports.run = async function(msg, settings, lang) {
   let userConfig
   let user2
   try {
-    userConfig = await util.readJSON(`./data/users/${id}/config.json`)
+    userConfig = await data.user(id)
     user2 = client.users.get(id)
   } catch (e) {
     logger.error(e)
