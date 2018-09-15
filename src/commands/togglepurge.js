@@ -11,18 +11,17 @@ module.exports.isAllowed = msg => {
 
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  const unsavedSettings = settings
   if (args[1] === 'enable') {
-    unsavedSettings.disable_purge = false
+    settings.disable_purge = false
   } else if (args[1] === 'disable') {
-    unsavedSettings.disable_purge = true
+    settings.disable_purge = true
   } else {
     if (settings.disable_purge) {
-      unsavedSettings.disable_purge = false
+      settings.disable_purge = false
     } else if (!settings.disable_purge) {
-      unsavedSettings.disable_purge = true
+      settings.disable_purge = true
     }
   }
-  await util.writeJSON(guildSettings, unsavedSettings)
+  await util.writeJSON(guildSettings, settings)
   await msg.channel.send(f(lang.setconfig, 'disable_purge'))
 }

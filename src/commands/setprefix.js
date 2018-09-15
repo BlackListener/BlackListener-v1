@@ -13,12 +13,11 @@ module.exports.isAllowed = msg => {
 
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  const set = settings
   if (/\s/gm.test(args[1]) || !args[1]) {
     msg.channel.send(lang.cannotspace)
   } else {
-    set.prefix = args[1]
-    await util.writeJSON(guildSettings, set)
+    settings.prefix = args[1]
+    await util.writeJSON(guildSettings, settings)
     await msg.channel.send(f(lang.setconfig, 'prefix'))
   }
 }
