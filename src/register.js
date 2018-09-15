@@ -1,6 +1,7 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.yml')
-const fs = require('fs').promises
+const _fs = require('fs')
+const fs = _fs.promises
 const os = require('os')
 const share = require('./share')
 const git = require('simple-git/promise')()
@@ -97,8 +98,8 @@ module.exports = function(client) {
 
   process.on('uncaughtException', async (error = {}) => {
     const { report, file } = await makeReport(client, error, 'crash')
-    require('fs').writeFileSync(file, report, 'utf8')
-    require('fs').unlinkSync('./blacklistener.pid') // Backport 41388608acac2d07c3e88a7cdf85cafa87873bc6 (future)
+    _fs.writeFileSync(file, report, 'utf8')
+    _fs.unlinkSync('./blacklistener.pid') // Backport 41388608acac2d07c3e88a7cdf85cafa87873bc6 (future)
     client.channels.get('484183865976553493').send(codeblock(report))
       .then(() => process.exit(1))
   })
@@ -130,7 +131,7 @@ module.exports = function(client) {
       if (!once) {
         logger.info('Caught INT signal')
         logger.info('Removing pid file')
-        require('fs').unlinkSync('./blacklistener.pid')
+        _fs.unlinkSync('./blacklistener.pid')
         logger.info('Disconnecting')
         client.destroy()
         once = true

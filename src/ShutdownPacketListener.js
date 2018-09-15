@@ -2,6 +2,7 @@ const EventEmitter = require('events')
 const logger = require('./logger').getLogger('ShutdownPacketListener', 'red')
 const net = require('net')
 const readline = require('readline')
+const fs = require('fs')
 const server = net.createServer()
 const rl = readline.createInterface(process.stdin, process.stdout)
 const clients = {}
@@ -21,7 +22,7 @@ class ShutdownPacketListener extends EventEmitter {
     server.close()
     rl.close()
     this.client.destroy()
-    require('fs').unlinkSync('./blacklistener.pid')
+    fs.unlinkSync('./blacklistener.pid')
     process.nextTick(() => {
       this.emit('received')
     })
