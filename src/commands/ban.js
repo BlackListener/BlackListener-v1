@@ -2,7 +2,6 @@ const Discord = require('discord.js')
 const util = require('../util')
 const bansFile = './data/bans.json'
 const { defaultUser, defaultBans } = require('../contents.js')
-const fs = require('fs').promises
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
 module.exports.args = ['[<ID/Mentions/Name> <Reason> <Probe>]']
@@ -72,8 +71,8 @@ module.exports.run = async function(msg, settings, lang) {
         bans.push(userid)
         userr.rep = ++userr.rep
         const targetUserFile = `./data/users/${userid}/config.json`
-        await fs.writeFile(bansFile, JSON.stringify(bans, null, 4), 'utf8')
-        await fs.writeFile(targetUserFile, JSON.stringify(userr, null, 4), 'utf8')
+        await util.writeJSON(bansFile, bans)
+        await util.writeJSON(targetUserFile, userr)
         if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned)
         msg.guild.ban(userid, { 'reason': reason })
           .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))

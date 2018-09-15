@@ -261,7 +261,7 @@ client.on('userUpdate', async (olduser, newuser) => {
     logger.error(`Error while null checking (${e})`)
   }
   try {
-    if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
+    if (userChanged) await util.writeJSON(userFile, user)
     if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
   } catch (e) {
     logger.error(e.stack)
