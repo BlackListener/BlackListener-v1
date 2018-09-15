@@ -23,7 +23,7 @@ const getDateTime = function() {
 
 if (process.env.ENABLE_RCON) {
   logger.warn('Remote control is enabled.')
-    .warn('Be careful for unexpected shutdown! (Use firewall to refuse from attack)')
+    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
     .info('Listener will be startup with 5123 port.')
   require('./ShutdownPacketListener')(client)
 } else {
@@ -101,24 +101,11 @@ client.on('message', async msg => {
   const settings = Object.assign(defaultSettings, await util.readJSON(guildSettings, defaultSettings))
   logger.debug('Loading ' + guildSettings)
   await util.checkConfig(user, settings, userFile, guildSettings)
-  try {
-    if (msg.channel.id !== settings.excludeLogging) {
-      const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
-      fs.appendFile(userMessagesFile, log_message)
-      fs.appendFile(serverMessagesFile, log_message)
-    }
-  } catch (e) {
-    logger.error(`Error while logging message (${guildSettings}) (${e})`)
+  if (msg.channel.id !== settings.excludeLogging) {
+    const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n`
+    fs.appendFile(userMessagesFile, log_message).catch(e => logger.error(e))
+    fs.appendFile(serverMessagesFile, log_message).catch(e => logger.error(e))
   }
-  // --- Begin of Sync
-  if (msg.content === settings.prefix + 'sync') return
-  if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
-    if (msg.content === `plz sync <@${client.user.id}>`) {
-      const message = await msg.channel.send(`hey <@${c.extender_id}>, ` + settings.language)
-      message.delete(500)
-    }
-  }
-  // --- End of Sync
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
