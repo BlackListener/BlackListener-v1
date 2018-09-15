@@ -33,6 +33,14 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     'uk',
     'vi',
     'zh',
+    'es',
+    'af',
+    'ar',
+    'el',
+    'cs',
+    'da',
+    'de',
+    'el',
   ]
   if (!args[1] || args[1] === 'help') {
     const embed = new Discord.RichEmbed()
