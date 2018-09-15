@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const util = require('../util')
+const f = require('string-format')
 
 module.exports.args = ['<User>']
 
@@ -48,5 +49,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   } else {
     settings.mute.push(user2)
   }
-  await util.writeSettings(guildSettings, settings, msg.channel, 'mute')
+  await util.writeJSON(guildSettings, settings)
+  await msg.channel.send(f(lang.setconfig, 'mute'))
 }

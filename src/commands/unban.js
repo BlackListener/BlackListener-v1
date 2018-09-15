@@ -43,8 +43,8 @@ module.exports.run = async function(msg, settings, lang) {
           .catch(e => logger.error(e))
       }
       user.rep = --user.rep
-      await util.writeSettings(bansFile, bans, null, null, false)
-      await util.writeSettings(userFile, user, null, null, false)
+      await util.writeJSON(bansFile, bans)
+      await util.writeJSON(userFile, user)
       msg.channel.send(lang.unbanned)
     } else {
       msg.channel.send(lang.guild_unavailable)

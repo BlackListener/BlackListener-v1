@@ -1,4 +1,5 @@
 const util = require('../util')
+const f = require('string-format')
 
 module.exports.args = ['<0...10>']
 
@@ -21,6 +22,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(lang.invalid_args)
   } else {
     set.notifyRep = parseInt(args[1], 10)
-    await util.writeSettings(guildSettings, set, msg.channel, 'notifyRep')
+    await util.writeJSON(guildSettings, set)
+    await msg.channel.send(f(lang.setconfig, 'notifyRep'))
   }
 }

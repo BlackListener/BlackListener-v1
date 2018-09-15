@@ -14,7 +14,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'remove') {
     settings.autorole = null
-    await util.writeSettings(guildSettings, settings, msg.channel, 'autorole')
+    await util.writeJSON(guildSettings, settings)
+    await msg.channel.send(f(lang.setconfig, 'autorole'))
   } else if (args[1] === 'add') {
     if (/\d{18,}/.test(args[2])) {
       settings.autorole = args[2]
@@ -25,7 +26,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
         msg.channel.send(lang.invalid_args); logger.error(e)
       }
     }
-    await util.writeSettings(guildSettings, settings, msg.channel, 'autorole')
+    await util.writeJSON(guildSettings, settings)
+    await msg.channel.send(f(lang.setconfig, 'autorole'))
   } else {
     if (settings.autorole != null) {
       msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name))

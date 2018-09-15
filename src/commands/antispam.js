@@ -22,7 +22,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   const command = `${settings.prefix}antispam`
   const write = async function(value) {
     settings.antispam = value
-    await util.writeSettings(guildSettings, settings, null, null, false)
+    await util.writeJSON(guildSettings, settings)
   }
   if (!args[1] || args[1] === 'help') {
     const status = settings.antispam ? lang.enabled : lang.disabled
@@ -55,11 +55,11 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     if (id === ':poop:') return msg.channel.send(lang.invalid_args)
     if (settings.ignoredChannels.includes(id)) {
       settings.ignoredChannels.splice(settings.ignoredChannels.indexOf(id), 1)
-      await util.writeSettings(guildSettings, settings, null, null, false)
+      await util.writeJSON(guildSettings, settings)
       msg.channel.send(lang.antispam.ignore_enabled)
     } else {
       settings.ignoredChannels.push(id)
-      await util.writeSettings(guildSettings, settings, null, null, false)
+      await util.writeJSON(guildSettings, settings)
       msg.channel.send(lang.antispam.ignore_disabled)
     }
   } else if (args[1] === 'status') {

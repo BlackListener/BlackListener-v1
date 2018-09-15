@@ -1,4 +1,5 @@
 const util = require('../util')
+const f = require('string-format')
 
 module.exports.args = ['<Prefix>']
 
@@ -17,6 +18,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(lang.cannotspace)
   } else {
     set.prefix = args[1]
-    await util.writeSettings(guildSettings, set, msg.channel, 'prefix')
+    await util.writeJSON(guildSettings, set)
+    await msg.channel.send(f(lang.setconfig, 'prefix'))
   }
 }

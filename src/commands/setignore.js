@@ -1,4 +1,5 @@
 const util = require('../util')
+const f = require('string-format')
 
 module.exports.args = ['<Channel>']
 
@@ -27,5 +28,6 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   if (!channel) return msg.channel.send(lang.invalid_args)
   const id = channel.id
   settings.excludeLogging = id
-  await util.writeSettings(guildSettings, settings, msg.channel, 'excludeLogging')
+  await util.writeJSON(guildSettings, settings)
+  await msg.channel.send(f(lang.setconfig, 'excludeLogging'))
 }

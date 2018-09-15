@@ -1,4 +1,5 @@
 const util = require('../util')
+const f = require('string-format')
 
 module.exports.args = ['<Role>']
 
@@ -21,9 +22,11 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       }
     }
     if (!exe) { settings = null; return msg.channel.send(lang.role_error) }
-    await util.writeSettings(guildSettings, settings, msg.channel, 'blocked_role')
+    await util.writeJSON(guildSettings, settings)
+    await msg.channel.send(f(lang.setconfig, 'blocked_role'))
   } else {
     settings.blocked_role.push(role.id)
-    await util.writeSettings(guildSettings, settings, msg.channel, 'blocked_role')
+    await util.writeJSON(guildSettings, settings)
+    await msg.channel.send(f(lang.setconfig, 'blocked_role'))
   }
 }

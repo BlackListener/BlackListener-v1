@@ -1,5 +1,6 @@
 const util = require('../util')
 const Discord = require('discord.js')
+const f = require('string-format')
 
 module.exports.args = ['<ja/en>']
 
@@ -19,6 +20,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
     msg.channel.send(embed)
   } else if (args[1] === 'en' || args[1] === 'ja') {
     settings.language = args[1]
-    await util.writeSettings(guildSettings, settings, msg.channel, 'language')
+    await util.writeJSON(guildSettings, settings)
+    await msg.channel.send(f(lang.setconfig, 'language'))
   }
 }

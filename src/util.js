@@ -2,7 +2,6 @@ const _fs = require('fs')
 const fs = _fs.promises
 const logger = require('./logger').getLogger('util')
 const Discord = require('discord.js')
-const f = require('string-format')
 
 module.exports = {
   async exists(path) {
@@ -37,10 +36,6 @@ module.exports = {
   },
   stringify(json) {
     return JSON.stringify(json, null, 4)
-  },
-  async writeSettings(settingsFile, wsettings, channel, config) {
-    await this.writeJSON(settingsFile, wsettings)
-    if (channel) await channel.send(f(require(`./lang/${wsettings.language}.json`).setconfig, config))
   },
   addRole(msg, rolename, isCommand = true, guildmember = null, language) {
     const lang = require(`./lang/${language}.json`)
