@@ -70,7 +70,7 @@ module.exports.run = function(msg, settings, lang) {
     (async () => {
       messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
       msg.channel.bulkDelete(messages)
-        .catch(logger.error)
+        .catch(e => logger.error(e))
     })()
   } else {
     msg.channel.send(lang.invalid_args)

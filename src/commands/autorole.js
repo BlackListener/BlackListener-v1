@@ -22,7 +22,7 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
       try {
         settings.autorole = msg.mentions.roles.first().id.toString() || msg.guild.roles.find(n => n.name === args[2]).id
       } catch(e) {
-        msg.channel.send(lang.invalid_args); logger.error(e)
+        msg.channel.send(lang.invalid_args); logger.warn(e)
       }
     }
     await util.writeSettings(guildSettings, settings, msg.channel, 'autorole')

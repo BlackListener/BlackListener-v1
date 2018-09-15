@@ -11,13 +11,35 @@ module.exports.isAllowed = msg => {
 
 module.exports.run = async function(msg, settings, lang, guildSettings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
+  const validLanguages = [
+    'en',
+    'ja',
+    'ca',
+    'fi',
+    'fr',
+    'he',
+    'hu',
+    'it',
+    'ko',
+    'nl',
+    'no',
+    'pl',
+    'pt',
+    'ro',
+    'sr',
+    'ru',
+    'sv',
+    'tr',
+    'uk',
+    'vi',
+    'zh',
+  ]
   if (!args[1] || args[1] === 'help') {
     const embed = new Discord.RichEmbed()
       .setTitle(lang.availablelang)
-      .addField(':flag_jp: Japanese - 日本語', 'ja')
-      .addField(':flag_us: English - English', 'en')
+      .setDescription(validLanguages.join('\n'))
     msg.channel.send(embed)
-  } else if (args[1] === 'en' || args[1] === 'ja') {
+  } else if (validLanguages.includes(args[1])) {
     settings.language = args[1]
     await util.writeSettings(guildSettings, settings, msg.channel, 'language')
   }

@@ -7,9 +7,8 @@ if (!fs.existsSync('blacklistener.pid')) {
   return
 }
 if (isRunning(fs.readFileSync('blacklistener.pid'))) {
-  logger.error('Found another BlackListener(or corrupted pid file), can\'t start.')
+  logger.emerg('Found another BlackListener(or corrupted pid file), can\'t start.')
   process.exit(-2)
 } else {
   logger.error('BlackListener was interrupted, please check data directory is correct')
-  logger.error('Starting')
 }

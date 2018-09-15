@@ -41,8 +41,8 @@ let s
 try {
   s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 } catch (e) {
-  logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
-    .fatal('Hint: Place secret.yml at src folder.')
+  logger.emerg('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
+    .emerg('Hint: Place secret.yml at src folder.')
   process.exit(1)
 }
 const {
@@ -135,7 +135,7 @@ client.on('message', async msg => {
         }
       }
     } catch (e) {
-      logger.error(`Error while processing anti-spam. (${guildSettings})`)
+      logger.warn(`Error while processing anti-spam. (${guildSettings})`)
     }
     // --- End of Anti-spam
     dispatcher(settings, msg, lang, guildSettings)
@@ -245,13 +245,13 @@ client.on('userUpdate', async (olduser, newuser) => {
       userChanged = true
     }
   } catch (e) {
-    logger.error(`Error while null checking (${e})`)
+    logger.warn(`Error while null checking (${e})`)
   }
   try {
     if (userChanged) await fs.writeFile(userFile, JSON.stringify(user, null, 4), 'utf8')
     if (olduser.username !== newuser.username) user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
   } catch (e) {
-    logger.error(e.stack)
+    logger.warn(e.stack)
   }
 })
 

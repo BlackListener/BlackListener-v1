@@ -20,7 +20,7 @@ module.exports.run = async function(msg, settings, lang) {
         try {
           id = client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
         } catch (e) {
-          logger.error(e)
+          logger.warn(e)
           return msg.channel.send(f(lang.unknown, args[1]))
         }
       } else if (/\d{18}/.test(args[1])) {
@@ -28,13 +28,13 @@ module.exports.run = async function(msg, settings, lang) {
           id = client.users.get(args[1]).id || client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
         } catch (e) {
           msg.channel.send(f(lang.unknown, args[1]))
-          return logger.error(e)
+          return logger.warn(e)
         }
       } else {
         try {
           id = client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
         } catch (e) {
-          logger.error(e)
+          logger.warn(e)
           return msg.channel.send(f(lang.unknown, args[1]))
         }
       }

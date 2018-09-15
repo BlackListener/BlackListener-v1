@@ -12,14 +12,14 @@ spawned.on('message', msg => {
 })
 
 spawned.on('error', e => {
-  logger.fatal('Failed to start Bot: ')
-  logger.fatal(e.stack)
+  logger.emerg('Failed to start Bot: ')
+  logger.emerg(e.stack)
   process.exit(1)
 })
 
 spawned.on('close', (code) => {
   logger.info(`Bot exited: ${code}`)
-  if (code >= 1 || code <= -1) logger.error(`Bot exited with unexpected code: ${code}`)
+  if (code >= 1 || code <= -1) logger.emerg(`Bot exited with unexpected code: ${code}`)
   process.exit(code)
 })
 process.on('SIGINT', () => {

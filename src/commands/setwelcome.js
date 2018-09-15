@@ -31,8 +31,8 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
         try {
           channel = msg.mentions.channels.first().id
         } catch (e) {
-          logger.error(e)
-          return msg.channel.send(`${lang.invalid_args} (\`${e}\`)`)
+          logger.warn(e)
+          return msg.channel.send(lang.invalid_args)
         }
       }
     }

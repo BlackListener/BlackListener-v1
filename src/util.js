@@ -138,7 +138,7 @@ module.exports = {
       if (serverChanged) await fs.writeFile(guildSettings, JSON.stringify(settings, null, 4), 'utf8')
     } catch (e) {
       logger.error(`Something went wrong: ${e}`)
-        .error(e)
+        .error(e.stack || e)
     }
   },
 }
