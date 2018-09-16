@@ -4,6 +4,10 @@ Global Banning System for Discord.
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
 
+## Important
+
+Do not edit src/lang files directly, managed by Crowdin(but can edit English if need).
+
 ## Startup options
 
 - You can change default prefix without editing config, and other things!
