@@ -11,8 +11,6 @@ const fs = require('fs').promises
 const util = require('./util')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
-const share = require('./share')
-share.client = client
 
 const getDateTime = function() {
   const date = new Date()
@@ -21,16 +19,6 @@ const getDateTime = function() {
     date.getMonth() + 1,
     date.getDate(),
   ].join( '/' ) + ' ' + date.toLocaleTimeString()
-}
-
-if (process.env.ENABLE_RCON) {
-  logger.warn('Remote control is enabled.')
-    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
-    .info('Listener will be startup with 5123 port.')
-  require('./ShutdownPacketListener')(client)
-} else {
-  logger.info('Remote control is disabled.')
-    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
 }
 
 if (process.env.BL_PREFIX) {
@@ -315,3 +303,15 @@ process.on('message', async message => {
     process.exit(0)
   }
 })
+
+if (process.env.ENABLE_RCON) {
+  logger.warn('Remote control is enabled.')
+    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
+    .info('Listener will be startup with 5123 port.')
+  require('./ShutdownPacketListener')
+} else {
+  logger.info('Remote control is disabled.')
+    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
+}
+
+module.exports = client

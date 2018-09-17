@@ -64,7 +64,7 @@ ${error.stack}
 }
 
 module.exports = function() {
-  const client = share.client
+  const client = require('./index')
   let count = 0
   let once = false
 
