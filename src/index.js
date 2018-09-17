@@ -1,6 +1,5 @@
 require('./yaml')
 const logger = require('./logger').getLogger('client', 'cyan', false)
-require('./pidcheck')
 logger.info('Initializing')
 const f = require('string-format')
 const Discord = require('discord.js')
@@ -11,6 +10,7 @@ const fs = require('fs').promises
 const util = require('./util')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
+module.exports = client
 
 const getDateTime = function() {
   const date = new Date()
@@ -313,5 +313,3 @@ if (process.env.ENABLE_RCON) {
   logger.info('Remote control is disabled.')
     .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
 }
-
-module.exports = client
