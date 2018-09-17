@@ -1,18 +1,13 @@
-const EventEmitter = require('events')
 const logger = require('./logger').getLogger('ShutdownPacketListener', 'red')
 const net = require('net')
 const readline = require('readline')
 const server = net.createServer()
 const rl = readline.createInterface(process.stdin, process.stdout)
 const clients = {}
+const share = require('./share')
 
-class ShutdownPacketListener extends EventEmitter {
-  constructor(client) {
-    super()
-    this.client = client
-    return this
-  }
-  received(logger, rl) {
+class ShutdownPacketListener {
+  received() {
     logger.info('Packet received, Shutting down!')
     for (const i in clients){
       const socket = clients[i].socket
@@ -20,11 +15,8 @@ class ShutdownPacketListener extends EventEmitter {
     }
     server.close()
     rl.close()
-    this.client.destroy()
+    share.client.destroy()
     require('fs').unlinkSync('./blacklistener.pid')
-    process.nextTick(() => {
-      this.emit('received')
-    })
   }
 }
 
@@ -45,7 +37,7 @@ server.on('connection', (socket) => {
     socket.write('[Server] Shutting down, you are being logged.\n')
   }
   logger.warn(`Triggered shutdown by ${socket.remoteAddress}`)
-  new ShutdownPacketListener().received(logger, rl)
+  new ShutdownPacketListener().received()
   //const status = server.getConnections.length + '/' + server.maxConnections
   const key = socket.remoteAddress + ':' + socket.remotePort
   clients[key] = new Client(socket)
@@ -81,7 +73,7 @@ server.listen(5123, '127.0.0.1', () => {
   logger.info('Listening Start on Server - ' + addr.address + ':' + addr.port)
 })
 
-rl.on('SIGINT', () => {
+process.on('SIGINT', () => {
   for(const i in clients){
     const socket = clients[i].socket
     socket.end()
@@ -90,4 +82,4 @@ rl.on('SIGINT', () => {
   rl.close()
 })
 
-module.exports = client => new ShutdownPacketListener(client)
+module.exports = () => new ShutdownPacketListener()

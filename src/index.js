@@ -11,6 +11,8 @@ const fs = require('fs').promises
 const util = require('./util')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
+const share = require('./share')
+share.client = client
 
 const getDateTime = function() {
   const date = new Date()
@@ -52,7 +54,7 @@ const {
 } = require('./contents')
 const dispatcher = require('./dispatcher')
 
-require('./register')(client)
+require('./register')()
 
 let lang
 
