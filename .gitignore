@@ -18,3 +18,6 @@ gitpull.log
 
 # npm package-lock.json
 package-lock.json
+
+# Config file
+src/config.yml

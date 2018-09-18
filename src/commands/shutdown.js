@@ -14,10 +14,9 @@ module.exports.run = function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (args[1] == '-f') {
-    logger.info(f(lang.atmpfs, msg.author.tag))
+    logger.warn(f(lang.atmpfs, msg.author.tag))
     msg.channel.send(lang.bye)
-    client.destroy()
-    fs.unlinkSync('../blacklistener.pid')
+    process.exit(0)
   } else if (args[1] == '-r') {
     (async () => {
       logger.info(f(lang.rebooting))

@@ -1,4 +1,3 @@
-const Discord = require('discord.js')
 const data = require('../data')
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
@@ -14,19 +13,7 @@ module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   const bans = await data.bans()
-  if (!args[1] || args[1] === '') {
-    const bansList = await Promise.all(bans.map(async (id) => {
-      if (id) {
-        const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
-        return `${user.tag} (${id})`
-      }
-    }))
-    const embed = new Discord.RichEmbed()
-      .setTitle(lang.banned_users)
-      .setColor([0,255,0])
-      .setDescription(bansList.join('\n') || 'まだ誰もBANしていません')
-    msg.channel.send(embed)
-  } else {
+  if (args[1] || args[1] !== '') {
     if (msg.guild && msg.guild.available && !msg.author.bot) {
       !(async () => {
         if (!args[2]) return msg.channel.send(lang.invalid_args)
@@ -59,14 +46,13 @@ module.exports.run = async function(msg, settings, lang) {
         if (args[3] !== '--force') { if (!user2) { return msg.channel.send(lang.invalid_user) } }
         let userid
         if (args[3] === '--force') { userid = args[1] } else { userid = user2.id }
-        const userr = await data.user(userid)
-        userr.bannedFromServerOwner.push(msg.guild.ownerID)
-        userr.bannedFromServer.push(msg.guild.id)
-        userr.bannedFromUser.push(msg.author.id)
-        userr.probes.push(attach)
-        userr.reasons.push(reason)
+        user.bannedFromServerOwner.push(msg.guild.ownerID)
+        user.bannedFromServer.push(msg.guild.id)
+        user.bannedFromUser.push(msg.author.id)
+        user.probes.push(attach)
+        user.reasons.push(reason)
         bans.push(userid)
-        userr.rep = ++userr.rep
+        user.rep = ++user.rep
         if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned)
         msg.guild.ban(userid, { 'reason': reason })
           .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
@@ -74,5 +60,7 @@ module.exports.run = async function(msg, settings, lang) {
         return msg.channel.send(lang.banned)
       })()
     }
+  } else {
+    msg.channel.send(':x: ' + lang.not_specified_user)
   }
 }

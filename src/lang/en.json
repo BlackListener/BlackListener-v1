@@ -172,5 +172,6 @@
   "load": {
     "loaded": "Command loaded: {0}",
     "error": "Failed to load command: {0}"
-  }
+  },
+  "not_specified_user": "Not specified user."
 }

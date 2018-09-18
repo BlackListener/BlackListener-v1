@@ -1,6 +1,5 @@
 require('./yaml')
 const logger = require('./logger').getLogger('client', 'cyan', false)
-require('./pidcheck')
 logger.info('Initializing')
 const f = require('string-format')
 const Discord = require('discord.js')
@@ -11,6 +10,7 @@ const fs = require('fs').promises
 const data = require('./data')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
+module.exports = client
 
 const getDateTime = function() {
   const date = new Date()
@@ -19,16 +19,6 @@ const getDateTime = function() {
     date.getMonth() + 1,
     date.getDate(),
   ].join( '/' ) + ' ' + date.toLocaleTimeString()
-}
-
-if (process.env.ENABLE_RCON) {
-  logger.warn('Remote control is enabled.')
-    .warn('Be careful for unexpected shutdown! (Use firewall to refuse from attack)')
-    .info('Listener will be startup with 5123 port.')
-  require('./ShutdownPacketListener')(client)
-} else {
-  logger.info('Remote control is disabled.')
-    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
 }
 
 if (process.env.BL_PREFIX) {
@@ -41,13 +31,13 @@ let s
 try {
   s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 } catch (e) {
-  logger.fatal('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
-    .fatal('Hint: Place secret.yml at src folder.')
+  logger.emerg('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
+    .emerg('Hint: Place secret.yml at src folder.')
   process.exit(1)
 }
 const dispatcher = require('./dispatcher')
 
-require('./register')(client)
+require('./register')()
 
 let lang
 
@@ -77,24 +67,11 @@ client.on('message', async msg => {
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
   const user = await data.user(msg.author.id)
   const settings = await data.server(msg.guild.id)
-  try {
-    if (msg.channel.id !== settings.excludeLogging) {
-      const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
-      fs.appendFile(userMessagesFile, log_message)
-      fs.appendFile(serverMessagesFile, log_message)
-    }
-  } catch (e) {
-    logger.error(`Error while logging message (${e})`)
+  if (msg.channel.id !== settings.excludeLogging) {
+    const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
+    fs.appendFile(userMessagesFile, log_message)
+    fs.appendFile(serverMessagesFile, log_message)
   }
-  // --- Begin of Sync
-  if (msg.content === settings.prefix + 'sync') return
-  if (msg.guild.members.get(c.extender_id) && msg.author.id === c.extender_id) {
-    if (msg.content === `plz sync <@${client.user.id}>`) {
-      const message = await msg.channel.send(`hey <@${c.extender_id}>, ` + settings.language)
-      message.delete(500)
-    }
-  }
-  // --- End of Sync
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
@@ -124,7 +101,7 @@ client.on('message', async msg => {
         }
       }
     } catch (e) {
-      logger.error('Error while processing anti-spam.')
+      logger.warn('Error while processing anti-spam.')
     }
     // --- End of Anti-spam
     dispatcher(settings, msg, lang)
@@ -249,3 +226,13 @@ process.on('message', async message => {
     process.exit(0)
   }
 })
+
+if (process.env.ENABLE_RCON) {
+  logger.warn('Remote control is enabled.')
+    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
+    .info('Listener will be startup with 5123 port.')
+  require('./ShutdownPacketListener')
+} else {
+  logger.info('Remote control is disabled.')
+    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
+}

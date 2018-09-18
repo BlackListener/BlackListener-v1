@@ -20,8 +20,8 @@ const report = cli.executeOnFiles(['.'])
 if (report.errorCount || report.warningCount) {
   const files = report.results.filter(e => e.source)
   const hasError = report.errorCount
-  const all = '${report.errorCount + report.warningCount} problems'
-  const counts = '(${report.errorCount} errors, ${report.warningCount} warnings)'
+  const all = `${report.errorCount + report.warningCount} problems`
+  const counts = `(${report.errorCount} errors, ${report.warningCount} warnings)`
   const embed = {
     description: `:${hasError ? 'x' : 'heavy_multiplication_x'}: ${all} ${counts}`,
     color: hasError ? 0xFF0000 : 0xFFFF00,
@@ -36,6 +36,5 @@ if (report.errorCount || report.warningCount) {
       }) => `${l}:${c} ${str(severity)} ${message} ${id}`).join('\n')),
     })),
   }
-  console.log(embed)
   hook.send({embeds: [embed]})
 }

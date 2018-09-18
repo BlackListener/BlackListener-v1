@@ -112,7 +112,8 @@ class Logger {
   }
   /**
    * Outputs debug level message.
-   *
+   * Just debug message.
+   * 
    * @example logger.debug("foo")
    *
    *
@@ -132,6 +133,7 @@ class Logger {
   }
   /**
    * Outputs warn level message.
+   * Warning condition
    *
    * @example logger.warn("foo")
    *
@@ -150,6 +152,7 @@ class Logger {
   }
   /**
    * Outputs error level message.
+   * Error condition
    *
    * @example logger.error("foo")
    *
@@ -168,6 +171,7 @@ class Logger {
   }
   /**
    * Outputs fatal level message.
+   * Fatal Error, may need action immediately
    *
    * @example logger.fatal("foo")
    *
@@ -182,6 +186,24 @@ class Logger {
    */
   fatal(message, isLogger = false) {
     this.out(message, 'fatal', 'redBright.bold', isLogger)
+    return this
+  }
+  /**
+   * Outputs emerg level message.
+   * Use on going system is unusable(e.g. uncaughtException)
+   *
+   * @example logger.emerg("foo")
+   *
+   *
+   * @example logger.emerg("foo").emerg("bar")
+   *
+   *
+   * @param {*} message
+   *
+   * @returns {Logger} A Logger instance
+   */
+  emerg(message) {
+    this.out(message, 'emerg', 'red.bold', false)
     return this
   }
 }

@@ -19,7 +19,7 @@ module.exports.run = function(msg, settings, lang) {
     try {
       (msg.guild.members.get(client.users.find(n => n.username === args[1])) || msg.guild.members.get(args[1]) || msg.mentions.members.first()).setNickname(msg.mentions.members.first().user.username)
     } catch (e) {
-      logger.error(e)
+      logger.warn(e)
       msg.channel.send(lang.invalid_args)
     }
     return msg.channel.send(':ok_hand:')
@@ -37,7 +37,7 @@ module.exports.run = function(msg, settings, lang) {
             try {
               msg.mentions.members.first().setNickname(args[1])
             } catch (e) {
-              logger.error(e)
+              logger.warn(e)
               msg.channel.send(lang.invalid_args)
             }
           }

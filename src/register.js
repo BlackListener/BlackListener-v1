@@ -64,7 +64,8 @@ ${error.stack}
   }
 }
 
-module.exports = function(client) {
+module.exports = function() {
+  const client = require('./index')
   let count = 0
   let once = false
 
@@ -76,12 +77,12 @@ module.exports = function(client) {
     logger.info(`Disconnected from Websocket (${count}ms).`)
     if (count === 0)
       logger.fatal('May wrong your bot token, Is bot token has changed or Base64 encoded?')
-        .fatal('Base64 is deprecated since this commit => a0cd0b542a435b7c36b9035e268fdeedd26d4261')
+        .info('Or are you attempted remote shutdown?')
     process.exit()
   })
 
   client.on('reconnecting', () => {
-    logger.fatal('Got Disconnected from Websocket, Reconnecting!')
+    logger.warn('Got Disconnected from Websocket, Reconnecting!')
   })
 
   process.on('unhandledRejection', async (error = {}) => {
@@ -98,19 +99,21 @@ module.exports = function(client) {
 
   process.on('uncaughtException', async (error = {}) => {
     const { report, file } = await makeReport(client, error, 'crash')
+    logger.emerg('Oh, BlackListener has crashed!')
+      .emerg(`Crash report has writed to: ${file}`)
     _fs.writeFileSync(file, report, 'utf8')
-    _fs.unlinkSync('./blacklistener.pid') // Backport 41388608acac2d07c3e88a7cdf85cafa87873bc6 (future)
+    _fs.unlinkSync('./blacklistener.pid')
     client.channels.get('484183865976553493').send(codeblock(report))
-      .then(() => process.exit(1))
+      .finally(() => process.exit(1))
   })
 
   client.on('rateLimit', (info, method) => {
-    logger.fatal('==============================')
-      .fatal('      Got rate limiting!      ')
-      .fatal(` -> ${info.limit} seconds remaining`)
-      .fatal(` Detected rate limit while processing '${method}' method.`)
-      .fatal(` Rate limit information: ${JSON.stringify(info)} `)
-      .fatal('==============================')
+    logger.error('==============================')
+      .error('      Got rate limiting!      ')
+      .error(` -> ${info.limit} seconds remaining`)
+      .error(` Detected rate limit while processing '${method}' method.`)
+      .error(` Rate limit information: ${JSON.stringify(info)} `)
+      .error('==============================')
   })
 
   client.on('guildCreate', () => {
