@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const util = require('../util')
+const f = require('string-format')
 
 module.exports.args = ['<User>']
 
@@ -9,7 +9,7 @@ module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }
 
-module.exports.run = async function(msg, settings, lang, guildSettings) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
   if (!args[1]) {
@@ -48,5 +48,5 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   } else {
     settings.mute.push(user2)
   }
-  await util.writeSettings(guildSettings, settings, msg.channel, 'mute')
+  await msg.channel.send(f(lang.setconfig, 'mute'))
 }

@@ -1,4 +1,4 @@
-const util = require('../util')
+const f = require('string-format')
 
 module.exports.name = 'setlog'
 
@@ -8,7 +8,7 @@ module.exports.isAllowed = msg => {
   return msg.member.hasPermission(8)
 }
 
-module.exports.run = async function(msg, settings, lang, guildSettings) {
+module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   let channel
   if (msg.mentions.channels.first()) {
@@ -27,5 +27,5 @@ module.exports.run = async function(msg, settings, lang, guildSettings) {
   if (!channel) return msg.channel.send(lang.invalid_args)
   const id = channel.id
   settings.log_channel = id
-  await util.writeSettings(guildSettings, settings, msg.channel, 'log_channel')
+  await msg.channel.send(f(lang.setconfig, 'log_channel'))
 }

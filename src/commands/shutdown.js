@@ -1,5 +1,6 @@
 const logger = require('../logger').getLogger('commands:shutdown', 'darkgray')
 const f = require('string-format')
+const fs = require('fs')
 
 module.exports.args = ['[-f]', '[-r]']
 
@@ -20,13 +21,13 @@ module.exports.run = function(msg, settings, lang) {
     (async () => {
       logger.info(f(lang.rebooting))
       await msg.channel.send(lang.rebooting)
-      require('fs').unlinkSync('../blacklistener.pid')
+      fs.unlinkSync('../blacklistener.pid')
       process.kill(process.pid, 'SIGKILL')
     })()
   } else {
     logger.info(f(lang.success, msg.content))
     msg.channel.send(lang.bye)
     client.destroy()
-    require('fs').unlinkSync('../blacklistener.pid')
+    fs.unlinkSync('../blacklistener.pid')
   }
 }

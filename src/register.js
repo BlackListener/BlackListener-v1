@@ -1,6 +1,7 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.yml')
-const fs = require('fs').promises
+const _fs = require('fs')
+const fs = _fs.promises
 const os = require('os')
 const share = require('./share')
 const git = require('simple-git/promise')()
@@ -100,8 +101,8 @@ module.exports = function() {
     const { report, file } = await makeReport(client, error, 'crash')
     logger.emerg('Oh, BlackListener has crashed!')
       .emerg(`Crash report has writed to: ${file}`)
-    require('fs').writeFileSync(file, report, 'utf8')
-    require('fs').unlinkSync('./blacklistener.pid')
+    _fs.writeFileSync(file, report, 'utf8')
+    _fs.unlinkSync('./blacklistener.pid')
     client.channels.get('484183865976553493').send(codeblock(report))
       .finally(() => process.exit(1))
   })
@@ -133,7 +134,7 @@ module.exports = function() {
       if (!once) {
         logger.info('Caught INT signal')
         logger.info('Removing pid file')
-        require('fs').unlinkSync('./blacklistener.pid')
+        _fs.unlinkSync('./blacklistener.pid')
         logger.info('Disconnecting')
         client.destroy()
         once = true

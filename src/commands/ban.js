@@ -1,7 +1,4 @@
-const util = require('../util')
-const bansFile = './data/bans.json'
-const { defaultUser, defaultBans } = require('../contents.js')
-const fs = require('fs').promises
+const data = require('../data')
 const logger = require('../logger').getLogger('commands:ban', 'blue')
 
 module.exports.args = ['[<ID/Mentions/Name> <Reason> <Probe>]']
@@ -15,6 +12,7 @@ module.exports.isAllowed = msg => {
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const client = msg.client
+  const bans = await data.bans()
   if (args[1] || args[1] !== '') {
     if (msg.guild && msg.guild.available && !msg.author.bot) {
       !(async () => {
@@ -22,10 +20,8 @@ module.exports.run = async function(msg, settings, lang) {
         let user2
         let fetchedBans
         let attach
-        const bans = await util.readJSON(bansFile, defaultBans)
         const reason = args[2]
-        const userFile = `./data/users/${msg.author.id}/config.json`
-        const user = Object.assign(defaultUser, await util.readJSON(userFile, defaultUser))
+        const user = await data.user(msg.author.id)
         if (args[3] !== '--force') { if (user.bannedFromServerOwner.includes(msg.guild.ownerID) && user.bannedFromServer.includes(msg.guild.id) && user.bannedFromUser.includes(msg.author.id)) return msg.channel.send(lang.already_banned) }
         if (msg.mentions.users.first()) {
           user2 = msg.mentions.users.first()
@@ -57,9 +53,6 @@ module.exports.run = async function(msg, settings, lang) {
         user.reasons.push(reason)
         bans.push(userid)
         user.rep = ++user.rep
-        const targetUserFile = `./data/users/${userid}/config.json`
-        await fs.writeFile(bansFile, JSON.stringify(bans, null, 4), 'utf8')
-        await fs.writeFile(targetUserFile, JSON.stringify(user, null, 4), 'utf8')
         if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned)
         msg.guild.ban(userid, { 'reason': reason })
           .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
