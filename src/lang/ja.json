@@ -70,7 +70,12 @@
     "ignore_enabled": "指定されたチャンネルのアンチスパムを有効化しました。",
     "status": "ステータスを表示します。",
     "status2": "ステータス: {0}",
-    "disabled_channels": "無効なチャンネル一覧:\n{0}"
+    "disabled_channels": "無効なチャンネル一覧:\n{0}",
+    "blacklist": {
+      "add": "Add Black listed regex.",
+      "remove": "Remove Black listed regex.",
+      "list": "Displays list of Black listed regex."
+    }
   },
   "includes_spam": ":x: スパムを削除しました。 (`b:antispam disable` で無効化できます)",
   "no_command": "`{0}{1}` はBlackListenerコマンドではありません。",
@@ -173,5 +178,6 @@
     "loaded": "コマンドが読み込まれました: {0}",
     "error": "コマンドの読み込みに失敗しました: {0}"
   },
-  "not_specified_user": "ユーザーが指定されていません。"
+  "not_specified_user": "ユーザーが指定されていません。",
+  "timedout": "The request was not executed due to timeout."
 }
