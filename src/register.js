@@ -107,6 +107,10 @@ module.exports = function() {
       .finally(() => process.exit(1))
   })
 
+  process.on('message', msg => {
+    if (msg === 'heartbeat') process.send('ping')
+  })
+
   client.on('rateLimit', (info, method) => {
     logger.error('==============================')
       .error('      Got rate limiting!      ')

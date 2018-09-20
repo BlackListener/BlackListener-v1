@@ -29,6 +29,9 @@ module.exports.run = async function(msg, settings, lang) {
       .addField(`${command} enable`, lang.antispam.enable)
       .addField(`${command} ignore <#Channel>`, lang.antispam.ignore)
       .addField(`${command} status <#Channel>`, lang.antispam.status)
+      .addField(`${command} blacklist add <RegEx> (Not available)`, lang.antispam.blacklist.add)
+      .addField(`${command} blacklist remove <number> (Not available)`, lang.antispam.blacklist.remove)
+      .addField(`${command} blacklist list (Not available)`, lang.antispam.blacklist.list)
       .setTimestamp()
     msg.channel.send(embed)
   } else if (args[1] === 'toggle') {
@@ -64,5 +67,7 @@ module.exports.run = async function(msg, settings, lang) {
     if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
     if (settings.ignoredChannels.includes(id)) return msg.channel.send(f(lang.antispam.status2, lang.disabled))
     msg.channel.send(f(lang.antispam.status2, lang.enabled))
+  } else {
+    msg.channel.send(lang.invalid_args)
   }
 }
