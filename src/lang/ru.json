@@ -70,7 +70,12 @@
     "ignore_enabled": "Enabled Anti-spam of selected channel.",
     "status": "Displays status.",
     "status2": "Status: {0}",
-    "disabled_channels": "Disabled channels list:\n{0}"
+    "disabled_channels": "Disabled channels list:\n{0}",
+    "blacklist": {
+      "add": "Add Black listed regex.",
+      "remove": "Remove Black listed regex.",
+      "list": "Displays list of Black listed regex."
+    }
   },
   "includes_spam": ":x: Deleted spamming. (You can disable it in `b:antispam disable`)",
   "no_command": "`{0}{1}` is not BlackListener command.",
@@ -173,5 +178,6 @@
     "loaded": "Command loaded: {0}",
     "error": "Failed to load command: {0}"
   },
-  "not_specified_user": "Not specified user."
+  "not_specified_user": "Not specified user.",
+  "timedout": "The request was not executed due to timeout."
 }
