@@ -180,5 +180,6 @@
   },
   "not_specified_user": "ユーザーが指定されていません。",
   "timedout": "The request was not executed due to timeout.",
-  "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator."
+  "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator.",
+  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )"
 }
