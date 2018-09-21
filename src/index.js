@@ -41,8 +41,6 @@ const dispatcher = require('./dispatcher')
 
 require('./register')()
 
-let lang
-
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
 client.on('ready', async () => {
@@ -74,7 +72,7 @@ client.on('message', async msg => {
     fs.appendFile(serverMessagesFile, log_message)
   }
 
-  lang = languages[settings.language]
+  const lang = languages[settings.language]
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
@@ -116,6 +114,7 @@ client.on('guildMemberAdd', async member => {
   await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
   const serverSetting = await data.server(member.guild.id)
   const userSetting = await data.user(member.user.id)
+  const lang = languages[serverSetting.language]
   if (!serverSetting.banned) {
     if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
       member.guild.ban(member)
