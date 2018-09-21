@@ -8,24 +8,25 @@ Global Banning System for Discord.
 
 Do not edit src/lang files directly, managed by Crowdin(but can edit English if need).
 
+[Translator's page](https://crowdin.com/project/blacklistener)
+
 ## Startup options
 
 - You can change default prefix without editing config, and other things!
-- If you set ``BL_PREFIX`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
-- If you set ``ENABLE_RCON``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
+- If you set ``--prefix`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
+- If you set ``--enable-rcon``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
   - Listener will start with port: 5123
   - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
-- Start with both options: ``BL_PREFIX="a:" ENABLE_RCON=true node index.js``
+- ``--{enable|disable}-repl`` will disable or enable REPL.
+- Start with both options: ``node index.js --prefix=a: --enable-rcon --disable-repl``
 
-## Common Commands (Too long!)
+## Common Commands
 
 __Default Prefix: `b:`, Configurable with `b:setprefix <Prefix>`__
 
-This bot has in-bot help, but currently supports only English, Japanese.
+This bot has in-bot help, Please use that feature\([Translation page](https://crowdin.com/project/blacklistener)\).
 
 Server's prefix can be show up in mention the bot.
-
-- Invite command is cannot be used with not allowed, need to be allowed by Guild Admins.
 
 | Command | How does it work | どのように動くか | Is needed Admin permission |
 | ------- | ---------------- | ---------------- | - |
@@ -81,14 +82,13 @@ If you're banned 5 times, you'll added 5 rep.
 
 ---
 
-Most servers are using default settings(maybe), notify reputations is `1`, default ban reputation is `3`.
+Most servers are using default settings(maybe), notify reputations is `1`, default ban reputation is `5`.
 
 Also you can't ban that users:
 
-- Not cached in Bot
-- @Mentions is (currently) not supported
+- Not cached in Bot(You can test with didyouknow command)
 - A unknown error
-- User has been deleted by Discord (`Deleted user ???????`)
+- User has been deleted by Discord (`Deleted user ???????` (Deleted user#0000))
 - You are banned from this Bot
 - Server has banned from bot
 
@@ -100,18 +100,12 @@ Also you can't ban that users:
 
 ---
 
-ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`1`で、デフォルトの自動BAN評価値は`3`です。
+ほとんどのサーバーはデフォルトの設定を使っています(たぶん)。通知評価値は`1`で、デフォルトの自動BAN評価値は`5`です。
 
 そしてこれらのユーザーはBANできません:
 
 - Botにキャッシュされていない
-- @メンション はサポートされていません。
 - 不明なエラー
 - Discordにユーザーを削除されています (`Deleted user ???????`)
 - 執行者がBotからBANされている
 - サーバーがBotからBANされている
-
-## Length of downtime
-
-- __The downtime is very tiny, This is only restart the bot.__
-- __If very long downtime(e.g. 1 days), we're having problem with Google Cloud Platform, please wait until problem is resolved.__
