@@ -5,7 +5,7 @@ const Thread = require('thread')
 new Thread(async () => {
   logger.info('Checking for version')
   await require('./src/versioncheck')()
-}).on('resolved', () => logger.info('Version check has completed.')).start()
+}).start()
 logger.info('Starting')
 const { fork } = require('child_process')
 const spawned = fork('src', process.argv.slice(2))
