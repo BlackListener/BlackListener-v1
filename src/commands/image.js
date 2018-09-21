@@ -1,6 +1,5 @@
 const Discord = require('discord.js')
 const randomPuppy = require('random-puppy')
-const logger = require('../logger').getLogger('commands:image', 'blue')
 
 module.exports.args = [
   '',
