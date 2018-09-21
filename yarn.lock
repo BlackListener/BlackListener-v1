@@ -861,9 +861,9 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
 
-"thread@github:rht0910/Thread":
-  version "1.0.0"
-  resolved "https://codeload.github.com/rht0910/Thread/tar.gz/84544f898fb5e33b2f4d6c24fffd6424d1219645"
+thread@rht0910/Thread:
+  version "1.1.0"
+  resolved "https://codeload.github.com/rht0910/Thread/tar.gz/70c8275a8ef52fb5b9c484cabf936b6909b237fc"
 
 through@^2.3.6:
   version "2.3.8"
