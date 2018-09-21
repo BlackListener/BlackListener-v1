@@ -1,6 +1,6 @@
-const logger = require('./logger').getLogger('ShutdownPacketListener', 'red')
+const logger = require('./logger').getLogger('ShutdownPacketListener')
 const server = require('net').createServer()
-const client = require('./index')
+const client = require('.')
 
 server.maxConnections = 1
 
@@ -11,7 +11,6 @@ server.on('connection', (socket) => {
   socket.end()
   server.close()
   client.destroy()
-  require('fs').unlinkSync('./blacklistener.pid')
 })
 
 server.on('close', () => logger.info('Server Closed'))

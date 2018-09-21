@@ -10,6 +10,7 @@ const fs = require('fs').promises
 const data = require('./data')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
+const languages = require('./language')
 module.exports = client
 
 const getDateTime = function() {
@@ -52,7 +53,6 @@ client.on('ready', async () => {
   if (isTravisBuild) {
     logger.info('Shutting down...')
     await client.destroy()
-    fs.unlink('./blacklistener.pid').catch(true)
     process.exit()
   }
 })
@@ -73,13 +73,15 @@ client.on('message', async msg => {
     fs.appendFile(serverMessagesFile, log_message)
   }
 
+  lang = languages[settings.language]
+
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
     msg.delete(0)
+    msg.author.send(lang.youaremuted)
   }
   // --- End of Mute
   if (!msg.author.bot) {
-    lang = require(`${__dirname}/lang/${settings.language}.json`) // Processing message is under of this
     if (msg.system || msg.author.bot) return
     // --- Begin of Auto-ban
     if (!settings.banned) {
@@ -108,7 +110,7 @@ client.on('message', async msg => {
   }
 })
 
-client.on('guildMemberAdd', async (member) => {
+client.on('guildMemberAdd', async member => {
   await mkdirp(`${__dirname}/../data/users/${member.user.id}`)
   await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
   const serverSetting = await data.server(member.guild.id)
@@ -170,13 +172,13 @@ client.on('userUpdate', async (olduser, newuser) => {
 
 let once = false; let count = 0
 if (!c.repl.disable) {
-  const help = function() {
+  const help = () => {
     console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
     console.log('.kill -> Kill this process')
     console.log('client -> A \'Discord.Client()\'')
     return
   }
-  const exit = function() {
+  const exit = () => {
     setInterval(() => {
       if (count <= 5000) {
         ++count
@@ -210,6 +212,16 @@ if (!c.repl.disable) {
   })
 } else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
+if (process.env.ENABLE_RCON) {
+  logger.warn('Remote control is enabled.')
+    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
+    .info('Listener will be startup with 5123 port.')
+  require('./rcon')
+} else {
+  logger.info('Remote control is disabled.')
+    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
+}
+
 logger.info('Logging in...')
 client.login(s.token)
   .catch(e => logger.error(e))
@@ -222,17 +234,6 @@ process.on('message', async message => {
     }, 5000)
     logger.info('Received message from main, stopping!')
     await client.destroy()
-    await fs.unlink('./blacklistener.pid')
     process.exit(0)
   }
 })
-
-if (process.env.ENABLE_RCON) {
-  logger.warn('Remote control is enabled.')
-    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
-    .info('Listener will be startup with 5123 port.')
-  require('./ShutdownPacketListener')
-} else {
-  logger.info('Remote control is disabled.')
-    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
-}

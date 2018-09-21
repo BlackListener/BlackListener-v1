@@ -42,7 +42,7 @@ ${error.stack}
 --- Discord.js ---
     Average ping of websocket: ${Math.floor(client.ping * 100) / 100}
     Last ping of websocket: ${client.pings[0]}
-    Ready at: ${client.readyAt.toLocaleString()}
+    Ready at: ${client.readyAt ? client.readyAt.toLocaleString() : 'Error on before getting ready'}
 
 --- System Details ---
     CPU Architecture: ${process.arch}
@@ -88,8 +88,8 @@ module.exports = function() {
   process.on('unhandledRejection', async (error = {}) => {
     if (error.name === 'DiscordAPIError') return true // if DiscordAPIError, just ignore it(e.g. Missing Permissions)
     const { report, file } = await makeReport(client, error, 'error')
-    client.channels.get('484357084037513216').send(codeblock(report))
-      .then(() => logger.info('Error report has been sent!'))
+    client.readyAt ? client.channels.get('484357084037513216').send(codeblock(report))
+      .then(() => logger.info('Error report has been sent!')) : true
     logger.error(`Unhandled Rejection: ${error}`)
     logger.error(error.stack)
     fs.writeFile(file, report, 'utf8').then(() => {
@@ -102,9 +102,8 @@ module.exports = function() {
     logger.emerg('Oh, BlackListener has crashed!')
       .emerg(`Crash report has writed to: ${file}`)
     _fs.writeFileSync(file, report, 'utf8')
-    _fs.unlinkSync('./blacklistener.pid')
-    client.channels.get('484183865976553493').send(codeblock(report))
-      .finally(() => process.exit(1))
+    client.readyAt ? client.channels.get('484183865976553493').send(codeblock(report))
+      .finally(() => process.exit(1)) : process.exit(1)
   })
 
   process.on('message', msg => {
@@ -137,8 +136,6 @@ module.exports = function() {
     if (count != 0)
       if (!once) {
         logger.info('Caught INT signal')
-        logger.info('Removing pid file')
-        _fs.unlinkSync('./blacklistener.pid')
         logger.info('Disconnecting')
         client.destroy()
         once = true

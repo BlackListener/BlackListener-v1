@@ -28,10 +28,10 @@ class Logger {
    *
    * @example const logger = require('./logger').getLogger("example", "red")
    * @param {string} thread Thread name
-   * @param {string} color yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
+   * @param {string} color Default: Random color, yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
    * @returns {Logger} A Logger instance
    */
-  getLogger(thread, color = 'yellow', init = true) {
+  getLogger(thread, color = null, init = true) {
     if (!init) this.initLog = () => {}
     if (!this.initialized && init) this.initLog()
     const self = new Logger()
@@ -55,6 +55,22 @@ class Logger {
       case 'cyan': self.thread = chalk.cyan(thread); break
       case 'purple': self.thread = chalk.hex('#800080')(thread); break
       case 'blue': self.thread = chalk.blue(thread); break
+      default: {
+        const colors = [
+          chalk.bold.yellow(thread),
+          chalk.gray(thread),
+          chalk.red(thread),
+          chalk.bold.red(thread),
+          chalk.green(thread),
+          chalk.bold.hex('#800080')(thread),
+          chalk.white(thread),
+          chalk.cyan(thread),
+          chalk.hex('#800080')(thread),
+          chalk.blue(thread),
+        ]
+        self.thread = colors[Math.floor(Math.random() * colors.length)]
+        break
+      }
     }
     this.info(`Registered logger for: ${thread}`, true)
     return self

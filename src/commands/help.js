@@ -2,6 +2,7 @@ const f = require('string-format')
 const Discord = require('discord.js')
 const c = require('../config.yml')
 const util = require('../util')
+const languages = require('../language')
 
 module.exports.args = ['[Command]']
 
@@ -10,7 +11,7 @@ module.exports.name = 'help'
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) {
-    const commands = require(`${__dirname}/../lang/commands/${settings.language}.json`)
+    const commands = languages.commands[settings.language]
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')

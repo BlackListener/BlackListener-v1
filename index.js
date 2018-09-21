@@ -1,40 +1,29 @@
 require('./src/yaml')
 const logger = require('./src/logger').getLogger('main', 'green')
 logger.info('Loaded core modules')
-const fs = require('fs')
-logger.info('Checking for version')
-const interrupted = () => {
-  logger.error('BlackListener was interrupted, please check data directory is correct')
-  logger.error('Starting')
-}
-
-if (fs.existsSync('blacklistener.pid')) {
-  try {
-    const pid = parseInt(fs.readFileSync('blacklistener.pid'), 10)
-    if (process.kill(pid, 0)) {
-      logger.error('Found another BlackListener(or corrupted pid file), can\'t start.')
-      process.exit(-2)
-    } else interrupted()
-  } catch(e) { interrupted() }
-}
-
+const Thread = require('thread')
+new Thread(async () => {
+  logger.info('Checking for version')
+  await require('./src/versioncheck')()
+}).on('resolved', () => logger.info('Version check has completed.')).start()
 logger.info('Starting')
 const { fork } = require('child_process')
 const spawned = fork('src', process.argv.slice(2))
-fs.writeFileSync('blacklistener.pid', spawned.pid)
 
 const heartbeat = async () => {
   let received = false
-  spawned.send('heartbeat')
-  spawned.on('message', msg => {
+  const handler = (msg) => {
     if (msg === 'ping') received = true
-  })
+  }
+  spawned.send('heartbeat')
+  spawned.once('message', handler)
   setTimeout(() => {
     if (!received) {
-      logger.emerg('Looks like client is unusable(not responding), killing client and restarting.')
+      logger.emerg('Looks like client is unusable(not responding), killing client.')
       spawned.kill('SIGKILL')
-      process.exit(1)
     }
+    received = false
+    spawned.removeListener('message', handler)
   }, 250)
 }
 
@@ -63,7 +52,7 @@ process.on('SIGINT', () => {
   logger.info('Caught SIGINT')
   logger.info('Stopping bot')
   setTimeout(() => {
-    spawned.kill('SIGTERM')
+    spawned.kill('SIGKILL')
   }, 5000)
   spawned.send('stop')
 })

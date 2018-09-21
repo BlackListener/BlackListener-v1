@@ -10,9 +10,6 @@ dump.txt
 # Logs
 latest.log
 
-# Pid file
-blacklistener.pid
-
 # Local file(GCP side)
 gitpull.log
 
