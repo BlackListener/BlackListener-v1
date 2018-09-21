@@ -1,7 +1,7 @@
 require('./src/yaml')
 const logger = require('./src/logger').getLogger('main', 'green')
 logger.info('Loaded core modules')
-const Thread = require('thread')
+const { Thread } = require('thread')
 new Thread(async () => {
   logger.info('Checking for version')
   await require('./src/versioncheck')()
