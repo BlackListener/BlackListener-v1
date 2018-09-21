@@ -863,7 +863,7 @@ text-table@^0.2.0:
 
 thread@rht0910/Thread:
   version "1.1.0"
-  resolved "https://codeload.github.com/rht0910/Thread/tar.gz/70c8275a8ef52fb5b9c484cabf936b6909b237fc"
+  resolved "https://codeload.github.com/rht0910/Thread/tar.gz/9e625d7a6160f45a05e13f2f3472bdf7535e107f"
 
 through@^2.3.6:
   version "2.3.8"
