@@ -179,5 +179,6 @@
     "error": "Failed to load command: {0}"
   },
   "not_specified_user": "Not specified user.",
-  "timedout": "The request was not executed due to timeout."
+  "timedout": "The request was not executed due to timeout.",
+  "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator."
 }
