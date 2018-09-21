@@ -11,6 +11,7 @@ const data = require('./data')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
 const languages = require('./language')
+const argv = require('./argument_parser')
 module.exports = client
 
 const getDateTime = function() {
@@ -22,9 +23,9 @@ const getDateTime = function() {
   ].join( '/' ) + ' ' + date.toLocaleTimeString()
 }
 
-if (process.env.BL_PREFIX) {
-  logger.info('BL_PREFIX is present.')
-  c.prefix = process.env.BL_PREFIX
+if (argv.prefix) {
+  logger.info('prefix option is present.')
+  c.prefix = argv.prefix
 }
 logger.info(`Default prefix: ${c.prefix}`)
 
@@ -171,48 +172,50 @@ client.on('userUpdate', async (olduser, newuser) => {
 })
 
 let once = false; let count = 0
-if (!c.repl.disable) {
-  const help = () => {
-    console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
-    console.log('.kill -> Kill this process')
-    console.log('client -> A \'Discord.Client()\'')
-    return
-  }
-  const exit = () => {
-    setInterval(() => {
-      if (count <= 5000) {
-        ++count
-      } else { clearInterval(this) }
-    }, 1)
-    setTimeout(() => {
-      logger.info('Exiting without disconnect')
-      process.exit()
-    }, 5000)
-    setTimeout(() => {
-      logger.warn('Force exiting without disconnect')
-      process.kill(process.pid, 'SIGKILL')
-    }, 10000)
-    if (count != 0)
-      if (!once) {
-        logger.info('Caught INT signal, shutdown.')
-        client.destroy()
-        once = true
-      } else {
-        logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
-      }
-  }
-  const replServer = require('repl').start(c.repl.prefix || '> ')
-  replServer.defineCommand('help', help)
-  replServer.defineCommand('kill', () => process.kill(process.pid, 'SIGKILL'))
-  replServer.defineCommand('end', exit)
-  replServer.context.client = client
-  replServer.on('exit', () => {
-    logger.info('Exited repl server. now exiting process...')
-    exit()
-  })
+if (!c.repl.disable || argv.repl === true) {
+  if (argv.repl !== false) {
+    const help = () => {
+      console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
+      console.log('.kill -> Kill this process')
+      console.log('client -> A \'Discord.Client()\'')
+      return
+    }
+    const exit = () => {
+      setInterval(() => {
+        if (count <= 5000) {
+          ++count
+        } else { clearInterval(this) }
+      }, 1)
+      setTimeout(() => {
+        logger.info('Exiting without disconnect')
+        process.exit()
+      }, 5000)
+      setTimeout(() => {
+        logger.warn('Force exiting without disconnect')
+        process.kill(process.pid, 'SIGKILL')
+      }, 10000)
+      if (count != 0)
+        if (!once) {
+          logger.info('Caught INT signal, shutdown.')
+          client.destroy()
+          once = true
+        } else {
+          logger.info('Already you tried CTRL+C. Program will exit at time out(' + (5000 - count) / 1000 + ' seconds left) or disconnected')
+        }
+    }
+    const replServer = require('repl').start(c.repl.prefix || '> ')
+    replServer.defineCommand('help', help)
+    replServer.defineCommand('kill', () => process.kill(process.pid, 'SIGKILL'))
+    replServer.defineCommand('end', exit)
+    replServer.context.client = client
+    replServer.on('exit', () => {
+      logger.info('Exited repl server. now exiting process...')
+      exit()
+    })
+  } else { logger.info('Disabled REPL') }
 } else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
-if (process.env.ENABLE_RCON) {
+if (argv.rcon) {
   logger.warn('Remote control is enabled.')
     .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
     .info('Listener will be startup with 5123 port.')

@@ -5,6 +5,7 @@ const fs = _fs.promises
 const os = require('os')
 const share = require('./share')
 const git = require('simple-git/promise')()
+const args = require('./argument_parser')
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -36,8 +37,8 @@ ${error.stack}
 
     Launched in PID: ${process.pid}
 
-    Remote control: ${process.env.ENABLE_RCON ? 'Enabled' : 'Disabled'}
-    Custom Prefix: ${process.env.BL_PREFIX || 'Disabled; using default value: '+c.prefix}
+    Remote control: ${args.rcon ? 'Enabled' : 'Disabled'}
+    Custom Prefix: ${args.prefix || 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
     Average ping of websocket: ${Math.floor(client.ping * 100) / 100}
