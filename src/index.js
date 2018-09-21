@@ -121,7 +121,7 @@ client.on('guildMemberAdd', async member => {
         .then(() => logger.info(f(lang.autobanned, member.user.tag, member.id, member.guild.name, member.guild.id)))
         .catch(e => logger.error(e))
     } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
-      member.guild.owner.send(`${member.user.tag}は評価値が${serverSetting.notifyRep}以上です(ユーザーの評価値: ${userSetting.rep})`)
+      member.guild.owner.send(f(lang.notifymsg, member.user.tag, serverSetting.notifyRep, userSetting.rep))
     }
   }
   if (serverSetting.autorole) {

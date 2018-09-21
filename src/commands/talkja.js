@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require('../travis.yml') : require('../secret.yml')
 
-module.exports.args = ['<<話しかけたいこと(日本語のみ)>>']
+module.exports.args = ['<話しかけたいこと(日本語のみ)>']
 
 module.exports.name = 'talkja'
 

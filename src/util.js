@@ -42,15 +42,15 @@ module.exports = {
       if (!guildmember) { member = msg.guild.members.get(msg.author.id) } else { member = msg.guild.members.get(guildmember.id) }
       if (isCommand) {
         const build = function(title, message) {
-          const embed = new Discord.RichEmbed().setTitle(title).setColor([255,0,0]).setDescription('役職 ``' + rolename + '`` ' + message)
+          const embed = new Discord.RichEmbed().setTitle(title).setColor([255,0,0]).setDescription('Role ``' + rolename + '`` ' + message)
           msg.channel.send(embed)
         }
         if (member.roles.has(role.id)) {
           member.removeRole(role).catch(e => logger.error(e))
-          build(':wastebasket: 役職を剥奪しました', ' から削除しました。')
+          build('<:tickNo:315009174163685377> Removed role from user', ' removed from user')
         } else {
           member.addRole(role).catch(e => logger.error(e))
-          build(':heavy_plus_sign: 役職を付与しました', ' を付与しました')
+          build('<:tickYes:315009125694177281> Added role to user', ' added to user')
         }
       } else { member.addRole(role).catch(e => logger.error(e)) }
     } catch (e) {

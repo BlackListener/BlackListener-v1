@@ -50,8 +50,6 @@ module.exports.run = async function(msg, settings, lang) {
       'UHDnsfw',
     ])
   } else {
-    const embed = new Discord.RichEmbed().setImage('https://i.imgur.com/rc8mMFi.png').setTitle('引数が').setColor([0,255,0])
-      .setDescription(':thumbsdown: 足りないのでコマンド実行できなかったよ :frowning:\n:thumbsdown: もしくは引数が間違ってるよ :frowning:')
-    return msg.channel.send(embed).catch(e => logger.error(e))
+    msg.channel.send(lang.invalid_args)
   }
 }
