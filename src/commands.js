@@ -8,12 +8,12 @@ const files = fs.readdirSync(__dirname + '/commands/')
 function setCommand(file, reload) {
   if (reload) delete require.cache[require.resolve(`./commands/${file}`)]
   const command = require(`./commands/${file}`)
-  commands[command.name] = command.run
+  commands[command.name] = command
   if (!command.alias) return
   for (const alias of command.alias) {
     if (commands[alias] && !reload)
       logger.fatal(`The alias ${alias} is already used.`)
-    commands[alias] = command.run
+    commands[alias] = command
   }
 }
 
