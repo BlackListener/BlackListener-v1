@@ -1,53 +1,16 @@
 /* eslint no-use-before-define: 0 */
 require('./src/yaml')
 const logger = require('./src/logger').getLogger('main', 'green')
-logger.info('Loaded core modules')
-const { Thread } = require('thread')
-new Thread(async () => {
+logger.info('Loaded core modules');
+(async () => {
   logger.info('Checking for version')
   await require('./src/versioncheck')()
-}).start()
+})()
 logger.info('Starting')
 const { fork } = require('child_process')
 let spawned
 let restart = false
 const spawn = () => spawned = fork('src', process.argv.slice(2))
-
-const unregister = () => {
-  spawned.removeListener('message', msg => {
-    if (msg !== 'ping') process.stdout.write(msg)
-  })
-  
-  spawned.removeListener('error', e => {
-    clearInterval(timer)
-    logger.emerg('Failed to start Bot: ')
-    logger.emerg(e.stack)
-    process.exit(1)
-  })
-  
-  spawned.removeListener('close', (code) => {
-    if (!restart) clearInterval(timer)
-    if (code === 0) logger.info(`Bot exited: ${code}`)
-    else logger.emerg(`Bot exited with unexpected code: ${code}`)
-    if (!restart) process.exit(code)
-    restart = false
-  })
-  
-  process.removeListener('SIGINT', () => {
-    clearInterval(timer)
-    logger.info('Caught SIGINT')
-    logger.info('Stopping bot')
-    setTimeout(() => {
-      spawned.kill('SIGKILL')
-    }, 5000)
-    try {
-      spawned.send('stop')
-    } catch (e) {
-      logger.error('Can\'t send message to client: ' + e)
-    }
-  })
-}
-
 const register = () => {
   spawned.on('message', msg => {
     if (msg !== 'ping') process.stdout.write(msg)
@@ -100,9 +63,6 @@ const heartbeat = async () => {
       logger.emerg('Looks like client is unusable(not responding), killing client, and attmpting restart')
       restart = true
       spawned.kill('SIGKILL')
-      unregister()
-      register()
-      spawn()
     }
     received = false
     spawned.removeListener('message', handler)
