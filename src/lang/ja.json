@@ -1,9 +1,9 @@
 {
   "commands": {
-    "title": "コマンド一覧 [{0}]",
+    "title": "一般的なコマンド [{0}]",
     "setprefix": "接頭語を設定します。",
     "ban": "グローバルBANします(評価値が1プラスされます)。",
-    "unban": "BANを解除します(評価値が1戻されます。非推奨)。",
+    "unban": "Banを解除します(評価値が1戻されます)。",
     "language": "言語を変更します[ja/en]。",
     "setnotifyrep": "通知レベルを設定します<0...10>。",
     "setbanrep": "BANレベルを設定します<0...10>。",
@@ -14,7 +14,7 @@
     "autorole": "参加時に自動で役職を付与する設定をします。",
     "image": "NSFW画像を表示します。",
     "others": "その他の記載されていないコマンドは",
-    "athere": "[説明書](http://docs.blacklistener.tk/ja/latest/commands.html) を見てください。"
+    "athere": "[説明書](http://docs.blacklistener.tk/ja/latest/commands.html) を見てください。 (__注意:いくつかのデータは古いです。__)"
   },
   "status": {
     "servers": {
@@ -72,15 +72,15 @@
     "status2": "ステータス: {0}",
     "disabled_channels": "無効なチャンネル一覧:\n{0}",
     "blacklist": {
-      "add": "Add Black listed regex.",
-      "remove": "Remove Black listed regex.",
-      "list": "Displays list of Black listed regex."
+      "add": "正規表現をブラックリストに登録します。",
+      "remove": "正規表現をブラックリストから削除します。",
+      "list": "ブラックリストに登録された正規表現を一覧で表示します。"
     }
   },
   "includes_spam": ":x: スパムを削除しました。 (`b:antispam disable` で無効化できます)",
   "no_command": "`{0}{1}` はBlackListenerコマンドではありません。",
   "didyoumean": "これはもしかして？\n{0}",
-  "error": "エラーが発生したため、要求は実行されませんでした。エラー: {0}",
+  "error": "処理中のエラー: ``{0}``",
   "errors": {
     "server_banned": "k52j",
     "types_are_not_specified": "h54a"
@@ -159,8 +159,7 @@
     "excludeLogging": "ロギングを無効化するチャンネル",
     "welcome_channel": "ウェルカムメッセージを送信するチャンネル",
     "welcome_message": "ウェルカムメッセージ",
-    "mute": "ミュートされた人たち",
-    "blocked_role": "roleコマンドで使用できない役職"
+    "mute": "ミュートされた人たち"
   },
   "disabled": "無効",
   "enabled": "有効",
@@ -179,7 +178,9 @@
     "error": "コマンドの読み込みに失敗しました: {0}"
   },
   "not_specified_user": "ユーザーが指定されていません。",
-  "timedout": "The request was not executed due to timeout.",
-  "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator.",
-  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )"
+  "timedout": "タイムアウトのため、要求は実行されませんでした。",
+  "youaremuted": "あなたはミュートされています。\nボットオーナーではなく、サーバーの管理者に問い合わせしてください。",
+  "notifymsg": "{0} は設定された評価値 {1} 以上持っています (ユーザーの評価値: {2})",
+  "pinging": "<a:PressF:410317239859019776> Ping中...",
+  "pong": "<a:ping:468022389926789120> ポン！\nレイテンシ: {0}ms\nAPIレイテンシ: {1}ms"
 }
