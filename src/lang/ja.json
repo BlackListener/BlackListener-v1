@@ -1,9 +1,9 @@
 {
   "commands": {
-    "title": "コマンド一覧 [{0}]",
+    "title": "Common Commands [{0}]",
     "setprefix": "接頭語を設定します。",
     "ban": "グローバルBANします(評価値が1プラスされます)。",
-    "unban": "BANを解除します(評価値が1戻されます。非推奨)。",
+    "unban": "Revert a Ban. User will be removed a reputation.",
     "language": "言語を変更します[ja/en]。",
     "setnotifyrep": "通知レベルを設定します<0...10>。",
     "setbanrep": "BANレベルを設定します<0...10>。",
@@ -14,7 +14,7 @@
     "autorole": "参加時に自動で役職を付与する設定をします。",
     "image": "NSFW画像を表示します。",
     "others": "その他の記載されていないコマンドは",
-    "athere": "[説明書](http://docs.blacklistener.tk/ja/latest/commands.html) を見てください。"
+    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html) (__Note: Outdated some data.__)."
   },
   "status": {
     "servers": {
@@ -80,7 +80,7 @@
   "includes_spam": ":x: スパムを削除しました。 (`b:antispam disable` で無効化できます)",
   "no_command": "`{0}{1}` はBlackListenerコマンドではありません。",
   "didyoumean": "これはもしかして？\n{0}",
-  "error": "エラーが発生したため、要求は実行されませんでした。エラー: {0}",
+  "error": "Errored while processing: Error: ``{0}``",
   "errors": {
     "server_banned": "k52j",
     "types_are_not_specified": "h54a"
@@ -159,8 +159,7 @@
     "excludeLogging": "ロギングを無効化するチャンネル",
     "welcome_channel": "ウェルカムメッセージを送信するチャンネル",
     "welcome_message": "ウェルカムメッセージ",
-    "mute": "ミュートされた人たち",
-    "blocked_role": "roleコマンドで使用できない役職"
+    "mute": "ミュートされた人たち"
   },
   "disabled": "無効",
   "enabled": "有効",
@@ -181,5 +180,7 @@
   "not_specified_user": "ユーザーが指定されていません。",
   "timedout": "The request was not executed due to timeout.",
   "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator.",
-  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )"
+  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )",
+  "pinging": "<a:PressF:410317239859019776> Pinging...",
+  "pong": "<a:ping:468022389926789120> Pong!\nLatency: {0}ms\nAPI Latency: {1}ms"
 }
