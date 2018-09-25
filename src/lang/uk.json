@@ -80,7 +80,7 @@
   "includes_spam": ":x: Deleted spamming. (You can disable it in `b:antispam disable`)",
   "no_command": "`{0}{1}` is not BlackListener command.",
   "didyoumean": "Did you mean?\n{0}",
-  "error": "Errored while processing: Error: {0}",
+  "error": "Errored while processing: Error: ``{0}``",
   "errors": {
     "server_banned": "k52j",
     "types_are_not_specified": "h54a"
