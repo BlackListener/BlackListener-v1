@@ -29,13 +29,6 @@ module.exports.run = function(msg, settings, lang) {
       return `<@${data}> ${data} (${lang.failed_to_get})`
     }
   })
-  const blockedRoles = settings.blocked_role.map((data) => {
-    if (msg.guild.roles.has(data)) {
-      return `${msg.guild.roles.get(data).name} (${data})`
-    } else {
-      return `${data} (${lang.failed_to_get})`
-    }
-  })
   const embed = new Discord.RichEmbed()
     .setTitle(' - Server Information - ')
     .setColor([0,255,0])
@@ -53,6 +46,5 @@ module.exports.run = function(msg, settings, lang) {
     .addField(lang.serverinfo.mute, mutes.join('\n') || lang.no)
     .addField(lang.serverinfo.welcome_channel, welcome_channel)
     .addField(lang.serverinfo.welcome_message, welcome_message)
-    .addField(lang.serverinfo.blocked_role, blockedRoles.join('\n') || lang.no)
   return msg.channel.send(embed)
 }
