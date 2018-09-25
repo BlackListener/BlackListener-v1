@@ -34,7 +34,7 @@ module.exports.run = async function(msg, settings, lang) {
     .addField(lang.info.loadavg, loadavg)
     .addField(lang.info.servers, client.guilds.size)
     .addField(lang.info.users, client.users.size)
-    .addField(lang.info.createdBy, `${owner.tag} (${owner.id})`)
+    .addField(lang.info.createdBy, owner)
     .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[Discord Bots](https://discordbots.org/bot/456966161079205899)`)
     .setFooter(`Sent by ${msg.author.tag}`)
   return msg.channel.send(embed)
