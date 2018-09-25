@@ -1,9 +1,9 @@
 {
   "commands": {
-    "title": "Implemented Commands [{0}]",
+    "title": "Common Commands [{0}]",
     "setprefix": "Set prefix.",
     "ban": "Global Ban. User will be added a reputation.",
-    "unban": "Revert a Ban. User will be removed a reputation. [Not recommended]",
+    "unban": "Revert a Ban. User will be removed a reputation.",
     "language": "Change language. [ja/en]",
     "setnotifyrep": "Set notification level. <0...10>",
     "setbanrep": "Set banning level. <0...10>",
@@ -14,7 +14,7 @@
     "autorole": "Set up to automatically assign a position at the time of participation.",
     "image": "Displays NSFW images.",
     "others": "Help of other commands,",
-    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html)."
+    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html) (__Note: Outdated some data.__)."
   },
   "status": {
     "servers": {
@@ -159,8 +159,7 @@
     "excludeLogging": "Disable logging channel",
     "welcome_channel": "Channel of send welcome messages",
     "welcome_message": "Welcome message",
-    "mute": "List of muted users",
-    "blocked_role": "Can't use roles in role command"
+    "mute": "List of muted users"
   },
   "disabled": "Disabled",
   "enabled": "Enabled",
@@ -181,5 +180,7 @@
   "not_specified_user": "Not specified user.",
   "timedout": "The request was not executed due to timeout.",
   "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator.",
-  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )"
+  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )",
+  "pinging": "<a:PressF:410317239859019776> Pinging...",
+  "pong": "<a:ping:468022389926789120> Pong!\nLatency: {0}ms\nAPI Latency: {1}ms"
 }
