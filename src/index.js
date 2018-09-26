@@ -65,6 +65,7 @@ client.on('message', async msg => {
   const serverMessagesFile = `${__dirname}/../data/servers/${msg.guild.id}/messages.log`
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
   const user = await data.user(msg.author.id)
+  user.tag = msg.author.tag
   const settings = await data.server(msg.guild.id)
   if (msg.channel.id !== settings.excludeLogging) {
     const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`

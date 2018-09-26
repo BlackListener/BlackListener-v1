@@ -29,5 +29,6 @@ module.exports = {
     probes: [],
     reasons: [],
     username_changes: [],
+    tag: '',
   },
 }
