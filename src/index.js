@@ -1,10 +1,3 @@
-// --- Test only code
-/*
-console.log('Hey bud');
-/([a-zA-Z1-9あ-んａ-ｎ]+)+$/.test('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!')
-*/
-// --- Test only code
-
 require('./yaml')
 const logger = require('./logger').getLogger('client', 'cyan', false)
 logger.info('Initializing')
