@@ -4,6 +4,8 @@ logger.info('Initializing')
 const f = require('string-format')
 const Discord = require('discord.js')
 const client = new Discord.Client()
+const mongodb = require('mongodb')
+const MongoClient = mongodb.MongoClient
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
@@ -48,6 +50,9 @@ client.on('ready', async () => {
   client.setTimeout(() => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   }, 10000)
+  const dbclient = await MongoClient.connect('mongodb://127.0.0.1:27017', { useNewUrlParser: true })
+  const db = dbclient.db('blacklistener')
+  data.config(db)
   logger.info(`BlackListener v${c.version} has fully startup.`)
   if (isTravisBuild) {
     logger.info('Shutting down...')
