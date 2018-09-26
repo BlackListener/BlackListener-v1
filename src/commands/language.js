@@ -43,7 +43,7 @@ module.exports.run = async function(msg, settings, lang) {
     'el',
   ]
   if (!args[1] || args[1] === 'help') {
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle(lang.availablelang)
       .setDescription(validLanguages.join('\n'))
     msg.channel.send(embed)

@@ -10,7 +10,7 @@ const addRole = (msg, rolename, guildmember = null, language) => {
     } catch(e) { logger.error('An error occurred in \'addRole\': ' + e) }
     if (!guildmember) { member = msg.guild.members.get(msg.author.id) } else { member = msg.guild.members.get(guildmember.id) }
     const build = function(title, message) {
-      const embed = new Discord.RichEmbed().setTitle(title).setColor([255,0,0]).setDescription('Role ``' + rolename + '`` ' + message)
+      const embed = new Discord.MessageEmbed().setTitle(title).setColor([255,0,0]).setDescription('Role ``' + rolename + '`` ' + message)
       msg.channel.send(embed)
     }
     if (member.roles.has(role.id)) {

@@ -38,7 +38,7 @@ module.exports.run = async function(msg, settings, lang) {
     }
     const endTime = now()
     const time = endTime - startTime
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle(lang.status.title)
       .setURL('https://help.mojang.com')
       .setColor([0,255,0])
@@ -75,7 +75,7 @@ module.exports.run = async function(msg, settings, lang) {
     }
     const endTime = now()
     const time = endTime - startTime
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle(lang.status.title)
       .setURL('https://status.epicgames.com')
       .setColor([0,255,0])

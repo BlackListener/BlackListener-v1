@@ -45,7 +45,7 @@ module.exports.run = async function(msg, settings, lang) {
     await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified))
     throw new TypeError('Types are not specified or invalid type.')
   }
-  const embed = new Discord.RichEmbed()
+  const embed = new Discord.MessageEmbed()
     .setTitle(lang.dumpmessage)
     .setColor([140,190,210])
     .setDescription(f(lang.deleted, link))

@@ -1,8 +1,9 @@
 const config = require('./config.yml')
+const argv = require('./argument_parser')
 
 module.exports = {
   defaultSettings: {
-    prefix: config.prefix,
+    prefix: argv.prefix || config.prefix,
     language: config.lang,
     notifyRep: config.notifyRep,
     banRep: config.banRep,

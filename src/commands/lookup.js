@@ -58,7 +58,7 @@ module.exports.run = async function(msg, settings, lang) {
   const desc = force ? `${lang.lookup.desc} ・ ${f(lang.unknown, args[1])}` : lang.lookup.desc
   const nick = user2 ? msg.guild.members.get(user2.id).nickname : lang.nul
   const joinedAt = user2 ? msg.guild.members.get(user2.id).joinedAt.toLocaleString() : lang.sunknown
-  const embed = new Discord.RichEmbed()
+  const embed = new Discord.MessageEmbed()
     .setTitle(lang.lookup.title)
     .setColor([0,255,0])
     .setFooter(desc)

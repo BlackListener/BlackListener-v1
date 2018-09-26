@@ -13,7 +13,7 @@ module.exports.run = async function(msg, settings, lang) {
   if (args[1]) {
     const commands = languages.commands[settings.language]
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle('About this command')
       .setDescription(
         commands[args[1]]
@@ -24,7 +24,7 @@ module.exports.run = async function(msg, settings, lang) {
     return msg.channel.send(embed)
   }
   const prefix = settings.prefix
-  const embed = new Discord.RichEmbed()
+  const embed = new Discord.MessageEmbed()
     .setTitle(f(lang.commands.title, c.version))
     .setTimestamp()
     .setColor([0,255,0])

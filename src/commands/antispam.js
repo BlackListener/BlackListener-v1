@@ -21,7 +21,7 @@ module.exports.run = async function(msg, settings, lang) {
   const command = `${settings.prefix}antispam`
   if (!args[1] || args[1] === 'help') {
     const status = settings.antispam ? lang.enabled : lang.disabled
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle(' - AntiSpam - ')
       .setDescription(f(lang.antispam.description, status))
       .addField(`${command} toggle`, lang.antispam.toggle)

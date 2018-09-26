@@ -27,7 +27,7 @@ module.exports.run = async function(msg, settings, lang) {
     if (user.tag && user.id) owner += `${aowner.tag} (${aowner.id})\n`
   })
   try {
-    msg.channel.send(new Discord.RichEmbed()
+    msg.channel.send(new Discord.MessageEmbed()
       .setTitle('Bot info')
       .setTimestamp()
       .setColor([0,255,0])
