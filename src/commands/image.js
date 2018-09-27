@@ -11,7 +11,6 @@ module.exports.args = [
 module.exports.name = 'image'
 
 module.exports.run = async function(msg, settings, lang) {
-  if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   const sendImage = async list => {
     msg.channel.send(lang.searching)
@@ -21,12 +20,12 @@ module.exports.run = async function(msg, settings, lang) {
     msg.channel.send(attachment).catch(msg.channel.send)
   }
   if (args[1] === 'custom') {
+    if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
     if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace)
     return await sendImage([args[2]])
   } else if (args[1] === 'anime') {
     return await sendImage([
       'Undertale',
-      'awwnime',
       'Gunime',
       'anime',
       'animemes',
@@ -37,16 +36,6 @@ module.exports.run = async function(msg, settings, lang) {
       'anime_irl',
       'animegifs',
       'AnimeFigures',
-    ])
-  } else if (['nsfw', 'r18'].includes(args[1])) {
-    await sendImage([
-      'HENTAI_GIF',
-      'hentai_irl',
-      'NSFW_Wallpapers',
-      'SexyWallpapers',
-      'HighResNSFW',
-      'nsfw_hd',
-      'UHDnsfw',
     ])
   } else {
     msg.channel.send(lang.invalid_args)
