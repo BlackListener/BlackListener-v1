@@ -47,7 +47,7 @@
   "success": "┗━ 成功: {0}、シャットダウン中。",
   "atmpfs": "┗━ 強制シャットダウンを実行中です。実行元: {0}",
   "bye": ":wave: じゃあね！",
-  "availablelang": "利用可能な言語",
+  "availablelang": "Available Languages(Current: {0})",
   "cannotspace": "スペースを含めることはできません。",
   "udonthaveperm": ":x: Adminコマンドを使用する権限がありません。管理者権限が必要です。",
   "invalid_user": "指定されたユーザーは存在しません。",
