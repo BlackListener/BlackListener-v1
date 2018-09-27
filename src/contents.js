@@ -1,5 +1,5 @@
 const config = require('./config.yml')
-const argv = require('./argument_parser')
+const argv = require('./argument_parser')(process.argv.slice(2))
 
 module.exports = {
   defaultSettings: {
@@ -32,4 +32,35 @@ module.exports = {
     username_changes: [],
     tag: '',
   },
+  validLanguages: [
+    'en',
+    'ja',
+    'ca',
+    'fi',
+    'fr',
+    'he',
+    'hu',
+    'it',
+    'ko',
+    'nl',
+    'no',
+    'pl',
+    'pt',
+    'ro',
+    'sr',
+    'ru',
+    'sv',
+    'tr',
+    'uk',
+    'vi',
+    'zh',
+    'es',
+    'af',
+    'ar',
+    'el',
+    'cs',
+    'da',
+    'de',
+    'el',
+  ],
 }

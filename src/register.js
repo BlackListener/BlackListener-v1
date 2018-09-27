@@ -5,7 +5,7 @@ const fs = _fs.promises
 const os = require('os')
 const share = require('./share')
 const git = require('simple-git/promise')()
-const args = require('./argument_parser')
+const args = require('./argument_parser')(process.argv.slice(2))
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -84,6 +84,11 @@ module.exports = function() {
 
   client.on('reconnecting', () => {
     logger.warn('Got Disconnected from Websocket, Reconnecting!')
+  })
+
+  client.on('error', (e) => {
+    logger.fatal('Something went wrong: ' + e)
+    logger.fatal(e.stack || e)
   })
 
   process.on('unhandledRejection', async (error = {}) => {

@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const f = require('string-format')
+const { validLanguages } = require(__dirname + '/../contents')
 
 module.exports.args = ['<ja/en>']
 
@@ -11,41 +12,11 @@ module.exports.isAllowed = msg => {
 
 module.exports.run = async function(msg, settings, lang) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  const validLanguages = [
-    'en',
-    'ja',
-    'ca',
-    'fi',
-    'fr',
-    'he',
-    'hu',
-    'it',
-    'ko',
-    'nl',
-    'no',
-    'pl',
-    'pt',
-    'ro',
-    'sr',
-    'ru',
-    'sv',
-    'tr',
-    'uk',
-    'vi',
-    'zh',
-    'es',
-    'af',
-    'ar',
-    'el',
-    'cs',
-    'da',
-    'de',
-    'el',
-  ]
   if (!args[1] || args[1] === 'help') {
     const embed = new Discord.RichEmbed()
-      .setTitle(lang.availablelang)
+      .setTitle(f(lang.availablelang, settings.language))
       .setDescription(validLanguages.join('\n'))
+      .setColor([0,255,0])
     msg.channel.send(embed)
   } else if (validLanguages.includes(args[1])) {
     settings.language = args[1]

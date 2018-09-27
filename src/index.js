@@ -11,7 +11,7 @@ const data = require('./data')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
 const languages = require('./language')
-const argv = require('./argument_parser')
+const argv = require('./argument_parser')(process.argv.slice(2))
 module.exports = client
 
 const getDateTime = function() {
@@ -73,7 +73,8 @@ client.on('message', async msg => {
     fs.appendFile(serverMessagesFile, log_message)
   }
 
-  const lang = languages[settings.language]
+  const language = user.language ? user.language : user.language = settings.language
+  const lang = languages[language]
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {

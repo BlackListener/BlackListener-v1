@@ -9,18 +9,20 @@ module.exports.args = ['[Command]']
 module.exports.name = 'help'
 
 module.exports.run = async function(msg, settings, lang) {
+  const {commands} = require('../commands')
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) {
-    const commands = languages.commands[settings.language]
+    const langcommands = languages.commands[settings.language]
     if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))
     const embed = new Discord.RichEmbed()
       .setTitle('About this command')
       .setDescription(
-        commands[args[1]]
+        (langcommands[args[1]] || ' - Not available information - ')
         + `\n\nUsage: ${settings.prefix}${args[1]} ${await util.exists(`${__dirname}/${args[1]}.js`) ? (require(`${__dirname}/${args[1]}`).args ? require(`${__dirname}/${args[1]}`).args.join('\n') : '') : '<?>'}`
         + `\nAlias: ${await util.exists(`${__dirname}/${args[1]}.js`) ? (require(`${__dirname}/${args[1]}`).alias ? require(`${__dirname}/${args[1]}`).alias.join('\n') : lang.no) : '?'}`
         + `\n\nAlso see: http://docs.blacklistener.tk/ja/latest/commands/${args[1]}.html`)
       .setTimestamp()
+      .setColor([0,255,0])
     return msg.channel.send(embed)
   }
   const prefix = settings.prefix
