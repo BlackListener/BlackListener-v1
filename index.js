@@ -47,7 +47,8 @@ const register = () => {
   }
 
   process.on('SIGINT', KILLINTHandler)
-  process.on('SIGKILL', KILLINTHandler)
+  process.on('SIGTERM', KILLINTHandler)
+  process.on('SIGHUP', KILLINTHandler)
 }
 
 const heartbeat = async () => {
