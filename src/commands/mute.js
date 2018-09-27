@@ -20,7 +20,7 @@ module.exports.run = async function(msg, settings, lang) {
         return `<@${data}> ${data} (${lang.failed_to_get})`
       }
     })
-    return msg.channel.send(new Discord.MessageEmbed()
+    return msg.channel.send(new Discord.RichEmbed()
       .setTitle(lang.serverinfo.mute)
       .addField(lang.serverinfo.mute, mutes.join('\n') || lang.no)
     )

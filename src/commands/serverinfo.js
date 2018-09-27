@@ -29,7 +29,7 @@ module.exports.run = function(msg, settings, lang) {
       return `<@${data}> ${data} (${lang.failed_to_get})`
     }
   })
-  const embed = new Discord.MessageEmbed()
+  const embed = new Discord.RichEmbed()
     .setTitle(' - Server Information - ')
     .setColor([0,255,0])
     .setTimestamp()

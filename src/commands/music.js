@@ -29,11 +29,11 @@ module.exports.args = ['play|start <URL>', 'stop', 'pause', 'unpause|resume', 'v
  */
 module.exports.run = async (msg, settings, lang) => {
   if (!config.patron) { return msg.channel.send(lang.not_patron) }
-  if (!msg.member.voice.channel) return msg.channel.send(lang.music.not_joined_vc)
+  if (!msg.member.voiceChannel) return msg.channel.send(lang.music.not_joined_vc)
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1] === 'play' || args[1] === 'start') {
     if (!args[2] || !args[2].includes('youtube.com/watch?v=')) return msg.channel.send(lang.invalid_args)
-    msg.member.voice.channel.join()
+    msg.member.voiceChannel.join()
       .then(async connection => {
         if (dispatcher) {
           if (loop) return msg.channel.send(lang.music.cantadd_loop_enabled)
@@ -77,7 +77,7 @@ module.exports.run = async (msg, settings, lang) => {
   } else if (args[1] === 'stop') {
     if (dispatcher) {
       dispatcher.destroy()
-      if (msg.guild.me.voice.channel) msg.guild.me.voice.channel.disconnect()
+      if (msg.guild.me.voiceChannel) msg.guild.me.voiceChannel.disconnect()
       msg.channel.send(':wave:')
     } else msg.channel.send(lang.music.not_playing)
   } else if (args[1] === 'loop') {

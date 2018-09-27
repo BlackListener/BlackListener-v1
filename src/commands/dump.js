@@ -57,7 +57,7 @@ module.exports.run = async function(msg, settings, lang) {
   } else {
     image = image2
   }
-  const embed = new Discord.MessageEmbed().setImage(image)
+  const embed = new Discord.RichEmbed().setImage(image)
     .setTitle(lang.dumpmessage)
     .setColor([140,190,210])
     .setDescription(f(lang.dumped, link))
