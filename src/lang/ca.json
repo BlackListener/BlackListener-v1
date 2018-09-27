@@ -181,6 +181,24 @@
   "timedout": "The request was not executed due to timeout.",
   "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator.",
   "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )",
-  "pinging": "<a:PressF:410317239859019776> Pinging...",
-  "pong": "<a:ping:468022389926789120> Pong!\nLatency: {0}ms\nAPI Latency: {1}ms"
+  "pinging": "Pinging...",
+  "pong": "Pong!\nLatency: {0}ms\nAPI Latency: {1}ms",
+  "music": {
+    "not_joined_vc": ":warning: You must join to voice channel before using this command.",
+    "cantadd_loop_enabled": ":warning: Can't add to queue due to loop is enabled.",
+    "queue_added": "Added {0} to queue.",
+    "playing": ":white_check_mark: Playing {0}",
+    "playing_queue": "Playing in queue: {0}",
+    "changed_volume": "Changed volume to: **{1}%** from **{0}%**.",
+    "not_playing": "Currently, not playing music.",
+    "one_music_loop": "One music loop changed to: {0} (Queue(s) has been removed)",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "paused": "Paused.",
+    "unpaused": "Unpaused.",
+    "queue_count": "{0} musics in queue.",
+    "queue_cleared": "Cleared queue.",
+    "now_playing": "Currently, playing {0}"
+  },
+  "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)"
 }
