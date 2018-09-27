@@ -10,7 +10,7 @@ let loop
 const play = (connection, url) => {
   const stream = ytdl(url, { filter : 'audioonly' })
   playing = url
-  return connection.play(stream, { seek: 0, volume: 0.1 })
+  return connection.playStream(stream, { seek: 0, volume: 0.1 })
 }
 
 /**
