@@ -47,7 +47,7 @@
   "success": "┗━ Success: {0}, Shutting down",
   "atmpfs": "┗━ Attempting for force shutdown, Sender: {0}",
   "bye": ":wave: Bye!",
-  "availablelang": "Available Languages",
+  "availablelang": "Available Languages(Current: {0})",
   "cannotspace": "Can't contain the space.",
   "udonthaveperm": ":x: You don't have permissions for use admin command.",
   "invalid_user": "Not found that user",
