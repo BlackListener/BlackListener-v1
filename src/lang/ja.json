@@ -193,12 +193,12 @@
     "not_playing": "現在、音楽を再生していません。",
     "one_music_loop": "1曲ループの変更: {0} (キューは削除されました)",
     "enabled": "有効",
-    "disabled": "disabled",
-    "paused": "Paused.",
-    "unpaused": "Unpaused.",
-    "queue_count": "{0} musics in queue.",
-    "queue_cleared": "Cleared queue.",
-    "now_playing": "Currently, playing {0}"
+    "disabled": "無効",
+    "paused": "一時停止中",
+    "unpaused": "一時停止を解除します。",
+    "queue_count": "{0} 個の音楽がキューに入っています。",
+    "queue_cleared": "キューを削除しました。",
+    "now_playing": "現在、 {0} を再生中です。"
   },
-  "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)"
+  "not_patron": "このボットはPatronではありません(Patronボットがオンライン＆存在する場合はprefix 'a:'で試してみてください)"
 }
