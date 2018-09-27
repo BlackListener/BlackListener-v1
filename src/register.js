@@ -6,6 +6,7 @@ const os = require('os')
 const share = require('./share')
 const git = require('simple-git/promise')()
 const args = require('./argument_parser')(process.argv.slice(2))
+const util = require('util')
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -87,7 +88,8 @@ module.exports = function() {
   })
 
   client.on('error', (e) => {
-    logger.fatal('Something went wrong: ' + e)
+    const err = typeof e == Object ? util.inspect(e) : e
+    logger.fatal('Something went wrong: ' + err)
     logger.fatal(e.stack || e)
   })
 
