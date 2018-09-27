@@ -181,6 +181,24 @@
   "timedout": "タイムアウトのため、要求は実行されませんでした。",
   "youaremuted": "あなたはミュートされています。\nボットオーナーではなく、サーバーの管理者に問い合わせしてください。",
   "notifymsg": "{0} は設定された評価値 {1} 以上持っています (ユーザーの評価値: {2})",
-  "pinging": "<a:PressF:410317239859019776> Ping中...",
-  "pong": "<a:ping:468022389926789120> ポン！\nレイテンシ: {0}ms\nAPIレイテンシ: {1}ms"
+  "pinging": "Ping中...",
+  "pong": "ポン！\nレイテンシ: {0}ms\nAPIレイテンシ: {1}ms",
+  "music": {
+    "not_joined_vc": ":warning: このコマンドを使用する前にボイスチャンネルに参加する必要があります。",
+    "cantadd_loop_enabled": ":warning: ループが有効なため、キューに追加できません。",
+    "queue_added": "{0} をキューに追加しました。",
+    "playing": ":white_check_mark: {0} を再生中",
+    "playing_queue": "キューを再生中: {0}",
+    "changed_volume": "音量を **{0}%**から**{1}%**に変更しました。",
+    "not_playing": "現在、音楽を再生していません。",
+    "one_music_loop": "1曲ループの変更: {0} (キューは削除されました)",
+    "enabled": "有効",
+    "disabled": "disabled",
+    "paused": "Paused.",
+    "unpaused": "Unpaused.",
+    "queue_count": "{0} musics in queue.",
+    "queue_cleared": "Cleared queue.",
+    "now_playing": "Currently, playing {0}"
+  },
+  "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)"
 }
