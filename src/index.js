@@ -73,8 +73,7 @@ client.on('message', async msg => {
     fs.appendFile(serverMessagesFile, log_message)
   }
 
-  const language = user.language ? user.language : user.language = settings.language
-  const lang = languages[language]
+  const lang = languages[user.language || settings.language]
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {

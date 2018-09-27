@@ -32,7 +32,7 @@ const register = () => {
     restart = false
   })
   
-  process.on('SIGINT', () => {
+  const KILLINTHandler = () => {
     clearInterval(timer)
     logger.info('Caught SIGINT')
     logger.info('Stopping bot')
@@ -44,7 +44,10 @@ const register = () => {
     } catch (e) {
       logger.error('Can\'t send message to client: ' + e)
     }
-  })
+  }
+
+  process.on('SIGINT', KILLINTHandler)
+  process.on('SIGKILL', KILLINTHandler)
 }
 
 const heartbeat = async () => {
