@@ -71,9 +71,7 @@ module.exports.run = async (msg, settings, lang) => {
           }
         }
         const endHandler = async () => {
-          console.log('music ended')
           if (queue !== [] && !loop) {
-            logger.info('Queue is found; and not enabled loop')
             let i
             for (i=0;i<=queue.length;i++) {
               if (queue[i]) {
@@ -84,11 +82,9 @@ module.exports.run = async (msg, settings, lang) => {
             msg.channel.send(f(lang.music.playing_queue, queue[i]))
           } else {
             if (!loop) {
-              logger.info('Queue is clear; and not looping')
               dispatcher = null
               msg.channel.send('すべての曲の再生が終了しました。')
             } else {
-              logger.info('looping')
               dispatcher = play(connection, args[2], msg, lang)
               register() //eslint-disable-line
             }
