@@ -12,10 +12,6 @@ let spawned
 let restart = false
 const spawn = () => spawned = fork('src', process.argv.slice(2))
 const register = () => {
-  spawned.on('message', msg => {
-    if (msg !== 'ping') process.stdout.write(msg)
-  })
-  
   spawned.on('error', e => {
     clearInterval(timer)
     logger.emerg('Failed to start Bot: ')
@@ -46,6 +42,10 @@ const register = () => {
     }
   }
 
+  spawned.on('message', msg => {
+    if (msg !== 'ping' && msg !== 'stop') process.stdout.write(msg)
+    if (msg === 'stop') KILLINTHandler()
+  })
   process.on('SIGINT', KILLINTHandler)
   process.on('SIGTERM', KILLINTHandler)
   process.on('SIGHUP', KILLINTHandler)
