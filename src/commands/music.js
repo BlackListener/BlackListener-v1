@@ -7,10 +7,15 @@ const f = require('string-format')
 let queue = []
 let playing
 let loop
-const play = (connection, url) => {
-  const stream = ytdl(url, { filter : 'audioonly' })
-  playing = url
-  return connection.playStream(stream, { seek: 0, volume: 0.1 })
+const play = (connection, url, msg, lang) => {
+  try {
+    const stream = ytdl(url, { filter : 'audioonly' })
+    playing = url
+    return connection.playStream(stream, { seek: 0, volume: 0.1 })
+  } catch (e) {
+    if (e.name === 'TypeError') msg.channel.send(f(lang.error, e))
+    logger.error(e)
+  }
 }
 
 /**
@@ -31,7 +36,9 @@ module.exports.run = async (msg, settings, lang) => {
   if (!config.patron) { return msg.channel.send(lang.not_patron) }
   if (!msg.member.voiceChannel) return msg.channel.send(lang.music.not_joined_vc)
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  if (args[1] === 'play' || args[1] === 'start') {
+  if (args[1] === 'join') {
+    msg.member.voiceChannel.join().then(vc => msg.channel.send(f(lang.music.joined_vc, vc.channel.name))).catch(e => logger.error(e))
+  } else if (args[1] === 'play' || args[1] === 'start') {
     if (!args[2] || !args[2].includes('youtube.com/watch?v=')) return msg.channel.send(lang.invalid_args)
     msg.member.voiceChannel.join()
       .then(async connection => {
@@ -40,15 +47,16 @@ module.exports.run = async (msg, settings, lang) => {
           queue.push(args[2])
           msg.channel.send(f(lang.music.queue_added, args[2]))
         } else {
-          dispatcher = play(connection, args[2])
+          dispatcher = play(connection, args[2], msg, lang)
           msg.channel.send(f(lang.music.playing, args[2]))
         }
-        dispatcher.on('end' || 'close', async () => {
+        if (msg.deletable) msg.delete()
+        async () => {
           if (queue !== [] && !loop) {
             let i
             for (i=0;i<=queue.length;i++) {
               if (queue[i]) {
-                dispatcher = play(connection, queue[i])
+                dispatcher = play(connection, queue[i], msg, lang)
                 break
               }
             }
@@ -58,26 +66,53 @@ module.exports.run = async (msg, settings, lang) => {
               dispatcher = null
               msg.channel.send('すべての曲の再生が終了しました。')
             } else {
-              dispatcher = play(connection, args[2])
+              dispatcher = play(connection, args[2], msg, lang)
             }
           }
-        })
-      }).catch(e => {
-        if (e.name === 'TypeError') msg.channel.send(f(lang.error, e))
-        logger.error(e)
+        }
+        const endHandler = async () => {
+          console.log('music ended')
+          if (queue !== [] && !loop) {
+            logger.info('Queue is found; and not enabled loop')
+            let i
+            for (i=0;i<=queue.length;i++) {
+              if (queue[i]) {
+                dispatcher = play(connection, queue[i], msg, lang)
+                break
+              }
+            }
+            msg.channel.send(f(lang.music.playing_queue, queue[i]))
+          } else {
+            if (!loop) {
+              logger.info('Queue is clear; and not looping')
+              dispatcher = null
+              msg.channel.send('すべての曲の再生が終了しました。')
+            } else {
+              logger.info('looping')
+              dispatcher = play(connection, args[2], msg, lang)
+              register() //eslint-disable-line
+            }
+          }
+        }
+        const register = () => {
+          dispatcher.once('end', endHandler)
+          dispatcher.once('close', endHandler)
+        }
+        register()
       })
   } else if (args[1] === 'volume') {
     if (dispatcher) {
       const before = dispatcher.volume
       if (!isNumber(args[2])) return msg.channel.send(lang.invalid_args)
-      dispatcher.setVolume(parseInt(args[2]) / 100)
-      const emoji = before * 100 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
-      msg.channel.send(f(emoji + lang.music.changed_volume, before * 100, parseInt(args[2])))
+      dispatcher.setVolume(parseInt(args[2]) / 1000)
+      const emoji = before * 1000 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
+      msg.channel.send(f(emoji + lang.music.changed_volume, before * 1000, parseInt(args[2])))
     } else msg.channel.send(lang.music.not_playing)
   } else if (args[1] === 'stop') {
     if (dispatcher) {
       dispatcher.destroy()
-      if (msg.guild.me.voiceChannel) msg.guild.me.voiceChannel.disconnect()
+      dispatcher = null
+      if (msg.guild.me.voiceChannel && msg.guild.me.voiceChannel.connection) msg.guild.me.voiceChannel.connection.disconnect()
       msg.channel.send(':wave:')
     } else msg.channel.send(lang.music.not_playing)
   } else if (args[1] === 'loop') {

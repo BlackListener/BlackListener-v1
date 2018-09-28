@@ -222,7 +222,7 @@ if (argv.rcon) {
   require('./rcon')
 } else {
   logger.info('Remote control is disabled.')
-    .info('If you wish to enable remote control, please set some string in \'ENABLE_RCON\'. (Not recommended for security reasons)')
+    .info('If you wish to enable remote control, please add argument: \'--enable-rcon\'. (Not recommended for security reasons)')
 }
 
 logger.info('Logging in...')
