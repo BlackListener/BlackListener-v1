@@ -59,7 +59,7 @@ ${error.stack}
 `
   return {
     report: data,
-    file: `./${type}-reports/${type}-${format}.txt`,
+    file: `../${type}-reports/${type}-${format}.txt`,
   }
 }
 
