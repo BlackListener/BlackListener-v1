@@ -198,7 +198,8 @@
     "unpaused": "Unpaused.",
     "queue_count": "{0} musics in queue.",
     "queue_cleared": "Cleared queue.",
-    "now_playing": "Currently, playing {0}"
+    "now_playing": "Currently, playing {0}",
+    "joined_vc": "Joined to {0}"
   },
   "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)"
 }
