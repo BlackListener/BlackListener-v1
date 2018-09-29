@@ -198,7 +198,8 @@
     "unpaused": "一時停止を解除します。",
     "queue_count": "{0} 個の音楽がキューに入っています。",
     "queue_cleared": "キューを削除しました。",
-    "now_playing": "現在、 {0} を再生中です。"
+    "now_playing": "現在、 {0} を再生中です。",
+    "joined_vc": "Joined to {0}"
   },
   "not_patron": "このボットはPatronではありません(Patronボットがオンライン＆存在する場合はprefix 'a:'で試してみてください)"
 }
