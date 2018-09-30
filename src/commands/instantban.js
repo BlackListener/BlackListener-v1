@@ -1,3 +1,5 @@
+const { toUser } = require(__dirname + '/../converter.js')
+
 module.exports.args = ['<User>']
 
 module.exports.name = 'instantban'
@@ -8,6 +10,7 @@ module.exports.isAllowed = msg => {
 
 module.exports.run = function(msg, settings) {
   const args = msg.content.replace(settings.prefix, '').split(' ')
-  msg.guild.ban(msg.client.users.get(args[1]))
+  const user = toUser(msg, args[1])
+  msg.guild.ban(user)
   msg.channel.send(':ok_hand:')
 }

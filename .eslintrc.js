@@ -21,5 +21,6 @@ module.exports = {
     'prefer-arrow-callback': 2,
     'no-use-before-define': 2,
     'eol-last': 2,
+    'no-useless-return': 2,
   }
 }

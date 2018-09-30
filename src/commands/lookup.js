@@ -56,7 +56,7 @@ module.exports.run = async function(msg, settings, lang) {
   let isBot = lang.no
   if (!force) { if (user2.bot) isBot = lang.yes } else { isBot = lang.sunknown }
   const desc = force ? `${lang.lookup.desc} ・ ${f(lang.unknown, args[1])}` : lang.lookup.desc
-  const nick = user2 ? msg.guild.members.get(user2.id).nickname : lang.nul
+  const nick = (user2 && msg.guild.members.get(user2.id)) ? msg.guild.members.get(user2.id).nickname : lang.nul
   const joinedAt = user2 ? msg.guild.members.get(user2.id).joinedAt.toLocaleString() : lang.sunknown
   const embed = new Discord.RichEmbed()
     .setTitle(lang.lookup.title)

@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const f = require('string-format')
+const isNumber = (n) => { return !isNaN(parseFloat(n)) && isFinite(n) }
 
 module.exports.args = [
   '',
@@ -67,6 +68,23 @@ module.exports.run = async function(msg, settings, lang) {
     if (/\s/.test(args[2]) || !args[2]) { return msg.channel.send(lang.cannotspace) }
     if (settings.ignoredChannels.includes(id)) return msg.channel.send(f(lang.antispam.status2, lang.disabled))
     msg.channel.send(f(lang.antispam.status2, lang.enabled))
+  } else if (args[1] === 'blacklist') {
+    if (args[2] === 'add') {
+      if (!args[3]) return msg.channel.send(lang.invalid_args)
+      msg.channel.send('you') // you shall not pass
+      setTimeout(() => msg.channel.send('shall not'), 1500)
+      setTimeout(() => msg.channel.send('pass'), 3000)
+      // settings.message_blacklist.push(args[3])
+    } else if (args[2] === 'remove') {
+      if (!args[3]) return msg.channel.send(lang.invalid_args)
+      if (!isNumber(args[3])) return msg.channel.send(f('{0} is not a number.', args[3]))
+      msg.channel.send('Oh, you got this message, it is not implemented!\n```javascript\nthrow new ReferenceError("Haha, not implemented!")\n// => ReferenceError: Haha, not implemented!\n```')
+      // Delete settings.message_blacklist[parseInt(args[3])]
+    } else if (args[2] === 'status') {
+      msg.channel.send(':warning: This is implemented but unusable at this moment.')
+      msg.channel.send(settings.message_blacklist.join('\n'))
+      // This should be embed
+    }
   } else {
     msg.channel.send(lang.invalid_args)
   }

@@ -178,7 +178,7 @@ if (!c.repl.disable || argv.repl === true) {
       console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
       console.log('.kill -> Kill this process')
       console.log('client -> A \'Discord.Client()\'')
-      return
+      
     }
     const exit = () => {
       setInterval(() => {
@@ -240,3 +240,5 @@ process.on('message', async message => {
     process.exit(0)
   }
 })
+
+module.exports = client
