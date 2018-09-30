@@ -25,18 +25,13 @@ module.exports.run = async function(msg, settings, lang) {
         user2 = client.users.find(n => n.username === args[1])
       }
       if (msg.mentions.users.first()) user2 = msg.mentions.users.first()
-      if (!user2) { settings = null; return msg.channel.send(lang.invalid_user) }
-      let exe = false
-      for (let i=0; i<=bans.length; i++) {
-        if (bans[i] == user2.id) {
-          exe = true
-          bans.splice(i, 1)
-        }
-      }
-      if (!exe) { settings = null; return msg.channel.send(lang.notfound_user) }
-      for (let i=0; i<=client.guilds.length; i++) {
-        client.guilds[i].unban(user2)
-          .then(user2 => logger.info(`Unbanned user(${i}): ${user2.tag} (${user2.id}) from ${client.guilds[i].name}(${client.guilds[i].id})`))
+      if (!user2) return msg.channel.send(lang.invalid_user)
+      const exe = bans.includes(user2.id)
+      bans.splice(bans.indexOf(user2.id), 1)
+      if (!exe) return msg.channel.send(lang.notfound_user)
+      for (const guild of client.guilds) {
+        guild.unban(user2)
+          .then(user2 => logger.info(`Unbanned user: ${user2.tag} (${user2.id}) from ${guild.name}(${guild.id})`))
           .catch(e => logger.error(e))
       }
       user.rep = --user.rep

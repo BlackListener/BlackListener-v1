@@ -10,32 +10,25 @@ module.exports.args = ['[minecraft]', '[fortnite]']
 module.exports.name = 'status'
 
 module.exports.run = async function(msg, settings, lang) {
+  const STATUS = {
+    minecraft: {
+      green: lang.status.ok,
+      red: lang.status.down,
+      yellow: lang.status.unstable,
+    },
+    fortnite: {
+      UP: lang.status.ok,
+      DOWN: lang.status.down,
+    },
+  }
   const cmd = settings.prefix + 'status '
   const service = msg.content.slice(cmd.length)
   if (service === 'minecraft') {
     msg.channel.send(lang.status.checking)
-    const status = ['undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined']
-    let i = 0
     const startTime = now()
     const data = await fetch('https://status.mojang.com/check').then(res => res.json())
-    for (; i < data.length; i ++) {
-      for (const key in data[i]){
-        switch (data[i][key]){
-          case 'green':
-            status[i] = lang.status.ok
-            break
-          case 'red':
-            status[i] = lang.status.down
-            break
-          case 'yellow':
-            status[i] = lang.status.unstable
-            break
-          default:
-            status[i] = lang.status.unknown
-            break
-        }
-      }
-    }
+    const flat = data.reduce((p, c) => Object.assign(p, c), {})
+    const status = Object.keys(flat).map(key => STATUS.minecraft[flat[key]] || lang.status.unknown)
     const endTime = now()
     const time = endTime - startTime
     const embed = new Discord.RichEmbed()
@@ -56,7 +49,6 @@ module.exports.run = async function(msg, settings, lang) {
   } else if (service === 'fortnite') {
     if (s.fortnite_api_key === '') return msg.channel.send(lang.no_apikey)
     msg.channel.send(lang.status.checking)
-    let status = 'Unknown'
     const startTime = now()
     const data = await fetch('https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status', {
       method: 'POST',
@@ -66,13 +58,7 @@ module.exports.run = async function(msg, settings, lang) {
       },
       body: new FormData().append('username', 'username'),
     }).then(res => res.json())
-    if (data.status === 'UP') {
-      status = lang.status.ok
-    } else if (data.status === 'DOWN') {
-      status = lang.status.down
-    } else {
-      status = lang.status.unknown
-    }
+    const status = STATUS.fortnite[data.status] || lang.status.unknown
     const endTime = now()
     const time = endTime - startTime
     const embed = new Discord.RichEmbed()

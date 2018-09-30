@@ -30,7 +30,7 @@ module.exports.alias = ['play']
 module.exports.args = ['play|start <URL>', 'stop', 'pause', 'unpause|resume', 'volume', 'loop', 'queue', 'status']
 
 /**
- * @param {Discord.Message} msg 
+ * @param {Discord.Message} msg
  */
 module.exports.run = async (msg, settings, lang) => {
   if (!config.patron) { return msg.channel.send(lang.not_patron) }
@@ -52,15 +52,9 @@ module.exports.run = async (msg, settings, lang) => {
         }
         if (msg.deletable) msg.delete()
         async () => {
-          if (queue !== [] && !loop) {
-            let i
-            for (i=0;i<=queue.length;i++) {
-              if (queue[i]) {
-                dispatcher = play(connection, queue[i], msg, lang)
-                break
-              }
-            }
-            msg.channel.send(f(lang.music.playing_queue, queue[i]))
+          if (queue.length && !loop) {
+            dispatcher = play(connection, queue[0], msg, lang)
+            msg.channel.send(f(lang.music.playing_queue, queue[0]))
           } else {
             if (!loop) {
               dispatcher = null
@@ -71,15 +65,9 @@ module.exports.run = async (msg, settings, lang) => {
           }
         }
         const endHandler = async () => {
-          if (queue !== [] && !loop) {
-            let i
-            for (i=0;i<=queue.length;i++) {
-              if (queue[i]) {
-                dispatcher = play(connection, queue[i], msg, lang)
-                break
-              }
-            }
-            msg.channel.send(f(lang.music.playing_queue, queue[i]))
+          if (queue.length && !loop) {
+            dispatcher = play(connection, queue[0], msg, lang)
+            msg.channel.send(f(lang.music.playing_queue, queue[0]))
           } else {
             if (!loop) {
               dispatcher = null
@@ -131,15 +119,8 @@ module.exports.run = async (msg, settings, lang) => {
       queue = []
       return msg.channel.send(lang.music.cleared_queue)
     }
-    const queues = []
-    let actual = 0
-    for (let i=0;i<=queue.length;i++) {
-      if (queue[i]) {
-        actual++
-        queues.push(`${actual}: ${queue[i]}`)
-      }
-    }
-    if (queues !== []) msg.channel.send(queues.join('\n'))
+    const queues = queue.map((e, i) => `${i}: ${e}`)
+    if (queues.length) msg.channel.send(queues.join('\n'))
   } else if (args[1] === 'status') {
     if (dispatcher && playing) msg.channel.send(f(lang.music.now_playing, playing))
     else msg.channel.send(lang.music.not_playing)

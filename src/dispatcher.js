@@ -25,8 +25,8 @@ module.exports = async function(settings, msg, lang) {
       } else msg.channel.send(lang.udonthaveperm)
     } else {
       const commandList = Object.keys(commands).map(cmd => ({ cmd, args: commands[cmd].args }))
-      for (const item of commandList) item.no = levenshtein(cmd, item.cmd)
-      const cmds = commandList.sort((a, b) => a.no - b.no).filter(item => item.no <= 2)
+      const similarCommand = commandList.map(item => item.no = levenshtein(cmd, item.cmd))
+      const cmds = similarCommand.sort((a, b) => a.no - b.no).filter(item => item.no <= 2)
       const list = cmds.map(item => `・\`${settings.prefix}${item.cmd} ${item.args || ''}\``)
       msg.channel.send(f(lang.no_command, settings.prefix, cmd))
       if (list.length) msg.channel.send(f(lang.didyoumean, list.join('\n')))
