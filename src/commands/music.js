@@ -51,7 +51,7 @@ module.exports.run = async (msg, settings, lang) => {
           msg.channel.send(f(lang.music.playing, args[2]))
         }
         if (msg.deletable) msg.delete()
-        async () => {
+        /*async () => {
           if (queue.length && !loop) {
             dispatcher = play(connection, queue[0], msg, lang)
             msg.channel.send(f(lang.music.playing_queue, queue[0]))
@@ -63,26 +63,27 @@ module.exports.run = async (msg, settings, lang) => {
               dispatcher = play(connection, args[2], msg, lang)
             }
           }
-        }
-        const endHandler = async () => {
-          if (queue.length && !loop) {
-            dispatcher = play(connection, queue[0], msg, lang)
-            msg.channel.send(f(lang.music.playing_queue, queue[0]))
+        }*/
+        const endHandler = async q => {
+          if (q.length && !loop) {
+            dispatcher = play(connection, q[0], msg, lang)
+            msg.channel.send(f(lang.music.playing_queue, q[0]))
+            q.slice(1)
           } else {
             if (!loop) {
               dispatcher = null
               msg.channel.send('すべての曲の再生が終了しました。')
             } else {
               dispatcher = play(connection, args[2], msg, lang)
-              register() //eslint-disable-line
+              register(q) //eslint-disable-line
             }
           }
         }
-        const register = () => {
-          dispatcher.once('end', endHandler)
-          dispatcher.once('close', endHandler)
+        const register = q => {
+          dispatcher.once('end', () => endHandler(q))
+          dispatcher.once('close', () => endHandler(q))
         }
-        register()
+        register(queue)
       })
   } else if (args[1] === 'volume') {
     if (dispatcher) {
