@@ -103,6 +103,7 @@ module.exports = function() {
   })
 
   process.on('unhandledRejection', async (error = {}) => {
+    errors++
     if (error.name === 'DiscordAPIError') return true // ignore DiscordAPIError (e.g. Missing Permissions)
     if (error.message.includes('ENOTFOUND')) return // ignore network error
     const { report, file } = await makeReport(client, error, 'error')
@@ -116,6 +117,7 @@ module.exports = function() {
   })
 
   process.on('uncaughtException', async (error = {}) => {
+    errors++
     const { report, file } = await makeReport(client, error, 'crash')
     logger.emerg('Oh, BlackListener has crashed!')
       .emerg(`Crash report has writed to: ${file}`)
