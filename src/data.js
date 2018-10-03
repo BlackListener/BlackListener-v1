@@ -13,13 +13,12 @@ const path = {
 
 async function dataStore(id, type, _default) {
   const json = await util.readJSON(path[type](id), {})
-  const data = Object.assign(_default, json)
-  return new Proxy(data, {
+  return new Proxy(json, {
     get(target, key) {
       if (typeof target[key] === 'object' && target[key] !== null) {
         return new Proxy(target[key], this)
       } else {
-        return target[key]
+        return target[key] != null ? target[key] : _default[key]
       }
     },
     async set(obj, prop, value) {
@@ -41,4 +40,4 @@ module.exports = {
   async bans() {
     return await dataStore('', 'bans', defaultBans)
   },
-} 
+}
