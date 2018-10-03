@@ -65,7 +65,9 @@ module.exports.run = async (msg, settings, lang) => {
           }
         }*/
         const endHandler = async q => {
+          logger.info('ended')
           if (q.length && !loop) {
+            logger.info('and playing queue')
             dispatcher = play(connection, q[0], msg, lang)
             msg.channel.send(f(lang.music.playing_queue, q[0]))
             q.slice(1)
