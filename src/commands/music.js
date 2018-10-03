@@ -124,6 +124,8 @@ module.exports.run = async (msg, settings, lang) => {
     if (args[2] === 'clear') {
       queue = []
       return msg.channel.send(lang.music.cleared_queue)
+    } else if (args[2] === 'reactivate') {
+      return msg.channel.send('You need to type this: ```\n<prefix>music stop\n<prefix>music play https://www.youtube.com/watch?v=jhFDyDgMVUI\n```')
     }
     const queues = queue.map((e, i) => `${i}: ${e}`)
     if (queues.length) msg.channel.send(queues.join('\n'))
