@@ -24,7 +24,7 @@ module.exports.run = function(msg, settings, lang) {
         .then((messages) => {
           msg.channel.bulkDelete(messages)
           if (messages.length >= 100) {
-            clear()
+            setTimeout(() => clear(), 3000) // for avoid rate limit
           }
         })
     }

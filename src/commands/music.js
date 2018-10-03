@@ -68,9 +68,11 @@ module.exports.run = async (msg, settings, lang) => {
           logger.info('ended')
           if (q.length && !loop) {
             logger.info('and playing queue')
+            dispatcher = null
             dispatcher = play(connection, q[0], msg, lang)
             msg.channel.send(f(lang.music.playing_queue, q[0]))
             q.slice(1)
+            register(q) //eslint-disable-line
           } else {
             if (!loop) {
               dispatcher = null
@@ -82,6 +84,7 @@ module.exports.run = async (msg, settings, lang) => {
           }
         }
         const register = q => {
+          queue = q
           dispatcher.once('end', () => endHandler(q))
           dispatcher.once('close', () => endHandler(q))
         }
