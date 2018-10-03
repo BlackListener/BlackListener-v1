@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const fs = require('fs').promises
 const f = require('string-format')
-const config = require('../config.yml')
+const config = require(__dirname + '/../config.yml')
 //const url = config.dump_url
 
 module.exports.args = [
@@ -63,6 +63,6 @@ module.exports.run = async function(msg, settings, lang) {
     .setDescription(f(lang.dumped, link))
   msg.channel.send(embed)
   if (!nowrite) {
-    fs.writeFile('./dump.txt', list.join('\n'), 'utf8')
+    fs.writeFile(__dirname + '/dump.txt', list.join('\n'), 'utf8')
   }
 }

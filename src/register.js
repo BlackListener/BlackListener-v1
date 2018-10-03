@@ -62,14 +62,23 @@ ${error.stack}
 `
   return {
     report: data,
-    file: `../${type}-reports/${type}-${format}.txt`,
+    file: `${__dirname}/../${type}-reports/${type}-${format}.txt`,
   }
 }
 
 module.exports = function() {
-  const client = require('./index')
+  const client = require(__dirname + '/index')
   let count = 0
+  let errors = 0
   let once = false
+
+  setInterval(() => {
+    if (errors >= 2) {
+      logger.emerg('Error loop detected, terminating this process')
+      process.kill(process.pid, 'SIGKILL')
+    }
+    errors = 0
+  }, 1000)
 
   client.on('warn', (warn) => {
     logger.warn(`Got Warning from Client: ${warn}`)

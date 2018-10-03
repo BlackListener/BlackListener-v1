@@ -1,7 +1,7 @@
 const f = require('string-format')
 const Discord = require('discord.js')
-const logger = require('../logger').getLogger('commands:lookup', 'purple')
-const data = require('../data')
+const logger = require(__dirname + '/../logger').getLogger('commands:lookup', 'purple')
+const data = require(__dirname + '/../data')
 
 module.exports.args = ['<User>']
 

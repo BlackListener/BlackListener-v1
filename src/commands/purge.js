@@ -1,4 +1,4 @@
-const logger = require('../logger').getLogger('commands:purge', 'lightpurple')
+const logger = require(__dirname + '/../logger').getLogger('commands:purge', 'lightpurple')
 
 module.exports.args = [
   '[number/all]',

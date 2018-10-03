@@ -1,4 +1,4 @@
-const logger = require('../logger').getLogger('commands:setwelcome', 'cyan')
+const logger = require(__dirname + '/../logger').getLogger('commands:setwelcome', 'cyan')
 const f = require('string-format')
 
 module.exports.args = ['[channel:message] [Channel:Message]']

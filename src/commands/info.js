@@ -1,11 +1,11 @@
 const Discord = require('discord.js')
 const exec = require('util').promisify(require('child_process').exec)
 const os = require('os')
-const c = require('../config.yml')
+const c = require(__dirname + '/../config.yml')
 const isWindows = process.platform === 'win32'
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require('../travis.yml') : require('../secret.yml')
-const logger = require('../logger').getLogger('commands:info')
+const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../secret.yml')
+const logger = require(__dirname + '/../logger').getLogger('commands:info')
 const f = require('string-format')
 
 module.exports.name = 'info'

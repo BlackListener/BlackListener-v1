@@ -1,5 +1,5 @@
-const data = require('../data')
-const logger = require('../logger').getLogger('commands:ban', 'blue')
+const data = require(__dirname + '/../data')
+const logger = require(__dirname + '/../logger').getLogger('commands:ban', 'blue')
 
 module.exports.args = ['[<ID/Mentions/Name> <Reason> <Probe>]']
 

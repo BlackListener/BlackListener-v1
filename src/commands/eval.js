@@ -1,4 +1,4 @@
-const logger = require('../logger').getLogger('commands:eval', 'lightpurple')
+const logger = require(__dirname + '/../logger').getLogger('commands:eval', 'lightpurple')
 const f = require('string-format')
 
 module.exports.args = ['<Program>']

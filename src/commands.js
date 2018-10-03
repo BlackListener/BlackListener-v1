@@ -1,4 +1,4 @@
-const logger = require('./logger').getLogger('plugins', 'cyan')
+const logger = require(__dirname + '/logger').getLogger('plugins', 'cyan')
 const fs = require('fs')
 
 const commands = {}

@@ -1,4 +1,4 @@
-const logger = require('../logger').getLogger('commands:role')
+const logger = require(__dirname + '/../logger').getLogger('commands:role')
 const Discord = require('discord.js')
 
 const addRole = (msg, rolename, guildmember = null, language) => {

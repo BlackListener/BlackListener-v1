@@ -1,15 +1,15 @@
 const f = require('string-format')
 const Discord = require('discord.js')
-const c = require('../config.yml')
-const util = require('../util')
-const languages = require('../language')
+const c = require(__dirname + '/../config.yml')
+const util = require(__dirname + '/../util')
+const languages = require(__dirname + '/../language')
 
 module.exports.args = ['[Command]']
 
 module.exports.name = 'help'
 
 module.exports.run = async function(msg, settings, lang) {
-  const {commands} = require('../commands')
+  const {commands} = require(__dirname + '/../commands')
   const args = msg.content.replace(settings.prefix, '').split(' ')
   if (args[1]) {
     const langcommands = languages.commands[settings.language]

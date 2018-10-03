@@ -1,5 +1,5 @@
 const f = require('string-format')
-const logger = require('../logger').getLogger('commands:autorole', 'green')
+const logger = require(__dirname + '/../logger').getLogger('commands:autorole', 'green')
 
 module.exports.args = ['[add/remove] <Role>']
 

@@ -1,7 +1,7 @@
 const fs = require('fs').promises
 const Discord = require('discord.js')
 const f = require('string-format')
-const config = require('../config.yml')
+const config = require(__dirname + '/../config.yml')
 
 module.exports.args = ['[User]']
 

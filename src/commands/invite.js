@@ -1,6 +1,6 @@
 const f = require('string-format')
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require('../travis.yml') : require('../secret.yml')
+const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../secret.yml')
 const c = require(__dirname + '/../config.yml')
 
 module.exports.name = 'invite'

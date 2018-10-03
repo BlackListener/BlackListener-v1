@@ -1,4 +1,4 @@
-const logger = require('../logger').getLogger('commands:shutdown', 'darkgray')
+const logger = require(__dirname + '/../logger').getLogger('commands:shutdown', 'darkgray')
 const f = require('string-format')
 
 module.exports.args = ['[-f]', '[-r]']

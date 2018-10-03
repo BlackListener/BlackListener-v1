@@ -1,4 +1,4 @@
-const logger = require('../logger').getLogger('commands:setnick', 'yellow')
+const logger = require(__dirname + '/../logger').getLogger('commands:setnick', 'yellow')
 
 module.exports.args = ['<NewName> [User]']
 
