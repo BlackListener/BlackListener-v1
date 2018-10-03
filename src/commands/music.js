@@ -71,7 +71,7 @@ module.exports.run = async (msg, settings, lang) => {
             dispatcher = null
             dispatcher = play(connection, q[0], msg, lang)
             msg.channel.send(f(lang.music.playing_queue, q[0]))
-            q.slice(1)
+            q = q.slice(1)
             register(q) //eslint-disable-line
           } else {
             if (!loop) {
