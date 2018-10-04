@@ -1,13 +1,18 @@
 const f = require('string-format')
+const { Command } = require('../core')
 
-module.exports.name = 'token'
+module.exports = class extends Command {
+  constructor() {
+    super('token')
+  }
 
-module.exports.isAllowed = (msg, owners) => {
-  return owners.includes(msg.author.id)
-}
+  isAllowed(msg, owners) {
+    return owners.includes(msg.author.id)
+  }
 
-module.exports.run = function(msg, settings, lang) {
-  msg.author.send(f(lang.mytoken, msg.client.token))
-  msg.reply(lang.senttodm)
-  msg.delete(5000)
+  run(msg, settings, lang) {
+    msg.author.send(f(lang.mytoken, msg.client.token))
+    msg.reply(lang.senttodm)
+    msg.delete(5000)
+  }
 }

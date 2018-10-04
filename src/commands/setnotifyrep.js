@@ -1,25 +1,34 @@
 const f = require('string-format')
+const { Command } = require('../core')
 
-module.exports.args = ['<0...10>']
+module.exports = class extends Command {
+  constructor() {
+    const opts = {
+      args: [
+        '<0...10>',
+      ],
+      alias: [
+        'notifyrep',
+      ],
+    }
+    super('setnotifyrep', opts)
+  }
 
-module.exports.name = 'setnotifyrep'
+  isAllowed(msg) {
+    return msg.member.hasPermission(8)
+  }
 
-module.exports.alias = ['notifyrep']
-
-module.exports.isAllowed = msg => {
-  return msg.member.hasPermission(8)
-}
-
-module.exports.run = async function(msg, settings, lang) {
-  const args = msg.content.replace(settings.prefix, '').split(' ')
-  const n = parseInt(args[1], 10)
-  const min = 0
-  const max = 10
-  const status = n >= min && n <= max
-  if (!status || args[1] == null) {
-    msg.channel.send(lang.invalid_args)
-  } else {
-    settings.notifyRep = parseInt(args[1], 10)
-    await msg.channel.send(f(lang.setconfig, 'notifyRep'))
+  async run(msg, settings, lang) {
+    const args = msg.content.replace(settings.prefix, '').split(' ')
+    const n = parseInt(args[1], 10)
+    const min = 0
+    const max = 10
+    const status = n >= min && n <= max
+    if (!status || args[1] == null) {
+      msg.channel.send(lang.invalid_args)
+    } else {
+      settings.notifyRep = parseInt(args[1], 10)
+      await msg.channel.send(f(lang.setconfig, 'notifyRep'))
+    }
   }
 }

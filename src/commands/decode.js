@@ -1,8 +1,17 @@
-module.exports.args = ['<Base64String>']
+const { Command } = require('../core')
 
-module.exports.name = 'decode'
+module.exports = class extends Command {
+  constructor() {
+    const opts = {
+      args: [
+        '<Base64String>',
+      ],
+    }
+    super('decode', opts)
+  }
 
-module.exports.run = function(msg, settings) {
-  const cmd = settings.prefix + 'decode '
-  return msg.channel.send(new Buffer.from(msg.content.slice(cmd.length), 'base64').toString('ascii'))
+  run(msg, settings) {
+    const cmd = settings.prefix + 'decode '
+    return msg.channel.send(new Buffer.from(msg.content.slice(cmd.length), 'base64').toString('ascii'))
+  }
 }

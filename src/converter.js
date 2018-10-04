@@ -7,10 +7,10 @@ const Discord = require('discord.js') // eslint-disable-line
  * @example toUser(msg, args[1])
  * @param {?Discord.Message} msg
  * @param {Discord.UserResolvable} before
- * @returns {?Discord.User} A resolved User, if not resolved, returns null
+ * @returns {?Discord.User} A resolved User, if not resolved, returns empty JSON({})
  */
 const toUser = (msg = null, before) => {
-  return client.users.get(before) || client.users.find(u => u.username === before) || msg ? msg.mentions.users.first() : null
+  return client.users.get(before) || client.users.find(u => u.username === before) || msg ? msg.mentions.users.first() : {}
 }
 
 /**
@@ -19,10 +19,10 @@ const toUser = (msg = null, before) => {
  * @example toChannel(msg, args[1])
  * @param {?Discord.Message} msg
  * @param {Discord.ChannelResolvable} before
- * @returns {?Discord.Channel} A resolved User, if not resolved, returns null
+ * @returns {?Discord.Channel} A resolved User, if not resolved, returns empty JSON({})
  */
 const toChannel = (msg = null, before) => {
-  return client.channels.get(before) || client.channels.find(c => c.name === before) || msg ? msg.mentions.channels.first() : null
+  return client.channels.get(before) || client.channels.find(c => c.name === before) || msg ? msg.mentions.channels.first() : {}
 }
 
 /**

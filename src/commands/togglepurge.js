@@ -1,25 +1,33 @@
 const f = require('string-format')
+const { Command } = require('../core')
 
-module.exports.args = ['[enable/disable]']
-
-module.exports.name = 'togglepurge'
-
-module.exports.isAllowed = msg => {
-  return msg.member.hasPermission(8)
-}
-
-module.exports.run = async function(msg, settings, lang) {
-  const args = msg.content.replace(settings.prefix, '').split(' ')
-  if (args[1] === 'enable') {
-    settings.disable_purge = false
-  } else if (args[1] === 'disable') {
-    settings.disable_purge = true
-  } else {
-    if (settings.disable_purge) {
-      settings.disable_purge = false
-    } else if (!settings.disable_purge) {
-      settings.disable_purge = true
+module.exports = class extends Command {
+  constructor() {
+    const opts = {
+      args: [
+        '[enable/disable]',
+      ],
     }
+    super('togglepurge', opts)
   }
-  await msg.channel.send(f(lang.setconfig, 'disable_purge'))
+
+  isAllowed(msg) {
+    return msg.member.hasPermission(8)
+  }
+
+  async run(msg, settings, lang) {
+    const args = msg.content.replace(settings.prefix, '').split(' ')
+    if (args[1] === 'enable') {
+      settings.disable_purge = false
+    } else if (args[1] === 'disable') {
+      settings.disable_purge = true
+    } else {
+      if (settings.disable_purge) {
+        settings.disable_purge = false
+      } else if (!settings.disable_purge) {
+        settings.disable_purge = true
+      }
+    }
+    await msg.channel.send(f(lang.setconfig, 'disable_purge'))
+  }
 }

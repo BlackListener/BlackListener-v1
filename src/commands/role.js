@@ -1,5 +1,6 @@
 const logger = require(__dirname + '/../logger').getLogger('commands:role')
 const Discord = require('discord.js')
+const { Command } = require('../core')
 
 const addRole = (msg, rolename, guildmember = null, language) => {
   const lang = require(`./lang/${language}.json`)
@@ -25,22 +26,29 @@ const addRole = (msg, rolename, guildmember = null, language) => {
   }
 }
 
-module.exports.args = ['<Role> [User]']
-
-module.exports.name = 'role'
-
-module.exports.run = function(msg, settings, lang) {
-  const args = msg.content.replace(settings.prefix, '').split(' ')
-  if (!msg.guild.roles.find(n => n.name === args[1] || n.id === args[1]))
-    return msg.channel.send(lang.invalid_args)
-  // msg.member.highestRole.position > role.position
-  if (msg.member.hasPermission(8)) {
-    if (!msg.mentions.members.first()) {
-      addRole(msg, args[1], null, settings.language)
-    } else {
-      addRole(msg, args[1], msg.mentions.members.first(), settings.language)
+module.exports = class extends Command {
+  constructor() {
+    const opts = {
+      args: [
+        '<Role> [User]',
+      ],
     }
-  } else {
-    return msg.channel.send(lang.udonthaveperm)
+    super('role', opts)
+  }
+
+  run(msg, settings, lang) {
+    const args = msg.content.replace(settings.prefix, '').split(' ')
+    if (!msg.guild.roles.find(n => n.name === args[1] || n.id === args[1]))
+      return msg.channel.send(lang.invalid_args)
+    // msg.member.highestRole.position > role.position
+    if (msg.member.hasPermission(8)) {
+      if (!msg.mentions.members.first()) {
+        addRole(msg, args[1], null, settings.language)
+      } else {
+        addRole(msg, args[1], msg.mentions.members.first(), settings.language)
+      }
+    } else {
+      return msg.channel.send(lang.udonthaveperm)
+    }
   }
 }
