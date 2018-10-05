@@ -16,7 +16,7 @@ module.exports = class extends Command {
     super('purge', opts)
   }
 
-  run(msg, settings, lang) {
+  async run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     if (settings.disable_purge) return msg.channel.send(lang.disabled_purge)
     let messages
@@ -52,16 +52,14 @@ module.exports = class extends Command {
     } else if (args[1] === 'remake') {
       if (!msg.mentions.channels.first()) return msg.channel.send(lang.no_args)
       try {
-        (async () => {
-          const channel = msg.mentions.channels.first()
-          msg.channel.send(':ok_hand:')
-          channel.delete('Remake of Channel')
-          const created_channel = await msg.guild.createChannel(channel.name, channel.type)
-          if (channel.parent) {
-            created_channel.setParent(channel.parentID)
-          }
-          created_channel.setPosition(channel.position)
-        })()
+        const channel = msg.mentions.channels.first()
+        msg.channel.send(':ok_hand:')
+        channel.delete('Remake of Channel')
+        const created_channel = await msg.guild.createChannel(channel.name, channel.type)
+        if (channel.parent) {
+          created_channel.setParent(channel.parentID)
+        }
+        created_channel.setPosition(channel.position)
       } catch (e) {
         logger.error(e)
       }
@@ -69,11 +67,9 @@ module.exports = class extends Command {
       if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
         msg.channel.send(lang.outofrange)
       }
-      (async () => {
-        messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
-        msg.channel.bulkDelete(messages)
-          .catch(e => logger.error(e))
-      })()
+      messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
+      msg.channel.bulkDelete(messages)
+        .catch(e => logger.error(e))
     } else {
       msg.channel.send(lang.invalid_args)
     }

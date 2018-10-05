@@ -12,7 +12,6 @@ const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
 const languages = require('./language')
 const argv = require('./argument_parser')(process.argv.slice(2))
-module.exports = client
 
 const getDateTime = function() {
   const date = new Date()
@@ -126,11 +125,9 @@ client.on('guildMemberAdd', async member => {
     }
   }
   if (serverSetting.autorole) {
-    (async function () {
-      const role = await member.guild.roles.get(serverSetting.autorole)
-      member.addRole(role)
-      logger.info(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`)
-    }) ()
+    const role = await member.guild.roles.get(serverSetting.autorole)
+    member.addRole(role)
+    logger.info(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`)
   }
   if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
     let message = serverSetting.welcome_message.replace('{user}', `<@${member.user.id}>`)
@@ -178,7 +175,7 @@ if (!c.repl.disable || argv.repl === true) {
       console.log('.end -> Call client.destroy() and call process.exit() 5 seconds later if don\'t down')
       console.log('.kill -> Kill this process')
       console.log('client -> A \'Discord.Client()\'')
-      
+
     }
     const exit = () => {
       setInterval(() => {

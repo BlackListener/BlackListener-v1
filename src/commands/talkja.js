@@ -26,12 +26,10 @@ module.exports = class extends Command {
     const resjson = await resreg.json()
     const userId = resjson.appUserId
     const talkform = `{ "botId": "sample", "appUserId": ${userId}, "initTalkingFlag": true, "voiceText": ${args[1]}, "initTopicId": "docomoapi" }`
-    return (async function () {
-      const res = await fetch('https://api.repl-ai.jp/v1/dialogue', { method: 'POST', body: talkform, headers: header })
-      if (res.status !== 200) return msg.channel.send(lang.returned_invalid_response)
-      const data = await res.json()
-      status = data.systemText.expression
-      await msg.channel.send(status.replace('#', ''))
-    }) ()
+    const res = await fetch('https://api.repl-ai.jp/v1/dialogue', { method: 'POST', body: talkform, headers: header })
+    if (res.status !== 200) return msg.channel.send(lang.returned_invalid_response)
+    const data = await res.json()
+    status = data.systemText.expression
+    await msg.channel.send(status.replace('#', ''))
   }
 }
