@@ -15,12 +15,9 @@ module.exports = class extends Command {
         '[emojis]',
         '[messages]',
       ],
+      permission: 8,
     }
     super('dump', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   async run(msg, settings, lang) {

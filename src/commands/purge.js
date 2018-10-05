@@ -11,12 +11,9 @@ module.exports = class extends Command {
         'gdel-really',
         'remake <Channel>',
       ],
+      permission: 8,
     }
     super('purge', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   run(msg, settings, lang) {

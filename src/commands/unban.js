@@ -8,12 +8,9 @@ module.exports = class extends Command {
       args: [
         '<User>',
       ],
+      permission: 8,
     }
     super('unban', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   async run(msg, settings, lang) {

@@ -7,12 +7,9 @@ module.exports = class extends Command {
       args: [
         '[enable/disable]',
       ],
+      permission: 8,
     }
     super('togglepurge', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   async run(msg, settings, lang) {

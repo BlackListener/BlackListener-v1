@@ -32,23 +32,18 @@ module.exports = class extends Command {
       args: [
         '<Role> [User]',
       ],
+      permission: 8,
     }
     super('role', opts)
   }
 
   run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
-    if (!msg.guild.roles.find(n => n.name === args[1] || n.id === args[1]))
-      return msg.channel.send(lang.invalid_args)
-    // msg.member.highestRole.position > role.position
-    if (msg.member.hasPermission(8)) {
-      if (!msg.mentions.members.first()) {
-        addRole(msg, args[1], null, settings.language)
-      } else {
-        addRole(msg, args[1], msg.mentions.members.first(), settings.language)
-      }
+    if (!msg.guild.roles.find(n => n.name === args[1] || n.id === args[1])) return msg.channel.send(lang.invalid_args)
+    if (!msg.mentions.members.first()) {
+      addRole(msg, args[1], null, settings.language)
     } else {
-      return msg.channel.send(lang.udonthaveperm)
+      addRole(msg, args[1], msg.mentions.members.first(), settings.language)
     }
   }
 }

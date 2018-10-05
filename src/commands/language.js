@@ -9,12 +9,9 @@ module.exports = class extends Command {
       args: [
         'ISO 639-1 Language Code(en, ja, and more)',
       ],
+      permission: 8,
     }
     super('language', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   run(msg, settings, lang) {

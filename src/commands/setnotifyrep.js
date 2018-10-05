@@ -10,12 +10,9 @@ module.exports = class extends Command {
       alias: [
         'notifyrep',
       ],
+      permission: 8,
     }
     super('setnotifyrep', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   async run(msg, settings, lang) {

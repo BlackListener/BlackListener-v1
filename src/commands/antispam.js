@@ -14,12 +14,9 @@ module.exports = class extends Command {
         'ignore <Channel>',
         'status [Channel]',
       ],
+      permission: 8,
     }
     super('antispam', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   async run(msg, settings, lang) {

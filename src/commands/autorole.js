@@ -8,12 +8,9 @@ module.exports = class extends Command {
       args: [
         '[add/remove] <Role>',
       ],
+      permission: 8,
     }
     super('autorole', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   run(msg, settings, lang) {

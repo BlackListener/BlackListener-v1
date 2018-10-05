@@ -25,6 +25,7 @@ module.exports = class extends Command {
     }
     if (args[1] === 'custom') {
       if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
+      if(/(https|http):\/\//gm.test(args[2])) return msg.channel.send(lang.invalid_args)
       if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace)
       return await sendImage([args[2]])
     } else if (args[1] === 'anime') {

@@ -8,12 +8,9 @@ module.exports = class extends Command {
       args: [
         '[channel:message] [Channel:Message]',
       ],
+      permission: 8,
     }
     super('setwelcome', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   async run(msg, settings, lang) {

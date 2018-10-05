@@ -7,12 +7,9 @@ module.exports = class extends Command {
       alias: [
         'log',
       ],
+      permission: 8,
     }
     super('setlog', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   run(msg, settings, lang) {

@@ -12,12 +12,9 @@ module.exports = class extends Command {
         'resetnick',
         'nick',
       ],
+      permission: 8,
     }
     super('setnick', opts)
-  }
-
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
   }
 
   run(msg, settings, lang) {

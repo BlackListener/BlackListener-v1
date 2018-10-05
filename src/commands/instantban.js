@@ -7,16 +7,14 @@ module.exports = class extends Command {
       args: [
         '<User>',
       ],
+      permission: 8,
     }
     super('instantban', opts)
   }
 
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
-  }
-
-  run(msg, settings) {
+  run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
+    if (!args[1]) return msg.channel.send(lang.invalid_args)
     const user = toUser(msg, args[1])
     msg.guild.ban(user)
     msg.channel.send(':ok_hand:')
