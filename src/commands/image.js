@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const randomPuppy = require('random-puppy')
+const f = require('string-format')
 const { Command } = require('../core')
 
 module.exports = class extends Command {
@@ -25,9 +26,13 @@ module.exports = class extends Command {
     }
     if (args[1] === 'custom') {
       if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
-      if(/(https|http):\/\//gm.test(args[2])) return msg.channel.send(lang.invalid_args)
       if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace)
-      return await sendImage([args[2]])
+      try {
+        return await sendImage([args[2]])
+      } catch(e) {
+        if (e.name === 'ParseError') return msg.channel.send(f(lang.error, 'Failed to parsing JSON. (Probably not found specified subreddit)'))
+        msg.channel.send(f(lang.error, e))
+      }
     } else if (args[1] === 'anime') {
       return await sendImage([
         'Undertale',
