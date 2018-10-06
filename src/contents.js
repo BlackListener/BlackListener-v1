@@ -63,4 +63,9 @@ module.exports = {
     'de',
     'el',
   ],
+  commandsDefaults: {
+    alias: [],
+    args: [],
+    permission: 0,
+  },
 }

@@ -1,4 +1,6 @@
-const Discord = require('discord.js') // eslint-disable-line
+const Discord = require('discord.js')
+const { Permissions } = Discord
+const { commandsDefaults: defaults } = require('./contents')
 
 class Command {
   /**
@@ -11,10 +13,12 @@ class Command {
    */
   constructor(name, options = {}) {
     this.name = name
-    //Object.keys(options).forEach(key => this[key] = options[key] || null) // Are you sure want this?
-    this.alias = options.alias || null
-    this.args = options.args || null
-    this.permission = options.permission || null
+
+    options = Object.assign(defaults, options)
+
+    this.alias = options.alias
+    this.args = options.args
+    this.permission = new Permissions(options.permission).freeze()
   }
 
   /**
@@ -26,13 +30,8 @@ class Command {
    * @abstract
    * @param {Discord.Message} msg
    */
-  isAllowed(msg) {
-    if (!this.permission) return true
-    try {
-      return msg.member.hasPermission(parseInt(this.permission))
-    } catch(e) {
-      throw TypeError('Permission must be a number.')
-    }
+  isAllowed({ member }) {
+    return member.hasPermission(this.permission)
   }
 }
 
