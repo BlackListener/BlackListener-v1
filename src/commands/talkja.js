@@ -7,6 +7,7 @@ const logger = require('../logger').getLogger('commands:talkja', 'purple')
 module.exports = class extends Command {
   constructor() {
     const opts = {
+      enabled: s.talk_apikey != null && s.talk_apikey !== 'undefined',
       args: [
         '<話しかけたいこと(日本語のみ)>',
       ],
@@ -15,7 +16,6 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang) {
-    if (s.talk_apikey == '' || s.talk_apikey == 'undefined') return msg.channel.send(lang.no_apikey)
     const voiceText = msg.content.replace(settings.prefix + ' talkja ', '')
     const id = await this.fetch('https://api.repl-ai.jp/v1/registration', { botId: 'sample' })
     if (!id) return msg.channel.send(lang.returned_invalid_response)

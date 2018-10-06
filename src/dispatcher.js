@@ -7,6 +7,7 @@ const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 
 function runCommand(command, settings, msg, lang) {
+  if (!command.enabled) return msg.channel.send(f(lang.disabled_command, command.name))
   if (command.isAllowed(msg, s.owners)) {
     logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
     command.run(msg, settings, lang)

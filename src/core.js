@@ -16,6 +16,7 @@ class Command {
 
     options = Object.assign(defaults, options)
 
+    this.enabled = options.enabled
     this.alias = options.alias
     this.args = options.args
     this.permission = new Permissions(options.permission).freeze()

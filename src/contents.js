@@ -67,5 +67,6 @@ module.exports = {
     alias: [],
     args: [],
     permission: 0,
+    enabled: true,
   },
 }
