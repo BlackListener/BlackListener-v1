@@ -38,7 +38,7 @@ try {
 }
 const dispatcher = require('./dispatcher')
 
-require('./register')()
+require('./register')(client)
 
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 

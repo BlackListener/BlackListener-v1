@@ -66,8 +66,7 @@ ${error.stack}
   }
 }
 
-module.exports = function() {
-  const client = require(__dirname + '/index')
+module.exports = function(client) {
   let count = 0
   let errors = 0
   let once = false
