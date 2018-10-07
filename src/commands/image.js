@@ -8,7 +8,6 @@ module.exports = class extends Command {
     const opts = {
       args: [
         'anime',
-        'nsfw|r18',
         'custom <subreddit>',
       ],
     }

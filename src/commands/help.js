@@ -45,7 +45,7 @@ module.exports = class extends Command {
       .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
       .addField(`${prefix}invite`, lang.commands.invite)
       .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
-      .addField(`${prefix}image [nsfw|anime|custom] [subreddit]`, lang.commands.image)
+      .addField(`${prefix}image [anime|custom] [subreddit]`, lang.commands.image)
       .addField(`${prefix}lookup <User>`, lang.lookup.desc)
       .addField(lang.commands.others, lang.commands.athere)
     return msg.channel.send(embed)

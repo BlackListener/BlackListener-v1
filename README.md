@@ -51,7 +51,6 @@ Server's prefix can be show up in mention the bot.
 | lookup \<User\> | Displays User information. | ユーザー情報を表示します。 | Yes |
 | didyouknow \<User\> | Tests if bot know specificed user | ボットが指定されたユーザーを知っているかテストします | No |
 | setignore \<Channel\> | Set exclude from logging channel. | ロギングを指定されたチャンネルを除外するようにします | Yes |
-| image \<nsfw\|r18\|anime\> | Send nsfw images... be careful. | NSFW画像を送信します...気を付けてくださいね。 | No |
 | image anime | Send anime images. | アニメ画像を送信します。 | No |
 | invite | Displays bot invite link. | ボットの招待リンクを表示します。 | No |
 | dump \[guilds\|users\|channels\|emojis\|messages\] | Dump guilds, users, channels, emojis, messages. default is guilds. | ギルド、ユーザー、チャンネル、メッセージをダンプします。デフォルトはギルドです。 | Yes |
