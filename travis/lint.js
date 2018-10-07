@@ -20,7 +20,7 @@ console.log('Running eslint...')
 const report = cli.executeOnFiles(['.'])
 
 console.log('Creating report')
-//if (report.errorCount || report.warningCount) {
+if (report.errorCount || report.warningCount) {
   console.log('Collecting results')
   const files = report.results.filter(e => e.source)
   console.log('Checking & Building results')
@@ -47,4 +47,4 @@ console.log('Creating report')
     console.log('OK, Finished')
     process.exit()
   })
-//}
+}
