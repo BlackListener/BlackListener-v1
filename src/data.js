@@ -4,6 +4,7 @@ const {
   defaultUser,
   defaultBans,
 } = require('./contents')
+const DeepProxy = require('proxy-deep')
 
 const path = {
   user: id => `./data/users/${id}/config.json`,
@@ -13,18 +14,19 @@ const path = {
 
 async function dataStore(id, type, _default) {
   const json = await util.readJSON(path[type](id), {})
-  return new Proxy(json, {
-    get(target, key) {
-      if (typeof target[key] === 'object' && target[key] !== null) {
-        return new Proxy(target[key], this)
+  const data = Object.assign(_default, json)
+  return new DeepProxy(data, {
+    get(target, key, receiver) {
+      const val = Reflect.get(target, key, receiver)
+      if (typeof val === 'object' && val !== null) {
+        return this.nest(val)
       } else {
-        return target[key] != null ? target[key] : _default[key]
+        return val
       }
     },
-    async set(obj, prop, value) {
-      if (obj[prop] === value) return true
-      obj[prop] = value
-      await util.writeJSON(path[type](id), obj)
+    set(target, key, value, receiver) {
+      Reflect.set(target, key, value, receiver)
+      util.writeJSON(path[type](id), this.rootTarget)
       return true
     },
   })
