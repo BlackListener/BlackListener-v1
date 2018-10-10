@@ -6,12 +6,17 @@ const util = require('./util')
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
 
-function runCommand(command, settings, msg, lang) {
+async function runCommand(command, settings, msg, lang) {
   if (!command.enabled) return msg.channel.send(f(lang.disabled_command, command.name))
-  if (command.isAllowed(msg, s.owners)) {
-    logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
-    command.run(msg, settings, lang)
-  } else msg.channel.send(lang.udonthaveperm)
+  if (!command.isAllowed(msg, s.owners)) return msg.channel.send(lang.udonthaveperm)
+  logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
+  try {
+    await command.run(msg, settings, lang)
+  } catch (e) {
+    await msg.channel.send(f(lang.error_occurred, command.name))
+    logger.info(f(lang.error_occurred, command.name))
+    throw e
+  }
 }
 
 module.exports = async function(settings, msg, lang) {
@@ -21,10 +26,10 @@ module.exports = async function(settings, msg, lang) {
     const [cmd] = msg.content.replace(settings.prefix, '').split(' ')
     if (settings.banned) return msg.channel.send(f(lang.error, lang.errors.server_banned))
     if (commands[cmd]) {
-      runCommand(commands[cmd], settings, msg, lang)
+      await runCommand(commands[cmd], settings, msg, lang)
     } else if (await util.exists(`${__dirname}/plugins/commands/${cmd}.js`)) {
       const plugin = require(`${__dirname}/plugins/commands/${cmd}.js`)
-      runCommand(plugin, settings, msg, lang)
+      await runCommand(plugin, settings, msg, lang)
     } else {
       const commandList = Object.keys(commands).map(cmd => ({ cmd, args: commands[cmd].args }))
       const similarCommand = commandList.map(item => item.no = levenshtein(cmd, item.cmd))

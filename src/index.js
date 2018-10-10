@@ -1,4 +1,5 @@
 require('./yaml')
+if (process.platform !== 'win32') require('./performance')
 const logger = require('./logger').getLogger('client', 'cyan', false)
 logger.info('Initializing')
 const f = require('string-format')
