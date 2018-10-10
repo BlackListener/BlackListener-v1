@@ -23,14 +23,17 @@
     "stringstream": "^1.0.0",
     "usage": "^0.7.1",
     "yaml": "^1.0.0-rc.8",
-    "ytdl-core": "^0.25.2"
+    "ytdl-core": "^0.25.2",
+    "snyk": "^1.103.0"
   },
   "devDependencies": {
     "eslint": "^5.4.0"
   },
   "scripts": {
     "test": "node index.js --travis-build",
-    "lint": "node travis/lint.js"
+    "lint": "node travis/lint.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -41,5 +44,6 @@
   "bugs": {
     "url": "https://github.com/rht0910/BlackListener/issues"
   },
-  "homepage": "https://github.com/rht0910/BlackListener#readme"
+  "homepage": "https://github.com/rht0910/BlackListener#readme",
+  "snyk": true
 }
