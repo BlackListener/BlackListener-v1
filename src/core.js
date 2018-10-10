@@ -1,6 +1,5 @@
 const Discord = require('discord.js')
 const { Permissions } = Discord
-const { commandsDefaults: defaults } = require('./contents')
 
 class Command {
   /**
@@ -14,7 +13,12 @@ class Command {
   constructor(name, options = {}) {
     this.name = name
 
-    options = Object.assign(defaults, options)
+    options = Object.assign({
+      alias: [],
+      args: [],
+      permission: 0,
+      enabled: true,
+    }, options)
 
     this.enabled = options.enabled
     this.alias = options.alias

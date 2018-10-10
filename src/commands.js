@@ -14,7 +14,7 @@ function setCommand(file, reload) {
   commands[command.name] = command
   for (const alias of command.alias) {
     if (commands[alias] && !reload)
-      logger.fatal(`The alias ${alias} is already used.`)
+      logger.fatal(`The ${command.name} alias ${alias} is already used.`)
     commands[alias] = command
   }
 }
