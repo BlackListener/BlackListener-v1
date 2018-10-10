@@ -19,6 +19,9 @@ module.exports = {
     quotes: [2, 'single'],
     semi: [2, 'never'],
     'prefer-arrow-callback': 2,
-    'no-use-before-define': ['error', { 'functions': true, 'classes': true }]
+    'no-use-before-define': 2,
+    'eol-last': 2,
+    'no-useless-return': 2,
+    'valid-typeof': 0,
   }
 }

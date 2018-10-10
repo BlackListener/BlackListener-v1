@@ -28,10 +28,10 @@ class Logger {
    *
    * @example const logger = require('./logger').getLogger("example", "red")
    * @param {string} thread Thread name
-   * @param {string} color yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
+   * @param {string} color Default: Random color, yellow, darkgray, red, lightred, green, lightpurple, white, cyan, purple, blue
    * @returns {Logger} A Logger instance
    */
-  getLogger(thread, color = 'yellow', init = true) {
+  getLogger(thread, color = null, init = true) {
     if (!init) this.initLog = () => {}
     if (!this.initialized && init) this.initLog()
     const self = new Logger()
@@ -55,6 +55,22 @@ class Logger {
       case 'cyan': self.thread = chalk.cyan(thread); break
       case 'purple': self.thread = chalk.hex('#800080')(thread); break
       case 'blue': self.thread = chalk.blue(thread); break
+      default: {
+        const colors = [
+          chalk.bold.yellow(thread),
+          chalk.gray(thread),
+          chalk.red(thread),
+          chalk.bold.red(thread),
+          chalk.green(thread),
+          chalk.bold.hex('#800080')(thread),
+          chalk.white(thread),
+          chalk.cyan(thread),
+          chalk.hex('#800080')(thread),
+          chalk.blue(thread),
+        ]
+        self.thread = colors[Math.floor(Math.random() * colors.length)]
+        break
+      }
     }
     this.info(`Registered logger for: ${thread}`, true)
     return self
@@ -112,7 +128,8 @@ class Logger {
   }
   /**
    * Outputs debug level message.
-   *
+   * Just debug message.
+   * 
    * @example logger.debug("foo")
    *
    *
@@ -132,6 +149,7 @@ class Logger {
   }
   /**
    * Outputs warn level message.
+   * Warning condition
    *
    * @example logger.warn("foo")
    *
@@ -150,6 +168,7 @@ class Logger {
   }
   /**
    * Outputs error level message.
+   * Error condition
    *
    * @example logger.error("foo")
    *
@@ -168,6 +187,7 @@ class Logger {
   }
   /**
    * Outputs fatal level message.
+   * Fatal Error, may need action immediately
    *
    * @example logger.fatal("foo")
    *
@@ -182,6 +202,24 @@ class Logger {
    */
   fatal(message, isLogger = false) {
     this.out(message, 'fatal', 'redBright.bold', isLogger)
+    return this
+  }
+  /**
+   * Outputs emerg level message.
+   * Use on going system is unusable(e.g. uncaughtException)
+   *
+   * @example logger.emerg("foo")
+   *
+   *
+   * @example logger.emerg("foo").emerg("bar")
+   *
+   *
+   * @param {*} message
+   *
+   * @returns {Logger} A Logger instance
+   */
+  emerg(message) {
+    this.out(message, 'emerg', 'red.bold', false)
     return this
   }
 }

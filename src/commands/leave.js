@@ -1,10 +1,16 @@
-module.exports.name = 'leave'
+const { Command } = require('../core')
 
-module.exports.isAllowed = msg => {
-  return msg.author.id !== msg.guild.ownerID
-}
+module.exports = class extends Command {
+  constructor() {
+    super('leave')
+  }
 
-module.exports.run = async function(msg) {
-  await msg.channel.send(':wave:')
-  msg.guild.leave()
+  isAllowed(msg) {
+    return msg.author.id !== msg.guild.ownerID
+  }
+
+  async run(msg) {
+    await msg.channel.send(':wave:')
+    msg.guild.leave()
+  }
 }

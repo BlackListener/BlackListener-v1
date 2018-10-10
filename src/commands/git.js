@@ -1,9 +1,14 @@
 const f = require('string-format')
 const git = require('simple-git/promise')()
+const { Command } = require('../core')
 
-module.exports.name = 'git'
+module.exports = class extends Command {
+  constructor() {
+    super('git')
+  }
 
-module.exports.run = async function(msg, settings, lang) {
-  const hash = await git.revparse(['HEAD'])
-  msg.channel.send(f(lang.commit, hash))
+  async run(msg, settings, lang) {
+    const hash = await git.revparse(['HEAD'])
+    msg.channel.send(f(lang.commit, hash))
+  }
 }

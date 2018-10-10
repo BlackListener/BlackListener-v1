@@ -1,0 +1,5 @@
+files:
+  - source: /src/lang/en.json
+    translation: /src/lang/%two_letters_code%.json
+  - source: /src/lang/commands/en.json
+    translation: /src/lang/commands/%two_letters_code%.json

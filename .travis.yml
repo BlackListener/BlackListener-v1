@@ -9,3 +9,6 @@ cache:
   directories:
     - node_modules
 install: yarn
+branches:
+  except:
+  - l10n_dev

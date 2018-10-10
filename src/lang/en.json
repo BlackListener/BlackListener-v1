@@ -1,9 +1,9 @@
 {
   "commands": {
-    "title": "Implemented Commands [{0}]",
+    "title": "Common Commands [{0}]",
     "setprefix": "Set prefix.",
     "ban": "Global Ban. User will be added a reputation.",
-    "unban": "Revert a Ban. User will be removed a reputation. [Not recommended]",
+    "unban": "Revert a Ban. User will be removed a reputation.",
     "language": "Change language. [ja/en]",
     "setnotifyrep": "Set notification level. <0...10>",
     "setbanrep": "Set banning level. <0...10>",
@@ -14,7 +14,7 @@
     "autorole": "Set up to automatically assign a position at the time of participation.",
     "image": "Displays NSFW images.",
     "others": "Help of other commands,",
-    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html)."
+    "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html) (__Note: Outdated some data.__)."
   },
   "status": {
     "servers": {
@@ -47,7 +47,7 @@
   "success": "┗━ Success: {0}, Shutting down",
   "atmpfs": "┗━ Attempting for force shutdown, Sender: {0}",
   "bye": ":wave: Bye!",
-  "availablelang": "Available Languages",
+  "availablelang": "Available Languages(Current: {0})",
   "cannotspace": "Can't contain the space.",
   "udonthaveperm": ":x: You don't have permissions for use admin command.",
   "invalid_user": "Not found that user",
@@ -70,12 +70,17 @@
     "ignore_enabled": "Enabled Anti-spam of selected channel.",
     "status": "Displays status.",
     "status2": "Status: {0}",
-    "disabled_channels": "Disabled channels list:\n{0}"
+    "disabled_channels": "Disabled channels list:\n{0}",
+    "blacklist": {
+      "add": "Add Black listed regex.",
+      "remove": "Remove Black listed regex.",
+      "list": "Displays list of Black listed regex."
+    }
   },
   "includes_spam": ":x: Deleted spamming. (You can disable it in `b:antispam disable`)",
   "no_command": "`{0}{1}` is not BlackListener command.",
   "didyoumean": "Did you mean?\n{0}",
-  "error": "Errored while processing: Error: {0}",
+  "error": "Errored while processing: Error: ``{0}``",
   "errors": {
     "server_banned": "k52j",
     "types_are_not_specified": "h54a"
@@ -154,8 +159,7 @@
     "excludeLogging": "Disable logging channel",
     "welcome_channel": "Channel of send welcome messages",
     "welcome_message": "Welcome message",
-    "mute": "List of muted users",
-    "blocked_role": "Can't use roles in role command"
+    "mute": "List of muted users"
   },
   "disabled": "Disabled",
   "enabled": "Enabled",
@@ -172,5 +176,32 @@
   "load": {
     "loaded": "Command loaded: {0}",
     "error": "Failed to load command: {0}"
-  }
+  },
+  "not_specified_user": "Not specified user.",
+  "timedout": "The request was not executed due to timeout.",
+  "youaremuted": "You are being muted.\nDo NOT contact bot owner, please tell for server administrator.",
+  "notifymsg": "{0} has an reputation of {1} or more (user's reputation: {2} )",
+  "pinging": "Pinging...",
+  "pong": "Pong!\nLatency: {0}ms\nAPI Latency: {1}ms",
+  "music": {
+    "not_joined_vc": ":warning: You must join to voice channel before using this command.",
+    "cantadd_loop_enabled": ":warning: Can't add to queue due to loop is enabled.",
+    "queue_added": "Added {0} to queue.",
+    "playing": ":white_check_mark: Playing {0}",
+    "playing_queue": "Playing in queue: {0}",
+    "changed_volume": "Changed volume to: **{1}%** from **{0}%**.",
+    "not_playing": "Currently, not playing music.",
+    "one_music_loop": "One music loop changed to: {0} (Queue(s) has been removed)",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "paused": "Paused.",
+    "unpaused": "Unpaused.",
+    "queue_count": "{0} musics in queue.",
+    "queue_cleared": "Cleared queue.",
+    "now_playing": "Currently, playing {0}",
+    "joined_vc": "Joined to {0}"
+  },
+  "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)",
+  "disabled_command": "{0} command is disabled",
+  "error_occurred": "An error occurred during {0} command execution"
 }

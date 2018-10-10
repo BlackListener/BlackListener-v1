@@ -1,8 +1,9 @@
 const config = require('./config.yml')
+const argv = require('./argument_parser')(process.argv.slice(2))
 
 module.exports = {
   defaultSettings: {
-    prefix: config.prefix,
+    prefix: argv.prefix || config.prefix,
     language: config.lang,
     notifyRep: config.notifyRep,
     banRep: config.banRep,
@@ -29,5 +30,37 @@ module.exports = {
     probes: [],
     reasons: [],
     username_changes: [],
+    tag: '',
   },
+  validLanguages: [
+    'en',
+    'ja',
+    'ca',
+    'fi',
+    'fr',
+    'he',
+    'hu',
+    'it',
+    'ko',
+    'nl',
+    'no',
+    'pl',
+    'pt',
+    'ro',
+    'sr',
+    'ru',
+    'sv',
+    'tr',
+    'uk',
+    'vi',
+    'zh',
+    'es',
+    'af',
+    'ar',
+    'el',
+    'cs',
+    'da',
+    'de',
+    'el',
+  ],
 }

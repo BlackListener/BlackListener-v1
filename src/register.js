@@ -1,9 +1,12 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
 const c = require('./config.yml')
-const fs = require('fs').promises
+const _fs = require('fs')
+const fs = _fs.promises
 const os = require('os')
 const share = require('./share')
 const git = require('simple-git/promise')()
+const args = require('./argument_parser')(process.argv.slice(2))
+const util = require('util')
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -35,13 +38,13 @@ ${error.stack}
 
     Launched in PID: ${process.pid}
 
-    Remote control: ${process.env.ENABLE_RCON ? 'Enabled' : 'Disabled'}
-    Custom Prefix: ${process.env.BL_PREFIX || 'Disabled; using default value: '+c.prefix}
+    Remote control: ${args.rcon ? 'Enabled' : 'Disabled'}
+    Custom Prefix: ${args.prefix || 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
     Average ping of websocket: ${Math.floor(client.ping * 100) / 100}
     Last ping of websocket: ${client.pings[0]}
-    Ready at: ${client.readyAt.toLocaleString()}
+    Ready at: ${client.readyAt ? client.readyAt.toLocaleString() : 'Error on before getting ready'}
 
 --- System Details ---
     CPU Architecture: ${process.arch}
@@ -59,13 +62,22 @@ ${error.stack}
 `
   return {
     report: data,
-    file: `../${type}-reports/${type}-${format}.txt`,
+    file: `${__dirname}/../${type}-reports/${type}-${format}.txt`,
   }
 }
 
 module.exports = function(client) {
   let count = 0
+  let errors = 0
   let once = false
+
+  setInterval(() => {
+    if (errors >= 2) {
+      logger.emerg('Error loop detected, terminating this process')
+      process.kill(process.pid, 'SIGKILL')
+    }
+    errors = 0
+  }, 1000)
 
   client.on('warn', (warn) => {
     logger.warn(`Got Warning from Client: ${warn}`)
@@ -75,20 +87,27 @@ module.exports = function(client) {
     logger.info(`Disconnected from Websocket (${count}ms).`)
     if (count === 0)
       logger.fatal('May wrong your bot token, Is bot token has changed or Base64 encoded?')
-        .fatal('Base64 is deprecated since this commit => a0cd0b542a435b7c36b9035e268fdeedd26d4261')
+        .info('Or are you attempted remote shutdown?')
     process.exit()
   })
 
   client.on('reconnecting', () => {
-    logger.fatal('Got Disconnected from Websocket, Reconnecting!')
+    logger.warn('Got Disconnected from Websocket, Reconnecting!')
+  })
+
+  client.on('error', (e) => {
+    const err = typeof e == Object ? util.inspect(e) : e
+    logger.fatal('Something went wrong: ' + err)
+    logger.fatal(e.stack || e)
   })
 
   process.on('unhandledRejection', async (error = {}) => {
+    errors++
     if (error.name === 'DiscordAPIError') return true // ignore DiscordAPIError (e.g. Missing Permissions)
     if (error.message.includes('ENOTFOUND')) return // ignore network error
     const { report, file } = await makeReport(client, error, 'error')
-    client.channels.get('484357084037513216').send(codeblock(report))
-      .then(() => logger.info('Error report has been sent!'))
+    client.readyAt ? client.channels.get('484357084037513216').send(codeblock(report))
+      .then(() => logger.info('Error report has been sent!')) : true
     logger.error(`Unhandled Rejection: ${error}`)
     logger.error(error.stack)
     fs.writeFile(file, report, 'utf8').then(() => {
@@ -97,20 +116,26 @@ module.exports = function(client) {
   })
 
   process.on('uncaughtException', async (error = {}) => {
+    errors++
     const { report, file } = await makeReport(client, error, 'crash')
-    require('fs').writeFileSync(file, report, 'utf8')
-    require('fs').unlinkSync('./blacklistener.pid') // Backport 41388608acac2d07c3e88a7cdf85cafa87873bc6 (future)
-    client.channels.get('484183865976553493').send(codeblock(report))
-      .then(() => process.exit(1))
+    logger.emerg('Oh, BlackListener has crashed!')
+      .emerg(`Crash report has writed to: ${file}`)
+    _fs.writeFileSync(file, report, 'utf8')
+    client.readyAt ? client.channels.get('484183865976553493').send(codeblock(report))
+      .finally(() => process.exit(1)) : process.exit(1)
+  })
+
+  process.on('message', msg => {
+    if (msg === 'heartbeat') process.send('ping')
   })
 
   client.on('rateLimit', (info, method) => {
-    logger.fatal('==============================')
-      .fatal('      Got rate limiting!      ')
-      .fatal(` -> ${info.limit} seconds remaining`)
-      .fatal(` Detected rate limit while processing '${method}' method.`)
-      .fatal(` Rate limit information: ${JSON.stringify(info)} `)
-      .fatal('==============================')
+    logger.error('==============================')
+      .error('      Got rate limiting!      ')
+      .error(` -> ${info.limit} seconds remaining`)
+      .error(` Detected rate limit while processing '${method}' method.`)
+      .error(` Rate limit information: ${JSON.stringify(info)} `)
+      .error('==============================')
   })
 
   client.on('guildCreate', () => {
@@ -130,8 +155,6 @@ module.exports = function(client) {
     if (count != 0)
       if (!once) {
         logger.info('Caught INT signal')
-        logger.info('Removing pid file')
-        require('fs').unlinkSync('./blacklistener.pid')
         logger.info('Disconnecting')
         client.destroy()
         once = true

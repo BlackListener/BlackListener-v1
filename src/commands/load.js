@@ -1,20 +1,28 @@
 const f = require('string-format')
+const { Command } = require('../core')
 
-module.exports.args = ['[Command]']
+module.exports = class extends Command {
+  constructor() {
+    const opts = {
+      args: [
+        '[Command]',
+      ],
+    }
+    super('load', opts)
+  }
 
-module.exports.name = 'load'
+  isAllowed(msg, owners) {
+    return owners.includes(msg.author.id)
+  }
 
-module.exports.isAllowed = (msg, owners) => {
-  return owners.includes(msg.author.id)
-}
-
-module.exports.run = function(msg, settings, lang) {
-  const file = msg.content.slice((settings.prefix + 'load ').length)
-  try {
-    if (!file) throw new Error()
-    require('../commands.js').load(file)
-    msg.channel.send(f(lang.load.loaded, file))
-  } catch (e) {
-    msg.channel.send(f(lang.load.error, file))
+  run(msg, settings, lang) {
+    const file = msg.content.slice((settings.prefix + 'load ').length)
+    try {
+      if (!file) throw new Error()
+      require(__dirname + '/../commands.js').load(file)
+      msg.channel.send(f(lang.load.loaded, file))
+    } catch (e) {
+      msg.channel.send(f(lang.load.error, file))
+    }
   }
 }

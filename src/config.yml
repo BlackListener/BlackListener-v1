@@ -5,9 +5,8 @@ notifyRep: 1
 banRep: 5
 dump_url:
 data_baseurl:
-version: '1.1.2'
-extender_id: '471558776751652868'
-# Please set this extender_id for BlackListener Extension(with-workspace branch) user ID.
+version: '1.2'
+patron: false
 repl:
   prefix: '> '
   disable: false

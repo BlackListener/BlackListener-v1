@@ -1,0 +1,18 @@
+# Node modules
+/node_modules/
+
+# Dumped file
+dump.txt
+
+# Logs
+latest.log
+
+# Local file(GCP side)
+gitpull.log
+
+# npm package-lock.json
+package-lock.json
+
+# Docker files
+Dockerfile
+docker-compose.yml

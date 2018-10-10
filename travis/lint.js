@@ -1,3 +1,4 @@
+/* eslint-disable */
 const Discord = require('discord.js')
 const creds = process.env.WEBHOOK.split(':')
 const hook = new Discord.WebhookClient(...creds)
@@ -10,18 +11,23 @@ function str(severity) {
     case 2: return 'error'
   }
 }
-  
+
 function codeblock(code) {
   return '```js\n' + code + '```'
 }
 
+console.log('Running eslint...')
 const report = cli.executeOnFiles(['.'])
 
+console.log('Creating report')
 if (report.errorCount || report.warningCount) {
+  console.log('Collecting results')
   const files = report.results.filter(e => e.source)
+  console.log('Checking & Building results')
   const hasError = report.errorCount
-  const all = '${report.errorCount + report.warningCount} problems'
-  const counts = '(${report.errorCount} errors, ${report.warningCount} warnings)'
+  const all = `${report.errorCount + report.warningCount} problems`
+  const counts = `(${report.errorCount} errors, ${report.warningCount} warnings)`
+  console.log('Preparing for send webhook')
   const embed = {
     description: `:${hasError ? 'x' : 'heavy_multiplication_x'}: ${all} ${counts}`,
     color: hasError ? 0xFF0000 : 0xFFFF00,
@@ -36,6 +42,9 @@ if (report.errorCount || report.warningCount) {
       }) => `${l}:${c} ${str(severity)} ${message} ${id}`).join('\n')),
     })),
   }
-  console.log(embed)
-  hook.send({embeds: [embed]})
+  console.log('Sending webhook')
+  hook.send({embeds: [embed]}).then(() => {
+    console.log('OK, Finished')
+    process.exit()
+  })
 }
