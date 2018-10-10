@@ -12,10 +12,6 @@ module.exports = class extends Command {
     super('instantkick', opts)
   }
 
-  isAllowed(msg) {
-    return msg.member.hasPermission(8)
-  }
-
   run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     if (!args[1]) return msg.channel.send(lang.invalid_args)
