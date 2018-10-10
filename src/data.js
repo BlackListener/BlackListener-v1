@@ -7,9 +7,9 @@ const {
 const DeepProxy = require('proxy-deep')
 
 const path = {
-  user: id => `./data/users/${id}/config.json`,
-  server: id => `./data/servers/${id}/config.json`,
-  bans: () => './data/bans.json',
+  user: id => `${__dirname}/../data/users/${id}/config.json`,
+  server: id => `${__dirname}/../data/servers/${id}/config.json`,
+  bans: () => __dirname + '/../data/bans.json',
 }
 
 async function dataStore(id, type, _default) {
