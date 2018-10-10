@@ -202,5 +202,6 @@
     "joined_vc": "Joined to {0}"
   },
   "not_patron": "このボットはPatronではありません(Patronボットがオンライン＆存在する場合はprefix 'a:'で試してみてください)",
-  "disabled_command": "{0} command is disabled"
+  "disabled_command": "{0} command is disabled",
+  "error_occurred": "An error occurred during {0} command execution"
 }
