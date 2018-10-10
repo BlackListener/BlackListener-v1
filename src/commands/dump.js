@@ -36,7 +36,7 @@ module.exports = class extends Command {
         const {size} = await fs.stat(`./data/servers/${msg.guild.id}/messages.log`)
         msg.channel.send(f(lang.logsize, size / 1000000.0))
       } else if (args[2] === 'delete') {
-        fs.writeFile(`./data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
+        fs.writeFile(`${__dirname}/../../data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
       }
       nowrite = true
       if (config.data_baseurl == '' || !config.data_baseurl) {

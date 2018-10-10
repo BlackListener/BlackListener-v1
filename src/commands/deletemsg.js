@@ -41,10 +41,10 @@ module.exports = class extends Command {
     const id = user2.id
     if (mode === types.guild) {
       link = `${config.data_baseurl}/servers/${id}/messages.log`
-      fs.writeFile(`./data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
+      fs.writeFile(`${__dirname}/../../data/servers/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
     } else if (mode === types.user) {
       link = `${config.data_baseurl}/users/${id}/messages.log`
-      fs.writeFile(`./data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
+      fs.writeFile(`${__dirname}/../../data/users/${id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
     } else {
       await msg.channel.send(f(lang.error, lang.errors.types_are_not_specified))
       throw new TypeError('Types are not specified or invalid type.')
