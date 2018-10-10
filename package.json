@@ -1,6 +1,6 @@
 {
   "name": "blacklistener",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Global Banning System for Discord.",
   "main": "index.js",
   "dependencies": {

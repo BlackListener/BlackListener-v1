@@ -17,6 +17,7 @@ module.exports = class extends Command {
       '1.1',
       '1.1.1',
       '1.1.2',
+      '1.2',
     ]
     if (args[1] && !versions.includes(args[1])) return msg.channel.send(lang.invalidVersion)
     if (args[1]) {
