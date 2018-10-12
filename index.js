@@ -43,21 +43,15 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
     fs.appendFile(__dirname + '/src/config.yml', data)
   }
   if (config.config_version) {
-    let status = true
     /**
      * Actual version
      */
-    const i1 = parseInt(config.config_version)
+    const i1 = parseInt(config.config_version.replace(/\./gm, ''))
     /**
      * Expected version
      */
-    const i2 = parseInt(app.wanted_configversion)
+    const i2 = parseInt(app.wanted_configversion.replace(/\./gm, ''))
     if (i1 < i2) { // Config version is less than expected version
-      status = 'outdated'
-    } else if (i1 > i2) { // Config version is greater than expected version
-      status = 'invalid'
-    }
-    if (status === 'outdated') {
       const migrate = require(__dirname + '/src/config_migrate')
       logger.warn(`Your config version is outdated! (${config.config_version} < ${app.wanted_configversion})`)
       if (migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]) {
@@ -66,10 +60,10 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
       } else {
         logger.warn('No update scripts available.')
       }
-    } else if (status === 'invalid') {
+    } else if (i1 > i2) { // Config version is greater than expected version
       logger.warn('Your config version is greater than expected version!')
         .warn('Are you time traveller? (or bug?)')
-    } else if (status === true) {
+    } else {
       logger.info('Config version is up to date.')
     }
   }
