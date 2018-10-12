@@ -86,7 +86,7 @@ class Logger {
    * @returns {void} <void>
    * @private
    */
-  out(message, level, color, isLogger) {
+  out(message, level, color, isLogger, write_to_console = true) {
     share.thread = this.thread
     const date = chalk.cyan(moment().format('YYYY-MM-DD HH:mm:ss.SSS')) + chalk.reset()
     let thread = this.thread
@@ -107,7 +107,7 @@ class Logger {
       data = `${date} ${thread}${chalk.reset()} ${logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     }
     fs.appendFileSync('latest.log', `${data}\n`)
-    console.info(data)
+    if (write_to_console)console.info(data)
   }
   /**
    * Outputs info level message.
@@ -143,10 +143,12 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   debug(message, isLogger = false) {
+    let opt = false
     if (config.logger.debug || args.debugg) {
       if (args.debugg === false) return this
-      this.out(message, 'debug', 'cyan', isLogger)
+      opt = true
     }
+    this.out(message, 'debug', 'cyan', isLogger, opt)
     return this
   }
   /**

@@ -43,29 +43,29 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
     fs.appendFile(__dirname + '/src/config.yml', data)
   }
   if (config.config_version) {
-    const split = config.config_version.split('.')
-    const wanted_split = app.wanted_configversion.split('.')
     let status = true
-    for (let i=0;i<=3;i++) { // up to x.x.x.x
-      if (!split[i] || !wanted_split[i]) break
-      /**
-       * Actual version
-       */
-      const i1 = parseInt(split[i])
-      /**
-       * Expected version
-       */
-      const i2 = parseInt(wanted_split[i])
-      if (i1 < i2) { // Config version is less than expected version
-        status = 'outdated'
-        break
-      } else if (i1 > i2) { // Config version is greater than expected version
-        status = 'invalid'
-        break
-      }
+    /**
+     * Actual version
+     */
+    const i1 = parseInt(config.config_version)
+    /**
+     * Expected version
+     */
+    const i2 = parseInt(app.wanted_configversion)
+    if (i1 < i2) { // Config version is less than expected version
+      status = 'outdated'
+    } else if (i1 > i2) { // Config version is greater than expected version
+      status = 'invalid'
     }
     if (status === 'outdated') {
+      const migrate = require(__dirname + '/src/config_migrate')
       logger.warn(`Your config version is outdated! (${config.config_version} < ${app.wanted_configversion})`)
+      if (migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]) {
+        logger.info(`Available update script: ${config.config_version}-to-${app.wanted_configversion}`)
+        await migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]()
+      } else {
+        logger.warn('No update scripts available.')
+      }
     } else if (status === 'invalid') {
       logger.warn('Your config version is greater than expected version!')
         .warn('Are you time traveller? (or bug?)')
