@@ -2,7 +2,7 @@ os: linux
 dist: trusty
 group: stable
 language: node_js
-script: "npm test && npm run lint"
+script: "cp src/config.example.yml src/config.yml&& npm test && npm run lint"
 node_js: "node"
 cache:
   yarn: true
