@@ -1,6 +1,6 @@
 const _fs = require('fs')
 const fs = _fs.promises
-const logger = require('./logger').getLogger('util')
+const logger = require(__dirname + '/logger').getLogger('util')
 
 module.exports = {
   async exists(path) {

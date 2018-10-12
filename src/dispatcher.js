@@ -1,8 +1,8 @@
 const f = require('string-format')
-const logger = require('./logger').getLogger('commands', 'yellow')
-const { commands } = require('./commands')
+const logger = require(__dirname + '/logger').getLogger('commands', 'yellow')
+const { commands } = require(__dirname + '/commands')
 const levenshtein = require('fast-levenshtein').get
-const util = require('./util')
+const util = require(__dirname + '/util')
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
 

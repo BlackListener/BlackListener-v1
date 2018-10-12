@@ -1,6 +1,6 @@
 require('./yaml')
 if (process.platform !== 'win32') require('./performance')
-const logger = require('./logger').getLogger('client', 'cyan', false)
+const logger = require(__dirname + '/logger').getLogger('client', 'cyan', false)
 logger.info('Initializing')
 const f = require('string-format')
 const Discord = require('discord.js')
@@ -8,11 +8,11 @@ const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
 const fs = require('fs').promises
-const data = require('./data')
+const data = require(__dirname + '/data')
 const isTravisBuild = process.argv.includes('--travis-build')
-const c = require('./config.yml')
-const languages = require('./language')
-const argv = require('./argument_parser')(process.argv.slice(2))
+const c = require(__dirname + '/config.yml')
+const languages = require(__dirname + '/language')
+const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const moment = require('moment')
 
 const getDateTime = function() {
@@ -32,15 +32,15 @@ logger.info(`Default prefix: ${c.prefix}`)
 
 let s
 try {
-  s = isTravisBuild ? require('./travis.yml') : c
+  s = isTravisBuild ? require(__dirname + '/travis.yml') : c
 } catch (e) {
   logger.emerg('Specified option \'--travis-build\' but not found \'travis.yml\'')
     .emerg('Hint: secret.yml is removed. (merged to config.yml)')
   process.exit(1)
 }
-const dispatcher = require('./dispatcher')
+const dispatcher = require(__dirname + '/dispatcher')
 
-require('./register')(client)
+require(__dirname + '/register')(client)
 
 if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
 
@@ -60,8 +60,12 @@ client.on('ready', async () => {
 client.on('message', async msg => {
   if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
-  await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
-  await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
+  try {
+    await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
+    await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
+  } catch (e) {
+    logger.error('Errored during creating directory: ' + e)
+  }
   const userMessagesFile = `${__dirname}/../data/users/${msg.author.id}/messages.log`
   const serverMessagesFile = `${__dirname}/../data/servers/${msg.guild.id}/messages.log`
   const parentName = msg.channel.parent ? msg.channel.parent.name : ''
@@ -112,8 +116,12 @@ client.on('message', async msg => {
 })
 
 client.on('guildMemberAdd', async member => {
-  await mkdirp(`${__dirname}/../data/users/${member.user.id}`)
-  await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
+  try {
+    await mkdirp(`${__dirname}/../data/users/${member.user.id}`)
+    await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
+  } catch(e) {
+    logger.error('Errored during creating directory: ' + e)
+  }
   const serverSetting = await data.server(member.guild.id)
   const userSetting = await data.user(member.user.id)
   const lang = languages[serverSetting.language]

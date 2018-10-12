@@ -1,9 +1,9 @@
-const util = require('./util')
+const util = require(__dirname + '/util')
 const {
   defaultSettings,
   defaultUser,
   defaultBans,
-} = require('./contents')
+} = require(__dirname + '/contents')
 const DeepProxy = require('proxy-deep')
 
 const path = {

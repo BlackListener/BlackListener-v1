@@ -1,9 +1,9 @@
 const fs = require('fs')
-const config = require('./config.yml')
+const config = require(__dirname +'/config.yml')
 const chalk = require('chalk')
-const share = require('./share')
+const share = require(__dirname + '/share')
 const moment = require('moment')
-const args = require('./argument_parser')(process.argv.slice(2))
+const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 
 class Logger {
   /**

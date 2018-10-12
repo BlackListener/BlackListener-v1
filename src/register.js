@@ -1,11 +1,11 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
-const c = require('./config.yml')
+const c = require(__dirname + '/config.yml')
 const _fs = require('fs')
 const fs = _fs.promises
 const os = require('os')
-const share = require('./share')
+const share = require(__dirname + '/share')
 const git = require('simple-git/promise')()
-const args = require('./argument_parser')(process.argv.slice(2))
+const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require('util')
 const moment = require('moment')
 
