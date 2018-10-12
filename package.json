@@ -13,6 +13,7 @@
     "hoek": "^5.0.4",
     "lzma-native": "^4.0.1",
     "mkdirp-promise": "^5.0.1",
+    "moment": "^2.22.2",
     "node-fetch": "^2.2.0",
     "node-opus": "^0.3.0",
     "performance-now": "^2.1.0",

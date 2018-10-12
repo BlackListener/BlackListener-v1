@@ -2,6 +2,7 @@ const fs = require('fs')
 const config = require('./config.yml')
 const chalk = require('chalk')
 const share = require('./share')
+const moment = require('moment')
 
 class Logger {
   /**
@@ -86,8 +87,7 @@ class Logger {
    */
   out(message, level, color, isLogger) {
     share.thread = this.thread
-    const originaldate = new Date()
-    const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
+    const date = chalk.cyan(moment().format('YYYY-MM-DD HH:mm:ss.SSS')) + chalk.reset()
     let thread = this.thread
     const logger = {}
     logger.coloredlevel = chalk`{${color} ${level}}`

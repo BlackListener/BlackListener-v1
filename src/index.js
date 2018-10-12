@@ -13,14 +13,10 @@ const isTravisBuild = process.argv.includes('--travis-build')
 const c = require('./config.yml')
 const languages = require('./language')
 const argv = require('./argument_parser')(process.argv.slice(2))
+const moment = require('moment')
 
 const getDateTime = function() {
-  const date = new Date()
-  return [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-  ].join( '/' ) + ' ' + date.toLocaleTimeString()
+  return moment().format('YYYY/MM/DD HH:mm:ss')
 }
 
 if (argv.prefix) {
