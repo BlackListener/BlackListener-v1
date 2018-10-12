@@ -7,17 +7,12 @@ const Discord = require('discord.js')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
-const fs = require('fs').promises
 const data = require(__dirname + '/data')
+const log = require(__dirname + '/log')
 const isTravisBuild = process.argv.includes('--travis-build')
 const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
-const moment = require('moment')
-
-const getDateTime = function() {
-  return moment().format('YYYY/MM/DD HH:mm:ss')
-}
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -66,17 +61,10 @@ client.on('message', async msg => {
   } catch (e) {
     logger.error('Errored during creating directory: ' + e)
   }
-  const userMessagesFile = `${__dirname}/../data/users/${msg.author.id}/messages.log`
-  const serverMessagesFile = `${__dirname}/../data/servers/${msg.guild.id}/messages.log`
-  const parentName = msg.channel.parent ? msg.channel.parent.name : ''
   const user = await data.user(msg.author.id)
   user.tag = msg.author.tag
   const settings = await data.server(msg.guild.id)
-  if (msg.channel.id !== settings.excludeLogging) {
-    const log_message = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}`
-    fs.appendFile(userMessagesFile, log_message)
-    fs.appendFile(serverMessagesFile, log_message)
-  }
+  if (msg.channel.id !== settings.excludeLogging) log.messageLog(msg)
 
   const lang = languages[user.language || settings.language]
 
@@ -157,18 +145,9 @@ client.on('messageUpdate', async (old, msg) => {
   const settings = await data.server(msg.guild.id)
   if (old.content === msg.content) return
   if (msg.channel.id !== settings.excludeLogging) {
-    let parentName
-    if (msg.channel.parent) {
-      parentName = msg.channel.parent.name
-    } else {
-      parentName = ''
-    }
     await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
     await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
-    const editUserMessagesFile = `${__dirname}/../data/users/${msg.author.id}/editedMessages.log`
-    const editServerMessagesFile = `${__dirname}/../data/servers/${msg.guild.id}/editedMessages.log`
-    fs.appendFile(editUserMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
-    fs.appendFile(editServerMessagesFile, `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`)
+    log.editedLog(old, msg)
   }
 })
 
