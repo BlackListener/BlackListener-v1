@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../secret.yml')
+const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
 const { Command } = require('../core')
 const logger = require('../logger').getLogger('commands:talkja', 'purple')
 

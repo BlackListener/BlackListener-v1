@@ -4,7 +4,7 @@ const { commands } = require('./commands')
 const levenshtein = require('fast-levenshtein').get
 const util = require('./util')
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
+const s = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
 
 async function runCommand(command, settings, msg, lang) {
   if (!command.enabled) return msg.channel.send(f(lang.disabled_command, command.name))

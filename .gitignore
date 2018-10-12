@@ -1,8 +1,10 @@
 # Node modules
 /node_modules/
 
-# Bot tokens, invite links file.
+# Bot tokens, invite links file. <Merged to config{.example}.yml>
 secret.yml
+secret.example.yml
+secret.old.yml
 
 # Dumped file
 dump.txt
@@ -17,4 +19,5 @@ gitpull.log
 package-lock.json
 
 # Config file
-src/config.yml
+config.yml
+config.old.yml

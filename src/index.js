@@ -19,6 +19,11 @@ const getDateTime = function() {
   return moment().format('YYYY/MM/DD HH:mm:ss')
 }
 
+if (argv.debug.perf || argv.debug.performance) {
+  require(__dirname + '/performance')
+  logger.info('Enabled performance logging(every 5 minutes)')
+}
+
 if (argv.prefix) {
   logger.info('prefix option is present.')
   c.prefix = argv.prefix
@@ -27,10 +32,10 @@ logger.info(`Default prefix: ${c.prefix}`)
 
 let s
 try {
-  s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
+  s = isTravisBuild ? require('./travis.yml') : c
 } catch (e) {
-  logger.emerg('Not found \'secret.yml\' and not specified option \'--travis-build\' or specified option \'--travis-build\' but not found \'travis.yml\'')
-    .emerg('Hint: Place secret.yml at src folder.')
+  logger.emerg('Specified option \'--travis-build\' but not found \'travis.yml\'')
+    .emerg('Hint: secret.yml is removed. (merged to config.yml)')
   process.exit(1)
 }
 const dispatcher = require('./dispatcher')
@@ -45,7 +50,7 @@ client.on('ready', async () => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   }, 10000)
   logger.info(`BlackListener v${c.version} has fully startup.`)
-  if (isTravisBuild) {
+  if (isTravisBuild || argv.debug.dryrun || argv.dryrun) {
     logger.info('Shutting down...')
     await client.destroy()
     process.exit()
@@ -220,6 +225,10 @@ if (argv.rcon) {
 }
 
 logger.info('Logging in...')
+if (!s.token) {
+  logger.emerg('Bot token is not set.')
+  process.exit(1)
+}
 client.login(s.token)
   .catch(e => logger.error(e))
 

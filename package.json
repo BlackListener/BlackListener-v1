@@ -22,6 +22,7 @@
     "simple-git": "^1.96.0",
     "string-format": "^2.0.0",
     "stringstream": "^1.0.0",
+    "thread": "github:rht0910/Thread",
     "usage": "^0.7.1",
     "yaml": "^1.0.0-rc.8",
     "ytdl-core": "^0.25.2"

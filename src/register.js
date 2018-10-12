@@ -104,7 +104,7 @@ module.exports = function(client) {
   process.on('unhandledRejection', async (error = {}) => {
     errors++
     if (error.name === 'DiscordAPIError') return true // ignore DiscordAPIError (e.g. Missing Permissions)
-    if (error.message.includes('ENOTFOUND')) return // ignore network error
+    if ((error.message || '').includes('ENOTFOUND')) return // ignore network error
     const { report, file } = await makeReport(client, error, 'error')
     client.readyAt ? client.channels.get('484357084037513216').send(codeblock(report))
       .then(() => logger.info('Error report has been sent!')) : true

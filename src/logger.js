@@ -3,6 +3,7 @@ const config = require('./config.yml')
 const chalk = require('chalk')
 const share = require('./share')
 const moment = require('moment')
+const args = require('./argument_parser')(process.argv.slice(2))
 
 class Logger {
   /**
@@ -33,7 +34,7 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   getLogger(thread, color = null, init = true) {
-    if (!init) this.initLog = () => {}
+    if (!init) { this.initLog = () => {}; this.initialized = true }
     if (!this.initialized && init) this.initLog()
     const self = new Logger()
     self.thread = thread
@@ -142,7 +143,8 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   debug(message, isLogger = false) {
-    if (config.logger.debug) {
+    if (config.logger.debug || args.debugg) {
+      if (args.debugg === false) return this
       this.out(message, 'debug', 'cyan', isLogger)
     }
     return this
