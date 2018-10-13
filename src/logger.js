@@ -1,3 +1,4 @@
+require('./yaml')
 const fs = require('fs')
 const config = require(__dirname +'/config.yml')
 const chalk = require('chalk')
