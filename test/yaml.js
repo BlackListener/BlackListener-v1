@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-env mocha */
 const assert = require('assert').strict
 
 describe('YAML', () => {

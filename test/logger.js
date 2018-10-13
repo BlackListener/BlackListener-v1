@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-env mocha */
 const assert = require('assert').strict
 const Logger = require('../src/logger')
 const logger = Logger.getLogger('test')
