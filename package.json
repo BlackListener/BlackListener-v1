@@ -28,7 +28,8 @@
     "ytdl-core": "^0.25.2"
   },
   "devDependencies": {
-    "eslint": "^5.7.0"
+    "eslint": "^5.7.0",
+    "mocha": "^5.2.0"
   },
   "scripts": {
     "test": "npm i -g mocha && mocha && node index.js --travis-build",
