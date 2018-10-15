@@ -89,7 +89,7 @@ client.on('message', async msg => {
     // --- Begin of Anti-spam
     try {
       if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
-        if (/(\S)\1{15,}/gm.test(msg.content)) {
+        if (/(\S.*?)\1{14,}/gm.test(msg.content)) {
           if (settings.banned) return
           msg.delete(0)
           msg.channel.send(lang.includes_spam)
