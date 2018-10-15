@@ -13,6 +13,7 @@ const isTravisBuild = process.argv.includes('--travis-build')
 const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
+const antispam = {} // Object.assign(antispam, {[msg.author.id]: { blocked: false, tried: tried+1 } })
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -89,7 +90,22 @@ client.on('message', async msg => {
     // --- Begin of Anti-spam
     try {
       if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
-        if (/(\S.*?)\1{14,}/gm.test(msg.content)) {
+        const tried = antispam[msg.author.id] ? antispam[msg.author.id]['tried'] : 0
+        let blocked = false
+        let timer = null
+        if (tried === 0) {
+          clearTimeout(timer)
+        }
+        if (antispam[msg.author.id]) timer = setTimeout(() => antispam[msg.author.id] = null, 5000)
+        if (tried >= 4) blocked = true
+        delete antispam[msg.author.id]
+        Object.assign(antispam, {[msg.author.id]: { blocked: blocked, tried: tried+1, timeout: timer } })
+        if (blocked) {
+          if(msg.deletable) msg.delete()
+          if (tried === 4) msg.channel.send(lang.includes_spam)
+          return
+        }
+        if (/(\S.*?)\1{14,}/gm.test(msg.content) || /(.*?\n){10,}/gm.test(msg.content)) {
           if (settings.banned) return
           msg.delete(0)
           msg.channel.send(lang.includes_spam)
