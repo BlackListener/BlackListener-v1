@@ -15,8 +15,8 @@ const path = {
 
 async function dataStore(id, type, _default) {
   if (id !== '') {
-    await mkdirp(`${__dirname}/../data/users/${id}`)
-    await mkdirp(`${__dirname}/../data/servers/${id}`)
+    if (type === 'user') await mkdirp(`${__dirname}/../data/users/${id}`)
+    if (type === 'server') await mkdirp(`${__dirname}/../data/servers/${id}`)
   }
   const json = await util.readJSON(path[type](id), {})
   const data = Object.assign(_default, json)

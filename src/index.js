@@ -13,6 +13,8 @@ const isTravisBuild = process.argv.includes('--travis-build')
 const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
+const util = require(__dirname + '/util')
+const { defaultSettings } = require(__dirname + '/contents')
 const antispam = {} // Object.assign(antispam, {[msg.author.id]: { blocked: false, tried: tried+1 } })
 
 if (argv.debug.perf || argv.debug.performance) {
@@ -61,6 +63,10 @@ client.on('message', async msg => {
     await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
   } catch (e) {
     logger.error('Errored during creating directory: ' + e)
+  }
+  if (await util.exists(`${__dirname}/../data/servers/${msg.guild.id}/config.json`)) {
+    logger.debug('Creating config on: ' + msg.guild.id)
+    await util.writeJSON(`${__dirname}/../data/servers/${msg.guild.id}/config.json`, defaultSettings)
   }
   const user = await data.user(msg.author.id)
   user.tag = msg.author.tag
