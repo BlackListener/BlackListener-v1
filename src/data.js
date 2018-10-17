@@ -5,6 +5,7 @@ const {
   defaultBans,
 } = require(__dirname + '/contents')
 const DeepProxy = require('proxy-deep')
+const mkdirp = require('mkdirp-promise')
 
 const path = {
   user: id => `${__dirname}/../data/users/${id}/config.json`,
@@ -13,6 +14,10 @@ const path = {
 }
 
 async function dataStore(id, type, _default) {
+  if (id !== '') {
+    await mkdirp(`${__dirname}/../data/users/${id}`)
+    await mkdirp(`${__dirname}/../data/servers/${id}`)
+  }
   const json = await util.readJSON(path[type](id), {})
   const data = Object.assign(_default, json)
   return new DeepProxy(data, {
