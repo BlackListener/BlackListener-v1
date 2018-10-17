@@ -43,6 +43,7 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
     fs.appendFile(__dirname + '/src/config.yml', data)
   }
   if (config.config_version) {
+    logger.info(`Checking for config version [config:${config.config_version}, wanted: ${app.wanted_configversion}]`)
     /**
      * Actual version
      */
@@ -56,7 +57,15 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
       logger.warn(`Your config version is outdated! (${config.config_version} < ${app.wanted_configversion})`)
       if (migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]) {
         logger.info(`Available update script: ${config.config_version}-to-${app.wanted_configversion}`)
-        await migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]()
+        const result = await migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]()
+        if (result) {
+          logger.info('You need to review the your config.')
+            .info('Please edit your config and re-run this.')
+            .warn('IMPORTANT: Check your prefix on config.yml carefully.')
+          process.exit()
+        } else {
+          logger.info('Fully upgraded, and no review(s) needed.')
+        }
       } else {
         logger.warn('No update scripts available.')
       }

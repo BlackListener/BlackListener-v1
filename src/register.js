@@ -138,7 +138,11 @@ module.exports = function(client) {
       .error('==============================')
   })
 
-  client.on('guildCreate', () => {
+  client.on('guildCreate', () => { // on created server, joined to a server, offline guild(s) back to online
+    client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
+  })
+
+  client.on('guildDelete', () => { // on kicked from server, deleted server
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   })
 

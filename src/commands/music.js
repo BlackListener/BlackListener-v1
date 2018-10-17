@@ -5,6 +5,9 @@ const logger = require(__dirname + '/../logger').getLogger('commands:music')
 const isNumber = (n) => { return !isNaN(parseFloat(n)) && isFinite(n) }
 const f = require('string-format')
 const { Command } = require('../core')
+const YouTube = require('youtube-node')
+const youtube = new YouTube()
+const util = require('util')
 let queue = []
 let playing
 let loop
@@ -12,7 +15,7 @@ const play = (connection, url, msg, lang) => {
   try {
     const stream = ytdl(url, { filter : 'audioonly' })
     playing = url
-    return connection.playStream(stream, { seek: 0, volume: 0.1 })
+    return connection.playStream(stream, { seek: 0, volume: 1 }) // 0.1
   } catch (e) {
     if (e.name === 'TypeError') msg.channel.send(f(lang.error, e))
     logger.error(e)
@@ -28,7 +31,7 @@ module.exports = class extends Command {
   constructor() {
     const opts = {
       args: [
-        'play|start <URL>',
+        'play|start <URL or Search>',
         'stop',
         'pause',
         'unpause|resume',
@@ -51,7 +54,18 @@ module.exports = class extends Command {
     if (args[1] === 'join') {
       msg.member.voiceChannel.join().then(vc => msg.channel.send(f(lang.music.joined_vc, vc.channel.name))).catch(e => logger.error(e))
     } else if (args[1] === 'play' || args[1] === 'start') {
-      if (!args[2] || !args[2].includes('youtube.com/watch?v=')) return msg.channel.send(lang.invalid_args)
+      if (!args[2] || !args[2].includes('youtube.com/watch?v=')) {
+        youtube.setKey(config.youtube_apikey)
+        const search = util.promisify(youtube.search)
+        const { items } = await search(args.slice(2).join(' '), 10).catch(e => logger.error(e))
+        let message = ''
+        items.forEach(item => {
+          message += `${item.snippet.title} (https://youtube.com/watch?v=${item.id.videoId})\n`
+        })
+        message += lang.youtube_search
+        msg.channel.send(message)
+        return
+      }
       msg.member.voiceChannel.join()
         .then(async connection => {
           if (dispatcher) {
@@ -108,7 +122,7 @@ module.exports = class extends Command {
         if (!isNumber(args[2])) return msg.channel.send(lang.invalid_args)
         dispatcher.setVolume(parseInt(args[2]) / 1000)
         const emoji = before * 1000 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
-        msg.channel.send(f(emoji + lang.music.changed_volume, before * 1000, parseInt(args[2])))
+        msg.channel.send(f(emoji + lang.music.changed_volume, before * 100, parseInt(args[2]))) // 100
       } else msg.channel.send(lang.music.not_playing)
     } else if (args[1] === 'stop') {
       if (dispatcher) {

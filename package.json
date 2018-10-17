@@ -25,6 +25,7 @@
     "thread": "github:rht0910/Thread",
     "usage": "^0.7.1",
     "yaml": "^1.0.0",
+    "youtube-node": "^1.3.2",
     "ytdl-core": "^0.25.2"
   },
   "devDependencies": {

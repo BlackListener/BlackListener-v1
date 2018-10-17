@@ -6,7 +6,7 @@ module.exports = class extends Command {
   }
 
   isAllowed(msg) {
-    return msg.author.id !== msg.guild.ownerID
+    return msg.author.id === msg.guild.ownerID
   }
 
   async run(msg) {

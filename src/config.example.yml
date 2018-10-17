@@ -30,9 +30,6 @@ musicinvite: https://discordapp.com/oauth2/authorize?client_id=46790851532790169
 # Your discordbots.org Token
 dbl:
 
-# Repl-AI API Key
-talk_apikey:
-
 # fortniteapi.com API Key
 fortnite_api_key:
 
@@ -43,5 +40,7 @@ owners:
 # Patron bot invite - Do not edit if you aren't self hosted patron bot.
 patroninvite: https://discordapp.com/oauth2/authorize?client_id=469114408501510166&permissions=8&redirect_uri=https%3A%2F%2Fapi.rht0910.tk%2Fpatronbot&scope=bot&response_type=code
 
+youtube_apikey: Your YouTube Data API key.
+
 # DO NOT EDIT CONFIG VERSION ANYWAY.
-config_version: '1.0'
+config_version: '1.0.1'

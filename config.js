@@ -1,3 +1,3 @@
 module.exports = {
-  wanted_configversion: '1.0',
+  wanted_configversion: '1.0.1',
 }
