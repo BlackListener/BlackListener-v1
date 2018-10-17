@@ -26,7 +26,8 @@
     "usage": "^0.7.1",
     "yaml": "^1.0.0",
     "youtube-node": "^1.3.2",
-    "ytdl-core": "^0.25.2"
+    "ytdl-core": "^0.25.2",
+    "snyk": "^1.104.1"
   },
   "devDependencies": {
     "eslint": "^5.7.0",
@@ -34,7 +35,9 @@
   },
   "scripts": {
     "test": "npm i -g mocha && mocha && node index.js --travis-build",
-    "lint": "node travis/lint.js"
+    "lint": "node travis/lint.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -45,5 +48,6 @@
   "bugs": {
     "url": "https://github.com/rht0910/BlackListener/issues"
   },
-  "homepage": "https://github.com/rht0910/BlackListener#readme"
+  "homepage": "https://github.com/rht0910/BlackListener#readme",
+  "snyk": true
 }

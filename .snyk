@@ -1,0 +1,26 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.12.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:hawk:20160119':
+    - youtube-node > request > hawk:
+        patched: '2018-10-17T13:30:54.617Z'
+  'npm:hoek:20180212':
+    - youtube-node > request > hawk > hoek:
+        patched: '2018-10-17T13:30:54.617Z'
+    - youtube-node > request > hawk > boom > hoek:
+        patched: '2018-10-17T13:30:54.617Z'
+    - youtube-node > request > hawk > sntp > hoek:
+        patched: '2018-10-17T13:30:54.617Z'
+    - youtube-node > request > hawk > cryptiles > boom > hoek:
+        patched: '2018-10-17T13:30:54.617Z'
+  'npm:http-signature:20150122':
+    - youtube-node > request > http-signature:
+        patched: '2018-10-17T13:30:54.617Z'
+  'npm:request:20160119':
+    - youtube-node > request:
+        patched: '2018-10-17T13:30:54.617Z'
+  'npm:tunnel-agent:20170305':
+    - youtube-node > request > tunnel-agent:
+        patched: '2018-10-17T13:30:54.617Z'
