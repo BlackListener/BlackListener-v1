@@ -23,6 +23,7 @@ module.exports = async function(settings, msg, lang) {
   if (msg.content === `<@${msg.client.user.id}>` || msg.content === `<@!${msg.client.user.id}>`)
     return msg.channel.send(f(lang.prefixis, settings.prefix))
   if (msg.content.startsWith(settings.prefix)) {
+    logger.info(`${msg.guild.id}: ${settings.prefix}`) // Why prefix change to '/'? Also see Issue #31!
     const [cmd] = msg.content.replace(settings.prefix, '').split(' ')
     if (settings.banned) return msg.channel.send(f(lang.error, lang.errors.server_banned))
     if (commands[cmd]) {
