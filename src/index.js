@@ -116,6 +116,8 @@ client.on('message', async msg => {
     }
     // --- End of Anti-spam
     dispatcher(settings, msg, lang)
+
+    logger.info(`${msg.guild.id}: ${settings.prefix}`) // Why prefix change to '/'? Also see Issue #31!
   }
 })
 
