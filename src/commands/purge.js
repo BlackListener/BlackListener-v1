@@ -53,13 +53,9 @@ module.exports = class extends Command {
       if (!msg.mentions.channels.first()) return msg.channel.send(lang.no_args)
       try {
         const channel = msg.mentions.channels.first()
+        await channel.clone()
+        await channel.delete('Remake of Channel')
         msg.channel.send(':ok_hand:')
-        channel.delete('Remake of Channel')
-        const created_channel = await msg.guild.createChannel(channel.name, channel.type)
-        if (channel.parent) {
-          created_channel.setParent(channel.parentID)
-        }
-        created_channel.setPosition(channel.position)
       } catch (e) {
         logger.error(e)
       }

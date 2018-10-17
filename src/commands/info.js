@@ -4,7 +4,7 @@ const os = require('os')
 const c = require(__dirname + '/../config.yml')
 const isWindows = process.platform === 'win32'
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../secret.yml')
+const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
 const logger = require(__dirname + '/../logger').getLogger('commands:info')
 const f = require('string-format')
 const { Command } = require('../core')

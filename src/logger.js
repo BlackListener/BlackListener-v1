@@ -1,7 +1,10 @@
+require('./yaml')
 const fs = require('fs')
-const config = require('./config.yml')
+const config = require(__dirname +'/config.yml')
 const chalk = require('chalk')
-const share = require('./share')
+const share = require(__dirname + '/share')
+const moment = require('moment')
+const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 
 class Logger {
   /**
@@ -32,7 +35,7 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   getLogger(thread, color = null, init = true) {
-    if (!init) this.initLog = () => {}
+    if (!init) { this.initLog = () => {}; this.initialized = true }
     if (!this.initialized && init) this.initLog()
     const self = new Logger()
     self.thread = thread
@@ -84,10 +87,9 @@ class Logger {
    * @returns {void} <void>
    * @private
    */
-  out(message, level, color, isLogger) {
+  out(message, level, color, isLogger, write_to_console = true) {
     share.thread = this.thread
-    const originaldate = new Date()
-    const date = chalk.cyan(`${originaldate.getFullYear()}-${originaldate.getMonth()}-${originaldate.getDate()} ${originaldate.getHours()}:${originaldate.getMinutes()}:${originaldate.getSeconds()}.${originaldate.getMilliseconds()}`) + chalk.reset()
+    const date = chalk.cyan(moment().format('YYYY-MM-DD HH:mm:ss.SSS')) + chalk.reset()
     let thread = this.thread
     const logger = {}
     logger.coloredlevel = chalk`{${color} ${level}}`
@@ -106,7 +108,7 @@ class Logger {
       data = `${date} ${thread}${chalk.reset()} ${logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     }
     fs.appendFileSync('latest.log', `${data}\n`)
-    console.info(data)
+    if (write_to_console)console.info(data)
   }
   /**
    * Outputs info level message.
@@ -142,9 +144,12 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   debug(message, isLogger = false) {
-    if (config.logger.debug) {
-      this.out(message, 'debug', 'cyan', isLogger)
+    let opt = false
+    if (config.logger.debug || args.debugg) {
+      if (args.debugg === false) return this
+      opt = true
     }
+    this.out(message, 'debug', 'cyan', isLogger, opt)
     return this
   }
   /**

@@ -1,10 +1,10 @@
 const f = require('string-format')
-const logger = require('./logger').getLogger('commands', 'yellow')
-const { commands } = require('./commands')
+const logger = require(__dirname + '/logger').getLogger('commands', 'yellow')
+const { commands } = require(__dirname + '/commands')
 const levenshtein = require('fast-levenshtein').get
-const util = require('./util')
+const util = require(__dirname + '/util')
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require('./travis.yml') : require('./secret.yml')
+const s = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
 
 async function runCommand(command, settings, msg, lang) {
   if (!command.enabled) return msg.channel.send(f(lang.disabled_command, command.name))
@@ -32,7 +32,7 @@ module.exports = async function(settings, msg, lang) {
       await runCommand(plugin, settings, msg, lang)
     } else {
       const commandList = Object.keys(commands).map(cmd => ({ cmd, args: commands[cmd].args }))
-      const similarCommand = commandList.map(item => item.no = levenshtein(cmd, item.cmd))
+      const similarCommand = commandList.map(item => ({ ...item, no: levenshtein(cmd, item.cmd) }))
       const cmds = similarCommand.sort((a, b) => a.no - b.no).filter(item => item.no <= 2)
       const list = cmds.map(item => `・\`${settings.prefix}${item.cmd} ${item.args || ''}\``)
       msg.channel.send(f(lang.no_command, settings.prefix, cmd))

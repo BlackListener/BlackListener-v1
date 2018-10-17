@@ -13,23 +13,26 @@
     "hoek": "^5.0.4",
     "lzma-native": "^4.0.1",
     "mkdirp-promise": "^5.0.1",
+    "moment": "^2.22.2",
     "node-fetch": "^2.2.0",
     "node-opus": "^0.3.0",
     "performance-now": "^2.1.0",
     "proxy-deep": "^2.1.1",
     "random-puppy": "^1.1.0",
-    "simple-git": "^1.96.0",
+    "simple-git": "^1.105.0",
     "string-format": "^2.0.0",
     "stringstream": "^1.0.0",
+    "thread": "github:rht0910/Thread",
     "usage": "^0.7.1",
-    "yaml": "^1.0.0-rc.8",
+    "yaml": "^1.0.0",
     "ytdl-core": "^0.25.2"
   },
   "devDependencies": {
-    "eslint": "^5.4.0"
+    "eslint": "^5.7.0",
+    "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "node index.js --travis-build",
+    "test": "npm i -g mocha && mocha && node index.js --travis-build",
     "lint": "node travis/lint.js"
   },
   "repository": {

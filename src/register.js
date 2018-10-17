@@ -1,22 +1,22 @@
 const logger = require('./logger').getLogger('main:event', 'purple')
-const c = require('./config.yml')
+const c = require(__dirname + '/config.yml')
 const _fs = require('fs')
 const fs = _fs.promises
 const os = require('os')
-const share = require('./share')
+const share = require(__dirname + '/share')
 const git = require('simple-git/promise')()
-const args = require('./argument_parser')(process.argv.slice(2))
+const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require('util')
+const moment = require('moment')
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
 
 async function makeReport(client, error, type) {
-  const date = new Date()
   const description = type === 'error'
     ? 'Unhandled Rejection(Exception/Error in Promise).'
     : 'Uncaught error.'
-  const format = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}`
+  const format = moment().format('YYYY-MM-DD_HH.mm.ss')
   const argv = process.argv.map((val, index) => `arguments[${index}]: ${val}`)
   const commit = await git.revparse(['HEAD'])
   const data =  `
@@ -104,7 +104,7 @@ module.exports = function(client) {
   process.on('unhandledRejection', async (error = {}) => {
     errors++
     if (error.name === 'DiscordAPIError') return true // ignore DiscordAPIError (e.g. Missing Permissions)
-    if (error.message.includes('ENOTFOUND')) return // ignore network error
+    if ((error.message || '').includes('ENOTFOUND')) return // ignore network error
     const { report, file } = await makeReport(client, error, 'error')
     client.readyAt ? client.channels.get('484357084037513216').send(codeblock(report))
       .then(() => logger.info('Error report has been sent!')) : true

@@ -7,7 +7,7 @@ class Command {
    *
    * If not extend this Class, it will be marked 'not a command'
    * @param {string} name Command name
-   * @param {JSON} options alias, args, permission(number)
+   * @param {Object} options alias, args, permission(number)
    * @constructor
    */
   constructor(name, options = {}) {
@@ -36,7 +36,7 @@ class Command {
    * @param {Discord.Message} msg
    */
   isAllowed({ member }) {
-    return member.hasPermission(this.permission)
+    return member.hasPermission(this.permission.bitfield)
   }
 }
 
