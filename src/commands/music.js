@@ -22,11 +22,6 @@ const play = (connection, url, msg, lang) => {
   }
 }
 
-/**
- * @type {Discord.StreamDispatcher}
- */
-let dispatcher
-
 module.exports = class extends Command {
   constructor() {
     const opts = {
@@ -68,12 +63,12 @@ module.exports = class extends Command {
       }
       msg.member.voiceChannel.join()
         .then(async connection => {
-          if (dispatcher) {
+          if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
             if (loop) return msg.channel.send(lang.music.cantadd_loop_enabled)
             queue.push(args[2])
             msg.channel.send(f(lang.music.queue_added, args[2]))
           } else {
-            dispatcher = play(connection, args[2], msg, lang)
+            play(connection, args[2], msg, lang)
             msg.channel.send(f(lang.music.playing, args[2]))
           }
           if (msg.deletable) msg.delete()
@@ -94,40 +89,37 @@ module.exports = class extends Command {
             logger.info('ended')
             if (q.length && !loop) {
               logger.info('and playing queue')
-              dispatcher = null
-              dispatcher = play(connection, q[0], msg, lang)
+              play(connection, q[0], msg, lang)
               msg.channel.send(f(lang.music.playing_queue, q[0]))
               q = q.slice(1)
               register(q) //eslint-disable-line
             } else {
               if (!loop) {
-                dispatcher = null
                 msg.channel.send('すべての曲の再生が終了しました。')
               } else {
-                dispatcher = play(connection, args[2], msg, lang)
+                play(connection, args[2], msg, lang)
                 register(q) //eslint-disable-line
               }
             }
           }
           const register = q => {
             queue = q
-            dispatcher.once('end', () => endHandler(q))
-            dispatcher.once('close', () => endHandler(q))
+            msg.guild.voiceConnection.dispatcher.once('end', () => endHandler(q))
+            msg.guild.voiceConnection.dispatcher.once('close', () => endHandler(q))
           }
           register(queue)
         })
     } else if (args[1] === 'volume') {
-      if (dispatcher) {
-        const before = dispatcher.volume
+      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
+        const before = msg.guild.voiceConnection.dispatcher.volume
         if (!isNumber(args[2])) return msg.channel.send(lang.invalid_args)
-        dispatcher.setVolume(parseInt(args[2]) / 1000)
+        msg.guild.voiceConnection.dispatcher.setVolume(parseInt(args[2]) / 1000)
         const emoji = before * 1000 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
         msg.channel.send(f(emoji + lang.music.changed_volume, before * 100, parseInt(args[2]))) // 100
       } else msg.channel.send(lang.music.not_playing)
     } else if (args[1] === 'stop') {
-      if (dispatcher) {
-        dispatcher.destroy()
-        dispatcher = null
+      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
+        msg.guild.voiceConnection.dispatcher.destroy()
         if (msg.guild.me.voiceChannel && msg.guild.me.voiceChannel.connection) msg.guild.me.voiceChannel.connection.disconnect()
         msg.channel.send(':wave:')
       } else msg.channel.send(lang.music.not_playing)
@@ -136,13 +128,13 @@ module.exports = class extends Command {
       loop = loop ? false : true
       msg.channel.send(f(lang.music.one_music_loop, loop ? lang.music.enabled : lang.music.disabled))
     } else if (args[1] === 'pause') {
-      if (dispatcher) {
-        dispatcher.pause()
+      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
+        msg.guild.voiceConnection.dispatcher.pause()
         msg.channel.send(lang.music.paused)
       } else msg.channel.send(lang.music.not_playing)
     } else if (args[1] === 'unpause' || args[1] === 'resume') {
-      if (dispatcher) {
-        dispatcher.resume()
+      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
+        msg.guild.voiceConnection.dispatcher.resume()
         msg.channel.send(lang.music.unpaused)
       } else msg.channel.send(lang.music.not_playing)
     } else if (args[1] === 'queue') {
@@ -156,7 +148,7 @@ module.exports = class extends Command {
       const queues = queue.map((e, i) => `${i}: ${e}`)
       if (queues.length) msg.channel.send(queues.join('\n'))
     } else if (args[1] === 'status') {
-      if (dispatcher && playing) msg.channel.send(f(lang.music.now_playing, playing))
+      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed && playing) msg.channel.send(f(lang.music.now_playing, playing))
       else msg.channel.send(lang.music.not_playing)
     } else msg.channel.send(lang.invalid_args)
   }
