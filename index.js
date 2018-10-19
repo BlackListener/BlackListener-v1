@@ -61,7 +61,7 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
         if (result) {
           logger.info('You need to review the your config.')
             .info('Please edit your config and re-run this.')
-            .warn('IMPORTANT: Check your prefix on config.yml carefully.')
+            .warn('IMPORTANT: Check your config.yml carefully(single/double quotations).')
           process.exit()
         } else {
           logger.info('Fully upgraded, and no review(s) needed.')

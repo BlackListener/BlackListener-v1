@@ -1,6 +1,5 @@
 const config = require(__dirname + '/../config.yml')
 const ytdl = require('ytdl-core')
-const Discord = require('discord.js') // eslint-disable-line
 const logger = require(__dirname + '/../logger').getLogger('commands:music')
 const isNumber = (n) => { return !isNaN(parseFloat(n)) && isFinite(n) }
 const f = require('string-format')
