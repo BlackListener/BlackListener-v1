@@ -199,7 +199,8 @@
     "queue_count": "{0} musics in queue.",
     "queue_cleared": "Cleared queue.",
     "now_playing": "Currently, playing {0}",
-    "joined_vc": "Joined to {0}"
+    "joined_vc": "Joined to {0}",
+    "youtube_search": "Run ``music play (URL)`` to play music."
   },
   "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)",
   "disabled_command": "{0} command is disabled",
