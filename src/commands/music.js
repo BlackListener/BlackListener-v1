@@ -56,7 +56,7 @@ module.exports = class extends Command {
         items.forEach(item => {
           message += `${item.snippet.title} (https://youtube.com/watch?v=${item.id.videoId})\n`
         })
-        message += lang.youtube_search
+        message += lang.music.youtube_search
         msg.channel.send(message)
         return
       }
