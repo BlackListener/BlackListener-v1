@@ -48,17 +48,21 @@ module.exports = class extends Command {
     if (args[1] === 'join') {
       msg.member.voiceChannel.join().then(vc => msg.channel.send(f(lang.music.joined_vc, vc.channel.name))).catch(e => logger.error(e))
     } else if (args[1] === 'play' || args[1] === 'start') {
+      let keyword
       if (!args[2] || !args[2].includes('youtube.com/watch?v=')) {
         youtube.setKey(config.youtube_apikey)
         const search = util.promisify(youtube.search)
-        const { items } = await search(args.slice(2).join(' '), 10).catch(e => logger.error(e))
-        let message = ''
-        items.forEach(item => {
-          message += `${item.snippet.title} (https://youtube.com/watch?v=${item.id.videoId})\n`
-        })
-        message += lang.music.youtube_search
-        msg.channel.send(message)
-        return
+        const { items } = await search(args.slice(2).join(' '), 1).catch(e => logger.error(e))
+        //let message = ''
+        //items.forEach(item => {
+        //message += `${item.snippet.title} (https://youtube.com/watch?v=${item.id.videoId})\n`
+        //})
+        //message += lang.music.youtube_search
+        // Oh no, "lang.music.youtube_search" is now unused!
+        //msg.channel.send(message)
+        //return
+        keyword = args.slice(2).join(' ')
+        args[2] = 'https://youtube.com/watch?v=' + items[0].id.videoId // Oh no, this is (really) not a good!
       }
       msg.member.voiceChannel.join()
         .then(async connection => {
@@ -66,9 +70,11 @@ module.exports = class extends Command {
             if (loop) return msg.channel.send(lang.music.cantadd_loop_enabled)
             queue.push(args[2])
             msg.channel.send(f(lang.music.queue_added, args[2]))
+            if (keyword) msg.channel.send('Search keyword: ' + keyword)
           } else {
             play(connection, args[2], msg, lang)
             msg.channel.send(f(lang.music.playing, args[2]))
+            if (keyword) msg.channel.send('Search keyword: ' + keyword)
           }
           if (msg.deletable) msg.delete()
           /*async () => {
@@ -85,9 +91,9 @@ module.exports = class extends Command {
             }
           }*/
           const endHandler = async q => {
-            logger.info('ended')
+            //logger.info('ended')
             if (q.length && !loop) {
-              logger.info('and playing queue')
+              //logger.info('and playing queue')
               play(connection, q[0], msg, lang)
               msg.channel.send(f(lang.music.playing_queue, q[0]))
               q = q.slice(1)

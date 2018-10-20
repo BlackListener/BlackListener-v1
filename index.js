@@ -124,6 +124,7 @@ const register = () => {
   process.on('SIGHUP', KILLINTHandler)
 }
 
+let times = 0
 const heartbeat = async () => {
   let received = false
   const handler = (msg) => {
@@ -137,9 +138,13 @@ const heartbeat = async () => {
   spawned.once('message', handler)
   setTimeout(() => {
     if (!received) {
-      logger.emerg('Looks like client is unusable(not responding), killing client, and attmpting restart')
-      restart = true
-      spawned.kill('SIGKILL')
+      if (times >= 1) {
+        logger.emerg('Looks like client is unusable(not responding), killing client, and attmpting restart')
+        restart = true
+        spawned.kill('SIGKILL')
+      } else {
+        times = times + 1
+      }
     }
     received = false
     spawned.removeListener('message', handler)

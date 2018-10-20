@@ -108,7 +108,7 @@ client.on('message', async msg => {
         Object.assign(antispam, {[msg.author.id]: { blocked: blocked, tried: tried+1, timeout: timer } })
         if (blocked) {
           if(msg.deletable) msg.delete()
-          if (tried === 4) msg.channel.send(lang.includes_spam)
+          if (tried === 4) msg.channel.send(f(lang.includes_spam, settings.prefix))
           return
         }
         if (/(\S.*?)\1{14,}/gm.test(msg.content)/* || /(.*?\n){10,}/gm.test(msg.content)*/) {
