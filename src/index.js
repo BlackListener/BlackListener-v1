@@ -111,7 +111,7 @@ client.on('message', async msg => {
           if (tried === 4) msg.channel.send(lang.includes_spam)
           return
         }
-        if (/(\S.*?)\1{14,}/gm.test(msg.content) || /(.*?\n){10,}/gm.test(msg.content)) {
+        if (/(\S.*?)\1{14,}/gm.test(msg.content)/* || /(.*?\n){10,}/gm.test(msg.content)*/) {
           if (settings.banned) return
           msg.delete(0)
           msg.channel.send(lang.includes_spam)
