@@ -28,7 +28,7 @@ module.exports = class extends Command {
     let owner = ''
     s.owners.forEach(aowner => {
       const user = client.users.get(aowner)
-      if (user.tag && user.id) owner += `${aowner.tag} (${aowner.id})\n`
+      if (user.tag && user.id) owner += `${user.tag} (${user.id})\n`
     })
     try {
       msg.channel.send(new Discord.RichEmbed()
