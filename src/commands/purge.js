@@ -26,7 +26,7 @@ module.exports = class extends Command {
           .then((messages) => {
             msg.channel.bulkDelete(messages)
             if (messages.length >= 100) {
-              setTimeout(() => clear(), 3000) // for avoid rate limit
+              setTimeout(() => clear(), 3000)
             }
           })
       }

@@ -9,7 +9,7 @@ module.exports = {
       delete config.talk_apikey
       config.youtube_apikey = 'Your YouTube Data API key'
       await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
-      return true // true if needed config review
+      return true
     },
   },
 }

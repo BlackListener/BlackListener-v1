@@ -15,7 +15,7 @@ const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require(__dirname + '/util')
 const { defaultSettings } = require(__dirname + '/contents')
-const antispam = {} // Object.assign(antispam, {[msg.author.id]: { blocked: false, tried: tried+1 } })
+const antispam = {}
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
