@@ -52,7 +52,7 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
      * Expected version
      */
     const i2 = parseInt(app.wanted_configversion.replace(/\./gm, ''))
-    if (i1 < i2) { // Config version is less than expected version
+    if (i1 < i2) {
       const migrate = require(__dirname + '/src/config_migrate')
       logger.warn(`Your config version is outdated! (${config.config_version} < ${app.wanted_configversion})`)
       if (migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]) {
@@ -69,7 +69,7 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
       } else {
         logger.warn('No update scripts available.')
       }
-    } else if (i1 > i2) { // Config version is greater than expected version
+    } else if (i1 > i2) {
       logger.warn('Your config version is greater than expected version!')
         .warn('Are you time traveller? (or bug?)')
     } else {

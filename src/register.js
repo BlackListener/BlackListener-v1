@@ -103,8 +103,8 @@ module.exports = function(client) {
 
   process.on('unhandledRejection', async (error = {}) => {
     errors++
-    if (error.name === 'DiscordAPIError') return true // ignore DiscordAPIError (e.g. Missing Permissions)
-    if ((error.message || '').includes('ENOTFOUND')) return // ignore network error
+    if (error.name === 'DiscordAPIError') return true
+    if ((error.message || '').includes('ENOTFOUND')) return
     const { report, file } = await makeReport(client, error, 'error')
     client.readyAt ? client.channels.get('484357084037513216').send(codeblock(report))
       .then(() => logger.info('Error report has been sent!')) : true
@@ -138,11 +138,11 @@ module.exports = function(client) {
       .error('==============================')
   })
 
-  client.on('guildCreate', () => { // on created server, joined to a server, offline guild(s) back to online
+  client.on('guildCreate', () => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   })
 
-  client.on('guildDelete', () => { // on kicked from server, deleted server
+  client.on('guildDelete', () => {
     client.user.setActivity(`${c.prefix}help | ${client.guilds.size} guilds`)
   })
 

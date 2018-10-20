@@ -73,19 +73,16 @@ module.exports = class extends Command {
     } else if (args[1] === 'blacklist') {
       if (args[2] === 'add') {
         if (!args[3]) return msg.channel.send(lang.invalid_args)
-        msg.channel.send('you') // you shall not pass
-        setTimeout(() => msg.channel.send('shall not'), 1500)
-        setTimeout(() => msg.channel.send('pass'), 3000)
-        // settings.message_blacklist.push(args[3])
+        msg.channel.send('you shall not pass')
       } else if (args[2] === 'remove') {
         if (!args[3]) return msg.channel.send(lang.invalid_args)
         if (!isNumber(args[3])) return msg.channel.send(f('{0} is not a number.', args[3]))
-        msg.channel.send('Oh, you got this message, it is not implemented!\n```javascript\nthrow new ReferenceError("Haha, not implemented!")\n// => ReferenceError: Haha, not implemented!\n```')
-        // Delete settings.message_blacklist[parseInt(args[3])]
+        msg.channel.send('Oh, you got this message, it is not implemented!')
+        // delete settings.message_blacklist[parseInt(args[3])]
+        // and try and catch these errors
       } else if (args[2] === 'status') {
         msg.channel.send(':warning: This is implemented but unusable at this moment.')
         msg.channel.send(settings.message_blacklist.join('\n'))
-        // This should be embed
       }
     } else {
       msg.channel.send(lang.invalid_args)
