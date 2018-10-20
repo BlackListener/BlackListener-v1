@@ -47,7 +47,7 @@
   "success": "┗━ 成功: {0}、シャットダウン中。",
   "atmpfs": "┗━ 強制シャットダウンを実行中です。実行元: {0}",
   "bye": ":wave: じゃあね！",
-  "availablelang": "Available Languages(Current: {0})",
+  "availablelang": "利用可能な言語(現在: {0})",
   "cannotspace": "スペースを含めることはできません。",
   "udonthaveperm": ":x: Adminコマンドを使用する権限がありません。管理者権限が必要です。",
   "invalid_user": "指定されたユーザーは存在しません。",
@@ -77,7 +77,7 @@
       "list": "ブラックリストに登録された正規表現を一覧で表示します。"
     }
   },
-  "includes_spam": ":x: スパムを削除しました。 (`b:antispam disable` で無効化できます)",
+  "includes_spam": ":x: スパムを削除しました。 (`{0}antispam disable` で無効化できます)",
   "no_command": "`{0}{1}` はBlackListenerコマンドではありません。",
   "didyoumean": "これはもしかして？\n{0}",
   "error": "処理中のエラー: ``{0}``",
@@ -199,10 +199,10 @@
     "queue_count": "{0} 個の音楽がキューに入っています。",
     "queue_cleared": "キューを削除しました。",
     "now_playing": "現在、 {0} を再生中です。",
-    "joined_vc": "Joined to {0}",
-    "youtube_search": "Run ``music play (URL)`` to play music."
+    "joined_vc": "{0} に参加しました",
+    "youtube_search": "``music play (URL)`` を実行して音楽を再生します。"
   },
   "not_patron": "このボットはPatronではありません(Patronボットがオンライン＆存在する場合はprefix 'a:'で試してみてください)",
-  "disabled_command": "{0} command is disabled",
-  "error_occurred": "An error occurred during {0} command execution"
+  "disabled_command": "{0} コマンドは無効です。",
+  "error_occurred": "{0} コマンドの実行中にエラーが発生しました。"
 }
