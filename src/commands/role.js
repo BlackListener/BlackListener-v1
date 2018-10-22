@@ -2,8 +2,7 @@ const logger = require(__dirname + '/../logger').getLogger('commands:role')
 const Discord = require('discord.js')
 const { Command } = require('../core')
 
-const addRole = (msg, rolename, guildmember = null, language) => {
-  const lang = require(`./lang/${language}.json`)
+const addRole = (msg, rolename, guildmember = null, lang) => {
   let role; let member
   try {
     try {
@@ -41,9 +40,9 @@ module.exports = class extends Command {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     if (!msg.guild.roles.find(n => n.name === args[1] || n.id === args[1])) return msg.channel.send(lang.invalid_args)
     if (!msg.mentions.members.first()) {
-      addRole(msg, args[1], null, settings.language)
+      addRole(msg, args[1], null, lang)
     } else {
-      addRole(msg, args[1], msg.mentions.members.first(), settings.language)
+      addRole(msg, args[1], msg.mentions.members.first(), lang)
     }
   }
 }
