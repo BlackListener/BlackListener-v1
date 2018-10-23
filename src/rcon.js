@@ -1,6 +1,6 @@
 const logger = require(__dirname + '/logger').getLogger('ShutdownPacketListener')
 const server = require('net').createServer()
-const client = require('.')
+const client = require('./client')
 
 server.maxConnections = 1
 
