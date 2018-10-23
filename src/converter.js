@@ -1,4 +1,4 @@
-const client = require(__dirname + '/index')
+const client = require(__dirname + '/client')
 const Discord = require('discord.js') // eslint-disable-line
 
 /**
