@@ -64,7 +64,7 @@ client.on('message', async msg => {
   } catch (e) {
     logger.error('Errored during creating directory: ' + e)
   }
-  if (await util.exists(`${__dirname}/../data/servers/${msg.guild.id}/config.json`)) {
+  if ((await util.exists(`${__dirname}/../data/servers/${msg.guild.id}`)) && (!await util.exists(`${__dirname}/../data/servers/${msg.guild.id}/config.json`))) {
     logger.debug('Creating config on: ' + msg.guild.id)
     await util.writeJSON(`${__dirname}/../data/servers/${msg.guild.id}/config.json`, defaultSettings)
   }

@@ -83,7 +83,7 @@ logger.info('Starting')
 const { fork } = require('child_process')
 let spawned
 let restart = false
-const spawn = () => spawned = fork('src', process.argv.slice(2))
+const spawn = () => spawned = fork('src/client', process.argv.slice(2))
 const register = () => {
   spawned.on('error', e => {
     clearInterval(timer)
