@@ -28,7 +28,7 @@ module.exports = class extends Command {
       const embed = new Discord.RichEmbed()
         .setTitle(lang.banned_users)
         .setColor([0,255,0])
-        .setDescription(bansList.join('\n') || 'まだ誰もBANしていません')
+        .setDescription(bansList.join('\n') || lang.not_banned)
       msg.channel.send(embed)
     } else {
       if (msg.guild && msg.guild.available && !msg.author.bot) {
@@ -73,7 +73,7 @@ module.exports = class extends Command {
         msg.guild.ban(userid, { 'reason': reason })
           .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
           .catch(e => logger.error(e))
-        return msg.channel.send('<a:ClapClap:454017956620271627> ' + lang.banned)
+        return msg.channel.send(':white_check_mark: ' + lang.banned)
       }
     }
   }

@@ -77,19 +77,6 @@ module.exports = class extends Command {
             if (keyword) msg.channel.send('Search keyword: ' + keyword)
           }
           if (msg.deletable) msg.delete()
-          /*async () => {
-            if (queue.length && !loop) {
-              dispatcher = play(connection, queue[0], msg, lang)
-              msg.channel.send(f(lang.music.playing_queue, queue[0]))
-            } else {
-              if (!loop) {
-                dispatcher = null
-                msg.channel.send('すべての曲の再生が終了しました。')
-              } else {
-                dispatcher = play(connection, args[2], msg, lang)
-              }
-            }
-          }*/
           const endHandler = async q => {
             //logger.info('ended')
             if (q.length && !loop) {
@@ -100,7 +87,7 @@ module.exports = class extends Command {
               register(q) //eslint-disable-line
             } else {
               if (!loop) {
-                msg.channel.send('すべての曲の再生が終了しました。')
+                msg.channel.send(lang.music.ended)
               } else {
                 play(connection, args[2], msg, lang)
                 register(q) //eslint-disable-line

@@ -7,18 +7,18 @@ const addRole = (msg, rolename, guildmember = null, lang) => {
   try {
     try {
       role = msg.guild.roles.find(n => n.name === rolename) || msg.guild.roles.get(rolename)
-    } catch(e) { logger.error('An error occurred in \'addRole\': ' + e) }
+    } catch(e) { logger.error('An error occurred: ' + e) }
     if (!guildmember) { member = msg.guild.members.get(msg.author.id) } else { member = msg.guild.members.get(guildmember.id) }
     const build = function(title, message) {
-      const embed = new Discord.RichEmbed().setTitle(title).setColor([255,0,0]).setDescription('Role ``' + rolename + '`` ' + message)
+      const embed = new Discord.RichEmbed().setTitle(title).setColor([255,0,0]).setDescription(lang.role.role + ' ``' + rolename + '`` ' + message)
       msg.channel.send(embed)
     }
     if (member.roles.has(role.id)) {
       member.removeRole(role).catch(e => logger.error(e))
-      build('<:tickNo:315009174163685377> Removed role from user', ' removed from user')
+      build(':x: ' + lang.role.title_removed, ' ' + lang.role.role_removed)
     } else {
       member.addRole(role).catch(e => logger.error(e))
-      build('<:tickYes:315009125694177281> Added role to user', ' added to user')
+      build(':white_check_mark: ' + lang.role.title_removed, ' ' + lang.role.role_added)
     }
   } catch (e) {
     msg.channel.send(lang.role_error); logger.error(e)
