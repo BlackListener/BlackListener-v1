@@ -200,9 +200,18 @@
     "queue_cleared": "Cleared queue.",
     "now_playing": "Currently, playing {0}",
     "joined_vc": "Joined to {0}",
-    "youtube_search": "Run ``music play (URL)`` to play music."
+    "youtube_search": "Run ``music play (URL)`` to play music.",
+    "ended": "Ended playing of music(s)."
   },
   "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)",
   "disabled_command": "{0} command is disabled",
-  "error_occurred": "An error occurred during {0} command execution"
+  "error_occurred": "An error occurred during {0} command execution",
+  "not_banned": "Not banned any users.",
+  "role": {
+    "role": "Role",
+    "role_removed": "removed from user",
+    "role_added": "added to user",
+    "title_removed": "Removed a role from user",
+    "title_added": "Added a role to user"
+  }
 }
