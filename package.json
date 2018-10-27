@@ -32,7 +32,7 @@
     "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "npm i -g mocha && mocha && node index.js --travis-build",
+    "test": "mocha && node index.js --travis-build",
     "lint": "node travis/lint.js"
   },
   "repository": {
