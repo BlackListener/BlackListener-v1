@@ -15,7 +15,6 @@ const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require(__dirname + '/util')
 const { defaultSettings } = require(__dirname + '/contents')
-const antispam = {}
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -93,7 +92,7 @@ client.on('message', async msg => {
     }
     // --- End of Auto-ban
 
-    // --- Begin of Anti-spam
+    /* --- Begin of Anti-spam
     try {
       if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
         const tried = antispam[msg.author.id] ? antispam[msg.author.id]['tried'] : 0
@@ -111,7 +110,7 @@ client.on('message', async msg => {
           if (tried === 4) msg.channel.send(f(lang.includes_spam, settings.prefix))
           return
         }
-        if (/(\S.*?)\1{14,}/gm.test(msg.content)/* || /(.*?\n){10,}/gm.test(msg.content)*/) {
+        if (/(\S.*?)\1{14,}/gm.test(msg.content)) {
           if (settings.banned) return
           msg.delete(0)
           msg.channel.send(lang.includes_spam)
@@ -120,7 +119,7 @@ client.on('message', async msg => {
     } catch (e) {
       logger.warn('Error while processing anti-spam.')
     }
-    // --- End of Anti-spam
+    */ // --- End of Anti-spam
     dispatcher(settings, msg, lang)
   }
 })
