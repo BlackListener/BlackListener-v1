@@ -7,14 +7,14 @@ const { Command } = require('../core')
 const YouTube = require('youtube-node')
 const youtube = new YouTube()
 const util = require('util')
-let queue = []
+let queue = {}
 let playing
-let loop
+let loop = {}
 const play = (connection, url, msg, lang) => {
   try {
     const stream = ytdl(url, { filter : 'audioonly' })
     playing = url
-    return connection.playStream(stream, { seek: 0, volume: 1 }) // 0.1
+    return connection.playStream(stream, { seek: 0, volume: 1 }) // oldvalue: 0.1
   } catch (e) {
     if (e.name === 'TypeError') msg.channel.send(f(lang.error, e))
     logger.error(e)
@@ -53,14 +53,6 @@ module.exports = class extends Command {
         youtube.setKey(config.youtube_apikey)
         const search = util.promisify(youtube.search)
         const { items } = await search(args.slice(2).join(' '), 1).catch(e => logger.error(e))
-        //let message = ''
-        //items.forEach(item => {
-        //message += `${item.snippet.title} (https://youtube.com/watch?v=${item.id.videoId})\n`
-        //})
-        //message += lang.music.youtube_search
-        // Oh no, "lang.music.youtube_search" is now unused!
-        //msg.channel.send(message)
-        //return
         keyword = args.slice(2).join(' ')
         args[2] = 'https://youtube.com/watch?v=' + items[0].id.videoId // Oh no, this is (really) not a good!
       }
@@ -68,7 +60,7 @@ module.exports = class extends Command {
         .then(async connection => {
           if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
             if (loop) return msg.channel.send(lang.music.cantadd_loop_enabled)
-            queue.push(args[2])
+            queue[msg.guild.id].push(args[2])
             msg.channel.send(f(lang.music.queue_added, args[2]))
             if (keyword) msg.channel.send('Search keyword: ' + keyword)
           } else {
@@ -78,17 +70,16 @@ module.exports = class extends Command {
           }
           if (msg.deletable) msg.delete()
           const endHandler = async q => {
-            //logger.info('ended')
-            if (q.length && !loop) {
-              //logger.info('and playing queue')
+            q = q[msg.guild.id]
+            if (q.length && !loop) { // if queue is *not* empty and not enabled loop
               play(connection, q[0], msg, lang)
               msg.channel.send(f(lang.music.playing_queue, q[0]))
               q = q.slice(1)
               register(q) //eslint-disable-line
-            } else {
-              if (!loop) {
+            } else { // if queue is empty or enabled looping
+              if (!loop) { // loop is disabled
                 msg.channel.send(lang.music.ended)
-              } else {
+              } else { // loop is enabled
                 play(connection, args[2], msg, lang)
                 register(q) //eslint-disable-line
               }
@@ -99,7 +90,7 @@ module.exports = class extends Command {
             msg.guild.voiceConnection.dispatcher.once('end', () => endHandler(q))
             msg.guild.voiceConnection.dispatcher.once('close', () => endHandler(q))
           }
-          register(queue)
+          register(queue[msg.guild.id])
         })
     } else if (args[1] === 'volume') {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
@@ -107,7 +98,7 @@ module.exports = class extends Command {
         if (!isNumber(args[2])) return msg.channel.send(lang.invalid_args)
         msg.guild.voiceConnection.dispatcher.setVolume(parseInt(args[2]) / 1000)
         const emoji = before * 1000 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
-        msg.channel.send(f(emoji + lang.music.changed_volume, before * 100, parseInt(args[2]))) // 100
+        msg.channel.send(f(emoji + lang.music.changed_volume, before * 100, parseInt(args[2]))) // oldvalue: 100
       } else msg.channel.send(lang.music.not_playing)
     } else if (args[1] === 'stop') {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
@@ -116,7 +107,7 @@ module.exports = class extends Command {
         msg.channel.send(':wave:')
       } else msg.channel.send(lang.music.not_playing)
     } else if (args[1] === 'loop') {
-      queue = []
+      queue[msg.guild.id] = []
       loop = loop ? false : true
       msg.channel.send(f(lang.music.one_music_loop, loop ? lang.music.enabled : lang.music.disabled))
     } else if (args[1] === 'pause') {
@@ -132,12 +123,12 @@ module.exports = class extends Command {
     } else if (args[1] === 'queue') {
       msg.channel.send(f(lang.music.queue_count, queue.length))
       if (args[2] === 'clear') {
-        queue = []
+        queue[msg.guild.id] = []
         return msg.channel.send(lang.music.cleared_queue)
       } else if (args[2] === 'reactivate') {
         return msg.channel.send('You need to type this: ```\n<prefix>music stop\n<prefix>music play https://www.youtube.com/watch?v=jhFDyDgMVUI\n```')
       }
-      const queues = queue.map((e, i) => `${i}: ${e}`)
+      const queues = queue[msg.guild.id].map((e, i) => `${i}: ${e}`)
       if (queues.length) msg.channel.send(queues.join('\n'))
     } else if (args[1] === 'status') {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed && playing) msg.channel.send(f(lang.music.now_playing, playing))
