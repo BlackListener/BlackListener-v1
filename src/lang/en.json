@@ -201,7 +201,9 @@
     "now_playing": "Currently, playing {0}",
     "joined_vc": "Joined to {0}",
     "youtube_search": "Run ``music play (URL)`` to play music.",
-    "ended": "Ended playing of music(s)."
+    "ended": "Ended playing of music(s).",
+    "disabled_loop": "Disabled looping.",
+    "loop_every": "Looping music every {0}."
   },
   "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)",
   "disabled_command": "{0} command is disabled",
