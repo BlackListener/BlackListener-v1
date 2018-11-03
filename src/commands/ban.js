@@ -59,6 +59,8 @@ module.exports = class extends Command {
           attach = msg.attachments.first().url
         }
         if (msg.mentions.users.first()) { user2 = msg.mentions.users.first() }
+        if (client.user.id === user2.id) return msg.channel.send('Can\'t ban myself!')
+        if (user2.id === msg.author.id) return msg.channel.send('Can\'t ban yourself!')
         if (args[3] !== '--force') { if (!user2) { return msg.channel.send(lang.invalid_user) } }
         let userid
         if (args[3] === '--force') { userid = args[1] } else { userid = user2.id }
