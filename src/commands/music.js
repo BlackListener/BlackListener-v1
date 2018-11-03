@@ -71,11 +71,12 @@ module.exports = class extends Command {
             if (keyword) msg.channel.send('Search keyword: ' + keyword)
           }
           if (msg.deletable) msg.delete()
-          const endHandler = async q => {
+          const endHandler = async () => {
+            const q = queue[msg.guild.id]
             if (q && (q ? q.length : false) && !loop[msg.guild.id].enabled) { // if queue is *not* empty and not enabled loop
               play(connection, q[0], msg, lang)
               msg.channel.send(f(lang.music.playing_queue, q[0]))
-              queue[msg.guild.id] = q[msg.guild.id].slice(1)
+              queue[msg.guild.id] = queue[msg.guild.id].slice(1)
               register(q) //eslint-disable-line
             } else { // if queue is empty or enabled looping
               if (!loop[msg.guild.id].enabled && !loop[msg.guild.id].every) { // loop is disabled
@@ -94,11 +95,11 @@ module.exports = class extends Command {
               }
             }
           }
-          const register = q => {
-            msg.guild.voiceConnection.dispatcher.once('end', () => endHandler(q))
-            msg.guild.voiceConnection.dispatcher.once('close', () => endHandler(q))
+          const register = () => {
+            msg.guild.voiceConnection.dispatcher.once('end', () => endHandler())
+            msg.guild.voiceConnection.dispatcher.once('close', () => endHandler())
           }
-          register(queue[msg.guild.id])
+          register()
         })
     } else if (args[1] === 'volume') {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
