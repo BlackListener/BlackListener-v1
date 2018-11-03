@@ -80,7 +80,9 @@ module.exports = class extends Command {
             } else { // if queue is empty or enabled looping
               if (!loop[msg.guild.id].enabled && !loop[msg.guild.id].every) { // loop is disabled
                 msg.channel.send(lang.music.ended)
-                msg.guild.voiceConnection.dispatcher.removeListener('end', () => endHandler())
+                try {
+                  msg.guild.voiceConnection.dispatcher.removeListener('end', () => endHandler())
+                } catch(e){} //eslint-disable-line
               } else { // loop is enabled
                 if (loop[msg.guild.id].every) {
                   const seconds = parseInt(loop[msg.guild.id].every.replace(/\D{1,}/gm, '')) * 60
@@ -101,7 +103,7 @@ module.exports = class extends Command {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
         const before = msg.guild.voiceConnection.dispatcher.volume
         if (!isNumber(args[2])) return msg.channel.send(lang.invalid_args)
-        msg.guild.voiceConnection.dispatcher.setVolume(parseInt(args[2]) / 1000)
+        msg.guild.voiceConnection.dispatcher.setVolume(parseInt(args[2]) / 100)
         const emoji = before * 1000 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
         msg.channel.send(f(emoji + lang.music.changed_volume, before * 100, parseInt(args[2]))) // oldvalue: 100
       } else return msg.channel.send(lang.music.not_playing)
