@@ -77,28 +77,24 @@ module.exports = class extends Command {
               play(connection, q[0], msg, lang)
               msg.channel.send(f(lang.music.playing_queue, q[0]))
               queue[msg.guild.id] = queue[msg.guild.id].slice(1)
-              register(q) //eslint-disable-line
             } else { // if queue is empty or enabled looping
               if (!loop[msg.guild.id].enabled && !loop[msg.guild.id].every) { // loop is disabled
                 msg.channel.send(lang.music.ended)
+                msg.guild.voiceConnection.dispatcher.removeListener('end', () => endHandler())
               } else { // loop is enabled
                 if (loop[msg.guild.id].every) {
                   const seconds = parseInt(loop[msg.guild.id].every.replace(/\D{1,}/gm, '')) * 60
                   setTimeout(() => {
                     play(connection, args[2], msg, lang)
                   }, seconds * 1000)
-                  register(q) //eslint-disable-line
                 } else {
                   play(connection, args[2], msg, lang)
-                  register(q) //eslint-disable-line
                 }
               }
             }
           }
-          const register = () => {
-            msg.guild.voiceConnection.dispatcher.once('end', () => endHandler())
-            msg.guild.voiceConnection.dispatcher.once('close', () => endHandler())
-          }
+          const register = () =>
+            msg.guild.voiceConnection.dispatcher.on('end', () => endHandler())
           register()
         })
     } else if (args[1] === 'volume') {
