@@ -114,8 +114,7 @@ module.exports = class extends Command {
     } else if (args[1] === 'stop') {
       queue[msg.guild.id] = []
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
-        msg.guild.voiceConnection.dispatcher.end()
-        msg.guild.voiceConnection.dispatcher.destroyed = true
+        msg.guild.voiceConnection.dispatcher.destroy() // destroy.
         if (msg.guild.me.voiceChannel && msg.guild.me.voiceChannel.connection) msg.guild.me.voiceChannel.connection.disconnect()
         msg.channel.send(':wave:')
       } else return msg.channel.send(lang.music.not_playing)
