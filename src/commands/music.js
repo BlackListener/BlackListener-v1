@@ -86,6 +86,7 @@ module.exports = class extends Command {
                   setTimeout(() => {
                     play(connection, args[2], msg, lang)
                   }, seconds * 1000)
+                  register(q) //eslint-disable-line
                 } else {
                   play(connection, args[2], msg, lang)
                   register(q) //eslint-disable-line
