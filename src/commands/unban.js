@@ -33,11 +33,11 @@ module.exports = class extends Command {
         const exe = bans.includes(user2.id)
         bans.splice(bans.indexOf(user2.id), 1)
         if (!exe) return msg.channel.send(lang.notfound_user)
-        for (const guild of client.guilds) {
+        /*for (const guild of client.guilds) {
           guild.unban(user2)
             .then(user2 => logger.info(`Unbanned user: ${user2.tag} (${user2.id}) from ${guild.name}(${guild.id})`))
             .catch(e => logger.error(e))
-        }
+        }*/
         user.rep = --user.rep
         msg.channel.send(lang.unbanned)
       } else {
