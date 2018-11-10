@@ -69,6 +69,8 @@ client.on('message', async msg => {
   }
   const user = await data.user(msg.author.id)
   user.tag = msg.author.tag
+  user.bot = msg.author.bot
+  user.createdTimestamp = msg.author.createdTimestamp
   const settings = await data.server(msg.guild.id)
   if (msg.channel.id !== settings.excludeLogging) log.messageLog(msg)
 
