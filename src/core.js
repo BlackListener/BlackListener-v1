@@ -38,6 +38,15 @@ class Command {
   isAllowed({ member }) {
     return member.hasPermission(this.permission.bitfield)
   }
+
+  /**
+   * @async
+   * @returns {any}
+   * @param {string} e 
+   */
+  async _eval(e) {
+    return await (eval(`(async () => {${e}})()`))
+  }
 }
 
 module.exports = {
