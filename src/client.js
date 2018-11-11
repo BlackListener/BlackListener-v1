@@ -150,6 +150,7 @@ client.on('guildMemberAdd', async member => {
     member.addRole(role)
     logger.info(`Role(${role.name}) granted for: ${member.tag} in ${member.guild.name}(${member.guild.id})`)
   }
+  if (!client.channels.get(serverSetting.welcome_channel)) serverSetting.welcome_channel = null
   if (!!serverSetting.welcome_channel && !!serverSetting.welcome_message) {
     let message = serverSetting.welcome_message.replace('{user}', `<@${member.user.id}>`)
     message = message.replace(/{rep}/gm, userSetting.rep)

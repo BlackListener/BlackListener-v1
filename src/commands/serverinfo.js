@@ -17,6 +17,7 @@ module.exports = class extends Command {
     const disable_purge = settings.disable_purge ? lang.no : lang.yes
     const autorole = settings.autorole ? `${lang.enabled} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]` : lang.disabled
     const excludeLogging = settings.excludeLogging ? `${lang.enabled} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)` : lang.disabled
+    if (!client.channels.get(settings.welcome_channel)) settings.welcome_channel = null
     const welcome_channel = settings.welcome_channel ? `${lang.enabled} (${client.channels.get(settings.welcome_channel).name})` : lang.disabled
     const welcome_message = settings.welcome_message ? `${lang.enabled} (\`\`\`${settings.welcome_message}\`\`\`)` : lang.disabled
     const ignoredChannels = settings.ignoredChannels.map((data) => {
