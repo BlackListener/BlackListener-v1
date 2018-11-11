@@ -17,11 +17,12 @@ module.exports = class extends Command {
   async run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     const sendImage = async list => {
-      msg.channel.send(lang.searching)
+      const message = await msg.channel.send(lang.searching)
       const sub = list[Math.round(Math.random() * (list.length - 1))]
       const url = await randomPuppy(sub)
+      if (!url) return message.edit('Unable to find images.')
       const attachment = new Discord.Attachment(url)
-      msg.channel.send(attachment).catch(msg.channel.send)
+      message.edit(attachment).catch(msg.channel.send)
     }
     if (args[1] === 'custom') {
       if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
@@ -30,7 +31,7 @@ module.exports = class extends Command {
         return await sendImage([args[2]])
       } catch(e) {
         if (e.name === 'ParseError') return msg.channel.send(f(lang.error, 'Failed to parsing JSON. (Probably not found specified subreddit)'))
-        msg.channel.send(f(lang.error, e))
+        msg.channel.send(f(lang.error, e) + '\nStack: ' + e.stack || '(nothing)')
       }
     } else if (args[1] === 'anime') {
       return await sendImage([

@@ -8,11 +8,11 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang) {
-    msg.channel.send('Checking for version...')
+    const message = await msg.channel.send('Checking for version...')
     await git.fetch()
     const status = await git.status()
     const hash = await git.revparse(['HEAD'])
-    msg.channel.send(f(lang.commit, hash)
+    message.edit(f(lang.commit, hash)
       + (status.behind === 0 ? '(✔ Running latest version) ' : `(${status.behind} commit(s) behind) `)
       + (status.isClean() ? '' : '[⚠ Pending commit]')
       + (status.ahead === 0 ? '' : '[⚠ Pending push]'))

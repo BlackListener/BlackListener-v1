@@ -24,7 +24,7 @@ module.exports = async function(settings, msg, lang) {
     return msg.channel.send(f(lang.prefixis, settings.prefix))
   if (msg.content.startsWith(settings.prefix)) {
     const [cmd] = msg.content.replace(settings.prefix, '').split(' ')
-    if (settings.banned) return msg.channel.send(f(lang.error, lang.errors.server_banned))
+    if (settings.banned) return msg.channel.send(f(lang.error, 'Your server is banned.\nPlease contact to the this server -> https://discord.gg/xQQXp4B'))
     if (commands[cmd]) {
       await runCommand(commands[cmd], settings, msg, lang)
     } else if (await util.exists(`${__dirname}/plugins/commands/${cmd}.js`)) {
