@@ -5,7 +5,9 @@ module.exports = class extends Command {
     super('members')
   }
 
-  run(msg) {
-    return msg.channel.send(msg.guild.members.size)
+  async run(msg) {
+    const message = await msg.channel.send('Fetching members...')
+    await msg.guild.fetchMembers()
+    message.edit(msg.guild.members.size)
   }
 }

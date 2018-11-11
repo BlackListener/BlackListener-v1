@@ -176,7 +176,7 @@ client.on('messageUpdate', async (old, msg) => {
 })
 
 client.on('userUpdate', async (olduser, newuser) => {
-  if (olduser.username === newuser.username) return
+  if (olduser.username === newuser.username && olduser.id !== newuser.id) return
   const user = await data.user(olduser.id)
   user.username_changes.push(`${olduser.username} -> ${newuser.username}`)
 })

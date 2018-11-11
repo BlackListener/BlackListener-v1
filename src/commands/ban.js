@@ -21,7 +21,7 @@ module.exports = class extends Command {
     if (!args[1] || args[1] === '') {
       const bansList = await Promise.all(bans.map(async (id) => {
         if (id) {
-          const user = await client.fetchUser(id).catch(() => { }) || lang.failed_to_get
+          const user = await client.fetchUser(id, false).catch(() => { }) || lang.failed_to_get
           return `${user.tag} (${id})`
         }
       }))
