@@ -200,9 +200,20 @@
     "queue_cleared": "キューを削除しました。",
     "now_playing": "現在、 {0} を再生中です。",
     "joined_vc": "{0} に参加しました",
-    "youtube_search": "``music play (URL)`` を実行して音楽を再生します。"
+    "youtube_search": "``music play (URL)`` を実行して音楽を再生します。",
+    "ended": "Ended playing of music(s).",
+    "disabled_loop": "Disabled looping.",
+    "loop_every": "Looping music every {0}."
   },
   "not_patron": "このボットはPatronではありません(Patronボットがオンライン＆存在する場合はprefix 'a:'で試してみてください)",
   "disabled_command": "{0} コマンドは無効です。",
-  "error_occurred": "{0} コマンドの実行中にエラーが発生しました。"
+  "error_occurred": "{0} コマンドの実行中にエラーが発生しました。",
+  "not_banned": "Not banned any users.",
+  "role": {
+    "role": "Role",
+    "role_removed": "removed from user",
+    "role_added": "added to user",
+    "title_removed": "Removed a role from user",
+    "title_added": "Added a role to user"
+  }
 }

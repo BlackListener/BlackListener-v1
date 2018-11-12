@@ -81,10 +81,6 @@
   "no_command": "`{0}{1}` is not BlackListener command.",
   "didyoumean": "Did you mean?\n{0}",
   "error": "Errored while processing: Error: ``{0}``",
-  "errors": {
-    "server_banned": "k52j",
-    "types_are_not_specified": "h54a"
-  },
   "outofrange": "Out of Range. [1-99]",
   "disabled_purge": ":x: Disabled `purge` command.",
   "info": {
@@ -114,25 +110,25 @@
   "rebooting": "Restarting!",
   "already_banned": "Already banned specific user!",
   "known": "I know specific target: {0}",
-  "unknown": "I can't find specific user(or is a bot?) or not found server: {0}",
+  "unknown": "I can't find specific user or not found server: {0}",
   "dumpmessage": "BlackListener: Global Banning System",
   "lookup": {
-    "desc": "Search specificed user.",
+    "description": "Search specificed user.",
     "title": "Result",
     "rep": "Reputation",
-    "bannedFromServer": "List of Banned from following servers (Owner)",
-    "bannedFromUser": "List of Executed from following users",
+    "bannedFromServer": "Owner of the server that executed BAN",
+    "bannedFromUser": "They banned you",
     "not_banned": "Not banned",
-    "probes": "List of Probes",
-    "reasons": "List of Probes",
+    "probes": "Probes",
+    "reasons": "Reasons",
     "tag": "User Tag",
     "nickname": "Nickname",
     "id": "User ID",
-    "username_changes": "List of username changes",
+    "username_changes": "Username changes",
     "bot": "Is bot",
     "createdAt": "Created at",
     "joinedAt": "Joined at",
-    "nowTime": "Now Time"
+    "nowTime": "Current Time"
   },
   "no": "No",
   "yes": "Yes",
@@ -142,7 +138,6 @@
   "encrypted": "Encrypted Text: `{0}`, Encrypt Key: `{1}`\nResult: `{2}`",
   "decrypted": "Decrypted Text: `{0}`, Decrypt Key: `{1}`\nResult: `{2}`",
   "invalid_password": "Incorrect password. (`{0}`)",
-  "deleted": "Deleted!\nCheck it out on URL: {0}",
   "nsfw": ":x: This channel is Non-NSFW channel, but you are tried to image command, please run at NSFW channel(s).",
   "sunknown": "Unknown",
   "nul": "Nothing",
@@ -159,7 +154,7 @@
     "excludeLogging": "Disable logging channel",
     "welcome_channel": "Channel of send welcome messages",
     "welcome_message": "Welcome message",
-    "mute": "List of muted users"
+    "mute": "Muted users"
   },
   "disabled": "Disabled",
   "enabled": "Enabled",
@@ -200,9 +195,20 @@
     "queue_cleared": "Cleared queue.",
     "now_playing": "Currently, playing {0}",
     "joined_vc": "Joined to {0}",
-    "youtube_search": "Run ``music play (URL)`` to play music."
+    "youtube_search": "Run ``music play (URL)`` to play music.",
+    "ended": "Ended playing of music(s).",
+    "disabled_loop": "Disabled looping.",
+    "loop_every": "Looping music every {0}."
   },
   "not_patron": "This bot is not patron(Also try with prefix 'a:' if patron bot is online & found)",
   "disabled_command": "{0} command is disabled",
-  "error_occurred": "An error occurred during {0} command execution"
+  "error_occurred": "An error occurred during {0} command execution",
+  "not_banned": "Not banned any users.",
+  "role": {
+    "role": "Role",
+    "role_removed": "removed from user",
+    "role_added": "added to user",
+    "title_removed": "Removed a role from user",
+    "title_added": "Added a role to user"
+  }
 }
