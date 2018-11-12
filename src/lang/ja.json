@@ -81,10 +81,6 @@
   "no_command": "`{0}{1}` はBlackListenerコマンドではありません。",
   "didyoumean": "これはもしかして？\n{0}",
   "error": "処理中のエラー: ``{0}``",
-  "errors": {
-    "server_banned": "k52j",
-    "types_are_not_specified": "h54a"
-  },
   "outofrange": "数値が範囲外です。[1-99]",
   "disabled_purge": ":x: `purge`コマンドは現在無効化されています。",
   "info": {
@@ -114,25 +110,25 @@
   "rebooting": "再起動中",
   "already_banned": "指定されたユーザーはすでにBANされています！",
   "known": "対象を見つけました: {0}",
-  "unknown": "指定されたユーザーはいない、もしくはボットみたいです、もしくはサーバーが存在しません: {0}",
+  "unknown": "I can't find specific user or not found server: {0}",
   "dumpmessage": "BlackListener：グローバルBANシステム",
   "lookup": {
-    "desc": "指定したユーザーの情報を検索します。",
+    "description": "指定したユーザーの情報を検索します。",
     "title": "検索結果",
     "rep": "評価値",
-    "bannedFromServer": "これらのサーバーからBANされています(オーナー)",
-    "bannedFromUser": "これらのユーザーがBANを実行しました",
+    "bannedFromServer": "Owner of the server that executed BAN",
+    "bannedFromUser": "They banned you",
     "not_banned": "BANされていません",
-    "probes": "証拠一覧",
-    "reasons": "理由一覧",
+    "probes": "Probes",
+    "reasons": "Reasons",
     "tag": "ユーザータグ",
     "nickname": "ニックネーム",
     "id": "ユーザーID",
-    "username_changes": "名前変更",
+    "username_changes": "Username changes",
     "bot": "ボットかどうか",
     "createdAt": "作成日時",
     "joinedAt": "参加日時",
-    "nowTime": "現在の日時"
+    "nowTime": "Current Time"
   },
   "no": "いいえ",
   "yes": "はい",
@@ -142,7 +138,6 @@
   "encrypted": "`{0}`を暗号化しました。暗号化キー: {1}\n結果: `{2}`",
   "decrypted": "`{0}`を復号化しました。復号に使用されたキー: {1}\n結果: `{2}`",
   "invalid_password": "パスワードが間違っています。(`{0}`)",
-  "deleted": "消しましたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたたた\nURLからチェックしてね: {0}",
   "nsfw": ":x: このチャンネルはNSFWチャンネルではありません。NSFWチャンネルに変えてもう一度お試しください。",
   "sunknown": "不明",
   "nul": "なし",
@@ -159,7 +154,7 @@
     "excludeLogging": "ロギングを無効化するチャンネル",
     "welcome_channel": "ウェルカムメッセージを送信するチャンネル",
     "welcome_message": "ウェルカムメッセージ",
-    "mute": "ミュートされた人たち"
+    "mute": "Muted users"
   },
   "disabled": "無効",
   "enabled": "有効",
