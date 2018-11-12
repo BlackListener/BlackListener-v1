@@ -2,13 +2,7 @@
   "antispam": "Settings of Antispam.",
   "autorole": "Settings of auto role.",
   "ban": "List of Banned users or BAN some users",
-  "decode": "Decode encoded string",
-  "decrypt": "Decrypt encrypted string",
-  "deletemsg": "Delete all messages stored on server",
-  "didyouknow": "Test if bot know specified user",
   "dump": "Output to file, users, emojis, channels, messages.",
-  "encode": "Encode string",
-  "encrypt": "Encrypt string",
   "eval": "Run command [Bot owner only]",
   "help": "List of common commands, or displays help of specified command.",
   "image": "Shows this image, that image.",
@@ -29,7 +23,6 @@
   "releases": "Show specified version's release note.",
   "resetnick": "Reset nickname specified user. (Default: the bot)",
   "role": "Manage roles.",
-  "save": "Write all pending saves. [Bot owner only] [Upcoming feature] [Not Implemented]",
   "serverinfo": "Displays server info.",
   "setbanrep": "Set auto banning reputation.\nDefault: 5\nIf joined user's reputation is less than settings, they will be banned.",
   "banrep": "[Alias of setbanrep]\n\nSet auto banning reputation.\nDefault: 5\nIf joined user's reputation is less than settings, they will be banned.",
@@ -46,8 +39,9 @@
   "welcome": "[Alias of setwelcome]\n\nSet joined message.\nPlease set channel, message, both options.\nAlso see: [here](https://github.com/BlackListener/BlackListener)",
   "shutdown": "Shutdown the bot. [-f...Force] [-r...Restart] [-g...Graceful] [Bot owner only]",
   "status": "Displays Minecraft, Fortnite status.\nPlease note Fortnite has rate limiting.",
-  "talkja": "Let's talk to AI.\n[Need to set API key from config]",
   "togglepurge": "Allow/Disallow purge command.",
   "token": "Send bot token to DM. [Bot owner only]",
-  "unban": "Unban specified user.\nReputation will be returned, but can't remove proofs, and reasons."
+  "unban": "Unban specified user.\nReputation will be returned, but can't remove proofs, and reasons.",
+  "userconf": "Set your config.",
+  "userconfig": "[Alias of userconf]\n\nSet your config."
 }
