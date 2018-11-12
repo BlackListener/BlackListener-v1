@@ -15,68 +15,67 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
-    if (!args[1]) return msg.channel.send(lang.no_args)
+    const arg = msg.content.replace(settings.prefix+'lookup ', '')
+    if (!arg) return msg.channel.send(lang.no_args)
     const client = msg.client
-    let id
+    let user
     if (msg.mentions.users.first()) {
-      id = msg.mentions.users.first().id
+      user = msg.mentions.users.first()
     } else {
-      if (/\D/gm.test(args[1])) {
+      if (/\D/gm.test(arg)) {
         try {
-          id = client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
+          user = client.users.find(n => n.username === arg) || msg.guild.members.find(n => n.nickname === arg).user || msg.client.users.find(n => n.tag === arg)
         } catch (e) {
           logger.warn(e)
-          return msg.channel.send(f(lang.unknown, args[1]))
+          return msg.channel.send(f(lang.unknown, arg))
         }
-      } else if (/\d{17,19}/.test(args[1])) {
+      } else if (/\d{17,19}/.test(arg)) {
         try {
-          id = (await client.fetchUser(args[1], false)).id || client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
+          user = await client.fetchUser(arg, false) || client.users.find(n => n.username === arg) || msg.guild.members.find(n => n.nickname === arg).user || msg.client.users.find(n => n.tag === arg)
         } catch (e) {
-          msg.channel.send(f(lang.unknown, args[1]))
-          return logger.warn(e)
+          logger.warn(e)
+          return msg.channel.send(f(lang.unknown, arg))
         }
       } else {
         try {
-          id = client.users.find(n => n.username === args[1]).id || msg.guild.members.find(n => n.nickname === args[1]).id
+          user = client.users.find(n => n.username === arg) || msg.guild.members.find(n => n.nickname === arg).user || msg.client.users.find(n => n.tag === arg)
         } catch (e) {
           logger.warn(e)
-          return msg.channel.send(f(lang.unknown, args[1]))
+          return msg.channel.send(f(lang.unknown, arg))
         }
       }
     }
     let userConfig = {}
-    let user2
     try {
+      userConfig = await data.user(user.id)
       try {
-        userConfig = await data.user(id)
-      } catch(e){/* ignore */}
-      user2 = await client.fetchUser(args[1], false)
-    } catch (e) {
-      logger.error(e)
-      return msg.channel.send(f(lang.unknown, args[1]))
-    }
-    const bannedFromServer = userConfig ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
-    const usernameChanges = userConfig ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
+        if (!user) user = client.fetchUser(arg, false)
+      } catch(e) {
+        logger.warn(e)
+        return msg.channel.send(f(lang.unknown, arg))
+      }
+    } catch(e){/* ignore */}
+    const bannedFromServer = userConfig && userConfig.bannedFromServer ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
+    const usernameChanges = userConfig && userConfig.username_changes ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
     let isBot = lang.no
-    if (user2.bot) isBot = lang.yes
-    const nick = (user2 && msg.guild.members.get(user2.id)) ? msg.guild.members.get(user2.id).nickname : lang.nul
-    const joinedAt = user2 && msg.guild.members.get(user2.id) ? msg.guild.members.get(user2.id).joinedAt.toLocaleString() : lang.sunknown
+    if (user.bot) isBot = lang.yes
+    const nick = (user && msg.guild.members.get(user.id)) ? msg.guild.members.get(user.id).nickname : lang.nul
+    const joinedAt = user && msg.guild.members.get(user.id) && msg.guild.members.get(user.id).joinedAt ? msg.guild.members.get(user.id).joinedAt.toLocaleString() : lang.sunknown
     const embed = new Discord.RichEmbed()
       .setTitle(lang.lookup.title)
       .setColor([0,255,0])
-      .setThumbnail(user2.avatarURL)
+      .setThumbnail(user.avatarURL)
       .addField(lang.lookup.rep, userConfig.rep)
       .addField(lang.lookup.bannedFromServer, bannedFromServer.join('\n') || lang.lookup.not_banned)
       .addField(lang.lookup.bannedFromUser, userConfig.bannedFromUser.join('\n') || lang.lookup.not_banned)
       .addField(lang.lookup.probes, userConfig.probes.join('\n') || lang.lookup.not_banned)
       .addField(lang.lookup.reasons, userConfig.reasons.join('\n') || lang.lookup.not_banned)
-      .addField(lang.lookup.tag, user2.tag)
+      .addField(lang.lookup.tag, user.tag)
       .addField(lang.lookup.nickname, nick)
-      .addField(lang.lookup.id, user2.id)
+      .addField(lang.lookup.id, user.id)
       .addField(lang.lookup.username_changes, usernameChanges.join('\n') || lang.no)
       .addField(lang.lookup.bot, isBot)
-      .addField(lang.lookup.createdAt, user2 ? user2.createdAt.toLocaleString() : lang.sunknown)
+      .addField(lang.lookup.createdAt, user && user.createdAt ? user.createdAt.toLocaleString() : lang.sunknown)
       .addField(lang.lookup.joinedAt, joinedAt)
       .addField(lang.lookup.nowTime, new Date().toLocaleString())
     msg.channel.send(embed)
