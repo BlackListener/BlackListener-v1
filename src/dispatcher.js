@@ -20,7 +20,7 @@ async function runCommand(command, settings, msg, lang) {
 }
 
 module.exports = async function(settings, msg, lang) {
-  if (msg.content === `<@${msg.client.user.id}>` || msg.content === `<@!${msg.client.user.id}>`)
+  if ((msg.content === `<@${msg.client.user.id}>` || msg.content === `<@!${msg.client.user.id}>`) && msg.attachments.length === 0)
     return msg.channel.send(f(lang.prefixis, settings.prefix))
   if (msg.content.startsWith(settings.prefix)) {
     const [cmd] = msg.content.replace(settings.prefix, '').split(' ')
