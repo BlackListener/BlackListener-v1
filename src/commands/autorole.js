@@ -1,6 +1,5 @@
 const Converter = require(__dirname + '/../converter.js')
 const f = require('string-format')
-const logger = require(__dirname + '/../logger').getLogger('commands:autorole', 'green')
 const { Command } = require('../core')
 
 module.exports = class extends Command {
