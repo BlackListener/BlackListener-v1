@@ -1,3 +1,4 @@
+const Converter = require(__dirname + '/../converter.js')
 const logger = require(__dirname + '/../logger').getLogger('commands:purge', 'lightpurple')
 const { Command } = require('../core')
 
@@ -50,15 +51,11 @@ module.exports = class extends Command {
     } else if (/[^0-9]/.test(args[1]) && args[1] === 'gdel-really') {
       msg.guild.channels.forEach((channel) => { channel.delete() })
     } else if (args[1] === 'remake') {
-      if (!msg.mentions.channels.first()) return msg.channel.send(lang.no_args)
-      try {
-        const channel = msg.mentions.channels.first()
-        await channel.clone()
-        await channel.delete('Remake of Channel')
-        msg.channel.send(':ok_hand:')
-      } catch (e) {
-        logger.error(e)
-      }
+      const channel = Converter.toTextChannel(msg, args[2])
+      if (!channel) return msg.channel.send(lang.no_args)
+      await channel.clone()
+      await channel.delete('Remake of Channel')
+      msg.channel.send(':ok_hand:')
     } else if (/[0-9]/.test(args[1])) {
       if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
         msg.channel.send(lang.outofrange)
