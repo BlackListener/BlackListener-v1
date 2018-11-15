@@ -73,15 +73,6 @@ client.on('message', async msg => {
   // --- End of Mute
   if (!msg.author.bot) {
     if (msg.system || msg.author.bot) return
-    // --- Begin of Auto-ban
-    if (!settings.banned) {
-      if (settings.banRep <= user.rep && settings.banRep != 0) {
-        msg.guild.ban(msg.author)
-          .then(() => logger.info(f(lang.autobanned, msg.author.tag, user.id, msg.guild.name, msg.guild.id)))
-          .catch(e => logger.error(e))
-      }
-    }
-    // --- End of Auto-ban
 
     /* --- Begin of Anti-spam
     try {
@@ -122,11 +113,7 @@ client.on('guildMemberAdd', async member => {
   const userSetting = await data.user(member.user.id)
   const lang = languages[serverSetting.language]
   if (!serverSetting.banned) {
-    if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
-      member.guild.ban(member)
-        .then(() => logger.info(f(lang.autobanned, member.user.tag, member.id, member.guild.name, member.guild.id)))
-        .catch(e => logger.error(e))
-    } else if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
+    if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
       member.guild.owner.send(f(lang.notifymsg, member.user.tag, serverSetting.notifyRep, userSetting.rep))
     }
   }

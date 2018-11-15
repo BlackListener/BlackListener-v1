@@ -1,3 +1,4 @@
+const Converter = require(__dirname + '/../converter.js')
 const data = require(__dirname + '/../data')
 const logger = require(__dirname + '/../logger').getLogger('commands:ban', 'blue')
 const Discord = require('discord.js')
@@ -20,10 +21,8 @@ module.exports = class extends Command {
     const bans = await data.bans()
     if (!args[1] || args[1] === '') {
       const bansList = await Promise.all(bans.map(async (id) => {
-        if (id) {
-          const user = await client.fetchUser(id, false).catch(() => { }) || lang.failed_to_get
-          return `${user.tag} (${id})`
-        }
+        const user = await client.fetchUser(id, false).catch(() => lang.failed_to_get)
+        return `${user.tag} (${id})`
       }))
       const embed = new Discord.RichEmbed()
         .setTitle(lang.banned_users)
@@ -31,52 +30,30 @@ module.exports = class extends Command {
         .setDescription(bansList.join('\n') || lang.not_banned)
       msg.channel.send(embed)
     } else {
-      if (msg.guild && msg.guild.available && !msg.author.bot) {
-        if (!args[2]) return msg.channel.send(lang.invalid_args)
-        let user2
-        let fetchedBans
-        let attach
-        const reason = args[2]
-        const user = await data.user(msg.author.id)
-        if (args[3] !== '--force') { if (user.bannedFromServerOwner.includes(msg.guild.ownerID) && user.bannedFromServer.includes(msg.guild.id) && user.bannedFromUser.includes(msg.author.id)) return msg.channel.send(lang.already_banned) }
-        if (msg.mentions.users.first()) {
-          user2 = msg.mentions.users.first()
-        } else if (/\d{18}/.test(args[1])) {
-          args[1] = args[1].replace('<@', '').replace('>', '')
-          fetchedBans = await msg.guild.fetchBans()
-          if (fetchedBans.has(args[1])) {
-            user2 = fetchedBans.get(args[1])
-          } else {
-            user2 = client.users.get(args[1])
-          }
-        } else {
-          user2 = client.users.find(n => n.username === args[1])
-          if (!user2) user2 = client.users.get(args[1])
-        }
-        if (!msg.attachments.first()) {
-          return msg.channel.send(lang.invalid_args)
-        } else {
-          attach = msg.attachments.first().url
-        }
-        if (msg.mentions.users.first()) { user2 = msg.mentions.users.first() }
-        if (client.user.id === user2.id) return msg.channel.send('Can\'t ban myself!')
-        if (user2.id === msg.author.id) return msg.channel.send('Can\'t ban yourself!')
-        if (args[3] !== '--force') { if (!user2) { return msg.channel.send(lang.invalid_user) } }
-        let userid
-        if (args[3] === '--force') { userid = args[1] } else { userid = user2.id }
-        user.bannedFromServerOwner.push(msg.guild.ownerID)
-        user.bannedFromServer.push(msg.guild.id)
-        user.bannedFromUser.push(msg.author.id)
-        user.probes.push(attach)
-        user.reasons.push(reason)
-        bans.push(userid)
-        user.rep = ++user.rep
-        if (!msg.guild.members.has(userid)) return msg.channel.send(lang.banned)
-        msg.guild.ban(userid, { 'reason': reason })
-          .then(user2 => logger.info(`Banned user: ${user2.tag} (${user2.id}) from ${msg.guild.name}(${msg.guild.id})`))
-          .catch(e => logger.error(e))
-        return msg.channel.send(':white_check_mark: ' + lang.banned)
-      }
+      const target = Converter.toUser(msg, args[1])
+      if (!target || !args[2] || !msg.attachments.first()) return msg.channel.send(lang.invalid_args)
+      const target_data = await data.user(target.id)
+      if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))
+        return msg.channel.send(lang.already_banned)
+      const attach = msg.attachments.first().url
+      if (client.user.id === target.id) return msg.channel.send(lang.ban.cannot_ban_myself)
+      if (target.id === msg.author.id) return msg.channel.send(lang.ban.cannot_ban_yourself)
+      const member = msg.guild.member(target)
+      if (!member && member.bannable) return msg.channel.send(lang.ban.cannot_ban)
+      target_data.bannedFromServerOwner.push(msg.guild.ownerID)
+      target_data.bannedFromServer.push(msg.guild.id)
+      target_data.bannedFromUser.push(msg.author.id)
+      target_data.probes.push(attach)
+      target_data.reasons.push(args[2])
+      bans.push(target.id)
+      target_data.rep = target_data.rep + 1
+      await Promise.all(msg.client.guilds.map(async guild => {
+        const { banRep } = await data.server(guild.id)
+        if (banRep !== 0 && banRep <= target_data.rep) return await guild.ban(target)
+        return Promise.resolve()
+      }))
+      logger.info(`Banned user: ${target.tag} (${target.id}) from ${msg.guild.name}(${msg.guild.id})`)
+      return msg.channel.send(':white_check_mark: ' + lang.banned)
     }
   }
 }
