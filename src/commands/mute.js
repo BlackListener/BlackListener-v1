@@ -1,3 +1,4 @@
+const Converter = require(__dirname + '/../converter.js')
 const Discord = require('discord.js')
 const f = require('string-format')
 const { Command } = require('../core')
@@ -29,28 +30,14 @@ module.exports = class extends Command {
         .addField(lang.serverinfo.mute, mutes.join('\n') || lang.no)
       )
     }
-    let user2
-    try {
-      user2 = client.users.find(n => n.username === args[1]).id
-    } catch (e) {
-      try {
-        user2 = client.users.get(args[1]).id
-      } catch (e) {
-        try {
-          user2 = msg.mentions.users.first().id
-        } catch (e) {
-          return msg.channel.send(lang.invalid_args)
-        }
-      }
-    }
-    if (!user2 || user2 === msg.author.id || user2 === client.user.id) return msg.channel.send(lang.invalid_args)
-    if (settings.mute.includes(user2) || args[2] === 'unmute') {
-      const result = settings.mute.filter( item => item !== user2)
+    const user = Converter.toUser(msg, args[1])
+    if (!user) return msg.channel.send(lang.invalid_args)
+    if (user.id === msg.author.id || user.id === client.user.id) return msg.channel.send(lang.invalid_args)
+    if (settings.mute.includes(user.id) || args[2] === 'unmute') {
+      const result = settings.mute.filter(item => item !== user.id)
       settings.mute = result
-    } else if (args[2] === 'mute') {
-      settings.mute.push(user2)
     } else {
-      settings.mute.push(user2)
+      settings.mute.push(user.id)
     }
     msg.channel.send(f(lang.setconfig, 'mute'))
   }

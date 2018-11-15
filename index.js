@@ -91,7 +91,7 @@ const register = () => {
     logger.emerg(e.stack)
     process.exit(1)
   })
-  
+
   spawned.on('close', (code) => {
     if (!restart) clearInterval(timer)
     if (code === 0) logger.info(`Bot exited: ${code}`)
@@ -100,7 +100,7 @@ const register = () => {
     spawned.kill('SIGKILL')
     restart = false
   })
-  
+
   const KILLINTHandler = () => {
     clearInterval(timer)
     logger.info('Caught SIGINT')
@@ -108,11 +108,8 @@ const register = () => {
     setTimeout(() => {
       spawned.kill('SIGKILL')
     }, 5000)
-    try {
-      spawned.send('stop')
-    } catch (e) {
-      logger.error('Can\'t send message to client: ' + e)
-    }
+    if (spawned) spawned.send('stop')
+    else logger.error('Can\'t send message to client')
   }
 
   spawned.on('message', msg => {
@@ -130,11 +127,8 @@ const heartbeat = async () => {
   const handler = (msg) => {
     if (msg === 'ping') received = true
   }
-  try {
-    spawned.send('heartbeat')
-  } catch (e) {
-    logger.error('Can\'t send heartbeat')
-  }
+  if (spawned) spawned.send('heartbeat')
+  else logger.error('Can\'t send heartbeat')
   spawned.once('message', handler)
   setTimeout(() => {
     if (!received) {
