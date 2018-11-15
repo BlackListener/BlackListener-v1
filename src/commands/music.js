@@ -10,16 +10,11 @@ const util = require('util')
 const queue = {}
 const playing = {}
 const loop = {}
-const play = (connection, url, msg, lang) => {
-  try {
-    const stream = ytdl(url, { filter : 'audioonly' })
-    loop[msg.guild.id] = {}
-    playing[msg.guild.id] = url
-    return connection.playStream(stream, { seek: 0, volume: 1 }) // oldvalue: 0.1
-  } catch (e) {
-    if (e.name === 'TypeError') msg.channel.send(f(lang.error, e))
-    logger.error(e)
-  }
+const play = (connection, url, msg) => {
+  const stream = ytdl(url, { filter : 'audioonly' })
+  loop[msg.guild.id] = {}
+  playing[msg.guild.id] = url
+  return connection.playStream(stream, { seek: 0, volume: 1 }) // oldvalue: 0.1
 }
 
 module.exports = class extends Command {
@@ -67,7 +62,7 @@ module.exports = class extends Command {
             msg.channel.send(f(lang.music.queue_added, args[2]))
             if (keyword) msg.channel.send('Search keyword: ' + keyword)
           } else {
-            play(connection, args[2], msg, lang)
+            play(connection, args[2], msg)
             msg.channel.send(f(lang.music.playing, args[2]))
             if (keyword) msg.channel.send('Search keyword: ' + keyword)
           }
@@ -75,23 +70,22 @@ module.exports = class extends Command {
           const endHandler = async () => {
             const q = queue[msg.guild.id]
             if (q && (q ? q.length : false) && !loop[msg.guild.id].enabled) { // if queue is *not* empty and not enabled loop
-              play(connection, q[0], msg, lang)
+              play(connection, q[0], msg)
               msg.channel.send(f(lang.music.playing_queue, q[0]))
               queue[msg.guild.id] = queue[msg.guild.id].slice(1)
             } else { // if queue is empty or enabled looping
               if (!loop[msg.guild.id].enabled && !loop[msg.guild.id].every) { // loop is disabled
                 msg.channel.send(lang.music.ended)
-                try {
+                if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher)
                   msg.guild.voiceConnection.dispatcher.removeListener('end', () => endHandler())
-                } catch(e){} //eslint-disable-line
               } else { // loop is enabled
                 if (loop[msg.guild.id].every) {
                   const seconds = parseInt(loop[msg.guild.id].every.replace(/\D{1,}/gm, '')) * 60
                   setTimeout(() => {
-                    play(connection, args[2], msg, lang)
+                    play(connection, args[2], msg)
                   }, seconds * 1000)
                 } else {
-                  play(connection, args[2], msg, lang)
+                  play(connection, args[2], msg)
                 }
               }
             }

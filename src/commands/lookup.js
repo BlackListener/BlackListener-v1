@@ -1,6 +1,5 @@
-const f = require('string-format')
+const Converter = require(__dirname + '/../converter.js')
 const Discord = require('discord.js')
-const logger = require(__dirname + '/../logger').getLogger('commands:lookup', 'purple')
 const data = require(__dirname + '/../data')
 const { Command } = require('../core')
 
@@ -18,43 +17,10 @@ module.exports = class extends Command {
     const arg = msg.content.replace(settings.prefix+'lookup ', '')
     if (!arg) return msg.channel.send(lang.no_args)
     const client = msg.client
-    let user
-    if (msg.mentions.users.first()) {
-      user = msg.mentions.users.first()
-    } else {
-      if (/\D/gm.test(arg)) {
-        try {
-          user = client.users.find(n => n.username === arg) || msg.guild.members.find(n => n.nickname === arg).user || msg.client.users.find(n => n.tag === arg)
-        } catch (e) {
-          logger.warn(e)
-          return msg.channel.send(f(lang.unknown, arg))
-        }
-      } else if (/\d{17,19}/.test(arg)) {
-        try {
-          user = await client.fetchUser(arg, false) || client.users.find(n => n.username === arg) || msg.guild.members.find(n => n.nickname === arg).user || msg.client.users.find(n => n.tag === arg)
-        } catch (e) {
-          logger.warn(e)
-          return msg.channel.send(f(lang.unknown, arg))
-        }
-      } else {
-        try {
-          user = client.users.find(n => n.username === arg) || msg.guild.members.find(n => n.nickname === arg).user || msg.client.users.find(n => n.tag === arg)
-        } catch (e) {
-          logger.warn(e)
-          return msg.channel.send(f(lang.unknown, arg))
-        }
-      }
-    }
-    let userConfig = {}
-    try {
-      userConfig = await data.user(user.id)
-      try {
-        if (!user) user = client.fetchUser(arg, false)
-      } catch(e) {
-        logger.warn(e)
-        return msg.channel.send(f(lang.unknown, arg))
-      }
-    } catch(e){/* ignore */}
+    let user = Converter.toUser(msg, arg)
+    if (!user) user = await client.fetchUser(arg, false).catch(() => null)
+    if (!user) return msg.channel.send(lang.invalid_args)
+    const userConfig = await data.user(user.id)
     const bannedFromServer = userConfig && userConfig.bannedFromServer ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
     const usernameChanges = userConfig && userConfig.username_changes ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
     let isBot = lang.no

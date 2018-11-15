@@ -14,7 +14,6 @@ const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require(__dirname + '/util')
-const { defaultSettings } = require(__dirname + '/contents')
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -27,14 +26,12 @@ if (argv.prefix) {
 }
 logger.info(`Default prefix: ${c.prefix}`)
 
-let s
-try {
-  s = isTravisBuild ? require(__dirname + '/travis.yml') : c
-} catch (e) {
+if (!util.exists(__dirname + '/travis.yml')) {
   logger.emerg('Specified option \'--travis-build\' but not found \'travis.yml\'')
     .emerg('Hint: secret.yml is removed. (merged to config.yml)')
   process.exit(1)
 }
+const s = isTravisBuild ? require(__dirname + '/travis.yml') : c
 const dispatcher = require(__dirname + '/dispatcher')
 
 require(__dirname + '/register')(client)
@@ -57,16 +54,8 @@ client.on('ready', async () => {
 client.on('message', async msg => {
   if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
-  try {
-    await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
-    await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
-  } catch (e) {
-    logger.error('Errored during creating directory: ' + e)
-  }
-  if ((await util.exists(`${__dirname}/../data/servers/${msg.guild.id}`)) && (!await util.exists(`${__dirname}/../data/servers/${msg.guild.id}/config.json`))) {
-    logger.debug('Creating config on: ' + msg.guild.id)
-    await util.writeJSON(`${__dirname}/../data/servers/${msg.guild.id}/config.json`, defaultSettings)
-  }
+  await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
+  await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
   const user = await data.user(msg.author.id)
   user.tag = msg.author.tag
   user.bot = msg.author.bot
@@ -127,12 +116,8 @@ client.on('message', async msg => {
 })
 
 client.on('guildMemberAdd', async member => {
-  try {
-    await mkdirp(`${__dirname}/../data/users/${member.user.id}`)
-    await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
-  } catch(e) {
-    logger.error('Errored during creating directory: ' + e)
-  }
+  await mkdirp(`${__dirname}/../data/users/${member.user.id}`)
+  await mkdirp(`${__dirname}/../data/servers/${member.guild.id}`)
   const serverSetting = await data.server(member.guild.id)
   const userSetting = await data.user(member.user.id)
   const lang = languages[serverSetting.language]

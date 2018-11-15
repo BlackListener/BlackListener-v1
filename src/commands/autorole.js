@@ -1,5 +1,5 @@
+const Converter = require(__dirname + '/../converter.js')
 const f = require('string-format')
-const logger = require(__dirname + '/../logger').getLogger('commands:autorole', 'green')
 const { Command } = require('../core')
 
 module.exports = class extends Command {
@@ -22,11 +22,9 @@ module.exports = class extends Command {
       if (/\d{18,}/.test(args[2])) {
         settings.autorole = args[2]
       } else {
-        try {
-          settings.autorole = msg.mentions.roles.first().id.toString() || msg.guild.roles.find(n => n.name === args[2]).id
-        } catch(e) {
-          msg.channel.send(lang.invalid_args); logger.warn(e)
-        }
+        const role = Converter.toRole(msg, args[2])
+        if (!role) msg.channel.send(lang.invalid_args)
+        settings.autorole = role.id
       }
       msg.channel.send(f(lang.setconfig, 'autorole'))
     } else {

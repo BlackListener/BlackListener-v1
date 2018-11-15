@@ -1,5 +1,5 @@
 const data = require(__dirname + '/../data')
-const logger = require(__dirname + '/../logger').getLogger('commands:unban', 'blue')
+// const logger = require(__dirname + '/../logger').getLogger('commands:unban', 'blue')
 const { Command } = require('../core')
 
 module.exports = class extends Command {
