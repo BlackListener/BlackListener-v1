@@ -1,4 +1,4 @@
-# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/) [![Travis-CI Build Status](https://travis-ci.com/BlackListener/BlackListener.svg?branch=master)](https://travis-ci.com/BlackListener/BlackListener) [![Jenkins Build Status](https://ci.rht0910.tk/view/all/job/BlackListener/badge/icon)](https://ci.rht0910.tk/view/all/job/BlackListener/)
+# BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/) [![Travis-CI Build Status](https://travis-ci.com/BlackListener/BlackListener.svg?branch=master)](https://travis-ci.com/BlackListener/BlackListener) \[ GitLab: [![Jenkins Build Status](https://ci.rht0910.tk/view/all/job/BlackListener/badge/icon)](https://ci.rht0910.tk/view/all/job/BlackListener/) \]
 
 Global Banning System for Discord.
 

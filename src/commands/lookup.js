@@ -23,8 +23,7 @@ module.exports = class extends Command {
     const userConfig = await data.user(user.id)
     const bannedFromServer = userConfig && userConfig.bannedFromServer ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
     const usernameChanges = userConfig && userConfig.username_changes ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
-    let isBot = lang.no
-    if (user.bot) isBot = lang.yes
+    const isBot = userConfig.bot ? lang.yes : lang.no
     const nick = (user && msg.guild.members.get(user.id)) ? msg.guild.members.get(user.id).nickname : lang.nul
     const joinedAt = user && msg.guild.members.get(user.id) && msg.guild.members.get(user.id).joinedAt ? msg.guild.members.get(user.id).joinedAt.toLocaleString() : lang.sunknown
     const embed = new Discord.RichEmbed()
