@@ -64,10 +64,12 @@ client.on('message', async msg => {
   const lang = languages[user.language || settings.language]
 
   // --- Begin of Mute
-  if (settings.mute.includes(msg.author.id) && !settings.banned && !sentmute.has(msg.author.id)) {
-    sentmute.add(msg.author.id)
+  if (settings.mute.includes(msg.author.id) && !settings.banned) {
+    if (!sentmute.has(msg.author.id)) {
+      msg.author.send(lang.youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
+      sentmute.add(msg.author.id)
+    }
     msg.delete(0)
-    msg.author.send(lang.youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
   }
   // --- End of Mute
   if (!msg.author.bot && !msg.system) dispatcher(settings, msg, lang)
