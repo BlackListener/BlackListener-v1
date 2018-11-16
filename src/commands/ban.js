@@ -21,7 +21,7 @@ module.exports = class extends Command {
   async run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     const client = msg.client
-    let bans = await data.bans()
+    const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800 }) // 2018/1/1 0:00:00
     const generate = () => {
       return intformat(flakeIdGen.next(), 'dec')
@@ -53,16 +53,15 @@ module.exports = class extends Command {
       target_data.bannedFromUser.push(msg.author.id)
       target_data.probes.push(attach)
       target_data.reasons.push(args[2])
-      const bandata = new Discord.Collection(bans)
       const id = generate()
-      bandata.set(id, {
+      const bansdata = {
         id: target.id,
         timestamp: Date.now(),
         guildId: msg.guild.id,
         executedUserId: msg.author.id,
         lostReps: 1,
-      })
-      bans = bandata.toJSON()
+      }
+      bans[id] = bansdata
       target_data.rep = target_data.rep + 1
       await Promise.all(msg.client.guilds.map(async guild => {
         const { banRep } = await data.server(guild.id)
