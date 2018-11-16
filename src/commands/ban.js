@@ -23,9 +23,7 @@ module.exports = class extends Command {
     const client = msg.client
     const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
-    const generate = () => {
-      return intformat(flakeIdGen.next(), 'dec')
-    }
+    const generate = () => intformat(flakeIdGen.next(), 'dec')
     if (!args[1] || args[1] === '') {
       const bansList = await Promise.all(bans.map(async (id) => {
         const user = await client.fetchUser(id, false).catch(() => lang.failed_to_get)

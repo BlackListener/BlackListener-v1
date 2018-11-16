@@ -1,7 +1,7 @@
 const config = require(__dirname + '/../config.yml')
 const ytdl = require('ytdl-core')
 const logger = require(__dirname + '/../logger').getLogger('commands:music')
-const isNumber = (n) => { return !isNaN(parseFloat(n)) && isFinite(n) }
+const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
 const f = require('string-format')
 const { Command } = require('../core')
 const YouTube = require('youtube-node')
@@ -77,7 +77,7 @@ module.exports = class extends Command {
               if (!loop[msg.guild.id].enabled && !loop[msg.guild.id].every) { // loop is disabled
                 msg.channel.send(lang.music.ended)
                 if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher)
-                  msg.guild.voiceConnection.dispatcher.removeListener('end', () => endHandler())
+                  msg.guild.voiceConnection.dispatcher.removeListener('end', endHandler)
               } else { // loop is enabled
                 if (loop[msg.guild.id].every) {
                   const seconds = parseInt(loop[msg.guild.id].every.replace(/\D{1,}/gm, '')) * 60
@@ -90,9 +90,7 @@ module.exports = class extends Command {
               }
             }
           }
-          const register = () =>
-            msg.guild.voiceConnection.dispatcher.on('end', () => endHandler())
-          register()
+          msg.guild.voiceConnection.dispatcher.on('end', endHandler)
         })
     } else if (args[1] === 'volume') {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {

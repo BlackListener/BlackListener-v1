@@ -13,15 +13,11 @@ module.exports = class extends Command {
 
   async run(msg, settings, lang) {
     const client = msg.client
-    let loadavg = '利用不可'
+    const loadavg = isWindows ? '利用不可' : Math.floor(os.loadavg()[0] * 100) / 100
     const invite = s.inviteme
-    if (!isWindows) {
-      loadavg = Math.floor(os.loadavg()[0] * 100) / 100
-    }
-    let owner = ''
-    s.owners.forEach(aowner => {
+    const owner = s.owners.map(aowner => {
       const user = client.users.get(aowner)
-      if (user.tag && user.id) owner += `${user.tag} (${user.id})\n`
+      return `${user.tag} (${user.id})\n`
     })
     msg.channel.send(new Discord.RichEmbed()
       .setTitle('Bot info')

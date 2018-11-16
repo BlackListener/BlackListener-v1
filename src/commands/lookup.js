@@ -27,8 +27,8 @@ module.exports = class extends Command {
     const bannedFromServer = userConfig && userConfig.bannedFromServer ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
     const usernameChanges = userConfig && userConfig.username_changes ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
     const isBot = userConfig.bot ? lang.yes : lang.no
-    const nick = (user && msg.guild.members.get(user.id)) ? msg.guild.members.get(user.id).nickname : lang.nul
-    const joinedAt = user && msg.guild.members.get(user.id) && msg.guild.members.get(user.id).joinedAt ? msg.guild.members.get(user.id).joinedAt.toLocaleString() : lang.sunknown
+    const nick = (user && msg.guild.members.has(user.id)) ? msg.guild.members.get(user.id).nickname : lang.nul
+    const joinedAt = user && msg.guild.members.has(user.id) && msg.guild.members.has(user.id).joinedAt ? msg.guild.members.get(user.id).joinedAt.toLocaleString() : lang.sunknown
     const embed = new Discord.RichEmbed()
       .setTitle(lang.lookup.title)
       .setColor([0,255,0])

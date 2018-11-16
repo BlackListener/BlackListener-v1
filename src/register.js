@@ -106,8 +106,8 @@ module.exports = function(client) {
     if (error.name === 'DiscordAPIError') return true
     if ((error.message || '').includes('ENOTFOUND')) return
     const { report, file } = await makeReport(client, error, 'error')
-    client.readyAt ? client.channels.get('484357084037513216').send(codeblock(report))
-      .then(() => logger.info('Error report has been sent!')) : true
+    if (client.readyAt) client.channels.get('484357084037513216').send(codeblock(report))
+      .then(() => logger.info('Error report has been sent!'))
     logger.error(`Unhandled Rejection: ${error}`)
     logger.error(error.stack)
     fs.writeFile(file, report, 'utf8').then(() => {

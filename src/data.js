@@ -1,6 +1,6 @@
 const util = require(__dirname + '/util')
 const {
-  defaultSettings,
+  defaultServer,
   defaultUser,
   defaultBans,
 } = require(__dirname + '/contents')
@@ -39,7 +39,7 @@ async function dataStore(id, type, _default) {
 
 module.exports = {
   async server(id) {
-    return await dataStore(id, 'server', defaultSettings)
+    return await dataStore(id, 'server', defaultServer)
   },
   async user(id) {
     return await dataStore(id, 'user', defaultUser)

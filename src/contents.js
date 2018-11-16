@@ -2,7 +2,7 @@ const config = require('./config.yml')
 const argv = require('./argument_parser')(process.argv.slice(2))
 
 module.exports = {
-  defaultSettings: {
+  defaultServer: {
     prefix: argv.prefix || config.prefix,
     language: config.lang,
     notifyRep: config.notifyRep,

@@ -131,7 +131,7 @@ class Logger {
   /**
    * Outputs debug level message.
    * Just debug message.
-   * 
+   *
    * @example logger.debug("foo")
    *
    *

@@ -20,7 +20,6 @@ module.exports = class extends Command {
   async run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     if (settings.disable_purge) return msg.channel.send(lang.disabled_purge)
-    let messages
     if (args[1] === '' || !args[1] || args[1] === 'all') {
       const clear = () => {
         msg.channel.fetchMessages()
@@ -60,7 +59,7 @@ module.exports = class extends Command {
       if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
         msg.channel.send(lang.outofrange)
       }
-      messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
+      const messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
       msg.channel.bulkDelete(messages)
         .catch(e => logger.error(e))
     } else {
