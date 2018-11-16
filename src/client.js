@@ -14,6 +14,7 @@ const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require(__dirname + '/util')
+const sentmute = []
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -52,58 +53,24 @@ client.on('ready', async () => {
 })
 
 client.on('message', async msg => {
-  if (!msg.guild && msg.author.id !== client.user.id) msg.channel.send('Currently not supported DM')
   if (!msg.guild) return
-  await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
-  await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
+  const settings = await data.server(msg.guild.id)
   const user = await data.user(msg.author.id)
   user.tag = msg.author.tag
   user.bot = msg.author.bot
   user.createdTimestamp = msg.author.createdTimestamp
-  const settings = await data.server(msg.guild.id)
   if (msg.channel.id !== settings.excludeLogging) log.messageLog(msg)
 
   const lang = languages[user.language || settings.language]
 
   // --- Begin of Mute
-  if (settings.mute.includes(msg.author.id) && !settings.banned) {
+  if (settings.mute.includes(msg.author.id) && !settings.banned && !sentmute[msg.author.id]) {
+    sentmute.push(msg.author.id)
     msg.delete(0)
-    msg.author.send(lang.youaremuted)
+    msg.author.send(lang.youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
   }
   // --- End of Mute
-  if (!msg.author.bot) {
-    if (msg.system || msg.author.bot) return
-
-    /* --- Begin of Anti-spam
-    try {
-      if (settings.antispam && !settings.ignoredChannels.includes(msg.channel.id) && !msg.author.bot) {
-        const tried = antispam[msg.author.id] ? antispam[msg.author.id]['tried'] : 0
-        let blocked = false
-        let timer = null
-        if (tried === 0) {
-          clearTimeout(timer)
-        }
-        if (antispam[msg.author.id]) timer = setTimeout(() => antispam[msg.author.id] = null, 5000)
-        if (tried >= 4) blocked = true
-        delete antispam[msg.author.id]
-        Object.assign(antispam, {[msg.author.id]: { blocked: blocked, tried: tried+1, timeout: timer } })
-        if (blocked) {
-          if(msg.deletable) msg.delete()
-          if (tried === 4) msg.channel.send(f(lang.includes_spam, settings.prefix))
-          return
-        }
-        if (/(\S.*?)\1{14,}/gm.test(msg.content)) {
-          if (settings.banned) return
-          msg.delete(0)
-          msg.channel.send(lang.includes_spam)
-        }
-      }
-    } catch (e) {
-      logger.warn('Error while processing anti-spam.')
-    }
-    */ // --- End of Anti-spam
-    dispatcher(settings, msg, lang)
-  }
+  if (!msg.author.bot && !msg.system) dispatcher(settings, msg, lang)
 })
 
 client.on('guildMemberAdd', async member => {
@@ -142,7 +109,6 @@ client.on('messageUpdate', async (old, msg) => {
   if (old.content === msg.content) return
   if (msg.channel.id !== settings.excludeLogging) {
     await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
-    await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
     log.editedLog(old, msg)
   }
 })

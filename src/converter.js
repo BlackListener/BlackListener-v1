@@ -1,4 +1,3 @@
-const client = require(__dirname + '/client')
 const Discord = require('discord.js')
 
 /**
@@ -22,8 +21,8 @@ class Converter {
    */
   static toUser(msg, user, fallback) {
     if (msg.mentions.users.size) return msg.mentions.users.first()
-    if (client.users.has(user)) return client.users.get(user)
-    if (client.users.find(u => u.username === user)) return client.users.find(u => u.username === user)
+    if (msg.client.users.has(user)) return msg.client.users.get(user)
+    if (msg.client.users.find(u => u.username === user)) return msg.client.users.find(u => u.username === user)
     if (fallback) return fallback
     return null
   }
@@ -46,8 +45,8 @@ class Converter {
   static toMember(msg, member, fallback) {
     if (!msg.guild) return null
     if (msg.mentions.members.size) return msg.mentions.members.first()
-    if (msg.guild.members.has(member)) return client.members.get(member)
-    if (msg.guild.members.find(u => u.username === member)) return client.members.find(u => u.username === member)
+    if (msg.guild.members.has(member)) return msg.client.members.get(member)
+    if (msg.guild.members.find(u => u.username === member)) return msg.client.members.find(u => u.username === member)
     if (fallback) return fallback
     return null
   }
@@ -70,8 +69,8 @@ class Converter {
   static toRole(msg, member, fallback) {
     if (!msg.guild) return null
     if (msg.mentions.roles.size) return msg.mentions.roles.first()
-    if (msg.guild.roles.has(member)) return client.roles.get(member)
-    if (msg.guild.roles.find(r => r.username === member)) return client.roles.find(r => r.username === member)
+    if (msg.guild.roles.has(member)) return msg.client.roles.get(member)
+    if (msg.guild.roles.find(r => r.username === member)) return msg.client.roles.find(r => r.username === member)
     if (fallback) return fallback
     return null
   }
@@ -93,8 +92,8 @@ class Converter {
     */
   static toChannel(msg, channel, fallback) {
     if (msg.mentions.channels.size) return msg.mentions.channels.first()
-    if (msg.guild.channels.has(channel)) return client.channels.get(channel)
-    if (msg.guild.channels.find(c => c.name === channel)) return client.channels.find(c => c.name === channel)
+    if (msg.guild.channels.has(channel)) return msg.client.channels.get(channel)
+    if (msg.guild.channels.find(c => c.name === channel)) return msg.client.channels.find(c => c.name === channel)
     if (fallback) return fallback
     return null
   }

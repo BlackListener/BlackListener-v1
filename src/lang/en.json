@@ -214,6 +214,7 @@
   "ban": {
     "cannot_ban": "Can't ban the user!",
     "cannot_ban_myself": "Can't ban myself!",
-    "cannot_ban_yourself": "Can't ban yourself!"
+    "cannot_ban_yourself": "Can't ban yourself!",
+    "cannot_ban_bot_owners": "Can't ban bot owners!"
   }
 }

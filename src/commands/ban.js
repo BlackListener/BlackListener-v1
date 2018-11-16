@@ -3,6 +3,9 @@ const data = require(__dirname + '/../data')
 const logger = require(__dirname + '/../logger').getLogger('commands:ban', 'blue')
 const Discord = require('discord.js')
 const { Command } = require('../core')
+const config = require(__dirname + '/../config.yml')
+const intformat = require('biguint-format')
+const FlakeId = require('flake-idgen')
 
 module.exports = class extends Command {
   constructor() {
@@ -18,7 +21,11 @@ module.exports = class extends Command {
   async run(msg, settings, lang) {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     const client = msg.client
-    const bans = await data.bans()
+    let bans = await data.bans()
+    const flakeIdGen = new FlakeId({ epoch: 1514764800 }) // 2018/1/1 0:00:00
+    const generate = () => {
+      return intformat(flakeIdGen.next(), 'dec')
+    }
     if (!args[1] || args[1] === '') {
       const bansList = await Promise.all(bans.map(async (id) => {
         const user = await client.fetchUser(id, false).catch(() => lang.failed_to_get)
@@ -38,6 +45,7 @@ module.exports = class extends Command {
       const attach = msg.attachments.first().url
       if (client.user.id === target.id) return msg.channel.send(lang.ban.cannot_ban_myself)
       if (target.id === msg.author.id) return msg.channel.send(lang.ban.cannot_ban_yourself)
+      if (config.owners.includes(target.id)) return msg.channel.send(lang.ban.cannot_ban_bot_owners)
       const member = msg.guild.member(target)
       if (!member && member.bannable) return msg.channel.send(lang.ban.cannot_ban)
       target_data.bannedFromServerOwner.push(msg.guild.ownerID)
@@ -45,7 +53,16 @@ module.exports = class extends Command {
       target_data.bannedFromUser.push(msg.author.id)
       target_data.probes.push(attach)
       target_data.reasons.push(args[2])
-      bans.push(target.id)
+      const bandata = new Discord.Collection(bans)
+      const id = generate()
+      bandata.set(id, {
+        id: target.id,
+        timestamp: Date.now(),
+        guildId: msg.guild.id,
+        executedUserId: msg.author.id,
+        lostReps: 1,
+      })
+      bans = bandata.toJSON()
       target_data.rep = target_data.rep + 1
       await Promise.all(msg.client.guilds.map(async guild => {
         const { banRep } = await data.server(guild.id)
