@@ -21,6 +21,9 @@ module.exports = class extends Command {
     if (!user) user = await client.fetchUser(arg, false).catch(() => null)
     if (!user) return msg.channel.send(lang.invalid_args)
     const userConfig = await data.user(user.id)
+    userConfig.tag = user.tag
+    userConfig.createdTimestamp = user.createdTimestamp
+    userConfig.bot = user.bot
     const bannedFromServer = userConfig && userConfig.bannedFromServer ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
     const usernameChanges = userConfig && userConfig.username_changes ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
     const isBot = userConfig.bot ? lang.yes : lang.no
