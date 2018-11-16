@@ -22,7 +22,7 @@ module.exports = class extends Command {
     const args = msg.content.replace(settings.prefix, '').split(' ')
     const client = msg.client
     const bans = await data.bans()
-    const flakeIdGen = new FlakeId({ epoch: 1514764800 }) // 2018/1/1 0:00:00
+    const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => {
       return intformat(flakeIdGen.next(), 'dec')
     }
