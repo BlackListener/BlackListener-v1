@@ -14,7 +14,7 @@ const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require(__dirname + '/util')
-const sentmute = []
+const sentmute = new Set()
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -64,8 +64,8 @@ client.on('message', async msg => {
   const lang = languages[user.language || settings.language]
 
   // --- Begin of Mute
-  if (settings.mute.includes(msg.author.id) && !settings.banned && !sentmute[msg.author.id]) {
-    sentmute.push(msg.author.id)
+  if (settings.mute.includes(msg.author.id) && !settings.banned && !sentmute.has(msg.author.id)) {
+    sentmute.add(msg.author.id)
     msg.delete(0)
     msg.author.send(lang.youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
   }
