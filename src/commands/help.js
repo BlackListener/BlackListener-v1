@@ -15,9 +15,8 @@ module.exports = class extends Command {
     super('help', opts)
   }
 
-  async run(msg, settings, lang) {
+  async run(msg, settings, lang, args) {
     const {commands} = require(__dirname + '/../commands')
-    const args = msg.content.replace(settings.prefix, '').split(' ')
     if (args[1]) {
       const langcommands = languages.commands[settings.language]
       if (!commands[args[1]]) return msg.channel.send(f(lang.no_command, args[1]))

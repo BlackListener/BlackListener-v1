@@ -13,8 +13,7 @@ module.exports = class extends Command {
     super('autorole', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     if (args[1] === 'remove') {
       settings.autorole = null
       msg.channel.send(f(lang.setconfig, 'autorole'))

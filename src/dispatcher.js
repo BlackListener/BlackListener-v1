@@ -11,7 +11,8 @@ async function runCommand(command, settings, msg, lang) {
   if (!command.isAllowed(msg, s.owners)) return msg.channel.send(lang.udonthaveperm)
   logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
   try { // eslint-disable-line
-    await command.run(msg, settings, lang)
+    const args = msg.content.replace(settings.prefix, '').split(' ')
+    await command.run(msg, settings, lang, args)
   } catch (e) {
     await msg.channel.send(f(lang.error_occurred, command.name))
     logger.info(f(lang.error_occurred, command.name))

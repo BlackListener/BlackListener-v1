@@ -12,8 +12,7 @@ module.exports = class extends Command {
     super('togglepurge', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     if (args[1] === 'enable') {
       settings.disable_purge = false
     } else if (args[1] === 'disable') {

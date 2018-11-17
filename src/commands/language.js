@@ -14,8 +14,7 @@ module.exports = class extends Command {
     super('language', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     if (!args[1] || args[1] === 'help') {
       const embed = new Discord.RichEmbed()
         .setTitle(f(lang.availablelang, settings.language))

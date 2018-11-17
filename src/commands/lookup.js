@@ -13,9 +13,9 @@ module.exports = class extends Command {
     super('lookup', opts)
   }
 
-  async run(msg, settings, lang) {
-    const arg = msg.content.replace(settings.prefix+'lookup ', '')
-    if (!arg) return msg.channel.send(lang.no_args)
+  async run(msg, settings, lang, args) {
+    if (!args[1]) return msg.channel.send(lang.no_args)
+    const arg = args.slice(1).join('\n')
     const client = msg.client
     let user = Converter.toUser(msg, arg)
     if (!user) user = await client.fetchUser(arg, false).catch(() => null)

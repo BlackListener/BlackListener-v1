@@ -12,8 +12,7 @@ module.exports = class extends Command {
     super('instantkick', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     if (!args[1]) return msg.channel.send(lang.invalid_args)
     const user = Converter.toUser(msg, args[1])
     msg.guild.members.get(user.id).kick('Instant Kick by BlackListener by ' + msg.author.tag)

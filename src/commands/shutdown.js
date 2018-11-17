@@ -18,8 +18,7 @@ module.exports = class extends Command {
     return owners.includes(msg.author.id)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     const client = msg.client
     if (~args.indexOf('-f')) {
       if (/-(g|)f(g|)/gm.test(args[1])) await msg.channel.send(':warning: Can\'t use graceful parameter; already set force option.')

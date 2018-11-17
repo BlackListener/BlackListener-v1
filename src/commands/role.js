@@ -14,8 +14,7 @@ module.exports = class extends Command {
     super('role', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     const role = Converter.toRole(args[1])
     const member = Converter.toMember(msg, args[2])
     const build = (title, message) => {

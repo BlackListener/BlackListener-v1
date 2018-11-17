@@ -20,8 +20,7 @@ module.exports = class extends Command {
     super('userconf', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     const opts = argument_parser(args.slice(1))
     if (opts.target) {
       if (!msg.member.hasPermission(8)) return msg.channel.send(':x: Administrators can only use this option.')

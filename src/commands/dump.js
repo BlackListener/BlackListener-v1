@@ -19,8 +19,7 @@ module.exports = class extends Command {
     super('dump', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     const url = config.dump_url
     const client = msg.client
     let list

@@ -15,8 +15,7 @@ module.exports = class extends Command {
     super('setprefix', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     if (/\s/gm.test(args[1]) || !args[1]) {
       msg.channel.send(lang.cannotspace)
     } else {

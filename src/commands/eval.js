@@ -16,8 +16,7 @@ module.exports = class extends Command {
     return owners.includes(msg.author.id)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     const opts = argument_parser(args.slice(1))
     if (msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
     const commandcut = args.slice(Object.values(opts).length + 1).join(' ')

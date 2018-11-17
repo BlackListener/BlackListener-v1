@@ -11,8 +11,7 @@ module.exports = class extends Command {
     super('releases', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     const versions = [
       '1.1',
       '1.1.1',

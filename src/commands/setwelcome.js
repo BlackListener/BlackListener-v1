@@ -13,8 +13,7 @@ module.exports = class extends Command {
     super('setwelcome', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     if (args[1] === 'message') {
       if (!args[2]) return msg.channel.send(lang.invalid_args)
       const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)

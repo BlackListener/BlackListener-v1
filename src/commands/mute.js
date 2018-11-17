@@ -14,8 +14,7 @@ module.exports = class extends Command {
     super('mute', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     const client = msg.client
     if (!args[1]) {
       const mutes = settings.mute.map((data) => {

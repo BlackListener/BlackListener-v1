@@ -13,8 +13,7 @@ module.exports = class extends Command {
     super('setlog', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     const channel = Converter.toTextChannel(msg, args[1])
     if (!channel) return msg.channel.send(lang.invalid_args)
     const id = channel.id

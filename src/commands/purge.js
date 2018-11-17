@@ -17,8 +17,7 @@ module.exports = class extends Command {
     super('purge', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     if (settings.disable_purge) return msg.channel.send(lang.disabled_purge)
     if (args[1] === '' || !args[1] || args[1] === 'all') {
       const clear = () => {

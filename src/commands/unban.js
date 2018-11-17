@@ -14,8 +14,7 @@ module.exports = class extends Command {
     super('unban', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     const target = Converter.toUser(msg, args[1])
     if (!target) return msg.channel.send(lang.invalid_user)
     const bans = await data.bans()

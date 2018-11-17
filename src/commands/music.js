@@ -37,10 +37,9 @@ module.exports = class extends Command {
     super('music', opts)
   }
 
-  async run(msg, settings, lang) {
+  async run(msg, settings, lang, args) {
     if (!config.patron) { return msg.channel.send(lang.not_patron) }
     if (!msg.member.voiceChannel) return msg.channel.send(lang.music.not_joined_vc)
-    const args = msg.content.replace(settings.prefix, '').split(' ')
     loop[msg.guild.id] = {} // need initialize!
     if (args[1] === 'join') {
       msg.member.voiceChannel.join().then(vc => msg.channel.send(f(lang.music.joined_vc, vc.channel.name))).catch(e => logger.error(e))

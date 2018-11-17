@@ -15,8 +15,7 @@ module.exports = class extends Command {
     super('setbanrep', opts)
   }
 
-  run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  run(msg, settings, lang, args) {
     const n = parseInt(args[1], 10)
     const min = 0
     const max = 10

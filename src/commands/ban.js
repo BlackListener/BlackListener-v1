@@ -18,8 +18,7 @@ module.exports = class extends Command {
     super('ban', opts)
   }
 
-  async run(msg, settings, lang) {
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+  async run(msg, settings, lang, args) {
     const client = msg.client
     const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
