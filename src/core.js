@@ -19,8 +19,16 @@ class Command {
    * @param {CommandOptions} options options
    * @constructor
    */
-  constructor(name, options = { alias: [], args: [], permission: 0, enabled: true }) {
+  constructor(name, options = {}) {
     this.name = name
+    
+    options = Object.assign({
+      alias: [],
+      args: [],
+      permission: 0,
+      enabled: true,
+    }, options)
+
     this.enabled = options.enabled
     this.alias = options.alias
     this.args = options.args
