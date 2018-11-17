@@ -15,7 +15,7 @@ module.exports = class extends Command {
 
   async run(msg, settings, lang, args) {
     if (!args[1]) return msg.channel.send(lang.no_args)
-    const arg = args.slice(1).join('\n')
+    const arg = args.slice(1).join(' ')
     const client = msg.client
     let user = Converter.toUser(msg, arg)
     if (!user) user = await client.fetchUser(arg, false).catch(() => null)

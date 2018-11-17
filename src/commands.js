@@ -10,7 +10,6 @@ function setCommand(file, reload) {
   const rawcommand = require(`${__dirname}/commands/${file}`)
   if (typeof rawcommand != 'function') return
   const command = new rawcommand()
-  logger.info('Loading command: ' + command.name)
   if (rawcommand instanceof Command) return
   commands[command.name] = command
   for (const alias of command.alias) {
