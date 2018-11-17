@@ -10,7 +10,7 @@ server.on('connection', (socket) => {
   logger.info('Packet received, Shutting down!')
   socket.end()
   server.close()
-  client.destroy()
+  process.emit('message', null)
 })
 
 server.on('close', () => logger.info('Server Closed'))

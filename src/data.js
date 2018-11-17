@@ -1,25 +1,25 @@
-const util = require(__dirname + '/util')
 const {
   defaultServer,
   defaultUser,
   defaultBans,
 } = require(__dirname + '/contents')
 const DeepProxy = require('proxy-deep')
-const mkdirp = require('mkdirp-promise')
+const MongoDB = require(__dirname + '/db') //eslint-disable-line
 
-const path = {
-  user: id => `${__dirname}/../data/users/${id}/config.json`,
-  server: id => `${__dirname}/../data/servers/${id}/config.json`,
-  bans: () => __dirname + '/../data/bans.json',
-}
+/**
+ * @type {MongoDB}
+ */
+let mongo
 
 async function dataStore(id, type, _default) {
-  if (id !== '') {
-    if (type === 'user') await mkdirp(`${__dirname}/../data/users/${id}`)
-    if (type === 'server') await mkdirp(`${__dirname}/../data/servers/${id}`)
+  let collection
+  switch(type) {
+    case 'bans': collection = 'bans'; break
+    case 'server': collection = 'servers'; break
+    case 'user': collection = 'users'; break
   }
-  const json = await util.readJSON(path[type](id), {})
-  const data = Object.assign(_default, json)
+  const rawdata = await mongo.get(collection, { id: id })
+  const data = Object.assign(_default, rawdata)
   return new DeepProxy(data, {
     get(target, key, receiver) {
       const val = Reflect.get(target, key, receiver)
@@ -31,7 +31,7 @@ async function dataStore(id, type, _default) {
     },
     set(target, key, value, receiver) {
       Reflect.set(target, key, value, receiver)
-      util.writeJSON(path[type](id), this.rootTarget)
+      mongo.updateOne(collection, { id: id }, { [id]: this.rootTarget })
       return true
     },
   })
@@ -46,5 +46,8 @@ module.exports = {
   },
   async bans() {
     return await dataStore('', 'bans', defaultBans)
+  },
+  config(db) {
+    mongo = db
   },
 }

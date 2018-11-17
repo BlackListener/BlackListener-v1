@@ -44,3 +44,8 @@ youtube_apikey: Your YouTube Data API key.
 
 # DO NOT EDIT CONFIG VERSION ANYWAY.
 config_version: '1.0.1'
+
+# MongoDB Settings
+db_host: '127.0.0.1'
+db_port: '27017'
+db_name: 'blacklistener'
