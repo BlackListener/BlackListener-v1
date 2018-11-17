@@ -150,7 +150,7 @@ module.exports = class extends Command {
       const queues = queue[msg.guild.id] ? queue[msg.guild.id].map((e, i) => `${i}: ${e}`) : []
       if (queues.length) msg.channel.send(queues.join('\n'))
     } else if (args[1] === 'status') {
-      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed && playing[msg.guild.id]) msg.channel.send(f(lang.music.now_playing, this.playing[msg.guild.id]))
+      if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed && playing[msg.guild.id]) msg.channel.send(f(lang.music.now_playing, playing[msg.guild.id]))
       else msg.channel.send(lang.music.not_playing)
     } else msg.channel.send(lang.invalid_args)
   }
