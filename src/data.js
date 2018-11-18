@@ -4,21 +4,15 @@ const {
   defaultBans,
 } = require(__dirname + '/contents')
 const DeepProxy = require('proxy-deep')
-const MongoDB = require('./db') //eslint-disable-line
+const MongoDB = require('./db')
 
 /**
  * @type {MongoDB}
  */
-let mongo
+const db = new MongoDB()
 
-async function dataStore(id, type, _default) {
-  let collection
-  switch(type) {
-    case 'bans': collection = 'bans'; break
-    case 'server': collection = 'servers'; break
-    case 'user': collection = 'users'; break
-  }
-  const rawdata = await mongo.get(collection, { id: id })
+async function dataStore(id, collection, _default) {
+  const rawdata = await db.get(collection, { id: id })
   const data = Object.assign(_default, rawdata)
   return new DeepProxy(data, {
     get(target, key, receiver) {
@@ -31,7 +25,7 @@ async function dataStore(id, type, _default) {
     },
     set(target, key, value, receiver) {
       Reflect.set(target, key, value, receiver)
-      mongo.updateOne(collection, { id: id }, { [id]: this.rootTarget }, null, { upsert: true })
+      db.updateOne(collection, { id: id }, { [id]: this.rootTarget }, null, { upsert: true })
       return true
     },
   })
@@ -39,15 +33,14 @@ async function dataStore(id, type, _default) {
 
 module.exports = {
   async server(id) {
-    return await dataStore(id, 'server', defaultServer)
+    return await dataStore(id, 'servers', defaultServer)
   },
   async user(id) {
-    return await dataStore(id, 'user', defaultUser)
+    return await dataStore(id, 'users', defaultUser)
   },
   async bans() {
     return await dataStore('', 'bans', defaultBans)
   },
-  config(db) {
-    mongo = db
-  },
 }
+
+process.on('beforeExit', () => db.close())
