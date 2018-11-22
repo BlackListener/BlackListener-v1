@@ -1,18 +1,6 @@
 {
   "help": {
     "title": "Common Commands [{0}]",
-    "setprefix": "Set prefix.",
-    "ban": "Global Ban. User will be added a reputation.",
-    "unban": "Revert a Ban. User will be removed a reputation.",
-    "language": "Change language. [ja/en]",
-    "setnotifyrep": "Set notification level. <0...10>",
-    "setbanrep": "Set banning level. <0...10>",
-    "antispam": "Settings of Antispam",
-    "dump": "Write all guilds (<= default) to file.",
-    "invite": "Create invite link at specified server.",
-    "role": "Set role and unset role from user.",
-    "autorole": "Set up to automatically assign a position at the time of participation.",
-    "image": "Displays NSFW images.",
     "others": "Help of other commands,",
     "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html) (__Note: Outdated some data.__)."
   },
