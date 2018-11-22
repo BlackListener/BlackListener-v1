@@ -7,7 +7,7 @@ module.exports = class extends Command {
   constructor() {
     const opts = {
       args: [
-        'ISO 639-1 Language Code(en, ja, and more)',
+        '[en|ja]',
       ],
       permission: 8,
     }
