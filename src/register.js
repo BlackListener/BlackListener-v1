@@ -38,7 +38,6 @@ ${error.stack}
 
     Launched in PID: ${process.pid}
 
-    Remote control: ${args.rcon ? 'Enabled' : 'Disabled'}
     Custom Prefix: ${args.prefix || 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
@@ -87,7 +86,6 @@ module.exports = function(client) {
     logger.info(`Disconnected from Websocket (${count}ms).`)
     if (count === 0)
       logger.fatal('May wrong your bot token, Is bot token has changed or Base64 encoded?')
-        .info('Or are you attempted remote shutdown?')
     process.exit()
   })
 

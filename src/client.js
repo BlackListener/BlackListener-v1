@@ -165,16 +165,6 @@ if (!c.repl.disable || argv.repl === true) {
   } else { logger.info('Disabled REPL') }
 } else { logger.warn('Disabled REPL because you\'re set \'disablerepl\' as \'true\' in config.yml.') }
 
-if (argv.rcon) {
-  logger.warn('Remote control is enabled.')
-    .warn('Be careful for unwanted shutdown! (Use firewall to refuse from attack)')
-    .info('Listener will be startup with 5123 port.')
-  require('./rcon')
-} else {
-  logger.info('Remote control is disabled.')
-    .info('If you wish to enable remote control, please add argument: \'--enable-rcon\'. (Not recommended for security reasons)')
-}
-
 logger.info('Logging in...')
 if (!s.token) {
   logger.emerg('Bot token is not set.')

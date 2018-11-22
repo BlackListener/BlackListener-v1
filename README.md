@@ -14,11 +14,8 @@ Do not edit src/lang files directly, managed by Crowdin(but can edit English if 
 
 - You can change default prefix without editing config, and other things!
 - If you set ``--prefix`` as `a:`, BlackListener will be start with changed default prefix, `a:`.
-- If you set ``--enable-rcon``, Enable remote control feature(Remote shutdown). It is not secure, we **highly** recommend not enable this feature.
-  - Listener will start with port: 5123
-  - You can remote shutdown by run ``node remote_shutdown.js``. (Target: 127.0.0.1, Port: 5123)
 - ``--{enable|disable}-repl`` will disable or enable REPL.
-- Start with both options: ``node index.js --prefix=a: --enable-rcon --disable-repl``
+- Start with both options: ``node index.js --prefix=a: --disable-repl``
 
 ## Common Commands
 
