@@ -5,7 +5,6 @@
     "athere": "[説明書](http://docs.blacklistener.tk/ja/latest/commands.html) を見てください。 (__注意:いくつかのデータは古いです。__)"
   },
   "commands": {
-    "antispam": "アンチスパムの設定をします。",
     "autorole": "参加時に自動で役職を付与する設定をします。",
     "ban": "BANされているユーザー一覧を表示、またはユーザーをBANします。",
     "dump": "ユーザー、絵文字、チャンネル、メッセージをファイルに出力します。",
@@ -92,26 +91,6 @@
   "no_args": ":x: 引数が足りません。",
   "invalid_args": ":x: 引数が正しくありません。",
   "autobanned": "サーバー {2} ({3})から自動BANしました: {0} ({1})",
-  "antispam": {
-    "description": "アンチスパムの設定 [現在: {0}]",
-    "toggle": "アンチスパムをトグルします。",
-    "disable": "アンチスパムを無効化します。",
-    "disabled": "アンチスパムを無効化しました。",
-    "enable": "アンチスパムを有効化します。",
-    "enabled": "アンチスパムを有効化しました。",
-    "ignore": "チャンネルのアンチスパムの切り替えをします。",
-    "ignore_disabled": "指定されたチャンネルのアンチスパムを無効化しました。",
-    "ignore_enabled": "指定されたチャンネルのアンチスパムを有効化しました。",
-    "status": "ステータスを表示します。",
-    "status2": "ステータス: {0}",
-    "disabled_channels": "無効なチャンネル一覧:\n{0}",
-    "blacklist": {
-      "add": "正規表現をブラックリストに登録します。",
-      "remove": "正規表現をブラックリストから削除します。",
-      "list": "ブラックリストに登録された正規表現を一覧で表示します。"
-    }
-  },
-  "includes_spam": ":x: スパムを削除しました。 (`{0}antispam disable` で無効化できます)",
   "no_command": "`{0}{1}` はBlackListenerコマンドではありません。",
   "didyoumean": "これはもしかして？\n{0}",
   "error": "処理中のエラー: ``{0}``",
@@ -180,8 +159,6 @@
     "language": "言語",
     "notifyRep": "オーナーに通知する評価値",
     "banRep": "BANする評価値",
-    "antispam": "アンチスパム",
-    "ignoredChannels": "アンチスパムを無効化するチャンネル",
     "banned": "サーバーがBANされているか",
     "disable_purge": "パージ機能は無効か",
     "autorole": "自動役職",

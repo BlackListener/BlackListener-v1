@@ -5,7 +5,6 @@
     "athere": "Please see [Documentation](http://docs.blacklistener.tk/en/latest/commands.html) (__Note: Outdated some data.__)."
   },
   "commands": {
-    "antispam": "Settings of Antispam.",
     "autorole": "Settings of auto role.",
     "ban": "List of Banned users or BAN some users",
     "dump": "Output to file, users, emojis, channels, messages.",
@@ -92,26 +91,6 @@
   "no_args": ":x: Missing an arguments.",
   "invalid_args": ":x: Invalid arguments.",
   "autobanned": "Auto banned user: {0} ({1}) from {2}({3})",
-  "antispam": {
-    "description": "AntiSpam Settings [Current: {0}]",
-    "toggle": "Toggles Anti-spam.",
-    "disable": "Disables Anti-spam.",
-    "disabled": "Disabled Anti-spam.",
-    "enable": "Enables Anti-spam.",
-    "enabled": "Enabled Anti-spam.",
-    "ignore": "Toggles Anti-spam of channel.",
-    "ignore_disabled": "Disabled Anti-spam of selected channel.",
-    "ignore_enabled": "Enabled Anti-spam of selected channel.",
-    "status": "Displays status.",
-    "status2": "Status: {0}",
-    "disabled_channels": "Disabled channels list:\n{0}",
-    "blacklist": {
-      "add": "Add Black listed regex.",
-      "remove": "Remove Black listed regex.",
-      "list": "Displays list of Black listed regex."
-    }
-  },
-  "includes_spam": ":x: Deleted spamming. (You can disable it in `{0}antispam disable`)",
   "no_command": "`{0}{1}` is not BlackListener command.",
   "didyoumean": "Did you mean?\n{0}",
   "error": "Errored while processing: Error: ``{0}``",
@@ -180,8 +159,6 @@
     "language": "Language",
     "notifyRep": "Reputation of notify for server owner",
     "banRep": "Reputation of auto banning",
-    "antispam": "Antispam",
-    "ignoredChannels": "Channels of disable antispam",
     "banned": "Is server banned",
     "disable_purge": "Is disabled purge features",
     "autorole": "Auto Role",

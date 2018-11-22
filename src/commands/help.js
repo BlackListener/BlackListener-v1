@@ -38,7 +38,6 @@ module.exports = class extends Command {
       .addField(`${prefix}ban [<User> <Reason> <Probe>] | ${prefix}unban`, `${lang.commands.ban} | ${lang.commands.unban}`)
       .addField(`${prefix}language`, lang.commands.language)
       .addField(`${prefix}setnotifyrep | ${prefix}setbanrep`, `${lang.commands.setnotifyrep} | ${lang.commands.setbanrep}`)
-      .addField(`${prefix}antispam`, lang.commands.antispam)
       .addField(`${prefix}dump [guilds|users|channels|emojis|messages] [messages:delete/size]`, lang.commands.dump)
       .addField(`${prefix}invite`, lang.commands.invite)
       .addField(`${prefix}role <role> [user] __/__ ${prefix}autorole [add/remove] <role>`, `${lang.commands.role}\n${lang.commands.autorole}`)
