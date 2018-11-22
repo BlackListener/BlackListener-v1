@@ -9,7 +9,7 @@ const s = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname
 async function runCommand(command, settings, msg, lang) {
   if (!command.enabled) return msg.channel.send(f(lang.disabled_command, command.name))
   if (!command.isAllowed(msg, s.owners)) return msg.channel.send(lang.udonthaveperm)
-  logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
+  logger.info(`${msg.author.tag} sent command: ${msg.content}`)
   try { // eslint-disable-line
     const args = msg.content.replace(settings.prefix, '').split(' ')
     await command.run(msg, settings, lang, args)

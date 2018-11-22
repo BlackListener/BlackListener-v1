@@ -77,7 +77,6 @@
   "youdonthavear": ":no_good: You don't have a admin permission.",
   "noperm": ":no_good: Sorry, you don't have a permission.",
   "failednotmatch": "┗━ Failed command because user doesn't match: {0}",
-  "issuedcmd": "{0} sent command: {1}",
   "processing_cmd": "┏━ Processing command: {0}, sender: {1} ({2})",
   "success": "┗━ Success: {0}, Shutting down",
   "atmpfs": "┗━ Attempting for force shutdown, Sender: {0}",
