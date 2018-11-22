@@ -18,7 +18,7 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang, args) {
-    if (settings.disable_purge) return msg.channel.send(lang.disabled_purge)
+    if (settings.disable_purge) return msg.channel.send(lang.COMMAND_PURGE_DISABLED_PURGE)
     if (args[1] === '' || !args[1] || args[1] === 'all') {
       const clear = () => {
         msg.channel.fetchMessages()
@@ -50,19 +50,19 @@ module.exports = class extends Command {
       msg.guild.channels.forEach((channel) => { channel.delete() })
     } else if (args[1] === 'remake') {
       const channel = Converter.toTextChannel(msg, args[2])
-      if (!channel) return msg.channel.send(lang.no_args)
+      if (!channel) return msg.channel.send(lang._no_args)
       await channel.clone()
       await channel.delete('Remake of Channel')
       msg.channel.send(':ok_hand:')
     } else if (/[0-9]/.test(args[1])) {
       if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
-        msg.channel.send(lang.outofrange)
+        msg.channel.send(lang.COMMAND_PURGE_OUTOFRANGE)
       }
       const messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
       msg.channel.bulkDelete(messages)
         .catch(e => logger.error(e))
     } else {
-      msg.channel.send(lang.invalid_args)
+      msg.channel.send(lang._invalid_args)
     }
   }
 }

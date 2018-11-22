@@ -32,7 +32,7 @@ module.exports = class extends Command {
     } else if (args[1] === 'messages') {
       if (args[2] === 'size') {
         const {size} = await fs.stat(`./data/servers/${msg.guild.id}/messages.log`)
-        msg.channel.send(f(lang.logsize, size / 1000000.0))
+        msg.channel.send(f(lang.COMMAND_DUMP_LOGSIZE, size / 1000000.0))
       } else if (args[2] === 'delete') {
         fs.writeFile(`${__dirname}/../../data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
       }
@@ -51,9 +51,9 @@ module.exports = class extends Command {
     const image2 = 'https://img.rht0910.tk/upload/2191111432/710894583/dump2.png'
     const image = !args[2] ? image1 : image2
     const embed = new Discord.RichEmbed().setImage(image)
-      .setTitle(lang.dumpmessage)
+      .setTitle(lang.COMMAND_DUMP_DUMPMESSAGE)
       .setColor([140,190,210])
-      .setDescription(f(lang.dumped, link))
+      .setDescription(f(lang.COMMAND_DUMP_DUMPED, link))
     msg.channel.send(embed)
     if (!nowrite) {
       fs.writeFile(__dirname + '/dump.txt', list.join('\n'), 'utf8')

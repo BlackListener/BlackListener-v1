@@ -7,7 +7,7 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang) {
-    const m = await msg.channel.send(lang.pinging)
-    m.edit(f(lang.pong, m.createdTimestamp - msg.createdTimestamp, Math.round(msg.client.ping)))
+    const m = await msg.channel.send(lang.COMMAND_PING)
+    m.edit(f(lang.COMMAND_PING_PONG, m.createdTimestamp - msg.createdTimestamp, Math.round(msg.client.ping)))
   }
 }

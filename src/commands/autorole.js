@@ -16,21 +16,21 @@ module.exports = class extends Command {
   run(msg, settings, lang, args) {
     if (args[1] === 'remove') {
       settings.autorole = null
-      msg.channel.send(f(lang.setconfig, 'autorole'))
+      msg.channel.send(f(lang._setconfig, 'autorole'))
     } else if (args[1] === 'add') {
       if (/\d{18,}/.test(args[2])) {
         settings.autorole = args[2]
       } else {
         const role = Converter.toRole(msg, args[2])
-        if (!role) msg.channel.send(lang.invalid_args)
+        if (!role) msg.channel.send(lang._invalid_args)
         settings.autorole = role.id
       }
-      msg.channel.send(f(lang.setconfig, 'autorole'))
+      msg.channel.send(f(lang._setconfig, 'autorole'))
     } else {
       if (settings.autorole != null) {
-        msg.channel.send(f(lang.autorole_enabled, msg.guild.roles.get(settings.autorole).name))
+        msg.channel.send(f(lang.COMMAND_AUTOROLE_ENABLED, msg.guild.roles.get(settings.autorole).name))
       } else if (!settings.autorole) {
-        msg.channel.send(lang.autorole_disabled)
+        msg.channel.send(lang.COMMAND_AUTOROLE_DISABLED)
       }
     }
   }

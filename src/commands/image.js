@@ -16,7 +16,7 @@ module.exports = class extends Command {
 
   async run(msg, settings, lang, args) {
     const sendImage = async list => {
-      const message = await msg.channel.send(lang.searching)
+      const message = await msg.channel.send(lang.COMMAND_IMAGE_SEARCHING)
       const sub = list[Math.round(Math.random() * (list.length - 1))]
       const url = await randomPuppy(sub)
       if (!url) return message.edit('Unable to find images.')
@@ -24,12 +24,12 @@ module.exports = class extends Command {
       message.edit(attachment).catch(msg.channel.send)
     }
     if (args[1] === 'custom') {
-      if (!msg.channel.nsfw) return msg.channel.send(lang.nsfw)
-      if(/\s/gm.test(args[2])) return msg.channel.send(lang.cannotspace)
+      if (!msg.channel.nsfw) return msg.channel.send(lang._nsfw)
+      if(/\s/gm.test(args[2])) return msg.channel.send(lang.COMMAND_IMAGE_CANNOTSPACE)
       try { // eslint-disable-line
         return await sendImage([args[2]])
       } catch(e) {
-        if (e.name === 'ParseError') return msg.channel.send(f(lang.error, 'Failed to parsing JSON. (Probably not found specified subreddit)'))
+        if (e.name === 'ParseError') return msg.channel.send(f(lang._error, 'Failed to parsing JSON. (Probably not found specified subreddit)'))
         throw e
       }
     } else if (args[1] === 'anime') {
@@ -47,7 +47,7 @@ module.exports = class extends Command {
         'AnimeFigures',
       ])
     } else {
-      msg.channel.send(lang.invalid_args)
+      msg.channel.send(lang._invalid_args)
     }
   }
 }

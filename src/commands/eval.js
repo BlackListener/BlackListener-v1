@@ -18,7 +18,7 @@ module.exports = class extends Command {
 
   async run(msg, settings, lang, args) {
     const opts = argument_parser(args.slice(1))
-    if (msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
+    if (msg.content.includes('token')) return msg.channel.send(lang._udonthaveperm)
     const commandcut = args.slice(Object.values(opts).length + 1).join(' ')
     try { // eslint-disable-line
       let returned
@@ -34,8 +34,8 @@ module.exports = class extends Command {
       if (!returned.includes('\n')) msg.channel.send(`:ok_hand: (${returned})`)
       else msg.channel.send(returned, { code: 'js' })
     } catch (e) {
-      logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.eval_error} (${e})`)
-      msg.channel.send(f(lang.eval_error, e))
+      logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.COMMAND_EVAL_ERROR} (${e})`)
+      msg.channel.send(f(lang.COMMAND_EVAL_ERROR, e))
     }
   }
 }

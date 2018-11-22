@@ -21,10 +21,10 @@ module.exports = class extends Command {
     const max = 10
     const status = n >= min && n <= max
     if (!status || args[1] == null) {
-      msg.channel.send(lang.invalid_args)
+      msg.channel.send(lang._invalid_args)
     } else {
       settings.notifyRep = parseInt(args[1], 10)
-      await msg.channel.send(f(lang.setconfig, 'notifyRep'))
+      await msg.channel.send(f(lang._setconfig, 'notifyRep'))
     }
   }
 }

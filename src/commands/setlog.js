@@ -15,9 +15,9 @@ module.exports = class extends Command {
 
   run(msg, settings, lang, args) {
     const channel = Converter.toTextChannel(msg, args[1])
-    if (!channel) return msg.channel.send(lang.invalid_args)
+    if (!channel) return msg.channel.send(lang._invalid_args)
     const id = channel.id
     settings.log_channel = id
-    msg.channel.send(f(lang.setconfig, 'log_channel'))
+    msg.channel.send(f(lang._setconfig, 'log_channel'))
   }
 }

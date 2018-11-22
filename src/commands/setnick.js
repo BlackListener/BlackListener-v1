@@ -24,12 +24,9 @@ module.exports = class extends Command {
       member.setNickname(null)
       return msg.channel.send(':ok_hand:')
     } else {
-      if (/\s/gm.test(args[1]) || !args[1]) {
-        msg.channel.send(lang.cannotspace)
-      } else {
-        const member = Converter.toMember(msg, args[2], msg.guild.me)
-        member.setNickname(args[1])
-      }
+      if (!args[1]) return msg.channel.send(lang._invalid_args)
+      const member = Converter.toMember(msg, args[2], msg.guild.me)
+      member.setNickname(args[1])
     }
   }
 }

@@ -33,14 +33,14 @@ module.exports = class extends Command {
     if (args[1] === 'language') {
       if (!args[2] || args[2] === 'help') {
         const embed = new Discord.RichEmbed()
-          .setTitle(f(lang.availablelang, user.language))
+          .setTitle(f(lang.COMMAND_USERCONF_AVAILABLELANG, user.language))
           .setDescription(validLanguages.join('\n'))
           .setColor([0,255,0])
         msg.channel.send(embed)
       } else if (validLanguages.includes(args[2])) {
         user.language = args[2]
-        await msg.channel.send(f(lang.setconfig, 'language'))
+        await msg.channel.send(f(lang._setconfig, 'language'))
       }
-    } else msg.channel.send(lang.invalid_args)
+    } else msg.channel.send(lang._invalid_args)
   }
 }

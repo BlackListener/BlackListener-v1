@@ -24,6 +24,6 @@ module.exports = class extends Command {
         settings.disable_purge = true
       }
     }
-    await msg.channel.send(f(lang.setconfig, 'disable_purge'))
+    await msg.channel.send(f(lang._setconfig, 'disable_purge'))
   }
 }

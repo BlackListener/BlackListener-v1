@@ -66,7 +66,7 @@ client.on('message', async msg => {
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
     if (!sentmute.has(msg.author.id)) {
-      msg.author.send(lang.youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
+      msg.author.send(lang._youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
       sentmute.add(msg.author.id)
     }
     msg.delete(0)
@@ -83,7 +83,7 @@ client.on('guildMemberAdd', async member => {
   const lang = languages[serverSetting.language]
   if (!serverSetting.banned) {
     if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
-      member.guild.owner.send(f(lang.notifymsg, member.user.tag, serverSetting.notifyRep, userSetting.rep))
+      member.guild.owner.send(f(lang._notifymsg, member.user.tag, serverSetting.notifyRep, userSetting.rep))
     }
   }
   if (serverSetting.autorole) {
