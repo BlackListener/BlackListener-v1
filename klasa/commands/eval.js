@@ -6,10 +6,10 @@ const util = require(__dirname + '/../util')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'eval',
       args: ['<Code>'],
-    }
-    super(...args, 'eval', opts)
+    })
   }
 
   isAllowed(msg, owners) {

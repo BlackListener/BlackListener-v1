@@ -6,7 +6,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'dump',
       args: [
         '[guilds]',
         '[users]',
@@ -15,8 +16,7 @@ module.exports = class extends Command {
         '[messages]',
       ],
       permission: 8,
-    }
-    super(...args, 'dump', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

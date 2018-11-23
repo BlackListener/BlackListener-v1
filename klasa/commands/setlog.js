@@ -4,13 +4,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'setlog',
       alias: [
         'log',
       ],
       permission: 8,
-    }
-    super(...args, 'setlog', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

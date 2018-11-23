@@ -5,7 +5,10 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    super(...args, 'invite', { args: ['[patron]'] })
+    super(...args, {
+      name: 'invite',
+      args: ['[patron]'],
+    })
   }
 
   run(msg, settings, lang, args) {

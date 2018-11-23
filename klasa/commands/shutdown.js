@@ -4,14 +4,14 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'shutdown',
       args: [
         '[-f]',
         '[-r[g]]',
         '[-g]',
       ],
-    }
-    super(...args, 'shutdown', opts)
+    })
   }
 
   isAllowed(msg, owners) {

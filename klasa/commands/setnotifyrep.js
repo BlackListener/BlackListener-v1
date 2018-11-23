@@ -3,7 +3,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'setnotifyrep',
       args: [
         '<0...10>',
       ],
@@ -11,8 +12,7 @@ module.exports = class extends Command {
         'notifyrep',
       ],
       permission: 8,
-    }
-    super(...args, 'setnotifyrep', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

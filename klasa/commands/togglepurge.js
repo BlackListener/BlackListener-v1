@@ -3,13 +3,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'togglepurge',
       args: [
         '[enable/disable]',
       ],
       permission: 8,
-    }
-    super(...args, 'togglepurge', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

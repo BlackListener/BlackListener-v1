@@ -9,13 +9,13 @@ const FlakeId = require('flake-idgen')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'ban',
       args: [
         '[<User> <Reason> <Probe>]',
       ],
       permission: 8,
-    }
-    super(...args, 'ban', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

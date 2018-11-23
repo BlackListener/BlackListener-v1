@@ -8,7 +8,9 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    super(...args, 'info')
+    super(...args, {
+      name: 'info',
+    })
   }
 
   async run(msg, settings, lang) {

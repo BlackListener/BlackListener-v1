@@ -6,13 +6,13 @@ const f = require('string-format')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'role',
       args: [
         '<Role> [User]',
       ],
       permission: 8,
-    }
-    super(...args, 'role', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

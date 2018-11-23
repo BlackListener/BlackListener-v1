@@ -3,12 +3,12 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'releases',
       args: [
         '[Version]',
       ],
-    }
-    super(...args, 'releases', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

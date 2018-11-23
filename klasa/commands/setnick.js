@@ -3,7 +3,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'setnick',
       args: [
         '<NewName> [User]',
       ],
@@ -13,8 +14,7 @@ module.exports = class extends Command {
         'nick',
       ],
       permission: 8,
-    }
-    super(...args, 'setnick', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

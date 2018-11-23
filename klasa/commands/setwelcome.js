@@ -4,13 +4,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'setwelcome',
       args: [
         '[channel:message] [Channel:Message]',
       ],
       permission: 8,
-    }
-    super(...args, 'setwelcome', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

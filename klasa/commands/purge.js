@@ -4,7 +4,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'purge',
       args: [
         '[number/all]',
         'gdel',
@@ -13,8 +14,7 @@ module.exports = class extends Command {
         'remake <Channel>',
       ],
       permission: 8,
-    }
-    super(...args, 'purge', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

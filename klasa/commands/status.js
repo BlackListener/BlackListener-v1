@@ -8,13 +8,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'status',
       args: [
         '[minecraft]',
         '[fortnite]',
       ],
-    }
-    super(...args, 'status', opts)
+    })
   }
 
   async run(msg, settings, lang) {

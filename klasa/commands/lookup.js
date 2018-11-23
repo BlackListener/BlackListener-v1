@@ -5,12 +5,12 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'lookup',
       args: [
         '<User>',
       ],
-    }
-    super(...args, 'lookup', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

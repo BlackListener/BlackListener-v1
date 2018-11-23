@@ -2,12 +2,12 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'listemojis',
       args: [
         '[escape]',
       ],
-    }
-    super(...args, 'listemojis', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

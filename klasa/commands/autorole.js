@@ -4,13 +4,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'autorole',
       args: [
         '[add/remove] <Role>',
       ],
       permission: 8,
-    }
-    super(...args, 'autorole', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

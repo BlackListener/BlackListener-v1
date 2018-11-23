@@ -5,13 +5,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'language',
       args: [
         '[en|ja]',
       ],
       permission: 8,
-    }
-    super(...args, 'language', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

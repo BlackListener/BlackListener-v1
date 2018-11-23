@@ -3,7 +3,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'setprefix',
       args: [
         '<Prefix>',
       ],
@@ -11,8 +12,7 @@ module.exports = class extends Command {
         'prefix',
       ],
       permission: 8,
-    }
-    super(...args, 'setprefix', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

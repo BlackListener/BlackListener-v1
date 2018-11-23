@@ -5,13 +5,13 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'image',
       args: [
         'anime',
         'custom <subreddit>',
       ],
-    }
-    super(...args, 'image', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

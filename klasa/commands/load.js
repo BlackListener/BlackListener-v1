@@ -3,12 +3,12 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'load',
       args: [
         '[Command]',
       ],
-    }
-    super(...args, 'load', opts)
+    })
   }
 
   isAllowed(msg, owners) {

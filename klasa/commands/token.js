@@ -3,7 +3,9 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    super(...args, 'token')
+    super(...args, {
+      name: 'token',
+    })
   }
 
   isAllowed(msg, owners) {

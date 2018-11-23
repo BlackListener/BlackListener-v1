@@ -3,7 +3,9 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    super(...args, 'serverinfo')
+    super(...args, {
+      name: 'serverinfo',
+    })
   }
 
   run(msg, settings, lang) {

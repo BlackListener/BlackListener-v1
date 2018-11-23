@@ -19,7 +19,8 @@ const play = (connection, url, msg) => {
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'music',
       args: [
         'play|start <URL or Search>',
         'stop',
@@ -33,8 +34,7 @@ module.exports = class extends Command {
       alias: [
         'play',
       ],
-    }
-    super(...args, 'music', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {

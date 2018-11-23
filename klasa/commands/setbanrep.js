@@ -3,7 +3,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'setbanrep',
       args: [
         '<0...10>',
       ],
@@ -11,8 +12,7 @@ module.exports = class extends Command {
         'banrep',
       ],
       permission: 8,
-    }
-    super(...args, 'setbanrep', opts)
+    })
   }
 
   run(msg, settings, lang, args) {

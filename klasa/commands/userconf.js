@@ -8,7 +8,8 @@ const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor(...args) {
-    const opts = {
+    super(...args, {
+      name: 'userconf',
       args: [
         'language',
         '[--target=<UserID>]',
@@ -16,8 +17,7 @@ module.exports = class extends Command {
       alias: [
         'userconfig',
       ],
-    }
-    super(...args, 'userconf', opts)
+    })
   }
 
   async run(msg, settings, lang, args) {
