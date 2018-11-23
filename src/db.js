@@ -70,9 +70,11 @@ class MongoDb {
     if (!Object.keys(this.collections).includes(collection))
       throw new ReferenceError('Collection ' + collection + ' is not defined')
     if (typeof nameOrObj === 'object') {
-      return await this.collections[collection].updateOne(filter, { $set: nameOrObj }, options)
+      //return await this.collections[collection].updateOne(filter, { $set: nameOrObj }, options)
+      return await this.collections[collection].save(nameOrObj)
     } else if (typeof nameOrObj === 'string') {
-      return await this.collections[collection].updateOne(filter, { $set: {[nameOrObj]: value}}, options)
+      //return await this.collections[collection].updateOne(filter, { $set: {[nameOrObj]: value}}, options)
+      return await this.collections[collection].save({[nameOrObj]: value})
     } else throw new TypeError('Unexpected document type: ' + typeof nameOrObj)
   }
 

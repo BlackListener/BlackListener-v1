@@ -13,7 +13,7 @@ const db = new MongoDB()
 db.init()
 
 async function dataStore(id, collection, _default) {
-  const rawdata = await db.get(collection, { id: id })
+  const rawdata = await db.get(collection, { _id: id })
   const data = Object.assign(_default, rawdata)
   return new DeepProxy(data, {
     get(target, key, receiver) {
@@ -26,7 +26,7 @@ async function dataStore(id, collection, _default) {
     },
     set(target, key, value, receiver) {
       Reflect.set(target, key, value, receiver)
-      db.updateOne(collection, { id: id }, { [id]: this.rootTarget }, null, { upsert: true })
+      db.updateOne(collection, { _id: id }, this.rootTarget, null, { upsert: true })
       return true
     },
   })
