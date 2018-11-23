@@ -56,6 +56,8 @@ client.on('message', async msg => {
   if (!msg.guild) return
   const settings = await data.server(msg.guild.id)
   const user = await data.user(msg.author.id)
+  await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
+  await mkdirp(`${__dirname}/../data/servers/${msg.guild.id}`)
   user.tag = msg.author.tag
   user.bot = msg.author.bot
   user.createdTimestamp = msg.author.createdTimestamp
