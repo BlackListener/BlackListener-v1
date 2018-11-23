@@ -13,6 +13,7 @@
     "flake-idgen": "^1.1.0",
     "form-data": "^2.3.2",
     "hoek": "^5.0.4",
+    "klasa": "dirigeants/klasa",
     "lzma-native": "^4.0.1",
     "mkdirp-promise": "^5.0.1",
     "moment": "^2.22.2",
