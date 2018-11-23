@@ -24,7 +24,7 @@ module.exports = class extends Command {
           return `<@${data}> ${data} (${lang._failed_to_get})`
         }
       })
-      return msg.channel.send(new Discord.RichEmbed()
+      return msg.channel.send(new Discord.MessageEmbed()
         .setTitle(lang.COMMAND_MUTE_MUTED)
         .setDescription(mutes.join('\n') || lang._no)
       )

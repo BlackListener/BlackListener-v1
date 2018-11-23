@@ -32,7 +32,7 @@ module.exports = class extends Command {
     const user = await data.user(opts.target || msg.author.id)
     if (args[1] === 'language') {
       if (!args[2] || args[2] === 'help') {
-        const embed = new Discord.RichEmbed()
+        const embed = new Discord.MessageEmbed()
           .setTitle(f(lang.COMMAND_USERCONF_AVAILABLELANG, user.language))
           .setDescription(validLanguages.join('\n'))
           .setColor([0,255,0])

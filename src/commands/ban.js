@@ -28,7 +28,7 @@ module.exports = class extends Command {
         const user = await client.fetchUser(id, false).catch(() => lang._failed_to_get)
         return `${user.tag} (${id})`
       }))
-      const embed = new Discord.RichEmbed()
+      const embed = new Discord.MessageEmbed()
         .setTitle(lang.COMMAND_BAN_BANNED_USERS)
         .setColor([0,255,0])
         .setDescription(bansList.join('\n') || lang.COMMAND_BAN_NOT_BANNED)

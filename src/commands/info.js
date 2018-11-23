@@ -19,7 +19,7 @@ module.exports = class extends Command {
       const user = client.users.get(aowner)
       return `${user.tag} (${user.id})\n`
     })
-    msg.channel.send(new Discord.RichEmbed()
+    msg.channel.send(new Discord.MessageEmbed()
       .setTitle('Bot info')
       .setTimestamp()
       .setColor([0,255,0])

@@ -26,7 +26,7 @@ module.exports = class extends Command {
         return `<@${data}> ${data} (${lang._failed_to_get})`
       }
     })
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle(' - Server Information - ')
       .setColor([0,255,0])
       .setTimestamp()

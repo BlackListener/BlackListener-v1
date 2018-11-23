@@ -19,7 +19,7 @@ module.exports = class extends Command {
     const role = Converter.toRole(args[1])
     const member = Converter.toMember(msg, args[2])
     const build = (title, message) => {
-      const embed = new Discord.RichEmbed()
+      const embed = new Discord.MessageEmbed()
         .setTitle(title)
         .setColor([255,0,0])
         .setDescription(f(message, args[1]))

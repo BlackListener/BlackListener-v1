@@ -16,7 +16,7 @@ module.exports = class extends Command {
 
   run(msg, settings, lang, args) {
     if (!args[1] || args[1] === 'help') {
-      const embed = new Discord.RichEmbed()
+      const embed = new Discord.MessageEmbed()
         .setTitle(f(lang.COMMAND_LANGUAGE_AVAILABLELANG, settings.language))
         .setDescription(validLanguages.join('\n'))
         .setColor([0,255,0])

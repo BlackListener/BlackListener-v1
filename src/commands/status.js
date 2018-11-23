@@ -39,7 +39,7 @@ module.exports = class extends Command {
       const status = Object.keys(flat).map(key => STATUS.minecraft[flat[key]] || lang.COMMAND_STATUS_UNKNOWN)
       const endTime = now()
       const time = endTime - startTime
-      const embed = new Discord.RichEmbed()
+      const embed = new Discord.MessageEmbed()
         .setTitle(lang.COMMAND_STATUS_TITLE)
         .setURL('https://help.mojang.com')
         .setColor([0,255,0])
@@ -69,7 +69,7 @@ module.exports = class extends Command {
       const status = STATUS.fortnite[data.status] || lang.COMMAND_STATUS_UNKNOWN
       const endTime = now()
       const time = endTime - startTime
-      const embed = new Discord.RichEmbed()
+      const embed = new Discord.MessageEmbed()
         .setTitle(lang.COMMAND_STATUS_TITLE)
         .setURL('https://status.epicgames.com')
         .setColor([0,255,0])

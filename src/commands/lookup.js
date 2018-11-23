@@ -29,7 +29,7 @@ module.exports = class extends Command {
     const isBot = userConfig.bot ? lang._yes : lang._no
     const nick = (user && msg.guild.members.has(user.id)) ? msg.guild.members.get(user.id).nickname : lang._nul
     const joinedAt = user && msg.guild.members.has(user.id) && msg.guild.members.has(user.id).joinedAt ? msg.guild.members.get(user.id).joinedAt.toLocaleString() : lang._sunknown
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
       .setTitle(lang.COMMAND_LOOKUP_TITLE)
       .setColor([0,255,0])
       .setThumbnail(user.avatarURL)

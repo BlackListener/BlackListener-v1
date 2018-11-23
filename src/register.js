@@ -41,8 +41,7 @@ ${error.stack}
     Custom Prefix: ${args.prefix || 'Disabled; using default value: '+c.prefix}
 
 --- Discord.js ---
-    Average ping of websocket: ${Math.floor(client.ping * 100) / 100}
-    Last ping of websocket: ${client.pings[0]}
+    Average ping of websocket: ${Math.floor(client.ws.ping * 100) / 100}
     Ready at: ${client.readyAt ? client.readyAt.toLocaleString() : 'Error on before getting ready'}
 
 --- System Details ---

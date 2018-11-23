@@ -21,7 +21,7 @@ class Command {
    */
   constructor(name, options = {}) {
     this.name = name
-    
+
     options = Object.assign({
       alias: [],
       args: [],
@@ -45,13 +45,13 @@ class Command {
    * @param {Discord.Message} msg
    */
   isAllowed({ member }) {
-    return member.hasPermission(this.permission.bitfield)
+    return member.hasPermission(this.permission)
   }
 
   /**
    * @async
    * @returns {any}
-   * @param {string} e 
+   * @param {string} e
    */
   async _eval(e) {
     return await (eval(`(async () => {${e}})()`))

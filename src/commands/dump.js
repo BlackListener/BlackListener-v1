@@ -50,7 +50,7 @@ module.exports = class extends Command {
     const image1 = 'https://img.rht0910.tk/upload/2191111432/72932264/bump.png'
     const image2 = 'https://img.rht0910.tk/upload/2191111432/710894583/dump2.png'
     const image = !args[2] ? image1 : image2
-    const embed = new Discord.RichEmbed().setImage(image)
+    const embed = new Discord.MessageEmbed().setImage(image)
       .setTitle(lang.COMMAND_DUMP_DUMPMESSAGE)
       .setColor([140,190,210])
       .setDescription(f(lang.COMMAND_DUMP_DUMPED, link))
