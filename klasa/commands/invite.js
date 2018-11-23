@@ -5,7 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'invite',
-      args: ['[patron]'],
+      usage: '[patron]',
     })
   }
 

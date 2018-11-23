@@ -22,16 +22,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'music',
-      args: [
-        'play|start <URL or Search>',
-        'stop',
-        'pause',
-        'unpause|resume',
-        'volume',
-        'loop',
-        'queue',
-        'status',
-      ],
+      subcommands: true,
+      usage: '<play|stop|pause|unpause|volume|loop|queue|status> (URLorSearch:str)',
       aliases: [
         'play',
       ],
@@ -44,7 +36,7 @@ module.exports = class extends Command {
     loop[msg.guild.id] = {} // need initialize!
     if (args[1] === 'join') {
       msg.member.voiceChannel.join().then(vc => msg.channel.send(f(lang.COMMAND_MUSIC_JOINED_VC, vc.channel.name))).catch(e => logger.error(e))
-    } else if (args[1] === 'play' || args[1] === 'start') {
+    } else if (args[1] === 'play') {
       let keyword
       if (!args[2] || !args[2].includes('youtube.com/watch?v=')) {
         youtube.setKey(config.youtube_apikey)
@@ -135,7 +127,7 @@ module.exports = class extends Command {
         msg.guild.voiceConnection.dispatcher.pause()
         msg.channel.send(lang.COMMAND_MUSIC_PAUSED)
       } else msg.channel.send(lang.COMMAND_MUSIC_NOT_PLAYING)
-    } else if (args[1] === 'unpause' || args[1] === 'resume') {
+    } else if (args[1] === 'unpause') {
       if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
         msg.guild.voiceConnection.dispatcher.resume()
         msg.channel.send(lang.COMMAND_MUSIC_UNPAUSED)

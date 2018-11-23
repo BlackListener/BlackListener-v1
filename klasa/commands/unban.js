@@ -8,9 +8,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'unban',
-      args: [
-        '<User>',
-      ],
+      usage: '<User:user>',
       permissionLevel: 6,
     })
   }

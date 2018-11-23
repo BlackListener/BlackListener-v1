@@ -12,9 +12,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'ban',
-      args: [
-        '[<User> <Reason> <Probe>]',
-      ],
+      usage: '[<User:user> <Reason:str> <Probe:str>]',
       permissionLevel: 6,
     })
   }

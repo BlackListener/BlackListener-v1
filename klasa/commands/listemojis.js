@@ -4,9 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'listemojis',
-      args: [
-        '[escape]',
-      ],
+      usage: '[escape]',
     })
   }
 

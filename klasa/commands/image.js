@@ -7,10 +7,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'image',
-      args: [
-        'anime',
-        'custom <subreddit>',
-      ],
+      usage: '<anime|custom> [subreddit:str]',
     })
   }
 

@@ -7,9 +7,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'language',
-      args: [
-        '[en|ja]',
-      ],
+      subcommands: true,
+      usage: '<set:default|help> (en|ja)',
       permissionLevel: 6,
     })
   }

@@ -9,9 +9,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'role',
-      args: [
-        '<Role> [User]',
-      ],
+      usage: '<Role:role> <User:user>',
       permissionLevel: 6,
     })
   }

@@ -5,9 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setnotifyrep',
-      args: [
-        '<0...10>',
-      ],
+      usage: '<rep:number{0,10}>',
       aliases: [
         'notifyrep',
       ],

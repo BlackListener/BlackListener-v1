@@ -5,9 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'togglepurge',
-      args: [
-        '[enable/disable]',
-      ],
+      usage: '[enable|disable]',
       permissionLevel: 6,
     })
   }

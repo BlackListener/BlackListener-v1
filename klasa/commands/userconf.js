@@ -10,10 +10,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'userconf',
-      args: [
-        'language',
-        '[--target=<UserID>]',
-      ],
+      usage: '<language>',
       aliases: [
         'userconfig',
       ],

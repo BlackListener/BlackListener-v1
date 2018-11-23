@@ -10,10 +10,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'status',
-      args: [
-        '[minecraft]',
-        '[fortnite]',
-      ],
+      subcommands: true,
+      usage: '<minecraft|fortnite>',
     })
   }
 

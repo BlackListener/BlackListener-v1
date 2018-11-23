@@ -7,18 +7,13 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'shutdown',
-      args: [
-        '[-f]',
-        '[-r[g]]',
-        '[-g]',
-      ],
       permissionLevel: 9,
     })
   }
 
   async run(msg, settings, lang, args) {
     const client = msg.client
-    if (~args.includes('-f')) {
+    if (args.includes('-f')) {
       if (/-(g|)f(g|)/gm.test(args[1])) await msg.channel.send(':warning: Can\'t use graceful parameter; already set force option.')
       logger.warn(f(lang.COMMAND_SHUTDOWN_ATMPFS, msg.author.tag))
       await msg.channel.send(lang.COMMAND_SHUTDOWN_BYE)

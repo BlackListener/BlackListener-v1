@@ -7,13 +7,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'dump',
-      args: [
-        '[guilds]',
-        '[users]',
-        '[channels]',
-        '[emojis]',
-        '[messages]',
-      ],
+      usage: '<users|channels|messages|emojis|guilds:default> [size|delete]',
       permissionLevel: 6,
     })
   }

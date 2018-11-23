@@ -5,9 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'load',
-      args: [
-        '[Command]',
-      ],
+      args: '<Command:str>',
       permissionLevel: 9,
     })
   }

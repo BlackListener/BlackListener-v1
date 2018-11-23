@@ -6,9 +6,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'autorole',
-      args: [
-        '[add/remove] <Role>',
-      ],
+      subcommands: true,
+      usage: '<add|remove|show:default> [Role:role]',
       permissionLevel: 6,
     })
   }

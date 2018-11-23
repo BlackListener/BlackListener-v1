@@ -8,9 +8,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'help',
-      args: [
-        '[Command]',
-      ],
+      usage: '(Command:command)',
     })
   }
 

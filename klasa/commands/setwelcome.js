@@ -6,9 +6,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setwelcome',
-      args: [
-        '[channel:message] [Channel:Message]',
-      ],
+      subcommands: true,
+      usage: '<channel|message> <Channel:channel|Message:str>',
       permissionLevel: 6,
     })
   }

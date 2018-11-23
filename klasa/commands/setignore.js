@@ -6,9 +6,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setignore',
-      args: [
-        '<Channel>',
-      ],
+      usage: '<Channel:channel>',
       permissionLevel: 6,
     })
   }

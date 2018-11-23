@@ -5,9 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setnick',
-      args: [
-        '<NewName> [User]',
-      ],
+      usage: '[NewName:str] [User]',
       aliases: [
         'setnickname',
         'resetnick',

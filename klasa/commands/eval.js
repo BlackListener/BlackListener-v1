@@ -9,7 +9,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'eval',
-      args: ['<Code>'],
+      usage: '<Code:str>',
       permissionLevel: 9,
     })
   }

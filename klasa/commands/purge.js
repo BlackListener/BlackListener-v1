@@ -7,20 +7,15 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'purge',
-      args: [
-        '[number/all]',
-        'gdel',
-        'gdel-msg',
-        'gdel-really',
-        'remake <Channel>',
-      ],
+      subcommands: true,
+      usage: '<all:default|gdel|gdel-msg|gdel-really|remake> (Channel:channel)',
       permissionLevel: 6,
     })
   }
 
   async run(msg, settings, lang, args) {
     if (settings.disable_purge) return msg.channel.send(lang.COMMAND_PURGE_DISABLED_PURGE)
-    if (args[1] === '' || !args[1] || args[1] === 'all') {
+    if (!args[1] || args[1] === 'all') {
       const clear = () => {
         msg.channel.fetchMessages()
           .then((messages) => {
@@ -31,7 +26,7 @@ module.exports = class extends Command {
           })
       }
       clear()
-    } else if (/[^0-9]/.test(args[1]) && args[1] === 'gdel-msg') {
+    } else if (args[1] === 'gdel-msg') {
       msg.guild.channels.forEach((channel) => {
         const clear = () => {
           channel.fetchMessages()
@@ -44,10 +39,10 @@ module.exports = class extends Command {
         }
         clear()
       })
-    } else if (/[^0-9]/.test(args[1]) && args[1] === 'gdel') {
+    } else if (args[1] === 'gdel') {
       msg.guild.channels.forEach((channel) => { channel.delete() })
       msg.guild.createChannel('general', 'text')
-    } else if (/[^0-9]/.test(args[1]) && args[1] === 'gdel-really') {
+    } else if (args[1] === 'gdel-really') {
       msg.guild.channels.forEach((channel) => { channel.delete() })
     } else if (args[1] === 'remake') {
       const channel = Converter.toTextChannel(msg, args[2])

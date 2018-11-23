@@ -7,9 +7,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'lookup',
-      args: [
-        '<User>',
-      ],
+      usage: '<User:user>',
     })
   }
 

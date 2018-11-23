@@ -7,9 +7,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'mute',
-      args: [
-        '<User>',
-      ],
+      subcommands: true,
+      usage: '<mute|show:default> (User:user)',
       permissionLevel: 6,
     })
   }

@@ -5,9 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'releases',
-      args: [
-        '[Version]',
-      ],
+      usage: '[Version:str]',
     })
   }
 
