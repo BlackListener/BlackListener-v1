@@ -1,6 +1,7 @@
-const logger = require(__dirname + '/../logger').getLogger('commands:eval', 'lightpurple')
 const f = require('string-format')
-const { Command } = require('klasa')
+const Klasa = require('klasa')
+const logger = new Klasa.KlasaConsole()
+const { Command } = Klasa
 const argument_parser = require(__dirname + '/../argument_parser')
 const util = require(__dirname + '/../util')
 
@@ -30,11 +31,11 @@ module.exports = class extends Command {
       } else {
         returned = await (eval(`(async () => {${commandcut}})()`))
       }
-      logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`)
+      logger.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`)
       if (!returned.includes('\n')) msg.channel.send(`:ok_hand: (${returned})`)
       else msg.channel.send(returned, { code: 'js' })
     } catch (e) {
-      logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.COMMAND_EVAL_ERROR} (${e})`)
+      logger.log(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.COMMAND_EVAL_ERROR} (${e})`)
       msg.channel.send(f(lang.COMMAND_EVAL_ERROR, e))
     }
   }

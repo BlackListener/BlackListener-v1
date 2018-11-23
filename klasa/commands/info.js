@@ -1,9 +1,8 @@
 const Discord = require('discord.js')
 const os = require('os')
-const c = require(__dirname + '/../config.yml')
 const isWindows = process.platform === 'win32'
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
+const c = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -16,8 +15,8 @@ module.exports = class extends Command {
   async run(msg, settings, lang) {
     const client = msg.client
     const loadavg = isWindows ? '利用不可' : Math.floor(os.loadavg()[0] * 100) / 100
-    const invite = s.inviteme
-    const owner = s.owners.map(aowner => {
+    const invite = `https://discordapp.com/oauth2/authorize?scope=bot&client_id=${msg.client.user.id}&permissions=8`
+    const owner = c.owners.map(aowner => {
       const user = client.users.get(aowner)
       return `${user.tag} (${user.id})\n`
     })
@@ -32,7 +31,7 @@ module.exports = class extends Command {
       .addField(lang.COMMAND_INFO_SERVERS, client.guilds.size, true)
       .addField(lang.COMMAND_INFO_USERS, client.users.size, true)
       .addField(lang.COMMAND_INFO_CREATEDBY, owner)
-      .setDescription(`[${lang.COMMAND_INFO_INVITE}](${invite})\n[${lang.COMMAND_INFO_SOURCE}](${c.github})\n[Discord Bots](https://discordbots.org/bot/456966161079205899)`)
+      .setDescription(`[${lang.COMMAND_INFO_INVITE}](${invite})\n[${lang.COMMAND_INFO_SOURCE}](https://github.com/BlackListener/BlackListener)\n[Discord Bots](https://discordbots.org/bot/456966161079205899)`)
       .setFooter(`Sent by ${msg.author.tag}`))
   }
 }

@@ -177,6 +177,3 @@ exports.config = {
      */
   schedule: { interval: 60000 },
 }
-
-// The token for this bot to login with
-exports.token = ''

@@ -1,5 +1,7 @@
+require('../src/yaml')
 const { Client } = require('klasa')
-const { config, token } = require('./config')
+const { config } = require('./config')
+const env = require('dotenv-safe').config()
 
 Client.defaultPermissionLevels
   .add(6, (client, message) => message.guild && message.member.permissions.has('ADMINISTRATOR'), { fetch: true })
@@ -16,4 +18,4 @@ class BlackListenerClient extends Client {
 
 }
 
-new BlackListenerClient(config).login(token)
+new BlackListenerClient(config).login(env.parsed.TOKEN)

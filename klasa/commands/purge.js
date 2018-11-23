@@ -1,6 +1,7 @@
 const Converter = require(__dirname + '/../converter.js')
-const logger = require(__dirname + '/../logger').getLogger('commands:purge', 'lightpurple')
-const { Command } = require('klasa')
+const Klasa = require('klasa')
+const logger = new Klasa.KlasaConsole()
+const { Command } = Klasa
 
 module.exports = class extends Command {
   constructor(...args) {

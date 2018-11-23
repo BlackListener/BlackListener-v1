@@ -21,3 +21,5 @@ package-lock.json
 # Config file
 config.yml
 config.old.yml
+
+.env

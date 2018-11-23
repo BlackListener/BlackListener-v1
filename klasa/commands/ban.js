@@ -1,8 +1,9 @@
 const Converter = require(__dirname + '/../converter.js')
 const data = require(__dirname + '/../data')
-const logger = require(__dirname + '/../logger').getLogger('commands:ban', 'blue')
 const Discord = require('discord.js')
-const { Command } = require('klasa')
+const Klasa = require('klasa')
+const { Command } = Klasa
+const logger = new Klasa.KlasaConsole()
 const config = require(__dirname + '/../config.yml')
 const intformat = require('biguint-format')
 const FlakeId = require('flake-idgen')
@@ -65,7 +66,7 @@ module.exports = class extends Command {
         if (banRep !== 0 && banRep <= target_data.rep) return await guild.ban(target)
         return Promise.resolve()
       }))
-      logger.info(`Banned user: ${target.tag} (${target.id}) from ${msg.guild.name}(${msg.guild.id})`)
+      logger.log(`Banned user: ${target.tag} (${target.id}) from ${msg.guild.name}(${msg.guild.id})`)
       return msg.channel.send(':white_check_mark: ' + lang.COMMAND_BAN_BANNED)
     }
   }

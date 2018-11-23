@@ -1,7 +1,8 @@
 const Converter = require(__dirname + '/../converter.js')
-const logger = require(__dirname + '/../logger').getLogger('commands:role')
 const Discord = require('discord.js')
-const { Command } = require('klasa')
+const Klasa = require('klasa')
+const logger = new Klasa.KlasaConsole()
+const { Command } = Klasa
 const f = require('string-format')
 
 module.exports = class extends Command {
