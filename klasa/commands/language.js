@@ -10,7 +10,7 @@ module.exports = class extends Command {
       args: [
         '[en|ja]',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

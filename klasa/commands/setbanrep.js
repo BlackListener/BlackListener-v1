@@ -11,7 +11,7 @@ module.exports = class extends Command {
       alias: [
         'banrep',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

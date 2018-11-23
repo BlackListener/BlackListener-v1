@@ -13,7 +13,7 @@ module.exports = class extends Command {
         'gdel-really',
         'remake <Channel>',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

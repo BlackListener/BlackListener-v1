@@ -9,7 +9,7 @@ module.exports = class extends Command {
       args: [
         '[add/remove] <Role>',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

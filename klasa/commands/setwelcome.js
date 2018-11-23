@@ -9,7 +9,7 @@ module.exports = class extends Command {
       args: [
         '[channel:message] [Channel:Message]',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

@@ -11,7 +11,7 @@ module.exports = class extends Command {
       args: [
         '<Role> [User]',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

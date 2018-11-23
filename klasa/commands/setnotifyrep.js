@@ -11,7 +11,7 @@ module.exports = class extends Command {
       alias: [
         'notifyrep',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

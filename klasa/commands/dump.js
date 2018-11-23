@@ -15,7 +15,7 @@ module.exports = class extends Command {
         '[emojis]',
         '[messages]',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

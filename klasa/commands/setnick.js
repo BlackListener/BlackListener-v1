@@ -13,7 +13,7 @@ module.exports = class extends Command {
         'resetnick',
         'nick',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 

@@ -14,7 +14,7 @@ module.exports = class extends Command {
       args: [
         '[<User> <Reason> <Probe>]',
       ],
-      permission: 8,
+      permissionLevel: 6,
     })
   }
 
