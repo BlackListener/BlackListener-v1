@@ -47,4 +47,4 @@ if (report.errorCount || report.warningCount) {
     console.log('OK, Finished')
     process.exit()
   })
-}
+} else process.exit()
