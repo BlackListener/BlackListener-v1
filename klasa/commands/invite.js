@@ -4,8 +4,8 @@ const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirn
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('invite', { args: ['[patron]'] })
+  constructor(...args) {
+    super(...args, 'invite', { args: ['[patron]'] })
   }
 
   run(msg, settings, lang, args) {

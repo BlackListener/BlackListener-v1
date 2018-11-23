@@ -4,14 +4,14 @@ const logger = require(__dirname + '/../logger').getLogger('commands:unban', 'bl
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<User>',
       ],
       permission: 8,
     }
-    super('unban', opts)
+    super(...args, 'unban', opts)
   }
 
   async run(msg, settings, lang, args) {

@@ -4,14 +4,14 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         'anime',
         'custom <subreddit>',
       ],
     }
-    super('image', opts)
+    super(...args, 'image', opts)
   }
 
   async run(msg, settings, lang, args) {

@@ -5,7 +5,7 @@ const config = require(__dirname + '/../config.yml')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[guilds]',
@@ -16,7 +16,7 @@ module.exports = class extends Command {
       ],
       permission: 8,
     }
-    super('dump', opts)
+    super(...args, 'dump', opts)
   }
 
   async run(msg, settings, lang, args) {

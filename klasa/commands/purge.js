@@ -3,7 +3,7 @@ const logger = require(__dirname + '/../logger').getLogger('commands:purge', 'li
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[number/all]',
@@ -14,7 +14,7 @@ module.exports = class extends Command {
       ],
       permission: 8,
     }
-    super('purge', opts)
+    super(...args, 'purge', opts)
   }
 
   async run(msg, settings, lang, args) {

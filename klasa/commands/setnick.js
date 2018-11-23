@@ -2,7 +2,7 @@ const Converter = require(__dirname + '/../converter.js')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<NewName> [User]',
@@ -14,7 +14,7 @@ module.exports = class extends Command {
       ],
       permission: 8,
     }
-    super('setnick', opts)
+    super(...args, 'setnick', opts)
   }
 
   run(msg, settings, lang, args) {

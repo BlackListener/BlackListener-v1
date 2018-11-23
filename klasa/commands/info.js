@@ -7,8 +7,8 @@ const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirn
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('info')
+  constructor(...args) {
+    super(...args, 'info')
   }
 
   async run(msg, settings, lang) {

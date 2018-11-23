@@ -2,7 +2,7 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<0...10>',
@@ -12,7 +12,7 @@ module.exports = class extends Command {
       ],
       permission: 8,
     }
-    super('setbanrep', opts)
+    super(...args, 'setbanrep', opts)
   }
 
   run(msg, settings, lang, args) {

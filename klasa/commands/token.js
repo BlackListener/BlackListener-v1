@@ -2,8 +2,8 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('token')
+  constructor(...args) {
+    super(...args, 'token')
   }
 
   isAllowed(msg, owners) {

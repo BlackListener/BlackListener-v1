@@ -8,14 +8,14 @@ const intformat = require('biguint-format')
 const FlakeId = require('flake-idgen')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[<User> <Reason> <Probe>]',
       ],
       permission: 8,
     }
-    super('ban', opts)
+    super(...args, 'ban', opts)
   }
 
   async run(msg, settings, lang, args) {

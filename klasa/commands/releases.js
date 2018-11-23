@@ -2,13 +2,13 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[Version]',
       ],
     }
-    super('releases', opts)
+    super(...args, 'releases', opts)
   }
 
   run(msg, settings, lang, args) {

@@ -5,11 +5,11 @@ const argument_parser = require(__dirname + '/../argument_parser')
 const util = require(__dirname + '/../util')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: ['<Code>'],
     }
-    super('eval', opts)
+    super(...args, 'eval', opts)
   }
 
   isAllowed(msg, owners) {

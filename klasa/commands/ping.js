@@ -2,8 +2,8 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('ping')
+  constructor(...args) {
+    super(...args, 'ping')
   }
 
   async run(msg, settings, lang) {

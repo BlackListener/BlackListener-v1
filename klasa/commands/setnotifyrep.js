@@ -2,7 +2,7 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<0...10>',
@@ -12,7 +12,7 @@ module.exports = class extends Command {
       ],
       permission: 8,
     }
-    super('setnotifyrep', opts)
+    super(...args, 'setnotifyrep', opts)
   }
 
   async run(msg, settings, lang, args) {

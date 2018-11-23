@@ -2,13 +2,13 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[Command]',
       ],
     }
-    super('load', opts)
+    super(...args, 'load', opts)
   }
 
   isAllowed(msg, owners) {

@@ -3,8 +3,8 @@ const git = require('simple-git/promise')()
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('git')
+  constructor(...args) {
+    super(...args, 'git')
   }
 
   async run(msg, settings, lang) {

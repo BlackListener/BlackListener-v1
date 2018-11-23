@@ -3,14 +3,14 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       alias: [
         'log',
       ],
       permission: 8,
     }
-    super('setlog', opts)
+    super(...args, 'setlog', opts)
   }
 
   run(msg, settings, lang, args) {

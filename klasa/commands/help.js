@@ -5,13 +5,13 @@ const util = require(__dirname + '/../util')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[Command]',
       ],
     }
-    super('help', opts)
+    super(...args, 'help', opts)
   }
 
   async run(msg, settings, lang, args) {

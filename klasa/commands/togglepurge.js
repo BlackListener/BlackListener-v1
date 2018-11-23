@@ -2,14 +2,14 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[enable/disable]',
       ],
       permission: 8,
     }
-    super('togglepurge', opts)
+    super(...args, 'togglepurge', opts)
   }
 
   async run(msg, settings, lang, args) {

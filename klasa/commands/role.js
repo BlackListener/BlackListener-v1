@@ -5,14 +5,14 @@ const { Command } = require('klasa')
 const f = require('string-format')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<Role> [User]',
       ],
       permission: 8,
     }
-    super('role', opts)
+    super(...args, 'role', opts)
   }
 
   run(msg, settings, lang, args) {

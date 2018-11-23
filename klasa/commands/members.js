@@ -1,8 +1,8 @@
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('members')
+  constructor(...args) {
+    super(...args, 'members')
   }
 
   async run(msg) {

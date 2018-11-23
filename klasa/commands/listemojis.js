@@ -1,13 +1,13 @@
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[escape]',
       ],
     }
-    super('listemojis', opts)
+    super(...args, 'listemojis', opts)
   }
 
   run(msg, settings, lang, args) {

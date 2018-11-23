@@ -3,7 +3,7 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[-f]',
@@ -11,7 +11,7 @@ module.exports = class extends Command {
         '[-g]',
       ],
     }
-    super('shutdown', opts)
+    super(...args, 'shutdown', opts)
   }
 
   isAllowed(msg, owners) {

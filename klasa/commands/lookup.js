@@ -4,13 +4,13 @@ const data = require(__dirname + '/../data')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<User>',
       ],
     }
-    super('lookup', opts)
+    super(...args, 'lookup', opts)
   }
 
   async run(msg, settings, lang, args) {

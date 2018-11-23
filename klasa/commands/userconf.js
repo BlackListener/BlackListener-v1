@@ -7,7 +7,7 @@ const data = require(__dirname + '/../data')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         'language',
@@ -17,7 +17,7 @@ module.exports = class extends Command {
         'userconfig',
       ],
     }
-    super('userconf', opts)
+    super(...args, 'userconf', opts)
   }
 
   async run(msg, settings, lang, args) {

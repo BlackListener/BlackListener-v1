@@ -4,14 +4,14 @@ const { validLanguages } = require(__dirname + '/../contents')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[en|ja]',
       ],
       permission: 8,
     }
-    super('language', opts)
+    super(...args, 'language', opts)
   }
 
   run(msg, settings, lang, args) {

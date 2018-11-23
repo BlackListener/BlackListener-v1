@@ -7,14 +7,14 @@ const s = require(__dirname + '/../config.yml')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[minecraft]',
         '[fortnite]',
       ],
     }
-    super('status', opts)
+    super(...args, 'status', opts)
   }
 
   async run(msg, settings, lang) {

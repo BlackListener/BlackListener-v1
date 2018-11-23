@@ -2,14 +2,14 @@ const Converter = require(__dirname + '/../converter.js')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<User>',
       ],
       permission: 8,
     }
-    super('instantkick', opts)
+    super(...args, 'instantkick', opts)
   }
 
   run(msg, settings, lang, args) {

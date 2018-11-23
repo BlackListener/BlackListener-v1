@@ -3,14 +3,14 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '<Channel>',
       ],
       permission: 8,
     }
-    super('setignore', opts)
+    super(...args, 'setignore', opts)
   }
 
   run(msg, settings, lang, args) {

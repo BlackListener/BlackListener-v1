@@ -1,8 +1,8 @@
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('leave')
+  constructor(...args) {
+    super(...args, 'leave')
   }
 
   isAllowed(msg) {

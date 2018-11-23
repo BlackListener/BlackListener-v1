@@ -3,14 +3,14 @@ const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
+  constructor(...args) {
     const opts = {
       args: [
         '[channel:message] [Channel:Message]',
       ],
       permission: 8,
     }
-    super('setwelcome', opts)
+    super(...args, 'setwelcome', opts)
   }
 
   async run(msg, settings, lang, args) {

@@ -2,8 +2,8 @@ const Discord = require('discord.js')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
-  constructor() {
-    super('serverinfo')
+  constructor(...args) {
+    super(...args, 'serverinfo')
   }
 
   run(msg, settings, lang) {
