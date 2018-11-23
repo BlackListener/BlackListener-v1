@@ -1,6 +1,6 @@
 const logger = require(__dirname + '/../logger').getLogger('commands:shutdown', 'darkgray')
 const f = require('string-format')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

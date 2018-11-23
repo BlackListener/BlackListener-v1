@@ -1,7 +1,7 @@
 const Converter = require(__dirname + '/../converter.js')
 const Discord = require('discord.js')
 const data = require(__dirname + '/../data')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

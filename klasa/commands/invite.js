@@ -1,7 +1,7 @@
 const f = require('string-format')
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const FormData = require('form-data')
 const now = require('performance-now')
 const s = require(__dirname + '/../config.yml')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

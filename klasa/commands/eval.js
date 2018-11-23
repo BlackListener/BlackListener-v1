@@ -1,6 +1,6 @@
 const logger = require(__dirname + '/../logger').getLogger('commands:eval', 'lightpurple')
 const f = require('string-format')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 const argument_parser = require(__dirname + '/../argument_parser')
 const util = require(__dirname + '/../util')
 

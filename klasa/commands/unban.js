@@ -1,7 +1,7 @@
 const Converter = require(__dirname + '/../converter')
 const data = require(__dirname + '/../data')
 const logger = require(__dirname + '/../logger').getLogger('commands:unban', 'blue')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

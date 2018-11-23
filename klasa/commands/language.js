@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const f = require('string-format')
 const { validLanguages } = require(__dirname + '/../contents')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

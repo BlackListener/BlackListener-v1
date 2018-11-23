@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const fs = require('fs').promises
 const f = require('string-format')
 const config = require(__dirname + '/../config.yml')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

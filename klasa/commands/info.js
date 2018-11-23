@@ -4,7 +4,7 @@ const c = require(__dirname + '/../config.yml')
 const isWindows = process.platform === 'win32'
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

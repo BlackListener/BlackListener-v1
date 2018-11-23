@@ -1,6 +1,6 @@
 const f = require('string-format')
 const git = require('simple-git/promise')()
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {

@@ -4,7 +4,7 @@ const f = require('string-format')
 const { validLanguages } = require(__dirname + '/../contents')
 const argument_parser = require(__dirname + '/../argument_parser')
 const data = require(__dirname + '/../data')
-const { Command } = require('../core')
+const { Command } = require('klasa')
 
 module.exports = class extends Command {
   constructor() {
