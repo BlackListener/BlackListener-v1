@@ -4,11 +4,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'leave',
+      permissionLevel: 7,
     })
-  }
-
-  isAllowed(msg) {
-    return msg.author.id === msg.guild.ownerID
   }
 
   async run(msg) {

@@ -5,11 +5,8 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'token',
+      permissionLevel: 9,
     })
-  }
-
-  isAllowed(msg, owners) {
-    return owners.includes(msg.author.id)
   }
 
   run(msg, settings, lang) {

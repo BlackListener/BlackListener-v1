@@ -12,11 +12,8 @@ module.exports = class extends Command {
         '[-r[g]]',
         '[-g]',
       ],
+      permissionLevel: 9,
     })
-  }
-
-  isAllowed(msg, owners) {
-    return owners.includes(msg.author.id)
   }
 
   async run(msg, settings, lang, args) {

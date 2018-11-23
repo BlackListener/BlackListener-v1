@@ -10,11 +10,8 @@ module.exports = class extends Command {
     super(...args, {
       name: 'eval',
       args: ['<Code>'],
+      permissionLevel: 9,
     })
-  }
-
-  isAllowed(msg, owners) {
-    return owners.includes(msg.author.id)
   }
 
   async run(msg, settings, lang, args) {

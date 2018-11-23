@@ -8,11 +8,8 @@ module.exports = class extends Command {
       args: [
         '[Command]',
       ],
+      permissionLevel: 9,
     })
-  }
-
-  isAllowed(msg, owners) {
-    return owners.includes(msg.author.id)
   }
 
   run(msg, settings, lang) {
