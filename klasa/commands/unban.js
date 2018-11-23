@@ -1,8 +1,7 @@
 const Converter = require(__dirname + '/../converter')
 const data = require(__dirname + '/../data')
-const Klasa = require('klasa')
-const logger = new Klasa.KlasaConsole()
-const { Command } = Klasa
+const { Command, KlasaConsole } = require('klasa')
+const logger = new KlasaConsole()
 
 module.exports = class extends Command {
   constructor(...args) {

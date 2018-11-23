@@ -1,7 +1,6 @@
 const f = require('string-format')
-const Klasa = require('klasa')
-const logger = new Klasa.KlasaConsole()
-const { Command } = Klasa
+const { Command, KlasaConsole } = require('klasa')
+const logger = new KlasaConsole()
 const argument_parser = require(__dirname + '/../argument_parser')
 const util = require(__dirname + '/../util')
 

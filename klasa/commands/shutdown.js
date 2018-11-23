@@ -1,7 +1,6 @@
 const f = require('string-format')
-const Klasa = require('klasa')
-const { Command } = Klasa
-const logger = new Klasa.KlasaConsole()
+const { Command, KlasaConsole } = require('klasa')
+const logger = new KlasaConsole()
 
 module.exports = class extends Command {
   constructor(...args) {

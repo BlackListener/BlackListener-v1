@@ -1,9 +1,8 @@
 const Converter = require(__dirname + '/../converter.js')
 const data = require(__dirname + '/../data')
 const Discord = require('discord.js')
-const Klasa = require('klasa')
-const { Command } = Klasa
-const logger = new Klasa.KlasaConsole()
+const { Command, KlasaConsole } = require('klasa')
+const logger = new KlasaConsole()
 const config = require(__dirname + '/../config.yml')
 const intformat = require('biguint-format')
 const FlakeId = require('flake-idgen')

@@ -1,10 +1,9 @@
 const config = require(__dirname + '/../config.yml')
 const ytdl = require('ytdl-core')
-const Klasa = require('klasa')
-const logger = new Klasa.KlasaConsole()
+const { Command, KlasaConsole } = require('klasa')
+const logger = new KlasaConsole()
 const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
 const f = require('string-format')
-const { Command } = Klasa
 const YouTube = require('youtube-node')
 const youtube = new YouTube()
 const util = require('util')
