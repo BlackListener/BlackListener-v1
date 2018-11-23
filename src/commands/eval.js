@@ -31,11 +31,13 @@ module.exports = class extends Command {
         returned = await (eval(`(async () => {${commandcut}})()`))
       }
       logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`)
-      if (!returned.includes('\n')) msg.channel.send(`:ok_hand: (${returned})`)
+      if (!returned) msg.channel.send(`:thinking: (${returned})`)
+      else if (!returned.includes('\n')) msg.channel.send(`:ok_hand: (${returned})`)
       else msg.channel.send(returned, { code: 'js' })
     } catch (e) {
       logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.COMMAND_EVAL_ERROR} (${e})`)
       msg.channel.send(f(lang.COMMAND_EVAL_ERROR, e))
+      throw e
     }
   }
 }
