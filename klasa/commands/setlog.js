@@ -6,7 +6,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setlog',
-      alias: [
+      aliases: [
         'log',
       ],
       permissionLevel: 6,

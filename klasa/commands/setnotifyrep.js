@@ -8,7 +8,7 @@ module.exports = class extends Command {
       args: [
         '<0...10>',
       ],
-      alias: [
+      aliases: [
         'notifyrep',
       ],
       permissionLevel: 6,

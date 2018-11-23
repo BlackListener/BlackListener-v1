@@ -31,7 +31,7 @@ module.exports = class extends Command {
         'queue',
         'status',
       ],
-      alias: [
+      aliases: [
         'play',
       ],
     })

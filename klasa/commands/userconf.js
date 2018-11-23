@@ -14,7 +14,7 @@ module.exports = class extends Command {
         'language',
         '[--target=<UserID>]',
       ],
-      alias: [
+      aliases: [
         'userconfig',
       ],
     })

@@ -8,7 +8,7 @@ module.exports = class extends Command {
       args: [
         '<Prefix>',
       ],
-      alias: [
+      aliases: [
         'prefix',
       ],
       permissionLevel: 6,
