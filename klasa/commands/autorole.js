@@ -12,25 +12,27 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang, args) {
-    if (args[1] === 'remove') {
-      settings.autorole = null
-      msg.channel.send(f(lang._setconfig, 'autorole'))
-    } else if (args[1] === 'add') {
-      if (/\d{18,}/.test(args[2])) {
-        settings.autorole = args[2]
-      } else {
-        const role = Converter.toRole(msg, args[2])
-        if (!role) msg.channel.send(lang._invalid_args)
-        settings.autorole = role.id
-      }
-      msg.channel.send(f(lang._setconfig, 'autorole'))
+  add(msg) {
+    if (/\d{18,}/.test(args[2])) {
+      settings.autorole = args[2]
     } else {
-      if (settings.autorole != null) {
-        msg.channel.send(f(lang.COMMAND_AUTOROLE_ENABLED, msg.guild.roles.get(settings.autorole).name))
-      } else if (!settings.autorole) {
-        msg.channel.send(lang.COMMAND_AUTOROLE_DISABLED)
-      }
+      const role = Converter.toRole(msg, args[2])
+      if (!role) msg.channel.send(lang._invalid_args)
+      settings.autorole = role.id
+    }
+    msg.channel.send(f(lang._setconfig, 'autorole'))
+  }
+
+  remove(msg) {
+    settings.autorole = null
+    msg.channel.send(f(lang._setconfig, 'autorole'))
+  }
+
+  show(msg) {
+    if (settings.autorole != null) {
+      msg.channel.send(f(lang.COMMAND_AUTOROLE_ENABLED, msg.guild.roles.get(settings.autorole).name))
+    } else if (!settings.autorole) {
+      msg.channel.send(lang.COMMAND_AUTOROLE_DISABLED)
     }
   }
 }
