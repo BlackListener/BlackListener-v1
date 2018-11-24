@@ -6,8 +6,8 @@
 
 exports.config = {
   /**
-     * General Options
-     */
+   * General Options
+   */
   // Disables/Enables a process.on('unhandledRejection'...) handler
   production: false,
   // The default language that comes with klasa. More base languages can be found on Klasa-Pieces
@@ -30,8 +30,8 @@ exports.config = {
   readyMessage: (client) => `Successfully initialized. Ready to serve ${client.guilds.size} guild${client.guilds.size === 1 ? '' : 's'}.`,
 
   /**
-     * Caching Options
-     */
+   * Caching Options
+   */
   fetchAllMembers: false,
   messageCacheMaxSize: 200,
   messageCacheLifetime: 0,
@@ -40,39 +40,39 @@ exports.config = {
   messageSweepInterval: 0,
 
   /**
-     * Sharding Options
-     */
+   * Sharding Options
+   */
   shardId: 0,
   shardCount: 0,
 
   /**
-     * Command Handler Options
-     */
+   * Command Handler Options
+   */
   commandEditing: false,
   commandLogging: false,
   typing: false,
 
   /**
-     * Database Options
-     */
+   * Database Options
+   */
   providers: {
     /*
-        // Provider Connection object for process based databases:
-        // rethinkdb, mongodb, mssql, mysql, postgresql
-        mysql: {
-            host: 'localhost',
-            db: 'klasa',
-            user: 'database-user',
-            password: 'database-password',
-            options: {}
-        },
-        */
+      // Provider Connection object for process based databases:
+      // rethinkdb, mongodb, mssql, mysql, postgresql
+      mysql: {
+        host: 'localhost',
+        db: 'klasa',
+        user: 'database-user',
+        password: 'database-password',
+        options: {}
+      },
+    */
     default: 'json',
   },
 
   /**
-     * Custom Prompt Defaults
-     */
+   * Custom Prompt Defaults
+   */
   customPromptDefaults: {
     time: 30000,
     limit: Infinity,
@@ -80,8 +80,8 @@ exports.config = {
   },
 
   /**
-     * Klasa Piece Defaults
-     */
+   * Klasa Piece Defaults
+   */
   pieceDefaults: {
     commands: {
       aliases: [],
@@ -135,8 +135,8 @@ exports.config = {
   },
 
   /**
-     * Console Event Handlers (enabled/disabled)
-     */
+   * Console Event Handlers (enabled/disabled)
+   */
   consoleEvents: {
     debug: false,
     error: true,
@@ -147,8 +147,8 @@ exports.config = {
   },
 
   /**
-     * Console Options
-     */
+   * Console Options
+   */
   console: {
     // Alternatively a Moment Timestamp string can be provided to customize the timestamps.
     timestamps: true,
@@ -164,8 +164,8 @@ exports.config = {
   },
 
   /**
-     * Custom Setting Gateway Options
-     */
+   * Custom Setting Gateway Options
+   */
   gateways: {
     guilds: {},
     users: {},
@@ -173,7 +173,7 @@ exports.config = {
   },
 
   /**
-     * Klasa Schedule Options
-     */
+   * Klasa Schedule Options
+   */
   schedule: { interval: 60000 },
 }
