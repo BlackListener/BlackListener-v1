@@ -1,4 +1,4 @@
-const config = require(__dirname + '/../config.yml')
+const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed
 const ytdl = require('ytdl-core')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
@@ -30,7 +30,7 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang, args) {
-    if (!config.patron) { return msg.channel.send(lang._not_patron) }
+    if (!env.PATRON) { return msg.channel.send(lang._not_patron) }
     if (!msg.member.voiceChannel) return msg.channel.send(lang.COMMAND_MUSIC_NOT_JOINED_VC)
     loop[msg.guild.id] = {} // need initialize!
     if (args[1] === 'join') {
@@ -38,7 +38,8 @@ module.exports = class extends Command {
     } else if (args[1] === 'play') {
       let keyword
       if (!args[2] || !args[2].includes('youtube.com/watch?v=')) {
-        youtube.setKey(config.youtube_apikey)
+        if (!env.YOUTUBE_API_KEY) return msg.channel.send('Not specified API Key in config')
+        youtube.setKey(env.YOUTUBE_API_KEY)
         const search = util.promisify(youtube.search)
         const { items } = await search(args.slice(2).join(' '), 1).catch(e => logger.error(e))
         keyword = args.slice(2).join(' ')

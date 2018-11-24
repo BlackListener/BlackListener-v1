@@ -3,7 +3,7 @@ const data = require(__dirname + '/../data')
 const Discord = require('discord.js')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
-const config = require(__dirname + '/../config.yml')
+const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed
 const intformat = require('biguint-format')
 const FlakeId = require('flake-idgen')
 
@@ -40,7 +40,7 @@ module.exports = class extends Command {
       const attach = msg.attachments.first().url
       if (client.user.id === target.id) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_MYSELF)
       if (target.id === msg.author.id) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_YOURSELF)
-      if (config.owners.includes(target.id)) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_BOT_OWNERS)
+      if (env.OWNERS.includes(target.id)) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_BOT_OWNERS)
       const member = msg.guild.member(target)
       if (!member && member.bannable) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN)
       target_data.bannedFromServerOwner.push(msg.guild.ownerID)

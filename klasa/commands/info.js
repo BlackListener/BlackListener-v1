@@ -1,8 +1,7 @@
 const Discord = require('discord.js')
 const os = require('os')
 const isWindows = process.platform === 'win32'
-const isTravisBuild = process.argv.includes('--travis-build')
-const c = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
+const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -16,7 +15,7 @@ module.exports = class extends Command {
     const client = msg.client
     const loadavg = isWindows ? '利用不可' : Math.floor(os.loadavg()[0] * 100) / 100
     const invite = `https://discordapp.com/oauth2/authorize?scope=bot&client_id=${msg.client.user.id}&permissions=8`
-    const owner = c.owners.map(aowner => {
+    const owner = env.OWNERS.replace(/ /gm, '').split(',').map(aowner => {
       const user = client.users.get(aowner)
       return `${user.tag} (${user.id})\n`
     })

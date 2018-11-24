@@ -1,7 +1,7 @@
 const f = require('string-format')
 const Discord = require('discord.js')
-const c = require(__dirname + '/../config.yml')
-const util = require(__dirname + '/../util')
+const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed
+const util = require(__dirname + '/../../src/util')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -29,7 +29,7 @@ module.exports = class extends Command {
     }
     const prefix = settings.prefix
     const embed = new Discord.MessageEmbed()
-      .setTitle(f(lang.COMMAND_HELP_TITLE, c.version))
+      .setTitle(f(lang.COMMAND_HELP_TITLE, env.VERSION))
       .setTimestamp()
       .setColor([0,255,0])
       .addField(`${prefix}setprefix`, lang.COMMAND_SETPREFIX_DESCRIPTION)

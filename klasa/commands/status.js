@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 const fetch = require('node-fetch')
 const FormData = require('form-data')
 const now = require('performance-now')
-const s = require(__dirname + '/../config.yml')
+const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -53,13 +53,13 @@ module.exports = class extends Command {
         .addField(lang.COMMAND_STATUS_SERVERS_MOJANG, status[7])
       return msg.channel.send(embed)
     } else if (service === 'fortnite') {
-      if (s.fortnite_api_key === '') return msg.channel.send(lang.COMMAND_STATUS_NO_APIKEY)
+      if (env.FORTNITE_API_KEY === '') return msg.channel.send(lang.COMMAND_STATUS_NO_APIKEY)
       msg.channel.send(lang.COMMAND_STATUS_CHECKING)
       const startTime = now()
       const data = await fetch('https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status', {
         method: 'POST',
         headers: {
-          'Authorization': s.fortnite_api_key,
+          'Authorization': env.FORTNITE_API_KEY,
           'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
         },
         body: new FormData().append('username', 'username'),

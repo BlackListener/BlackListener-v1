@@ -2,7 +2,7 @@ const f = require('string-format')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
 const argument_parser = require(__dirname + '/../argument_parser')
-const util = require(__dirname + '/../util')
+const util = require(__dirname + '/../../src/util')
 
 module.exports = class extends Command {
   constructor(...args) {
