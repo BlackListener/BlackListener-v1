@@ -12,7 +12,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     const target = Converter.toUser(msg, args[1])
     if (!target) return msg.channel.send(lang.COMMAND_UNBAN_INVALID_USER)
     const bans = await data.bans()

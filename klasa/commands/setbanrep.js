@@ -13,7 +13,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang, args) {
+  run(msg) {
     const n = parseInt(args[1], 10)
     const min = 0
     const max = 10

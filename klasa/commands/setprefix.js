@@ -13,7 +13,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     if (/\s/gm.test(args[1]) || !args[1]) {
       msg.channel.send(lang.COMMAND_SETPREFIX_CANNOTSPACE)
     } else {

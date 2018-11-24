@@ -11,7 +11,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang) {
+  async run(msg) {
     const client = msg.client
     const loadavg = isWindows ? '利用不可' : Math.floor(os.loadavg()[0] * 100) / 100
     const invite = `https://discordapp.com/oauth2/authorize?scope=bot&client_id=${msg.client.user.id}&permissions=8`

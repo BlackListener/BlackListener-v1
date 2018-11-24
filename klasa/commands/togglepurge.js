@@ -10,7 +10,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     if (args[1] === 'enable') {
       settings.disable_purge = false
     } else if (args[1] === 'disable') {

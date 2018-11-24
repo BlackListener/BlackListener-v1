@@ -12,7 +12,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     const client = msg.client
     let list
     let nowrite

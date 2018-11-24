@@ -9,7 +9,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang, args) {
+  run(msg) {
     const versions = [
       '1.1',
       '1.1.1',

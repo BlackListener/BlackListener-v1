@@ -17,7 +17,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     const opts = argument_parser(args.slice(1))
     if (opts.target) {
       if (!msg.member.hasPermission(8)) return msg.channel.send(':x: Administrators can only use this option.')

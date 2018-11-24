@@ -8,7 +8,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang) {
+  run(msg) {
     const client = msg.client
     const prefix = settings.prefix ? `\`${settings.prefix}\`` : lang._sunknown
     const language = settings.language ? `\`${settings.language}\`` : lang._sunknown

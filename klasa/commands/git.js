@@ -9,7 +9,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang) {
+  async run(msg) {
     const hash = await git.revparse(['HEAD'])
     const message = await msg.channel.send(f(lang.COMMAND_GIT_COMMIT, hash) + 'Checking for status...')
     await git.fetch()

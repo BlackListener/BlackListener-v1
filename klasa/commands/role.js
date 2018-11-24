@@ -13,7 +13,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang, args) {
+  run(msg) {
     const role = Converter.toRole(args[1])
     const member = Converter.toMember(msg, args[2])
     const build = (title, message) => {

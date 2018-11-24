@@ -11,7 +11,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     const sendImage = async list => {
       const message = await msg.channel.send(lang.COMMAND_IMAGE_SEARCHING)
       const sub = list[Math.round(Math.random() * (list.length - 1))]

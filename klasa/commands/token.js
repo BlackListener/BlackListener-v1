@@ -9,7 +9,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang) {
+  run(msg) {
     msg.author.send(f(lang.COMMAND_TOKEN_MYTOKEN, msg.client.token))
     msg.reply(lang.COMMAND_TOKEN_SENTTODM)
     msg.delete(5000)

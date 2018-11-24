@@ -11,7 +11,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     if (!args[1]) return msg.channel.send(lang._no_args)
     const arg = args.slice(1).join(' ')
     const client = msg.client

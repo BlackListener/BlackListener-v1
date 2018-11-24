@@ -15,7 +15,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang, args) {
+  run(msg) {
     const cmd = args[0]
     if (cmd === 'resetnick') {
       const member = Converter.toMember(msg, args[1], msg.guild.me)

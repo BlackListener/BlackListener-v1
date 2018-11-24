@@ -11,7 +11,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang, args) {
+  run(msg) {
     const channel = Converter.toTextChannel(msg, args[1])
     if (!channel) return msg.channel.send(lang._invalid_args)
     const id = channel.id

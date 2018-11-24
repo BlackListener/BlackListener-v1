@@ -13,7 +13,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     const n = parseInt(args[1], 10)
     const min = 0
     const max = 10

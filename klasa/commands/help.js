@@ -12,7 +12,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, settings, lang, args) {
+  async run(msg) {
     const {commands} = require(__dirname + '/../commands')
     if (args[1]) {
       if (!commands[args[1]]) return msg.channel.send(f(lang._no_command, args[1]))

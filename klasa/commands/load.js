@@ -10,7 +10,7 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, settings, lang) {
+  run(msg) {
     const file = msg.content.slice((settings.prefix + 'load ').length)
     if (!file) return msg.channel.send(lang._invalid_args)
     require(__dirname + '/../commands.js').load(file)
