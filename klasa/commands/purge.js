@@ -1,4 +1,4 @@
-const Converter = require(__dirname + '/../converter.js')
+const Discord = require('discord.js')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
 
@@ -60,9 +60,8 @@ module.exports = class extends Command {
     msg.guild.channels.forEach((channel) => { channel.delete() })
   }
 
-  async remake(msg) {
-    const channel = Converter.toTextChannel(msg, args[2])
-    if (!channel) return msg.channel.send(lang._no_args)
+  async remake(msg, [channel]) {
+    if (!(channel instanceof Discord.TextChannel)) return msg.channel.send(lang._no_args)
     await channel.clone()
     await channel.delete('Remake of Channel')
     msg.channel.send(':ok_hand:')

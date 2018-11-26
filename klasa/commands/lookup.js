@@ -1,4 +1,3 @@
-const Converter = require(__dirname + '/../converter.js')
 const Discord = require('discord.js')
 const data = require(__dirname + '/../data')
 const { Command } = require('klasa')
@@ -11,13 +10,7 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg) {
-    if (!args[1]) return msg.channel.send(lang._no_args)
-    const arg = args.slice(1).join(' ')
-    const client = msg.client
-    let user = Converter.toUser(msg, arg)
-    if (!user) user = await client.fetchUser(arg, false).catch(() => null)
-    if (!user) return msg.channel.send(lang._invalid_args)
+  async run(msg, [user]) {
     const userConfig = await data.user(user.id)
     userConfig.tag = user.tag
     userConfig.createdTimestamp = user.createdTimestamp

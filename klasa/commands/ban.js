@@ -1,4 +1,3 @@
-const Converter = require(__dirname + '/../converter.js')
 const data = require(__dirname + '/../data')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
@@ -15,12 +14,11 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg) {
+  async run(msg, [target]) {
     const client = msg.client
     const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => intformat(flakeIdGen.next(), 'dec')
-    const target = Converter.toUser(msg, args[1])
     if (!target || !args[2] || !msg.attachments.first()) return msg.channel.send(lang._invalid_args)
     const target_data = await data.user(target.id)
     if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))

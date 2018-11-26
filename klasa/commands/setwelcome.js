@@ -1,4 +1,4 @@
-const Converter = require(__dirname + '/../converter.js')
+const Discord = require('discord.js')
 const f = require('string-format')
 const { Command } = require('klasa')
 
@@ -20,9 +20,8 @@ module.exports = class extends Command {
     msg.channel.send(lang.COMMAND_SETWELCOME_WARNING)
   }
 
-  async channel(msg) {
-    const channel = Converter.toTextChannel(msg, args[2])
-    if (!channel) return msg.channel.send(lang._invalid_args)
+  async channel(msg, [channel]) {
+    if (!(channel instanceof Discord.TextChannel)) return msg.channel.send(lang._invalid_args)
     settings.welcome_channel = channel
     await msg.channel.send(f(lang._setconfig, 'welcome_channel'))
     msg.channel.send(lang.COMMAND_SETWELCOME_WARNING)

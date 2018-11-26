@@ -1,4 +1,3 @@
-const Converter = require(__dirname + '/../converter.js')
 const Discord = require('discord.js')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
@@ -8,14 +7,12 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'role',
-      usage: '<Role:role> <User:user>',
+      usage: '<Role:role> <Member:member>',
       permissionLevel: 6,
     })
   }
 
-  run(msg) {
-    const role = Converter.toRole(args[1])
-    const member = Converter.toMember(msg, args[2])
+  run(msg, [role, member]) {
     const build = (title, message) => {
       const embed = new Discord.MessageEmbed()
         .setTitle(title)
