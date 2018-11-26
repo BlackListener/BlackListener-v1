@@ -13,13 +13,13 @@ module.exports = class extends Command {
     })
   }
 
-  set(msg) {
-    if (!validLanguages.includes(args[1])) return msg.send(lang._invalid_args)
-    settings.language = args[1]
+  set(msg, [lang]) {
+    if (!validLanguages.includes(lang)) return msg.send(lang._invalid_args)
+    settings.language = lang
     msg.channel.send(f(lang._setconfig, 'language'))
   }
 
-  help() {
+  help(msg) {
     const embed = new Discord.MessageEmbed()
       .setTitle(f(lang.COMMAND_LANGUAGE_AVAILABLELANG, settings.language))
       .setDescription(validLanguages.join('\n'))

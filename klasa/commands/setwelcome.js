@@ -12,8 +12,8 @@ module.exports = class extends Command {
     })
   }
 
-  async message(msg) {
-    if (!args[2]) return msg.channel.send(lang._invalid_args)
+  async message(msg, [message]) {
+    if (typeof message !== 'string') return msg.channel.send(lang._invalid_args)
     const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)
     settings.welcome_message = commandcut
     await msg.channel.send(f(lang._setconfig, 'welcome_message'))

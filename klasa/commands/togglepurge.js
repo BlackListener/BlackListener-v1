@@ -10,17 +10,13 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg) {
-    if (args[1] === 'enable') {
+  async run(msg, [status]) {
+    if (status === 'enable') {
       settings.disable_purge = false
-    } else if (args[1] === 'disable') {
+    } else if (status === 'disable') {
       settings.disable_purge = true
     } else {
-      if (settings.disable_purge) {
-        settings.disable_purge = false
-      } else if (!settings.disable_purge) {
-        settings.disable_purge = true
-      }
+      settings.disable_purge = !settings.disable_purge
     }
     await msg.channel.send(f(lang._setconfig, 'disable_purge'))
   }

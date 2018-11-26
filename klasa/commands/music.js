@@ -39,27 +39,27 @@ module.exports = class extends Command {
     msg.member.voiceChannel.join().then(vc => msg.channel.send(f(lang.COMMAND_MUSIC_JOINED_VC, vc.channel.name))).catch(e => logger.error(e))
   }
 
-  async play(msg) {
+  async play(msg, URL) {
     let keyword
-    if (!args[2] || !args[2].includes('youtube.com/watch?v=')) {
+    if (!URL || !URL.includes('youtube.com/watch?v=')) {
       if (!env.YOUTUBE_API_KEY) return msg.channel.send('Not specified API Key in config')
       youtube.setKey(env.YOUTUBE_API_KEY)
       const search = util.promisify(youtube.search)
-      const { items } = await search(args.slice(2).join(' '), 1).catch(e => logger.error(e))
-      keyword = args.slice(2).join(' ')
-      args[2] = 'https://youtube.com/watch?v=' + items[0].id.videoId // Oh no, this is (really) not a good!
+      const { items } = await search(URL, 1).catch(e => logger.error(e))
+      keyword = URL
+      URL = 'https://youtube.com/watch?v=' + items[0].id.videoId // Oh no, this is (really) not a good!
     }
     msg.member.voiceChannel.join()
       .then(async connection => {
         if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
           if (loop[msg.guild.id].enabled) return msg.channel.send(lang.COMMAND_MUSIC_CANTADD_LOOP_ENABLED)
           if (!queue[msg.guild.id]) queue[msg.guild.id] = []
-          queue[msg.guild.id].push(args[2])
-          msg.channel.send(f(lang.COMMAND_MUSIC_QUEUE_ADDED, args[2]))
+          queue[msg.guild.id].push(URL)
+          msg.channel.send(f(lang.COMMAND_MUSIC_QUEUE_ADDED, URL))
           if (keyword) msg.channel.send('Search keyword: ' + keyword)
         } else {
-          play(connection, args[2], msg)
-          msg.channel.send(f(lang.COMMAND_MUSIC_PLAYING, args[2]))
+          play(connection, URL, msg)
+          msg.channel.send(f(lang.COMMAND_MUSIC_PLAYING, URL))
           if (keyword) msg.channel.send('Search keyword: ' + keyword)
         }
         if (msg.deletable) msg.delete()
@@ -78,10 +78,10 @@ module.exports = class extends Command {
               if (loop[msg.guild.id].every) {
                 const seconds = parseInt(loop[msg.guild.id].every.replace(/\D{1,}/gm, '')) * 60
                 setTimeout(() => {
-                  play(connection, args[2], msg)
+                  play(connection, URL, msg)
                 }, seconds * 1000)
               } else {
-                play(connection, args[2], msg)
+                play(connection, URL, msg)
               }
             }
           }
@@ -90,13 +90,13 @@ module.exports = class extends Command {
       })
   }
 
-  volume(msg) {
+  volume(msg, [volume]) {
     if (msg.guild.voiceConnection && msg.guild.voiceConnection.dispatcher && !msg.guild.voiceConnection.dispatcher.destroyed) {
       const before = msg.guild.voiceConnection.dispatcher.volume
-      if (!isNumber(args[2])) return msg.channel.send(lang._invalid_args)
-      msg.guild.voiceConnection.dispatcher.setVolume(parseInt(args[2]) / 100)
-      const emoji = before * 100 <= parseInt(args[2]) ? ':loud_sound:' : ':sound:'
-      msg.channel.send(f(emoji + lang.COMMAND_MUSIC_CHANGED_VOLUME, before * 100, parseInt(args[2]))) // oldvalue: 100
+      if (!isNumber(volume)) return msg.channel.send(lang._invalid_args)
+      msg.guild.voiceConnection.dispatcher.setVolume(parseInt(volume) / 100)
+      const emoji = before * 100 <= parseInt(volume) ? ':loud_sound:' : ':sound:'
+      msg.channel.send(f(emoji + lang.COMMAND_MUSIC_CHANGED_VOLUME, before * 100, parseInt(volume))) // oldvalue: 100
     } else return msg.channel.send(lang.COMMAND_MUSIC_NOT_PLAYING)
   }
 
@@ -115,20 +115,20 @@ module.exports = class extends Command {
     } else return msg.channel.send(lang.COMMAND_MUSIC_NOT_PLAYING)
   }
 
-  loop(msg) {
+  loop(msg, [status, clear]) {
     Object.assign({[msg.guild.id]: []}, queue)
     //queue.push({[msg.guild.id]: []})
-    if (args[2] === 'disable') {
+    if (status === 'disable') {
       loop[msg.guild.id].every = null
       loop[msg.guild.id].enabled = false
       msg.channel.send(lang.COMMAND_MUSIC_DISABLED_LOOPING)
     } else {
-      if (args[2] === 'every') {
-        if (args[3] === 'clear') return loop[msg.guild.id].every = null
-        if (!/\d{1,}m/gm.test(args[3])) return msg.channel.send(lang._invalid_args)
+      if (status === 'every') {
+        if (clear === 'clear') return loop[msg.guild.id].every = null
+        if (!/\d{1,}m/gm.test(clear)) return msg.channel.send(lang._invalid_args)
         loop[msg.guild.id].enabled = true
-        loop[msg.guild.id].every = args[3]
-        msg.channel.send(f(lang.COMMAND_MUSIC_LOOP_EVERY, args[3]))
+        loop[msg.guild.id].every = clear
+        msg.channel.send(f(lang.COMMAND_MUSIC_LOOP_EVERY, clear))
       } else {
         loop[msg.guild.id].enabled = loop[msg.guild.id].enabled ? false : true
         msg.channel.send(f(lang.COMMAND_MUSIC_ONE_MUSIC_LOOP, loop[msg.guild.id].enabled ? lang.COMMAND_MUSIC_ENABLED : lang.COMMAND_MUSIC_DISABLED))
@@ -150,12 +150,12 @@ module.exports = class extends Command {
     } else msg.channel.send(lang.COMMAND_MUSIC_NOT_PLAYING)
   }
 
-  queue(msg) {
+  queue(msg, [clear, reactivate]) {
     msg.channel.send(f(lang.COMMAND_MUSIC_QUEUE_COUNT, queue.length))
-    if (args[2] === 'clear') {
+    if (clear === 'clear') {
       queue[msg.guild.id] = []
       return msg.channel.send(lang.COMMAND_MUSIC_CLEARED_QUEUE)
-    } else if (args[2] === 'reactivate') {
+    } else if (reactivate === 'reactivate') {
       return msg.channel.send(f('You need to type this: ```\n{0}music stop\n{0}music play https://www.youtube.com/watch?v=jhFDyDgMVUI\n```', settings.prefix))
     }
     const queues = queue[msg.guild.id] ? queue[msg.guild.id].map((e, i) => `${i}: ${e}`) : []

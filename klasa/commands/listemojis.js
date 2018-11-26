@@ -8,9 +8,9 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg) {
+  run(msg, [escape]) {
     const emojiList = msg.guild.emojis.map(e=>e.toString()).join(' ')
-    if (args[1] === 'escape') {
+    if (escape) {
       msg.channel.send(`\`\`\`${emojiList}\`\`\``)
     } else {
       msg.channel.send(emojiList)

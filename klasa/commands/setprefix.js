@@ -13,11 +13,11 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg) {
-    if (/\s/gm.test(args[1]) || !args[1]) {
+  async run(msg, [prefix]) {
+    if (/\s/.test(prefix) || !prefix) {
       msg.channel.send(lang.COMMAND_SETPREFIX_CANNOTSPACE)
     } else {
-      settings.prefix = args[1]
+      settings.prefix = prefix
       await msg.channel.send(f(lang._setconfig, 'prefix'))
     }
   }

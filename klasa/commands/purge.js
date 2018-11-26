@@ -13,11 +13,11 @@ module.exports = class extends Command {
 
   async run(msg, [type, ...params]) {
     if (settings.disable_purge) return msg.channel.send(lang.COMMAND_PURGE_DISABLED_PURGE)
-    if (/[0-9]/.test(args[1])) {
-      if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) {
+    if (/[0-9]/.test(type)) {
+      if (parseInt(type) > 99 || parseInt(type) < 1) {
         msg.channel.send(lang.COMMAND_PURGE_OUTOFRANGE)
       }
-      const messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
+      const messages = await msg.channel.fetchMessages({limit: parseInt(type) + 1})
       msg.channel.bulkDelete(messages)
         .catch(e => logger.error(e))
     } else return this[type](msg, params)

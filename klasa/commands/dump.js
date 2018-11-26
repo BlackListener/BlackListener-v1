@@ -12,30 +12,30 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg) {
+  async run(msg, [type, sub]) {
     const client = msg.client
     let list
     let nowrite
-    if (args[1] === 'users') {
+    if (type === 'users') {
       list = client.users.map((user) => `${user.tag} (${user.id})`)
-    } else if (args[1] === 'channels') {
+    } else if (type === 'channels') {
       list = client.channels.map((channel) => `<${channel.guild.name}><${channel.guild.id}> ${channel.name} (${channel.id}) [${channel.type}]`)
-    } else if (args[1] === 'messages') {
-      if (args[2] === 'size') {
+    } else if (type === 'messages') {
+      if (sub === 'size') {
         const {size} = await fs.stat(`./data/servers/${msg.guild.id}/messages.log`)
         msg.channel.send(f(lang.COMMAND_DUMP_LOGSIZE, size / 1000000.0))
-      } else if (args[2] === 'delete') {
+      } else if (sub === 'delete') {
         fs.writeFile(`${__dirname}/../../data/servers/${msg.guild.id}/messages.log`, `--- deleted messages by ${msg.author.tag} ---\n\n\n`, 'utf8')
       }
       nowrite = true
-    } else if (args[1] === 'emojis') {
+    } else if (type === 'emojis') {
       list = client.emojis.map((emoji) => `<${emoji.guild.name}><${emoji.guild.id}> ${emoji.name} (${emoji.id}) [isAnimated:${emoji.animated}] [ ${emoji.url} ]`)
-    } else if (!args[1] || args[1] === 'guilds') {
+    } else if (type === 'guilds') {
       list = client.guilds.map((guild) => `${guild.name} (${guild.id}) [ /servers/${guild.id}/messages.log ]`)
     }
     const image1 = 'https://img.rht0910.tk/upload/2191111432/72932264/bump.png'
     const image2 = 'https://img.rht0910.tk/upload/2191111432/710894583/dump2.png'
-    const image = !args[2] ? image1 : image2
+    const image = !sub ? image1 : image2
     const embed = new Discord.MessageEmbed().setImage(image)
       .setTitle(lang.COMMAND_DUMP_DUMPMESSAGE)
       .setColor([140,190,210])

@@ -17,7 +17,7 @@ module.exports = class extends Command {
       const embed = new Discord.MessageEmbed()
         .setTitle(title)
         .setColor([255,0,0])
-        .setDescription(f(message, args[1]))
+        .setDescription(f(message, role))
       msg.channel.send(embed)
     }
     if (member.roles.has(role.id)) {

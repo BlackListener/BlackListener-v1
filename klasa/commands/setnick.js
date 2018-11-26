@@ -15,13 +15,12 @@ module.exports = class extends Command {
   }
 
   run(msg, [name, member]) {
-    const cmd = args[0]
     if (cmd === 'resetnick') {
       member.setNickname(null)
       return msg.channel.send(':ok_hand:')
     } else {
-      if (!args[1]) return msg.channel.send(lang._invalid_args)
-      member.setNickname(args[1])
+      if (!name) return msg.channel.send(lang._invalid_args)
+      member.setNickname(name)
     }
   }
 }

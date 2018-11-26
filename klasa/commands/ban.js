@@ -14,12 +14,12 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg, [target]) {
+  async run(msg, [target, reason]) {
     const client = msg.client
     const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => intformat(flakeIdGen.next(), 'dec')
-    if (!target || !args[2] || !msg.attachments.first()) return msg.channel.send(lang._invalid_args)
+    if (!target || !reason || !msg.attachments.first()) return msg.channel.send(lang._invalid_args)
     const target_data = await data.user(target.id)
     if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))
       return msg.channel.send(lang.COMMAND_BAN_ALREADY_BANNED)
@@ -33,7 +33,7 @@ module.exports = class extends Command {
     target_data.bannedFromServer.push(msg.guild.id)
     target_data.bannedFromUser.push(msg.author.id)
     target_data.probes.push(attach)
-    target_data.reasons.push(args[2])
+    target_data.reasons.push(reason)
     const id = generate()
     const bansdata = {
       id: target.id,
