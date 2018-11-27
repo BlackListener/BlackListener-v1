@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -15,6 +14,6 @@ module.exports = class extends Command {
 
   async run(msg, [rep]) {
     settings.notifyRep = rep
-    await msg.channel.send(f(lang._setconfig, 'notifyRep'))
+    await msg.sendLocale('_setconfig', ['notifyRep'])
   }
 }

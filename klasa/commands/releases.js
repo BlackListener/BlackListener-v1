@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -17,11 +16,11 @@ module.exports = class extends Command {
       '1.2',
       '1.2.1',
     ]
-    if (version && !versions.includes(version)) return msg.channel.send(lang.COMMAND_RELEASES_INVALID_VERSION)
+    if (version && !versions.includes(version)) return msg.sendLocale('COMMAND_RELEASES_INVALID_VERSION')
     if (version) {
-      return msg.channel.send(f(`http://go.blacklistener.tk/go/release_notes/${version}`))
+      return msg.channel.send(`http://go.blacklistener.tk/go/release_notes/${version}`)
     } else {
-      return msg.channel.send(f('http://go.blacklistener.tk/go/history'))
+      return msg.channel.send('http://go.blacklistener.tk/go/history')
     }
   }
 }

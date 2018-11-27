@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -18,6 +17,6 @@ module.exports = class extends Command {
     } else {
       settings.disable_purge = !settings.disable_purge
     }
-    await msg.channel.send(f(lang._setconfig, 'disable_purge'))
+    await msg.sendLocale('_setconfig', ['disable_purge'])
   }
 }

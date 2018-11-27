@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -10,8 +9,8 @@ module.exports = class extends Command {
   }
 
   run(msg) {
-    msg.author.send(f(lang.COMMAND_TOKEN_MYTOKEN, msg.client.token))
-    msg.reply(lang.COMMAND_TOKEN_SENTTODM)
+    msg.author.send(msg.language.get('COMMAND_TOKEN_MYTOKEN', msg.client.token))
+    msg.reply(msg.language.get('COMMAND_TOKEN_SENTTODM'))
     msg.delete(5000)
   }
 }

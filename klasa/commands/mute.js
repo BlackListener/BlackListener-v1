@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -12,8 +11,8 @@ module.exports = class extends Command {
   }
 
   run(msg, [user]) {
-    if (user.id === msg.author.id || user.id === msg.client.user.id) return msg.channel.send(lang._invalid_args)
+    if (user.id === msg.author.id || user.id === msg.client.user.id) return msg.sendLocale('_invalid_args')
     settings.mute.push(user.id)
-    msg.channel.send(f(lang._setconfig, 'mute'))
+    msg.sendLocale('_setconfig', ['mute'])
   }
 }

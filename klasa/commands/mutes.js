@@ -13,12 +13,12 @@ module.exports = class extends Command {
       if (msg.client.users.has(data)) {
         return `<@${data}> (${msg.client.users.get(data).tag})`
       } else {
-        return `<@${data}> ${data} (${lang._failed_to_get})`
+        return `<@${data}> ${data} (${msg.language.get('_failed_to_get')})`
       }
     })
     return msg.channel.send(new Discord.MessageEmbed()
-      .setTitle(lang.COMMAND_MUTE_MUTED)
-      .setDescription(mutes.join('\n') || lang._no)
+      .setTitle(msg.language.get('COMMAND_MUTE_MUTED'))
+      .setDescription(mutes.join('\n') || msg.language.get('_no'))
     )
   }
 }

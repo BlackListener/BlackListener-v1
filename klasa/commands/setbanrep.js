@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -15,6 +14,6 @@ module.exports = class extends Command {
 
   run(msg, [rep]) {
     settings.banRep = rep
-    msg.channel.send(f(lang._setconfig, 'banRep'))
+    msg.sendLocale('_setconfig', ['banRep'])
   }
 }

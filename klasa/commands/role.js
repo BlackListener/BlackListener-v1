@@ -1,7 +1,6 @@
 const Discord = require('discord.js')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
-const f = require('string-format')
 
 module.exports = class extends Command {
   constructor(...args) {
@@ -17,15 +16,15 @@ module.exports = class extends Command {
       const embed = new Discord.MessageEmbed()
         .setTitle(title)
         .setColor([255,0,0])
-        .setDescription(f(message, role))
+        .setDescription(message(role))
       msg.channel.send(embed)
     }
     if (member.roles.has(role.id)) {
       member.removeRole(role).catch(e => logger.error(e))
-      build(lang.COMMAND_ROLE_REMOVED_TITLE, lang.COMMAND_ROLE_REMOVED)
+      build(msg.language.get('COMMAND_ROLE_REMOVED_TITLE'), msg.language.get('COMMAND_ROLE_REMOVED'))
     } else {
       member.addRole(role).catch(e => logger.error(e))
-      build(lang.COMMAND_ROLE_ADDED_TITLE, lang.COMMAND_ROLE_ADDED)
+      build(msg.language.get('COMMAND_ROLE_ADDED_TITLE'), msg.language.get('COMMAND_ROLE_ADDED'))
     }
   }
 }

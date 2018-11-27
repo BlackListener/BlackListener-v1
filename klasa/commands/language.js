@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const f = require('string-format')
 const { validLanguages } = require(__dirname + '/../contents')
 const { Command } = require('klasa')
 
@@ -14,14 +13,14 @@ module.exports = class extends Command {
   }
 
   set(msg, [lang]) {
-    if (!validLanguages.includes(lang)) return msg.send(lang._invalid_args)
+    if (!validLanguages.includes(lang)) return msg.send(msg.language.get('_invalid_args'))
     settings.language = lang
-    msg.channel.send(f(lang._setconfig, 'language'))
+    msg.sendLocale('_setconfig', ['language'])
   }
 
   help(msg) {
     const embed = new Discord.MessageEmbed()
-      .setTitle(f(lang.COMMAND_LANGUAGE_AVAILABLELANG, settings.language))
+      .setTitle(msg.language.get('COMMAND_LANGUAGE_AVAILABLELANG', settings.language))
       .setDescription(validLanguages.join('\n'))
       .setColor([0,255,0])
     msg.channel.send(embed)

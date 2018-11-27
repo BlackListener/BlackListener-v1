@@ -11,7 +11,7 @@ module.exports = class extends Command {
   }
 
   set(msg, [member, name]) {
-    if (!name) return msg.channel.send(lang._invalid_args)
+    if (!name) return msg.sendLocale('_invalid_args')
     member.setNickname(name)
   }
 

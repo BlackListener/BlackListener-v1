@@ -1,4 +1,3 @@
-const f = require('string-format')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {
@@ -15,10 +14,10 @@ module.exports = class extends Command {
 
   async run(msg, [prefix]) {
     if (/\s/.test(prefix) || !prefix) {
-      msg.channel.send(lang.COMMAND_SETPREFIX_CANNOTSPACE)
+      msg.sendLocale('COMMAND_SETPREFIX_CANNOTSPACE')
     } else {
       settings.prefix = prefix
-      await msg.channel.send(f(lang._setconfig, 'prefix'))
+      await msg.sendLocale('_setconfig', ['prefix'])
     }
   }
 }

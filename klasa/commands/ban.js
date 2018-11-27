@@ -19,16 +19,16 @@ module.exports = class extends Command {
     const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => intformat(flakeIdGen.next(), 'dec')
-    if (!target || !reason || !msg.attachments.first()) return msg.channel.send(lang._invalid_args)
+    if (!target || !reason || !msg.attachments.first()) return msg.sendLocale('_invalid_args')
     const target_data = await data.user(target.id)
     if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))
-      return msg.channel.send(lang.COMMAND_BAN_ALREADY_BANNED)
+      return msg.sendLocale('COMMAND_BAN_ALREADY_BANNED')
     const attach = msg.attachments.first().url
-    if (client.user.id === target.id) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_MYSELF)
-    if (target.id === msg.author.id) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_YOURSELF)
-    if (env.OWNERS.includes(target.id)) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN_BOT_OWNERS)
+    if (client.user.id === target.id) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN_MYSELF')
+    if (target.id === msg.author.id) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN_YOURSELF')
+    if (env.OWNERS.includes(target.id)) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN_BOT_OWNERS')
     const member = msg.guild.member(target)
-    if (!member && member.bannable) return msg.channel.send(lang.COMMAND_BAN_CANNOT_BAN)
+    if (!member && member.bannable) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN')
     target_data.bannedFromServerOwner.push(msg.guild.ownerID)
     target_data.bannedFromServer.push(msg.guild.id)
     target_data.bannedFromUser.push(msg.author.id)
@@ -50,6 +50,6 @@ module.exports = class extends Command {
       return Promise.resolve()
     }))
     logger.log(`Banned user: ${target.tag} (${target.id}) from ${msg.guild.name}(${msg.guild.id})`)
-    return msg.channel.send(':white_check_mark: ' + lang.COMMAND_BAN_BANNED)
+    return msg.channel.send(':white_check_mark: ' + msg.language.get('COMMAND_BAN_BANNED'))
   }
 }
