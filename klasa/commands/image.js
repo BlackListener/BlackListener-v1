@@ -13,15 +13,15 @@ module.exports = class extends Command {
 
   async run(msg, [type, subreddit]) {
     const sendImage = async list => {
-      const message = await msg.sendLocale('COMMAND_IMAGE_SEARCHING')
+      await msg.sendLocale('COMMAND_IMAGE_SEARCHING')
       const sub = list[Math.round(Math.random() * (list.length - 1))]
       const url = await randomPuppy(sub)
-      if (!url) return message.edit('Unable to find images.')
+      if (!url) return msg.send('Unable to find images.')
       const attachment = new MessageAttachment(url)
-      message.edit(attachment).catch(msg.channel.send)
+      msg.send(attachment).catch(msg.channel.send)
     }
     if (type === 'custom') {
-      if (!msg.channel.nsfw) return msg.sendLocale('sendLocale')
+      if (!msg.channel.nsfw) return msg.sendLocale('_nsfw')
       if(/\s/gm.test(subreddit)) return msg.sendLocale('COMMAND_IMAGE_CANNOTSPACE')
       try { // eslint-disable-line
         return await sendImage([subreddit])
