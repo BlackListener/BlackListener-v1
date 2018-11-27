@@ -1,4 +1,3 @@
-const data = require(__dirname + '/../data')
 const { Command, KlasaConsole } = require('klasa')
 const logger = new KlasaConsole()
 const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed

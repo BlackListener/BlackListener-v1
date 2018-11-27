@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const data = require(__dirname + '/../data')
 const { Command } = require('klasa')
 
 module.exports = class extends Command {

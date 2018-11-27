@@ -1,4 +1,3 @@
-const data = require(__dirname + '/../data')
 const Discord = require('discord.js')
 const { Command } = require('klasa')
 
