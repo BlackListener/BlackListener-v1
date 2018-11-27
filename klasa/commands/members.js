@@ -8,8 +8,6 @@ module.exports = class extends Command {
   }
 
   async run(msg) {
-    const message = await msg.channel.send('Fetching members...')
-    await msg.guild.fetchMembers()
-    message.edit(msg.guild.members.size)
+    msg.channel.send(msg.guild.memberCount)
   }
 }
