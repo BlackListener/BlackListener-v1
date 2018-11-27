@@ -1,4 +1,4 @@
-const Discord = require('discord.js')
+const { MessageAttachment } = require('discord.js')
 const randomPuppy = require('random-puppy')
 const { Command } = require('klasa')
 
@@ -16,7 +16,7 @@ module.exports = class extends Command {
       const sub = list[Math.round(Math.random() * (list.length - 1))]
       const url = await randomPuppy(sub)
       if (!url) return message.edit('Unable to find images.')
-      const attachment = new Discord.Attachment(url)
+      const attachment = new MessageAttachment(url)
       message.edit(attachment).catch(msg.channel.send)
     }
     if (type === 'custom') {
