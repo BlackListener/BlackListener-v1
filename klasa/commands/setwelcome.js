@@ -7,6 +7,7 @@ module.exports = class extends Command {
       name: 'setwelcome',
       subcommands: true,
       usage: '<channel|message> <Channel:channel|Message:str>',
+      usageDelim: ' ',
       permissionLevel: 6,
     })
   }

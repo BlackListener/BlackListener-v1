@@ -6,6 +6,7 @@ module.exports = class extends Command {
       name: 'autorole',
       subcommands: true,
       usage: '<add|remove|show:default> [Role:role]',
+      usageDelim: ' ',
       permissionLevel: 6,
     })
   }

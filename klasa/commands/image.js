@@ -7,6 +7,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'image',
       usage: '<anime|custom> [subreddit:str]',
+      usageDelim: ' ',
     })
   }
 

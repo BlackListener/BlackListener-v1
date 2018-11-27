@@ -8,6 +8,7 @@ module.exports = class extends Command {
       name: 'language',
       subcommands: true,
       usage: '<set:default|help> (en|ja)',
+      usageDelim: ' ',
       permissionLevel: 6,
     })
   }

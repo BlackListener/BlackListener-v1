@@ -7,6 +7,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'role',
       usage: '<Role:role> <Member:member>',
+      usageDelim: ' ',
       permissionLevel: 6,
     })
   }
