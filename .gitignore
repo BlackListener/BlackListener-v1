@@ -23,3 +23,6 @@ config.yml
 config.old.yml
 
 .env
+
+# Database
+bwd/*
