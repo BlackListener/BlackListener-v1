@@ -15,11 +15,11 @@ module.exports = class extends Command {
 
   async run(msg, [target, reason]) {
     const client = msg.client
-    const bans = await data.bans()
+    const data = client.providers.get('json')
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => intformat(flakeIdGen.next(), 'dec')
     if (!target || !reason || !msg.attachments.first()) return msg.sendLocale('_invalid_args')
-    const target_data = await data.user(target.id)
+    const target_data = await data.get('users', target.id)
     if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))
       return msg.sendLocale('COMMAND_BAN_ALREADY_BANNED')
     const attach = msg.attachments.first().url
@@ -41,10 +41,10 @@ module.exports = class extends Command {
       executedUserId: msg.author.id,
       lostReps: 1,
     }
-    bans[id] = bansdata
+    data.create('bans', id, bansdata)
     target_data.rep = target_data.rep + 1
     await Promise.all(msg.client.guilds.map(async guild => {
-      const { banRep } = await data.server(guild.id)
+      const { banRep } = await data.get('guilds', guild.id)
       if (banRep !== 0 && banRep <= target_data.rep) return await guild.ban(target)
       return Promise.resolve()
     }))
