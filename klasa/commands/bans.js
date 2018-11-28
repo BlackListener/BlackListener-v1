@@ -12,9 +12,9 @@ module.exports = class extends Command {
     const client = msg.client
     const data = client.providers.get('json')
     const bans = await data.getAll('bans')
-    const bansList = await Promise.all(bans.map(async data => {
-      const user = await msg.client.users.fetch(data.id, false).catch(() => msg.language.get('_failed_to_get'))
-      return `${user.tag} (${data.id})`
+    const bansList = await Promise.all(bans.map(async (id) => {
+      const user = await client.fetchUser(id, false).catch(() => msg.language.get('_failed_to_get'))
+      return `${user.tag} (${id})`
     }))
     const embed = new Discord.MessageEmbed()
       .setTitle(msg.language.get('COMMAND_BAN_BANNED_USERS'))

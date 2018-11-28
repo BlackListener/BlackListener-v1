@@ -3,21 +3,12 @@ const logger = new KlasaConsole()
 const env = require('dotenv-safe').config({allowEmptyValues: true}).parsed
 const intformat = require('biguint-format')
 const FlakeId = require('flake-idgen')
-const defaultUser = {
-  bannedFromServer: [],
-  bannedFromServerOwner: [],
-  bannedFromUser: [],
-  probes: [],
-  reasons: [],
-  rep: 0,
-}
 
 module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'ban',
       usage: '<User:user> <Reason:str> <Probe:str>',
-      usageDelim: ' ',
       permissionLevel: 6,
     })
   }
@@ -28,7 +19,7 @@ module.exports = class extends Command {
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => intformat(flakeIdGen.next(), 'dec')
     if (!target || !reason || !msg.attachments.first()) return msg.sendLocale('_invalid_args')
-    const target_data = await data.get('users', target.id) || defaultUser
+    const target_data = await data.get('users', target.id)
     if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))
       return msg.sendLocale('COMMAND_BAN_ALREADY_BANNED')
     const attach = msg.attachments.first().url
