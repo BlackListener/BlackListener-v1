@@ -1,3 +1,5 @@
+const { Client } = require('klasa')
+
 /**
  * The following are all client options for Klasa/Discord.js.
  * Any option that you wish to use the default value can be removed from this file.
@@ -167,9 +169,39 @@ exports.config = {
    * Custom Setting Gateway Options
    */
   gateways: {
-    guilds: {},
-    users: {},
-    clientStorage: {},
+    guilds: {
+      schema: Client.defaultGuildSchema
+        .add('prefix', 'any', { default: '!' })
+        .add('language', 'any', { default: 'en-US' })
+        .add('notifyRep', 'any', { default: 1 })
+        .add('banRep', 'any', { default: 5 })
+        .add('banned', 'any', { default: false })
+        .add('disable_purge', 'any', { default: true })
+        .add('autorole', 'any', { default: null })
+        .add('excludeLogging', 'any', { default: '' })
+        .add('invite', 'any', { default: false })
+        .add('welcome_channel', 'any', { default: null })
+        .add('welcome_message', 'any', { default: null })
+        .add('mute', 'any', { array: true })
+        .add('message_blacklist', 'any', { array: true })
+        .add('blocked_role', 'any', { array: true })
+        .add('log_channel', 'any', { default: '' }),
+    },
+    users: {
+      schema: Client.defaultUserSchema
+        .add('rep', 'any', { default: 0 })
+        .add('bannedFromServer', 'any', { array: true })
+        .add('bannedFromServerOwner', 'any', { array: true })
+        .add('bannedFromUser', 'any', { array: true })
+        .add('probes', 'any', { array: true })
+        .add('reasons', 'any', { array: true })
+        .add('username_changes', 'any', { array: true })
+        .add('tag', 'any', { default: '' }),
+    },
+    clientStorage: {
+      schema: Client.defaultClientSchema
+        .add('bans', 'any', { array: true }),
+    },
   },
 
   /**
