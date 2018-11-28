@@ -8,9 +8,8 @@ module.exports = class extends Command {
     })
   }
 
-  async run(msg) {
-    const data = msg.client.providers.get('json')
-    const mutes = (await data.get('guilds', msg.guild.id).mute || []).map((data) => {
+  run(msg) {
+    const mutes = settings.mute.map((data) => {
       if (msg.client.users.has(data)) {
         return `<@${data}> (${msg.client.users.get(data).tag})`
       } else {
