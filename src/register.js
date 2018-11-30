@@ -102,27 +102,27 @@ module.exports = function(client) {
   })
 
   process.on('unhandledRejection', async (error = {}) => {
-    errors++
     if (error.name === 'DiscordAPIError') return true
     if ((error.message || '').includes('ENOTFOUND')) return
+    logger.error(`Unhandled Rejection: ${error}`)
+    logger.error(error.stack)
     const { report, file } = await makeReport(client, error, 'error')
     if (client.readyAt) client.channels.get('484357084037513216').send(codeblock(report))
       .then(() => logger.info('Error report has been sent!'))
-    logger.error(`Unhandled Rejection: ${error}`)
-    logger.error(error.stack)
     fs.writeFile(file, report, 'utf8').then(() => {
       logger.info(`Error Report has been writed to ${file}`)
     })
+    errors++
   })
 
   process.on('uncaughtException', async (error = {}) => {
-    errors++
-    const { report, file } = await makeReport(client, error, 'crash')
     logger.emerg('Oh, BlackListener has crashed!')
-      .emerg(`Crash report has writed to: ${file}`)
+    const { report, file } = await makeReport(client, error, 'crash')
     _fs.writeFileSync(file, report, 'utf8')
+    logger.emerg(`Crash report has writed to: ${file}`)
     client.readyAt ? client.channels.get('484183865976553493').send(codeblock(report))
       .finally(() => process.exit(1)) : process.exit(1)
+    errors++
   })
 
   process.on('message', msg => {

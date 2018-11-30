@@ -11,7 +11,7 @@ async function runCommand(command, settings, msg, lang) {
   if (!command.isAllowed(msg, s.owners)) return msg.channel.send(lang.udonthaveperm)
   logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
   try { // eslint-disable-line
-    const args = msg.content.replace(settings.prefix, '').split(' ')
+    const args = msg.content.replace(settings.prefix, '').replace(/\s{1,}/gm, ' ').split(' ')
     await command.run(msg, settings, lang, args)
   } catch (e) {
     await msg.channel.send(f(lang.error_occurred, command.name))
@@ -24,7 +24,7 @@ module.exports = async function(settings, msg, lang) {
   if ((msg.content === `<@${msg.client.user.id}>` || msg.content === `<@!${msg.client.user.id}>`) && msg.attachments.length === 0)
     return msg.channel.send(f(lang.prefixis, settings.prefix))
   if (msg.content.startsWith(settings.prefix)) {
-    const [cmd] = msg.content.replace(settings.prefix, '').split(' ')
+    const [cmd] = msg.content.replace(settings.prefix, '').replace(/\s{1,}/gm, ' ').split(' ')
     if (settings.banned) return msg.channel.send(f(lang.error, 'Your server is banned.\nPlease contact to the this server -> https://discord.gg/xQQXp4B'))
     if (commands[cmd]) {
       await runCommand(commands[cmd], settings, msg, lang)
