@@ -18,7 +18,7 @@ module.exports = {
   },
   editedLog(old, msg) {
     const parentName = msg.channel.parent ? msg.channel.parent.name : ''
-    const log = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${msg.content}\n----------\n${old.content}\n----------\n----------\n`
+    const log = `[${getDateTime()}::${msg.guild.name}:${parentName}:${msg.channel.name}:${msg.channel.id}:${msg.author.tag}:${msg.author.id}] ${old.content}\n----------\n${msg.content}\n----------\n----------\n`
     fs.appendFile(path.editUserMessages(msg.author.id), log)
     fs.appendFile(path.editServerMessages(msg.guild.id), log)
   },
