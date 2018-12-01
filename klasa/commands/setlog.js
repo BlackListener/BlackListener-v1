@@ -12,8 +12,8 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, [channel]) {
-    settings.log_channel = channel.id
+  async run(msg, [channel]) {
+    await msg.guild.settings.update('log_channel', channel.id)
     msg.sendLocale('_setconfig', ['log_channel'])
   }
 }

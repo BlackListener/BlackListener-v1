@@ -12,8 +12,8 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, [rep]) {
-    settings.banRep = rep
+  async run(msg, [rep]) {
+    await msg.guild.settings.update('banRep', rep)
     msg.sendLocale('_setconfig', ['banRep'])
   }
 }

@@ -15,12 +15,11 @@ module.exports = class extends Command {
 
   async run(msg, [target, reason]) {
     const client = msg.client
-    const bans = await data.bans()
     const flakeIdGen = new FlakeId({ epoch: 1514764800000 }) // 2018/1/1 0:00:00
     const generate = () => intformat(flakeIdGen.next(), 'dec')
     if (!target || !reason || !msg.attachments.first()) return msg.sendLocale('_invalid_args')
-    const target_data = await data.user(target.id)
-    if (target_data.bannedFromServerOwner.includes(msg.guild.ownerID) && target_data.bannedFromServer.includes(msg.guild.id) && target_data.bannedFromUser.includes(msg.author.id))
+    const target_settings = target.settings
+    if (target_settings.bannedFromServerOwner.includes(msg.guild.ownerID) && target_settings.bannedFromServer.includes(msg.guild.id) && target_settings.bannedFromUser.includes(msg.author.id))
       return msg.sendLocale('COMMAND_BAN_ALREADY_BANNED')
     const attach = msg.attachments.first().url
     if (client.user.id === target.id) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN_MYSELF')
@@ -28,24 +27,25 @@ module.exports = class extends Command {
     if (env.OWNERS.includes(target.id)) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN_BOT_OWNERS')
     const member = msg.guild.member(target)
     if (!member && member.bannable) return msg.sendLocale('COMMAND_BAN_CANNOT_BAN')
-    target_data.bannedFromServerOwner.push(msg.guild.ownerID)
-    target_data.bannedFromServer.push(msg.guild.id)
-    target_data.bannedFromUser.push(msg.author.id)
-    target_data.probes.push(attach)
-    target_data.reasons.push(reason)
+    target_settings.update('bannedFromServerOwner', msg.guild.ownerID)
+    target_settings.update('bannedFromServer', msg.guild.id)
+    target_settings.update('bannedFromUser', msg.author.id)
+    target_settings.update('probes', attach)
+    target_settings.update('reasons', reason)
     const id = generate()
     const bansdata = {
-      id: target.id,
+      id: id,
+      userid: target.id,
       timestamp: Date.now(),
       guildId: msg.guild.id,
       executedUserId: msg.author.id,
       lostReps: 1,
     }
-    bans[id] = bansdata
-    target_data.rep = target_data.rep + 1
+    client.settings.update('bans', bansdata)
+    target_settings.update('rep', target_settings.rep + 1)
     await Promise.all(msg.client.guilds.map(async guild => {
-      const { banRep } = await data.server(guild.id)
-      if (banRep !== 0 && banRep <= target_data.rep) return await guild.ban(target)
+      const banRep = guild.settings.banRep
+      if (banRep !== 0 && banRep <= target_settings.rep) return await guild.ban(target)
       return Promise.resolve()
     }))
     logger.log(`Banned user: ${target.tag} (${target.id}) from ${msg.guild.name}(${msg.guild.id})`)

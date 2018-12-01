@@ -11,11 +11,11 @@ module.exports = class extends Command {
 
   async run(msg, [status]) {
     if (status === 'enable') {
-      settings.disable_purge = false
+      await msg.guild.settings.update('disable_purge', false)
     } else if (status === 'disable') {
-      settings.disable_purge = true
+      await msg.guild.settings.update('disable_purge', true)
     } else {
-      settings.disable_purge = !settings.disable_purge
+      await msg.guild.settings.update('disable_purge', !msg.guild.settings.disable_purge)
     }
     await msg.sendLocale('_setconfig', ['disable_purge'])
   }

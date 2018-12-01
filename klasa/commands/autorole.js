@@ -11,18 +11,19 @@ module.exports = class extends Command {
     })
   }
 
-  add(msg, [role]) {
+  async add(msg, [role]) {
     if (!role) msg.sendLocale('_invalid_args')
-    settings.autorole = role.id
+    await msg.guild.settings.update('autorole', role.id)
     msg.sendLocale('_setconfig', ['autorole'])
   }
 
-  remove(msg) {
-    settings.autorole = null
+  async remove(msg) {
+    await msg.guild.settings.update('autorole', null)
     msg.sendLocale('_setconfig', ['autorole'])
   }
 
   show(msg) {
+    const settings = msg.guild.settings
     if (settings.autorole != null) {
       msg.sendLocale('COMMAND_AUTOROLE_ENABLED', [msg.guild.roles.get(settings.autorole).name])
     } else if (!settings.autorole) {

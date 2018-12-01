@@ -12,7 +12,7 @@ module.exports = class extends Command {
 
   run(msg, [user]) {
     if (user.id === msg.author.id || user.id === msg.client.user.id) return msg.sendLocale('_invalid_args')
-    settings.mute.push(user.id)
+    msg.guild.settings.update('mute', user.id, { action: 'add' })
     msg.sendLocale('_setconfig', ['mute'])
   }
 }

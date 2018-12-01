@@ -10,7 +10,7 @@ module.exports = class extends Command {
 
   async run(msg) {
     const client = msg.client
-    const bans = await data.bans()
+    const bans = client.settings.bans
     const bansList = await Promise.all(bans.map(async (id) => {
       const user = await client.fetchUser(id, false).catch(() => msg.language.get('_failed_to_get'))
       return `${user.tag} (${id})`

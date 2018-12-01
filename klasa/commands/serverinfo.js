@@ -8,8 +8,9 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg) {
+  async run(msg) {
     const client = msg.client
+    const settings = msg.guild.settings
     const prefix = settings.prefix ? `\`${settings.prefix}\`` : msg.language.get('_sunknown')
     const language = settings.language ? `\`${settings.language}\`` : msg.language.get('_sunknown')
     const notifyRep = settings.notifyRep || msg.language.get('COMMAND_SERVERINFO_UNKNOWNORZERO')
@@ -18,7 +19,7 @@ module.exports = class extends Command {
     const disable_purge = settings.disable_purge ? msg.language.get('_no') : msg.language.get('_yes')
     const autorole = settings.autorole ? `${msg.language.get('COMMAND_SERVERINFO_ENABLED')} (${msg.guild.roles.get(settings.autorole).name}) [${settings.autorole}]` : msg.language.get('COMMAND_SERVERINFO_DISABLED')
     const excludeLogging = settings.excludeLogging ? `${msg.language.get('COMMAND_SERVERINFO_ENABLED')} (${client.channels.get(settings.excludeLogging).name}) (\`${client.channels.get(settings.excludeLogging).id}\`)` : msg.language.get('COMMAND_SERVERINFO_DISABLED')
-    if (!client.channels.has(settings.welcome_channel)) settings.welcome_channel = null
+    if (!client.channels.has(settings.welcome_channel)) await msg.guild.settings.update('welcome_channel', null)
     const welcome_channel = settings.welcome_channel ? `${msg.language.get('COMMAND_SERVERINFO_ENABLED')} (${client.channels.get(settings.welcome_channel).name})` : msg.language.get('COMMAND_SERVERINFO_DISABLED')
     const welcome_message = settings.welcome_message ? `${msg.language.get('COMMAND_SERVERINFO_ENABLED')} (\`\`\`${settings.welcome_message}\`\`\`)` : msg.language.get('COMMAND_SERVERINFO_DISABLED')
     const mutes = settings.mute.map((data) => {

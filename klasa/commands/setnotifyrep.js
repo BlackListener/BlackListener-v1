@@ -13,7 +13,7 @@ module.exports = class extends Command {
   }
 
   async run(msg, [rep]) {
-    settings.notifyRep = rep
+    await msg.guild.settings.update('notifyRep', rep)
     await msg.sendLocale('_setconfig', ['notifyRep'])
   }
 }

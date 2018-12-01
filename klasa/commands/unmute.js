@@ -9,9 +9,8 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, [user]) {
-    const result = settings.mute.filter(item => item !== user.id)
-    settings.mute = result
+  async run(msg, [user]) {
+    await msg.guild.settings.update('mute', user.id, { action: 'remove' })
     msg.sendLocale('_setconfig', ['mute'])
   }
 }

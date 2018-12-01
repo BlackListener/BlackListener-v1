@@ -9,8 +9,8 @@ module.exports = class extends Command {
     })
   }
 
-  run(msg, [channel]) {
-    settings.excludeLogging = channel.id
+  async run(msg, [channel]) {
+    await msg.guild.settings.update('excludeLogging', channel.id)
     msg.sendLocale('_setconfig', ['excludeLogging'])
   }
 }

@@ -13,11 +13,7 @@ module.exports = class extends Command {
   }
 
   async run(msg, [prefix]) {
-    if (/\s/.test(prefix) || !prefix) {
-      msg.sendLocale('COMMAND_SETPREFIX_CANNOTSPACE')
-    } else {
-      settings.prefix = prefix
-      await msg.sendLocale('_setconfig', ['prefix'])
-    }
+    await msg.guild.settings.update('prefix', prefix)
+    await msg.sendLocale('_setconfig', ['prefix'])
   }
 }
