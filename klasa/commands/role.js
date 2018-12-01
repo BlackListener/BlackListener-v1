@@ -6,6 +6,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'role',
+      description: language => language.get('COMMAND_ROLE_DESCRIPTION'),
       usage: '<Role:role> <Member:member>',
       usageDelim: ' ',
       permissionLevel: 6,

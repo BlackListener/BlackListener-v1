@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'token',
+      description: language => language.get('COMMAND_TOKEN_DESCRIPTION'),
       permissionLevel: 9,
     })
   }

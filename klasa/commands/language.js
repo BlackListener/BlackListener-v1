@@ -6,6 +6,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'language',
       subcommands: true,
+      description: language => language.get('COMMAND_LANGUAGE_DESCRIPTION'),
       usage: '<set:default|help> (lang:language)',
       usageDelim: ' ',
       permissionLevel: 6,

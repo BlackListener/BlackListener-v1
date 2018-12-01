@@ -5,6 +5,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'mute',
       subcommands: true,
+      description: language => language.get('COMMAND_MUTE_DESCRIPTION'),
       usage: '<User:user>',
       permissionLevel: 6,
     })

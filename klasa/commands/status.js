@@ -10,6 +10,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'status',
       subcommands: true,
+      description: language => language.get('COMMAND_STATUS_DESCRIPTION'),
       usage: '<minecraft|fortnite>',
     })
   }

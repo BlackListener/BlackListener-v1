@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'listemojis',
+      description: language => language.get('COMMAND_LISTEMOJIS_DESCRIPTION'),
       usage: '[escape]',
     })
   }

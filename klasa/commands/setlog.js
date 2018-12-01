@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setlog',
+      description: language => language.get('COMMAND_SETLOG_DESCRIPTION'),
       usage: '<Channel:channel>',
       aliases: [
         'log',

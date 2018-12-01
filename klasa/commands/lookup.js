@@ -6,6 +6,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'lookup',
       usage: '<User:user>',
+      description: language => language.get('COMMAND_LOOKUP_DESCRIPTION'),
     })
   }
 

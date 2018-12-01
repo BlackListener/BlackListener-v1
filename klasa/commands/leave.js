@@ -5,6 +5,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'leave',
       permissionLevel: 7,
+      description: language => language.get('COMMAND_LEAVE_DESCRIPTION'),
     })
   }
 

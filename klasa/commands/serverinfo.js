@@ -5,6 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'serverinfo',
+      description: language => language.get('COMMAND_SERVERINFO_DESCRIPTION'),
     })
   }
 

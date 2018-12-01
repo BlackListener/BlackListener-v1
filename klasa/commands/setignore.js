@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setignore',
+      description: language => language.get('COMMAND_SETIGNORE_DESCRIPTION'),
       usage: '<Channel:channel>',
       permissionLevel: 6,
     })

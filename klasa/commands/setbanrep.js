@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setbanrep',
+      description: language => language.get('COMMAND_SETBANREP_DESCRIPTION'),
       usage: '<rep:number{0,10}>',
       aliases: [
         'banrep',

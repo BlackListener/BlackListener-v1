@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'togglepurge',
+      description: language => language.get('COMMAND_TOGGLEPURGE_DESCRIPTION'),
       usage: '[enable|disable]',
       permissionLevel: 6,
     })

@@ -6,6 +6,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'setwelcome',
       subcommands: true,
+      description: language => language.get('COMMAND_SETWELCOME_DESCRIPTION'),
       usage: '<channel|message> <Channel:channel|Message:str>',
       usageDelim: ' ',
       permissionLevel: 6,

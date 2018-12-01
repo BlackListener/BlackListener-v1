@@ -5,6 +5,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'shutdown',
+      description: language => language.get('COMMAND_SHUTDOWN_DESCRIPTION'),
       permissionLevel: 9,
     })
   }

@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'releases',
+      description: language => language.get('COMMAND_RELEASES_DESCRIPTION'),
       usage: '[Version:str]',
     })
   }

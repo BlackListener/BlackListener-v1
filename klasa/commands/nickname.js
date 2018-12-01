@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       subcommands: true,
+      description: language => language.get('COMMAND_NICKNAME_DESCRIPTION'),
       usage: '<set|reset> <Member:member> (NewName:str)',
       aliases: ['nick'],
       permissionLevel: 6,

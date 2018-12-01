@@ -8,6 +8,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'ban',
+      description: language => language.get('COMMAND_BAN_DESCRIPTION'),
       usage: '<User:user> <Reason:str> <Probe:str>',
       permissionLevel: 6,
     })

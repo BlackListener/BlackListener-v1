@@ -4,6 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'setnotifyrep',
+      description: language => language.get('COMMAND_SETNOTIFYREP_DESCRIPTION'),
       usage: '<rep:number{0,10}>',
       aliases: [
         'notifyrep',

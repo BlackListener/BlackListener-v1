@@ -6,6 +6,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'image',
+      description: language => language.get('COMMAND_IMAGE_DESCRIPTION'),
       usage: '<anime|custom> [subreddit:str]',
       usageDelim: ' ',
     })

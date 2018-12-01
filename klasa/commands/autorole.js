@@ -5,6 +5,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'autorole',
       subcommands: true,
+      description: language => language.get('COMMAND_AUTOROLE_DESCRIPTION'),
       usage: '<add|remove|show:default> [Role:role]',
       usageDelim: ' ',
       permissionLevel: 6,

@@ -8,6 +8,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       name: 'info',
+      description: language => language.get('COMMAND_INFO_DESCRIPTION'),
     })
   }
 
