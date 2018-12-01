@@ -77,7 +77,7 @@
       "list": "Displays list of Black listed regex."
     }
   },
-  "includes_spam": ":x: Deleted spamming. (You can disable it in `{0}antispam disable`)",
+  "includes_spam": ":x: Deleted spamming. (You can disable it in `b:antispam disable`)",
   "no_command": "`{0}{1}` is not BlackListener command.",
   "didyoumean": "Did you mean?\n{0}",
   "error": "Errored while processing: Error: ``{0}``",
