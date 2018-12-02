@@ -171,8 +171,8 @@ exports.config = {
   gateways: {
     guilds: {
       schema: Client.defaultGuildSchema
-        .add('prefix', 'any', { default: '!' })
-        .add('language', 'any', { default: 'en-US' })
+        // .add('prefix', 'any', { default: '!' })
+        // .add('language', 'any', { default: 'en-US' })
         .add('notifyRep', 'any', { default: 1 })
         .add('banRep', 'any', { default: 5 })
         .add('banned', 'any', { default: false })

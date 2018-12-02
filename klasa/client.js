@@ -2,7 +2,7 @@ const { Client } = require('klasa')
 const { config } = require('./config')
 const env = require('dotenv-safe').config({allowEmptyValues: true})
 
-config.permissionLevels = Client.defaultPermissionLevels
+Client.defaultPermissionLevels
   .add(5, (client, message) => message.guild && message.member.permissions.has('ADMINISTRATOR'), { fetch: true })
 
 class BlackListenerClient extends Client {
