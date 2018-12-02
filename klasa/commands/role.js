@@ -9,7 +9,7 @@ module.exports = class extends Command {
       description: language => language.get('COMMAND_ROLE_DESCRIPTION'),
       usage: '<Role:role> <Member:member>',
       usageDelim: ' ',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

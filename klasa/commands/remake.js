@@ -4,7 +4,7 @@ module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
       usage: '<Channel:channel>',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

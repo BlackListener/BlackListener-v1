@@ -7,7 +7,7 @@ module.exports = class extends Command {
       subcommands: true,
       description: language => language.get('COMMAND_MUTE_DESCRIPTION'),
       usage: '<User:user>',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

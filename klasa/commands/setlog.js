@@ -9,7 +9,7 @@ module.exports = class extends Command {
       aliases: [
         'log',
       ],
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

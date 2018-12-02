@@ -9,7 +9,7 @@ module.exports = class extends Command {
       description: language => language.get('COMMAND_SETWELCOME_DESCRIPTION'),
       usage: '<channel|message> <Channel:channel|Message:str>',
       usageDelim: ' ',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

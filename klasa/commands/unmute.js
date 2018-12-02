@@ -5,7 +5,7 @@ module.exports = class extends Command {
     super(...args, {
       name: 'mute',
       usage: '<User:user>',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

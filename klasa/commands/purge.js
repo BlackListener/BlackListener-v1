@@ -7,7 +7,7 @@ module.exports = class extends Command {
       name: 'purge',
       description: language => language.get('COMMAND_PURGE_DESCRIPTION'),
       usage: '<num:number{1,99}>',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

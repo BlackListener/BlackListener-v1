@@ -4,7 +4,7 @@ const { Command } = require('klasa')
 module.exports = class extends Command {
   constructor(...args) {
     super(...args, {
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

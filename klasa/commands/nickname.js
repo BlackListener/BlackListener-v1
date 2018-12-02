@@ -7,7 +7,7 @@ module.exports = class extends Command {
       description: language => language.get('COMMAND_NICKNAME_DESCRIPTION'),
       usage: '<set|reset> <Member:member> (NewName:str)',
       aliases: ['nick'],
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 

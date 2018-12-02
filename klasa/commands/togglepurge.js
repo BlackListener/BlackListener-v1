@@ -6,7 +6,7 @@ module.exports = class extends Command {
       name: 'togglepurge',
       description: language => language.get('COMMAND_TOGGLEPURGE_DESCRIPTION'),
       usage: '[enable|disable]',
-      permissionLevel: 6,
+      permissionLevel: 5,
     })
   }
 
