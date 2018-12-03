@@ -210,5 +210,5 @@ exports.config = {
   schedule: { interval: 60000 },
 
   permissionLevels: Client.defaultPermissionLevels
-    .add(5, ({ guild, member }) => guild && member.permissions.has('ADMINISTRATOR'), { fetch: true })
+    .add(5, ({ guild, member }) => guild && member.permissions.has('ADMINISTRATOR'), { fetch: true }),
 }

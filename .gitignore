@@ -25,4 +25,4 @@ config.old.yml
 .env
 
 # Database
-bwd/*
+bwd
