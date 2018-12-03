@@ -208,4 +208,7 @@ exports.config = {
    * Klasa Schedule Options
    */
   schedule: { interval: 60000 },
+
+  permissionLevels: Client.defaultPermissionLevels
+    .add(5, ({ guild, member }) => guild && member.permissions.has('ADMINISTRATOR'), { fetch: true })
 }
