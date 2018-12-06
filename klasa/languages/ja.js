@@ -4,7 +4,7 @@ const format = require('string-format')
 module.exports = class extends Language {
   constructor(...args) {
     super(...args)
-    const lang = require('./json/ja')
+    const lang = Object.assign({}, require('./json/ja'))
     Object.keys(lang).forEach(key => {
       const message = lang[key]
       if (message.includes('{0}'))
