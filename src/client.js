@@ -173,7 +173,14 @@ if (!s.token) {
   process.exit(1)
 }
 client.login(s.token)
-  .catch(e => logger.error(e))
+  .catch(e => {
+    if (e.message.includes('ECONNRESET')) {
+      logger.emerg('Unrecoverable error detected while connecting: ' + e.stack)
+      process.exit(1)
+    } else {
+      logger.error(e)
+    }
+  })
 
 process.on('message', async message => {
   if (message === 'stop') {

@@ -98,12 +98,16 @@ module.exports = function(client) {
     logger.fatal(e.stack || e)
   })
 
-  process.on('unhandledRejection', async (error = {}) => {
+  process.on('unhandledRejection', async (error = {message:''}) => {
     if (error.name === 'DiscordAPIError') return true
-    if ((error.message || '').includes('ENOTFOUND')) return
+    if (error.message.includes('ENOTFOUND')) return
     logger.error(`Unhandled Rejection: ${error}`)
     logger.error(error.stack)
     const { report, file } = await makeReport(client, error, 'error')
+    if (error.message.includes('ECONNRESET')) {
+      logger.emerg('Unrecoverable error detected while connecting: ' + error.stack)
+      process.exit(1)
+    }
     if (client.readyAt) client.channels.get('484357084037513216').send(codeblock(report))
       .then(() => logger.info('Error report has been sent!'))
     fs.writeFile(file, report, 'utf8').then(() => {

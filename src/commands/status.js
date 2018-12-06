@@ -32,7 +32,7 @@ module.exports = class extends Command {
     const cmd = settings.prefix + 'status '
     const service = msg.content.slice(cmd.length)
     if (service === 'minecraft') {
-      msg.channel.send(lang.COMMAND_STATUS_CHECKING)
+      const message = await msg.channel.send(lang.status.checking)
       const startTime = now()
       const data = await fetch('https://status.mojang.com/check').then(res => res.json())
       const flat = data.reduce((p, c) => Object.assign(p, c), {})
@@ -53,10 +53,10 @@ module.exports = class extends Command {
         .addField(lang.COMMAND_STATUS_SERVERS_APIMOJANG, status[5])
         .addField(lang.COMMAND_STATUS_SERVERS_TEXTURESMINECRAFT, status[6])
         .addField(lang.COMMAND_STATUS_SERVERS_MOJANG, status[7])
-      return msg.channel.send(embed)
+      return message.edit(embed)
     } else if (service === 'fortnite') {
       if (s.fortnite_api_key === '') return msg.channel.send(lang.COMMAND_STATUS_NO_APIKEY)
-      msg.channel.send(lang.COMMAND_STATUS_CHECKING)
+      const message = await msg.channel.send(lang.COMMAND_STATUS_CHECKING)
       const startTime = now()
       const data = await fetch('https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status', {
         method: 'POST',
@@ -76,7 +76,7 @@ module.exports = class extends Command {
         .setFooter(f(lang.COMMAND_STATUS_TIME, Math.floor(time)))
         .setTimestamp()
         .addField(lang.COMMAND_STATUS_SERVERS_FORTNITE, status)
-      return msg.channel.send(embed)
+      return message.edit(embed)
     } else {
       return msg.channel.send(lang.COMMAND_STATUS_INVALID)
     }
