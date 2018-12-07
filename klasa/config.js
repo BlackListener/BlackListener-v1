@@ -69,6 +69,9 @@ exports.config = {
         options: {}
       },
     */
+    logger: {
+      db: 'logging',
+    },
     default: 'json',
   },
 

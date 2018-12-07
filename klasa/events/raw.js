@@ -2,8 +2,12 @@ const { Event } = require('klasa')
 
 module.exports = class extends Event {
   run(packet) {
+    if (!this.client.ready) return
     if (packet.op !== 0) return
-    const provider = this.client.providers.get('mongodb')
-    provider.create('log', '', packet.d)
+    this.provider.create(packet.t, packet.d)
+  }
+
+  init() {
+    this.provider = this.client.providers.get('logger')
   }
 }
