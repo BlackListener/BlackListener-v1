@@ -54,6 +54,11 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
     const i2 = parseInt(app.wanted_configversion.replace(/\./gm, ''))
     if (i1 < i2) {
       const migrate = require(__dirname + '/src/config_migrate')
+      if (migrate.missingno.includes(config.config_version)) {
+        logger.error('Your config is using invalid version!')
+          .error('(Due to that config version is may used in other branches)')
+        process.exit(2)
+      }
       logger.warn(`Your config version is outdated! (${config.config_version} < ${app.wanted_configversion})`)
       if (migrate.versions[`${config.config_version}-to-${app.wanted_configversion}`]) {
         logger.info(`Available update script: ${config.config_version}-to-${app.wanted_configversion}`)

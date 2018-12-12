@@ -5,6 +5,7 @@ const config = require(__dirname + '/config.yml')
 const write = async (c) => await fs.writeFile(__dirname + '/config.yml', YAML.stringify(c))
 
 module.exports = {
+  missingno: ['1.0.2'],
   versions: {
     '1.0-to-1.0.1': async () => {
       config.config_version = '1.0.1'
@@ -12,6 +13,12 @@ module.exports = {
       config.youtube_apikey = 'Your YouTube Data API key'
       await write(config)
       return true // Is restart and/or review needed?
+    },
+    '1.0.1-to-1.0.3': async () => {
+      config.config_version = '1.0.3'
+      config.version = '2.0.0'
+      await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
+      return false
     },
   },
 }

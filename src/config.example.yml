@@ -5,7 +5,7 @@ notifyRep: 1
 banRep: 5
 dump_url:
 data_baseurl:
-version: '1.2.1'
+version: '2.0.0'
 patron: false
 repl:
   prefix: '> '
@@ -43,4 +43,4 @@ patroninvite: https://discordapp.com/oauth2/authorize?client_id=4691144085015101
 youtube_apikey: Your YouTube Data API key.
 
 # DO NOT EDIT CONFIG VERSION ANYWAY.
-config_version: '1.0.1'
+config_version: '1.0.3'
