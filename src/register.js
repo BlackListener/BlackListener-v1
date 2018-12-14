@@ -111,7 +111,7 @@ module.exports = function(client) {
       logger.emerg('Unrecoverable error detected while connecting: ' + error.stack)
       process.exit(1)
     }
-    if (client.readyAt) client.channels.get('484357084037513216').send(codeblock(report))
+    if (client.readyAt && c.errors_channel) client.channels.get(c.errors_channel).send(codeblock(report))
       .then(() => logger.info('Error report has been sent!'))
     fs.writeFile(file, report, 'utf8').then(() => {
       logger.info(`Error Report has been writed to ${file}`)
@@ -123,8 +123,8 @@ module.exports = function(client) {
     logger.emerg('Oh, BlackListener has crashed!')
     const { report, file } = await makeReport(client, error, 'crash')
     _fs.writeFileSync(file, report, 'utf8')
-    logger.emerg(`Crash report has writed to: ${file}`)
-    client.readyAt ? client.channels.get('484183865976553493').send(codeblock(report))
+    logger.emerg(`Crash report has writed to: ${file}`);
+    (client.readyAt && c.crashes_channel) ? client.channels.get(c.crashes_channel).send(codeblock(report))
       .finally(() => process.exit(1)) : process.exit(1)
     errors++
   })
