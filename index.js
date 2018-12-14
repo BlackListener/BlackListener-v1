@@ -13,8 +13,13 @@ if (process.pid === 1 || args.debug.pid1) {
     .warn('PID is 1, it may occur unexpected behavior! (And not supported)')
     .warn('=======================================')
 }
-if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug messages.');
-(async () => {
+if (app.djs_version.includes('12')) {
+  logger.error(`Your version of discord.js is not compatible with this bot(${app.djs_version}).`)
+    .error('Please re-installing your dependencies.')
+  process.exit(1)
+}
+if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug messages.')
+!(async () => {
   const util = require('./src/util')
   const fs = require('fs').promises
   if (await util.exists(__dirname + '/src/secret.yml')) {

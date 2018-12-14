@@ -17,6 +17,9 @@ module.exports = {
     '1.0.1-to-1.0.3': async () => {
       config.config_version = '1.0.3'
       config.version = '2.0.0'
+      config.errors_channel = null
+      config.crashes_channel = null
+      delete config.inviteme
       await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
       return false
     },
