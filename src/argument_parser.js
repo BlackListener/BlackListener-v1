@@ -1,6 +1,6 @@
 
 module.exports = (argv) => {
-  const args = { debug: {} }
+  const args = { debug: {}, flags: [] }
   argv.forEach(arg => {
     if (arg.includes('--') && arg.includes('=') && !arg.startsWith('--debug=')) {
       arg = arg.replace(/--/gm, '')
@@ -17,6 +17,9 @@ module.exports = (argv) => {
     } else if (arg.startsWith('--debug=')) {
       arg = arg.replace(/--debug=/gm, '')
       arg.split(',').forEach(a => Object.assign(args.debug, {[a]: true}))
+    } else if (arg.startsWith('-')) { // flags
+      const flags = arg.replace('-', '').split('')
+      Object.assign(args, {flags: flags})
     }
     if (arg === '--dryrun' || arg === '--dry-run') Object.assign(args, {'dryrun': true})
   })
