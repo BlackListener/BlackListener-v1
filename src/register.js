@@ -8,6 +8,7 @@ const git = require('simple-git/promise')()
 const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require('util')
 const moment = require('moment')
+const app = require('../config')
 
 const codeblock = code => '```' + code + '```'
 const ucfirst = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -53,6 +54,7 @@ ${error.stack}
     Memory Usage: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100}MB
 
 --- Versions ---
+    Discord.js Version: ${app.djs_version}
     Node Version: ${process.versions.node}
     HTTP Parser Version: ${process.versions.http_parser}
     v8 Version: ${process.versions.v8}
