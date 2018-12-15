@@ -10,7 +10,6 @@ const MongoDB = require('./db')
  * @type {MongoDB}
  */
 const db = new MongoDB()
-db.init()
 
 async function dataStore(id, collection, _default) {
   const rawdata = await db.get(collection, { id: id })
