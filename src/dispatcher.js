@@ -2,7 +2,6 @@ const f = require('string-format')
 const logger = require(__dirname + '/logger').getLogger('commands', 'yellow')
 const { commands } = require(__dirname + '/commands')
 const levenshtein = require('fast-levenshtein').get
-const util = require(__dirname + '/util')
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
 
@@ -28,9 +27,6 @@ module.exports = async function(settings, msg, lang) {
     if (settings.banned) return msg.channel.send(f(lang._error, 'Your server is banned.\nPlease contact to the this server -> https://discord.gg/xQQXp4B'))
     if (commands[cmd]) {
       await runCommand(commands[cmd], settings, msg, lang)
-    } else if (await util.exists(`${__dirname}/plugins/commands/${cmd}.js`)) {
-      const plugin = require(`${__dirname}/plugins/commands/${cmd}.js`)
-      await runCommand(plugin, settings, msg, lang)
     } else {
       const commandList = Object.keys(commands).map(cmd => ({ cmd, args: commands[cmd].args }))
       const similarCommand = commandList.map(item => ({ ...item, no: levenshtein(cmd, item.cmd) }))

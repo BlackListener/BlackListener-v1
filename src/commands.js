@@ -6,7 +6,7 @@ const commands = {}
 const files = fs.readdirSync(__dirname + '/commands/')
 
 function setCommand(file, reload) {
-  if (reload) delete require.cache[require.resolve(`${__dirname}/commands/${file}`)]
+  if (reload) delete require.cache[require.resolve(`${__dirname}/commands/${file.replace(/\.\./gm, '')}`)]
   const rawcommand = require(`${__dirname}/commands/${file}`)
   if (typeof rawcommand != 'function') return
   const command = new rawcommand()
@@ -23,7 +23,7 @@ for (const file of files) if (file.endsWith('.js')) setCommand(file)
 
 module.exports = {
   commands,
-  load(file) {
+  async load(file) {
     setCommand(file, true)
   },
 }
