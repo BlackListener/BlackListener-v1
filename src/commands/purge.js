@@ -46,7 +46,7 @@ module.exports = class extends Command {
       setTimeout(() => {
         this.confirmremake[msg.author.id] = null
       }, 10000)
-      msg.channel.send('Are you sure? (It will remake this channel!!!)\nIf you sure, please enter `'+settings.prefix+'purge confirm`.\n10 seconds to expire.')
+      msg.channel.send('Are you sure?\nIf you sure, please enter `'+settings.prefix+'purge confirm`.\n10 seconds to expire.')
     } else if (/[0-9]/.test(args[1])) {
       if (parseInt(args[1]) > 99 || parseInt(args[1]) < 1) return msg.channel.send(lang.outofrange)
       const messages = await msg.channel.fetchMessages({limit: parseInt(args[1]) + 1})
