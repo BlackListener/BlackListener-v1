@@ -18,13 +18,9 @@ module.exports = class extends Command {
       settings.autorole = null
       msg.channel.send(f(lang.setconfig, 'autorole'))
     } else if (args[1] === 'add') {
-      if (/\d{18,}/.test(args[2])) {
-        settings.autorole = args[2]
-      } else {
-        const role = Converter.toRole(msg, args[2])
-        if (!role) msg.channel.send(lang.invalid_args)
-        settings.autorole = role.id
-      }
+      const role = Converter.toRole(msg, args[2])
+      if (!role) return msg.channel.send(lang.invalid_args)
+      settings.autorole = role.id
       msg.channel.send(f(lang.setconfig, 'autorole'))
     } else {
       if (settings.autorole != null) {
