@@ -15,6 +15,13 @@ const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require(__dirname + '/util')
 const sentmute = new Set()
+const MongoDb = require(__dirname + '/db')
+const mongodb = new MongoDb()
+mongodb.init().catch(e => {
+  logger.emerg(e.stack || e)
+  process.exit(1)
+})
+data.config(mongodb)
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -149,6 +156,7 @@ if (!c.repl.disable || argv.repl === true) {
       if (count != 0)
         if (!once) {
           logger.info('Caught INT signal, shutdown.')
+          mongodb.close()
           client.destroy()
           once = true
         } else {
@@ -170,6 +178,7 @@ if (!c.repl.disable || argv.repl === true) {
 logger.info('Logging in...')
 if (!s.token) {
   logger.emerg('Bot token is not set.')
+  mongodb.close()
   process.exit(1)
 }
 client.login(s.token)
@@ -182,6 +191,7 @@ process.on('message', async message => {
       process.exit(0)
     }, 5000)
     logger.info('Received message from main, stopping!')
+    mongodb.close()
     await client.destroy()
     process.exit(0)
   }

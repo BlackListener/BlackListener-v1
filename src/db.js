@@ -25,6 +25,11 @@ class MongoDb {
     this.client = await mongodb.MongoClient.connect('mongodb://'+config['db_host']+':'+(config['db_port'] || '27017'), { useNewUrlParser: true })
     this.db = await this.client.db(config['db_name'])
     this.dbcollections = await this.db.collections()
+    this.dbcollections.forEach(async collection => {
+      if (!collection.collectionName === 'servers') await this.db.createCollection('servers')
+      if (!collection.collectionName === 'users') await this.db.createCollection('users')
+      if (!collection.collectionName === 'bans') await this.db.createCollection('bans')
+    })
 
     /**
      * @type {Array<mongodb.Collection<any>>}
