@@ -13,13 +13,5 @@ module.exports = {
       await write(config)
       return true // Is restart and/or review needed?
     },
-    '1.0.1-to-1.0.2': async () => {
-      config['db_host'] = '127.0.0.1'
-      config['db_port'] = null
-      config['db_name'] = 'blacklistener'
-      config.config_version = '1.0.2'
-      await write(config)
-      return true
-    },
   },
 }
