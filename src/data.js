@@ -4,7 +4,7 @@ const {
   defaultBans,
 } = require(__dirname + '/contents')
 const DeepProxy = require('proxy-deep')
-const MongoDB = require('./db') //eslint-disable-line
+const MongoDB = require(__dirname + '/db') //eslint-disable-line
 
 /**
  * @type {MongoDB}
@@ -31,7 +31,7 @@ async function dataStore(id, type, _default) {
     },
     set(target, key, value, receiver) {
       Reflect.set(target, key, value, receiver)
-      mongo.updateOne(collection, { id: id }, { [id]: this.rootTarget }, null, { upsert: true })
+      mongo.updateOne(collection, { id: id }, { [id]: this.rootTarget })
       return true
     },
   })

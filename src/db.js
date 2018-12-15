@@ -25,11 +25,9 @@ class MongoDb {
     this.client = await mongodb.MongoClient.connect('mongodb://'+config['db_host']+':'+(config['db_port'] || '27017'), { useNewUrlParser: true })
     this.db = await this.client.db(config['db_name'])
     this.dbcollections = await this.db.collections()
-    this.dbcollections.forEach(async collection => {
-      if (!collection.collectionName === 'servers') await this.db.createCollection('servers')
-      if (!collection.collectionName === 'users') await this.db.createCollection('users')
-      if (!collection.collectionName === 'bans') await this.db.createCollection('bans')
-    })
+    if (!this.dbcollections.includes('servers')) await this.db.createCollection('servers')
+    if (!this.dbcollections.includes('users')) await this.db.createCollection('users')
+    if (!this.dbcollections.includes('bans')) await this.db.createCollection('bans')
 
     /**
      * @type {Array<mongodb.Collection<any>>}
@@ -70,14 +68,14 @@ class MongoDb {
    * @throws TypeError - unexpected document type
    * @returns {Promise<mongodb.UpdateWriteOpResult>}
    */
-  async updateOne(collection, filter = {}, nameOrObj, value, options) {
+  async updateOne(collection, filter = {}, nameOrObj, value) {
     if (!this.initialized) throw new IllegalStateError('Client is not initialized!')
     if (!Object.keys(this.collections).includes(collection))
       throw new ReferenceError('Collection ' + collection + ' is not defined')
     if (typeof nameOrObj === 'object') {
-      return await this.collections[collection].updateOne(filter, { $set: nameOrObj }, options)
+      return await this.collections[collection].updateOne(filter, { $set: nameOrObj })
     } else if (typeof nameOrObj === 'string') {
-      return await this.collections[collection].updateOne(filter, { $set: {[nameOrObj]: value}}, options)
+      return await this.collections[collection].updateOne(filter, { $set: {[nameOrObj]: value}})
     } else throw new TypeError('Unexpected document type: ' + typeof nameOrObj)
   }
 
