@@ -86,7 +86,7 @@ module.exports = function(client) {
   client.on('disconnect', () => {
     logger.info(`Disconnected from Websocket (${count}ms).`)
     if (count === 0)
-      logger.fatal('May wrong your bot token, Is bot token has changed or Base64 encoded?')
+      logger.fatal('May wrong your bot token, Is bot token has changed?')
     process.exit()
   })
 
@@ -95,7 +95,7 @@ module.exports = function(client) {
   })
 
   client.on('error', (e) => {
-    const err = typeof e == Object ? util.inspect(e) : e
+    const err = typeof e == 'object' ? util.inspect(e) : e
     logger.fatal('Something went wrong: ' + err)
     logger.fatal(e.stack || e)
   })
@@ -112,9 +112,7 @@ module.exports = function(client) {
     }
     if (client.readyAt && c.errors_channel) client.channels.get(c.errors_channel).send(codeblock(report))
       .then(() => logger.info('Error report has been sent!'))
-    fs.writeFile(file, report, 'utf8').then(() => {
-      logger.info(`Error Report has been writed to ${file}`)
-    })
+    fs.writeFile(file, report, 'utf8').then(() => logger.info(`Error Report has been writed to ${file}`))
     errors++
   })
 
@@ -132,12 +130,13 @@ module.exports = function(client) {
     if (msg === 'heartbeat') process.send('ping')
   })
 
-  client.on('rateLimit', (info, method) => {
+  client.on('rateLimit', info => {
+    if (info.limit === 1) return
+    setTimeout(() => logger.info('Rate limit is no longer active.'), info.limit*1000)
     logger.error('==============================')
       .error('      Got rate limiting!      ')
       .error(` -> ${info.limit} seconds remaining`)
-      .error(` Detected rate limit while processing '${method}' method.`)
-      .error(` Rate limit information: ${JSON.stringify(info)} `)
+      .error(` Rate limit information: ${JSON.stringify(info)}`)
       .error('==============================')
   })
 
