@@ -2,7 +2,7 @@
 module.exports = (argv) => {
   const args = { debug: {} }
   argv.forEach(arg => {
-    if (/--/.test(arg) && arg.includes('=') && !arg.startsWith('--debug=')) {
+    if (arg.includes('--') && arg.includes('=') && !arg.startsWith('--debug=')) {
       arg = arg.replace(/--/gm, '')
       const argval = arg.split('=')
       Object.assign(args, {[argval[0]]: argval[1]})
