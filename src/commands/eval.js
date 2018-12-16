@@ -19,7 +19,7 @@ module.exports = class extends Command {
   async run(msg, settings, lang, args) {
     const opts = argument_parser(args.slice(1))
     if (msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
-    const commandcut = args.slice(Object.values(opts).length + 1).join(' ')
+    const commandcut = args.slice(Object.values(opts).length - 1).join(' ')
     try { // eslint-disable-line
       let returned
       if (opts.run_as) {
