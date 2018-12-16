@@ -12,13 +12,9 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang) {
-    const client = msg.client
     const loadavg = isWindows ? '利用不可' : Math.floor(os.loadavg()[0] * 100) / 100
     const invite = s.inviteme
-    const owner = s.owners.map(aowner => {
-      const user = client.users.get(aowner)
-      return `${user.tag} (${user.id})\n`
-    })
+    const owner = await Promise.all(s.owners.map(async id => await msg.client.fetchUser(id).then(user => `${user.tag} (${user.id})`)))
     msg.channel.send(new Discord.RichEmbed()
       .setTitle('Bot info')
       .setTimestamp()
@@ -27,8 +23,8 @@ module.exports = class extends Command {
       .addField(lang.info.cpu, `${lang.info.threads}: ${os.cpus().length}\n${lang.info.cpu_model}: ${os.cpus()[0].model}\n${lang.info.cpu_speed}: ${os.cpus()[0].speed}`)
       .addField(lang.info.platform, os.platform)
       .addField(lang.info.loadavg, loadavg)
-      .addField(lang.info.servers, client.guilds.size, true)
-      .addField(lang.info.users, client.users.size, true)
+      .addField(lang.info.servers, msg.client.guilds.size, true)
+      .addField(lang.info.users, msg.client.users.size, true)
       .addField(lang.info.createdBy, owner)
       .setDescription(`[${lang.info.invite}](${invite})\n[${lang.info.source}](${c.github})\n[Discord Bots](https://discordbots.org/bot/456966161079205899)`)
       .setFooter(`Sent by ${msg.author.tag}`))
