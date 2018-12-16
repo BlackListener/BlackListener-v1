@@ -41,8 +41,6 @@ class Logger {
     self.thread_raw = thread
     if (config.logger.style === 'maven') {
       self.style = 'maven'
-    } else if (config.logger.style === 'npm') {
-      self.style = 'npm'
     } else {
       self.style = 'original'
     }
@@ -74,7 +72,7 @@ class Logger {
         break
       }
     }
-    this.info(`Registered logger for: ${thread}`, true)
+    self.info(`Registered logger for: ${thread}`, true)
     return self
   }
   /**
@@ -97,11 +95,6 @@ class Logger {
       level = level.replace('warn', 'warning')
       logger.coloredlevel2 = chalk`{${color}.bold ${level.toUpperCase()}}`
       data = `[${logger.coloredlevel2}${chalk.reset()}] ${message}${chalk.reset()}`
-    } else if (this.style === 'npm') {
-      level = level.replace('error', 'ERR!')
-      level = level.replace('warn', 'WARN')
-      logger.coloredlevel2 = level === 'WARN' ? chalk.bgYellow(level) : level === 'info' ? chalk.green(level) : chalk[color](level)
-      data = `${chalk.white('BlackListener')} ${logger.coloredlevel2}${chalk.reset()} ${chalk.hex('#800080')(this.thread_raw)}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     } else {
       data = `${date} ${thread}${chalk.reset()} ${logger.coloredlevel}${chalk.reset()} ${chalk.green(message)}${chalk.reset()}`
     }
