@@ -3,7 +3,6 @@ const c = require(__dirname + '/config.yml')
 const _fs = require('fs')
 const fs = _fs.promises
 const os = require('os')
-const share = require(__dirname + '/share')
 const git = require('simple-git/promise')()
 const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 const util = require('util')
@@ -20,6 +19,7 @@ async function makeReport(client, error, type) {
   const format = moment().format('YYYY-MM-DD_HH.mm.ss')
   const argv = process.argv.map((val, index) => `arguments[${index}]: ${val}`)
   const commit = await git.revparse(['HEAD'])
+  const {current: branch} = await git.branchLocal()
   const data =  `
 --- BlackListener ${ucfirst(type)} Report ---
 
@@ -29,10 +29,8 @@ Description: ${description}
 ${error.stack}
 
 --- Process Details ---
-    Last Called Logger Thread: ${share.thread} (may not current thread)
-
     BlackListener Version: ${c.version}
-    BlackListener Commit: ${commit}
+    BlackListener Commit: ${commit}(Local branch: ${branch})
 
     Arguments: ${process.argv.length}
     ${argv.join('\n    ')}

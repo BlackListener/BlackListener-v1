@@ -2,7 +2,6 @@ require('./yaml')
 const fs = require('fs')
 const config = require(__dirname +'/config.yml')
 const chalk = require('chalk')
-const share = require(__dirname + '/share')
 const moment = require('moment')
 const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
 
@@ -88,7 +87,6 @@ class Logger {
    * @private
    */
   out(message, level, color, isLogger, write_to_console = true) {
-    share.thread = this.thread
     const date = chalk.cyan(moment().format('YYYY-MM-DD HH:mm:ss.SSS')) + chalk.reset()
     let thread = this.thread
     const logger = {}
