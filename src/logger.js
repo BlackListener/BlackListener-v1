@@ -44,30 +44,30 @@ class Logger {
     } else {
       self.style = 'original'
     }
+    const colors = [
+      chalk.bold.yellow(thread),
+      chalk.gray(thread),
+      chalk.red(thread),
+      chalk.bold.red(thread),
+      chalk.green(thread),
+      chalk.bold.hex('#800080')(thread),
+      chalk.white(thread),
+      chalk.cyan(thread),
+      chalk.hex('#800080')(thread),
+      chalk.blue(thread),
+    ]
     switch (color) {
-      case 'yellow': self.thread = chalk.bold.yellow(thread); break
-      case 'darkgray': self.thread = chalk.gray(thread); break
-      case 'red': self.thread = chalk.red(thread); break
-      case 'lightred': self.thread = chalk.bold.red(thread); break
-      case 'green': self.thread = chalk.green(thread); break
-      case 'lightpurple': self.thread = chalk.bold.hex('#800080')(thread); break
-      case 'white': self.thread = chalk.white(thread); break
-      case 'cyan': self.thread = chalk.cyan(thread); break
-      case 'purple': self.thread = chalk.hex('#800080')(thread); break
-      case 'blue': self.thread = chalk.blue(thread); break
+      case 'yellow': self.thread = colors[0]; break
+      case 'darkgray': self.thread = colors[1]; break
+      case 'red': self.thread = colors[2]; break
+      case 'lightred': self.thread = colors[3]; break
+      case 'green': self.thread = colors[4]; break
+      case 'lightpurple': self.thread = colors[5]; break
+      case 'white': self.thread = colors[6]; break
+      case 'cyan': self.thread = colors[7]; break
+      case 'purple': self.thread = colors[8]; break
+      case 'blue': self.thread = colors[9]; break
       default: {
-        const colors = [
-          chalk.bold.yellow(thread),
-          chalk.gray(thread),
-          chalk.red(thread),
-          chalk.bold.red(thread),
-          chalk.green(thread),
-          chalk.bold.hex('#800080')(thread),
-          chalk.white(thread),
-          chalk.cyan(thread),
-          chalk.hex('#800080')(thread),
-          chalk.blue(thread),
-        ]
         self.thread = colors[Math.floor(Math.random() * colors.length)]
         break
       }
