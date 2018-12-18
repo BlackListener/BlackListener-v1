@@ -1,8 +1,7 @@
 const logger = require(__dirname + '/../logger').getLogger('commands:eval', 'lightpurple')
 const f = require('string-format')
 const { Command } = require('../core')
-const argument_parser = require(__dirname + '/../argument_parser')
-const util = require(__dirname + '/../util')
+const Thread = require('thread')
 
 module.exports = class extends Command {
   constructor() {
@@ -17,24 +16,44 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang, args) {
-    const opts = argument_parser(args.slice(1))
     if (msg.content.includes('token')) return msg.channel.send(lang.udonthaveperm)
-    const commandcut = args.slice(Object.values(opts).length - 1).join(' ')
-    try { // eslint-disable-line
-      let returned
-      if (opts.run_as) {
-        if (util.exists(__dirname + '/' + opts.run_as)) {
-          const Run = require(__dirname + '/' + opts.run_as)
-          returned = await (new Run())._eval(commandcut)
-        } else throw new ReferenceError('Not found specified command.')
-      } else {
-        returned = await (eval(`(async () => {${commandcut}})()`))
-      }
-      logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${returned}`)
-      msg.channel.send(`:ok_hand: (${returned})`)
-    } catch (e) {
-      logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), result: ${lang.eval_error} (${e})`)
-      msg.channel.send(f(lang.eval_error, e))
+    const message = {
+      content: msg.content,
+      author: {
+        id: msg.author.id,
+        bot: msg.author.bot,
+        avatar: msg.author.avatar,
+        avatarURL: msg.author.avatarURL,
+        createdAt: msg.author.createdAt,
+        createdTimestamp: msg.author.createdTimestamp,
+        defaultAvatarURL: msg.author.defaultAvatarURL,
+        discriminator: msg.author.discriminator,
+        displayAvatarURL: msg.author.displayAvatarURL,
+        dmChannel: msg.author.dmChannel,
+        lastMessageID: msg.author.lastMessageID,
+        presence: msg.author.presence,
+        tag: msg.author.tag,
+        username: msg.author.username,
+      },
     }
+    new Thread(async (msg, settings, lang, args) => {
+      if (args[1].includes('async:')) {
+        args[1] = args[1].replace(/async:/g, '')
+        return await eval(`(async () => {${args.slice(1).join(' ')}})()`)
+      } else return await eval(args.slice(1).join(' '))
+    })
+      .on('resolved', data => {
+        logger.info(`Eval by ${msg.author.tag} (${msg.author.id}), Result: ${data}`)
+        msg.channel.send(`:ok_hand: (${data})`)
+      })
+      .on('rejected', e => {
+        logger.info(`Eval[failed] by ${msg.author.tag} (${msg.author.id}), Result: ${e.error}`)
+        msg.channel.send(f(lang.eval_error, e.error))
+      })
+      .start(message, settings, lang, args)
+      .catch(e => {
+        logger.info(`Eval[failed] by ${msg.author.tag} (${msg.author.id}), Result: ${e.error}`)
+        msg.channel.send(f(lang.eval_error, e.error))
+      })
   }
 }
