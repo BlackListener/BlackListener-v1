@@ -10,15 +10,19 @@ const DBL = require('dblapi.js')
 const data = require(__dirname + '/data')
 const log = require(__dirname + '/log')
 const isTravisBuild = process.argv.includes('--travis-build')
-const c = require(__dirname + '/config.yml')
 const languages = require(__dirname + '/language')
 const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
-const util = require(__dirname + '/util')
 const sentmute = new Set()
+const util = require(__dirname + '/util')
+if (!util.exists(__dirname + '/travis.yml')) {
+  logger.emerg('Not found \'travis.yml\'.')
+  process.exit(1)
+}
+const c = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
-  logger.info('Enabled performance logging(every 5 minutes)')
+  logger.info('Enabled performance logging every 5 minutes(debug level logging)')
 }
 
 if (argv.prefix) {
@@ -27,17 +31,11 @@ if (argv.prefix) {
 }
 logger.info(`Default prefix: ${c.prefix}`)
 
-if (!util.exists(__dirname + '/travis.yml')) {
-  logger.emerg('Specified option \'--travis-build\' but not found \'travis.yml\'')
-    .emerg('Hint: secret.yml is removed. (merged to config.yml)')
-  process.exit(1)
-}
-const s = isTravisBuild ? require(__dirname + '/travis.yml') : c
 const dispatcher = require(__dirname + '/dispatcher')
 
 require(__dirname + '/register')(client)
 
-if (!isTravisBuild && s.dbl) new DBL(s.dbl, client).on('error', e => logger.warn(e))
+if (!isTravisBuild && c.dbl) new DBL(c.dbl, client).on('error', e => logger.warn(e))
 
 client.on('ready', async () => {
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
@@ -176,11 +174,11 @@ if (argv.rcon) {
 }
 
 logger.info('Logging in...')
-if (!s.token) {
+if (!c.token) {
   logger.emerg('Bot token is not set.')
   process.exit(1)
 }
-client.login(s.token)
+client.login(c.token)
   .catch(e => {
     if (e.message.includes('ECONNRESET')) {
       logger.emerg('Unrecoverable error detected while connecting: ' + e.stack)
