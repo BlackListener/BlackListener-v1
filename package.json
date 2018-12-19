@@ -1,6 +1,6 @@
 {
   "name": "blacklistener",
-  "version": "2.0.0",
+  "version": "2.0.0-dev",
   "description": "Global Banning System for Discord.",
   "main": "index.js",
   "dependencies": {
@@ -39,12 +39,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rht0910/BlackListener.git"
+    "url": "git+https://github.com/BlackListener/BlackListener.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rht0910/BlackListener/issues"
+    "url": "https://github.com/BlackListener/BlackListener/issues"
   },
-  "homepage": "https://github.com/rht0910/BlackListener#readme"
+  "homepage": "https://github.com/BlackListener/BlackListener#readme"
 }
