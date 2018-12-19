@@ -1,9 +1,8 @@
 const Discord = require('discord.js')
 const os = require('os')
-const c = require(__dirname + '/../config.yml')
 const isWindows = process.platform === 'win32'
 const isTravisBuild = process.argv.includes('--travis-build')
-const s = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
+const c = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
 const { Command } = require('../core')
 
 module.exports = class extends Command {
@@ -13,9 +12,9 @@ module.exports = class extends Command {
 
   async run(msg, settings, lang) {
     const loadavg = isWindows ? '利用不可' : Math.floor(os.loadavg()[0] * 100) / 100
-    const invite = s.inviteme
+    const invite = c.inviteme
     //const owner = await Promise.all(s.owners.map(async id => await msg.client.fetchUser(id).then(user => `${user.tag} (${user.id})`)))
-    const owner = await Promise.all(s.owners.map(id => msg.client.fetchUser(id).then(user => `${user.tag} (${user.id})`)))
+    const owner = await Promise.all(c.owners.map(id => msg.client.fetchUser(id).then(user => `${user.tag} (${user.id})`)))
     msg.channel.send(new Discord.RichEmbed()
       .setTitle('Bot info')
       .setTimestamp()
