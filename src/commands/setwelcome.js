@@ -1,6 +1,4 @@
-const Converter = require(__dirname + '/../converter.js')
-const f = require('string-format')
-const { Command } = require('../core')
+const { commons: { f }, Command, Converter } = require('../core')
 
 module.exports = class extends Command {
   constructor() {

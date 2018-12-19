@@ -1,12 +1,11 @@
-const config = require(__dirname + '/../config.yml')
+const BlackListener = require('../core')
+const { config, f, util } = BlackListener.commons
+const { Logger, Command } = BlackListener
 const ytdl = require('ytdl-core')
-const logger = require(__dirname + '/../logger').getLogger('commands:music')
+const logger = Logger.getLogger('commands:music')
 const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
-const f = require('string-format')
-const { Command } = require('../core')
 const YouTube = require('youtube-node')
 const youtube = new YouTube()
-const util = require('util')
 const queue = {}
 const playing = {}
 const loop = {}

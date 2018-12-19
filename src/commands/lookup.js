@@ -1,7 +1,4 @@
-const Converter = require(__dirname + '/../converter.js')
-const Discord = require('discord.js')
-const data = require(__dirname + '/../data')
-const { Command } = require('../core')
+const { commons: { data }, Command, Converter, Discord } = require('../core')
 
 module.exports = class extends Command {
   constructor() {

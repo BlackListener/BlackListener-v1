@@ -1,7 +1,5 @@
-const Converter = require(__dirname + '/../converter')
-const data = require(__dirname + '/../data')
-const logger = require(__dirname + '/../logger').getLogger('commands:unban', 'blue')
-const { Command } = require('../core')
+const { commons: { data }, Command, Logger, Converter } = require('../core')
+const logger = Logger.getLogger('commands:unban', 'blue')
 
 module.exports = class extends Command {
   constructor() {

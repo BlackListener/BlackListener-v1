@@ -1,7 +1,5 @@
-const Converter = require(__dirname + '/../converter.js')
-const logger = require(__dirname + '/../logger').getLogger('commands:role')
-const Discord = require('discord.js')
-const { Command } = require('../core')
+const { Command, Discord, Logger, Converter } = require('../core')
+const logger = Logger.getLogger('commands:role')
 
 module.exports = class extends Command {
   constructor() {

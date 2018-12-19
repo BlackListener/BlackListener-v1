@@ -1,6 +1,5 @@
-const Converter = require(__dirname + '/../converter.js')
-const logger = require(__dirname + '/../logger').getLogger('commands:purge', 'lightpurple')
-const { Command } = require('../core')
+const { Command, Logger, Converter } = require('../core')
+const logger = Logger.getLogger('commands:purge', 'lightpurple')
 
 module.exports = class extends Command {
   constructor() {

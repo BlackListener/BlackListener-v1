@@ -1,5 +1,5 @@
 const f = require('string-format')
-const logger = require(__dirname + '/logger').getLogger('commands', 'yellow')
+const logger = require('./structures/util/Logger').getLogger('commands', 'yellow')
 const { commands } = require(__dirname + '/commands')
 const levenshtein = require('fast-levenshtein').get
 const isTravisBuild = process.argv.includes('--travis-build')

@@ -1,9 +1,8 @@
-const Discord = require('discord.js')
+const BlackListener = require('../core')
 const os = require('os')
 const isWindows = process.platform === 'win32'
-const isTravisBuild = process.argv.includes('--travis-build')
-const c = isTravisBuild ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')
-const { Command } = require('../core')
+const { config: c } = BlackListener.commons
+const { Command, Discord } = BlackListener
 
 module.exports = class extends Command {
   constructor() {

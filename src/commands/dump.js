@@ -1,8 +1,6 @@
-const Discord = require('discord.js')
-const fs = require('fs').promises
-const f = require('string-format')
-const config = require(__dirname + '/../config.yml')
-const { Command } = require('../core')
+const BlackListener = require('../core')
+const { f, fs } = BlackListener.commons
+const { Command, Discord, config } = BlackListener
 
 module.exports = class extends Command {
   constructor() {

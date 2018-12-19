@@ -1,9 +1,7 @@
-const Converter = require(__dirname + '/../converter.js')
-const data = require(__dirname + '/../data')
-const logger = require(__dirname + '/../logger').getLogger('commands:ban', 'blue')
-const Discord = require('discord.js')
-const { Command } = require('../core')
-const config = require(__dirname + '/../config.yml')
+const BlackListener = require('../core')
+const { Converter, Discord, Logger, Command } = BlackListener
+const { data, config } = BlackListener.commons
+const logger = Logger.getLogger('commands:ban', 'blue')
 const intformat = require('biguint-format')
 const FlakeId = require('flake-idgen')
 

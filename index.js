@@ -4,10 +4,18 @@ if (parseInt(process.versions.node.split('.')[0]) < 10) {
   process.exit(1)
 }
 require('./src/yaml')
-const logger = require('./src/logger').getLogger('main', 'green')
-const args = require('./src/argument_parser')(process.argv.slice(2))
-const app = require('./config')
-logger.info('Loaded core modules')
+const BlackListener = require('./src/core')
+const {
+  Logger,
+} = BlackListener
+const {
+  argsresolver,
+  app,
+  package,
+} = BlackListener.commons
+const logger = Logger.getLogger('main', 'green')
+const args = argsresolver(process.argv.slice(2))
+logger.info(`Starting BlackListener v${package.version}`)
 if (process.pid === 1 || args.debug.pid1) {
   logger.warn('=============== WARNING ===============')
     .warn('PID is 1, it may occur unexpected behavior! (And not supported)')
@@ -15,10 +23,10 @@ if (process.pid === 1 || args.debug.pid1) {
 }
 if (app.djs_version.startsWith('12')) {
   logger.error(`Your version of discord.js is not compatible with this bot(${app.djs_version}).`)
-    .error('Please re-installing your dependencies.')
+    .error('Please re-installing dependencies.')
   process.exit(1)
 }
-if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug messages.')
+if (args.debugg) logger.debug('You\'ve enabled debug option, and you\'ll see debug messages.')
 !(async () => {
   const util = require('./src/util')
   const fs = require('fs').promises
@@ -89,7 +97,7 @@ if (args.debugg) logger.debug('You enabled debug option, and you\'ll see debug m
   logger.info('Checking for version')
   await require('./src/versioncheck')()
 })()
-logger.info('Starting')
+logger.info('Booting')
 const { fork } = require('child_process')
 let spawned
 let restart = false

@@ -1,24 +1,25 @@
 require('./yaml')
 if (process.platform !== 'win32') require('./performance')
-const logger = require(__dirname + '/logger').getLogger('client', 'cyan', false)
+const BlackListener = require('./core')
+const {
+  f,
+  data,
+  language: languages,
+  argsresolver,
+  isTravisBuild,
+  config: c,
+  register,
+} = BlackListener.commons
+const { Discord, Logger } = BlackListener
+const logger = Logger.getLogger('client', 'cyan', false)
 logger.info('Initializing')
-const f = require('string-format')
-const Discord = require('discord.js')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
-const data = require(__dirname + '/data')
 const log = require(__dirname + '/log')
-const isTravisBuild = process.argv.includes('--travis-build')
-const languages = require(__dirname + '/language')
-const argv = require(__dirname + '/argument_parser')(process.argv.slice(2))
+const argv = argsresolver(process.argv.slice(2))
 const sentmute = new Set()
-const util = require(__dirname + '/util')
-if (!util.exists(__dirname + '/travis.yml')) {
-  logger.emerg('Not found \'travis.yml\'.')
-  process.exit(1)
-}
-const c = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
+const dispatcher = require('./dispatcher')
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -31,9 +32,7 @@ if (argv.prefix) {
 }
 logger.info(`Default prefix: ${c.prefix}`)
 
-const dispatcher = require(__dirname + '/dispatcher')
-
-require(__dirname + '/register')(client)
+register(client)
 
 if (!isTravisBuild && c.dbl) new DBL(c.dbl, client).on('error', e => logger.warn(e))
 

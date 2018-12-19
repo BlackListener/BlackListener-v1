@@ -1,63 +1,47 @@
+const Command = require('./structures/Command')
+const Component = require('./structures/Component')
+
+const Logger = require('./structures/util/Logger')
+const Converter = require('./structures/util/Converter')
+
 const Discord = require('discord.js')
-const { Permissions } = Discord
 
-class Command {
-  /**
-   * Command options
-   * @typedef CommandOptions
-   * @property {Array<string>} alias
-   * @property {Array<string>} args
-   * @property {number} permission
-   * @property {boolean} enabled
-   */
+const f = require('string-format')
+const _fs = require('fs')
 
-  /**
-   * Construct this Command Instance.
-   *
-   * If not extend this Class, it will be marked 'not a command'
-   * @param {string} name Command name
-   * @param {CommandOptions} options options
-   * @constructor
-   */
-  constructor(name, options = {}) {
-    this.name = name
-    
-    options = Object.assign({
-      alias: [],
-      args: [],
-      permission: 0,
-      enabled: true,
-    }, options)
+const language = require('./language')
+const contents = require('./contents')
+const data = require('./data')
+const argsresolver = require('./argument_parser')
+const util = require('./util')
+const register = require('./register')
+const app = require('../config')
+const package = require('../package.json')
 
-    this.enabled = options.enabled
-    this.alias = options.alias
-    this.args = options.args
-    this.permission = new Permissions(options.permission).freeze()
-  }
-
-  /**
-   * @abstract
-   */
-  run() {}
-
-  /**
-   * @abstract
-   * @param {Discord.Message} msg
-   */
-  isAllowed({ member }) {
-    return member.hasPermission(this.permission.bitfield)
-  }
-
-  /**
-   * @async
-   * @returns {any}
-   * @param {string} e 
-   */
-  async _eval(e) {
-    return await (eval(`(async () => {${e}})()`))
-  }
-}
+const isTravisBuild = process.argv.includes('--travis-build')
 
 module.exports = {
   Command,
+  Component,
+
+  Logger,
+  Converter,
+
+  Discord,
+
+  commons: {
+    contents,
+    language,
+    data,
+    argsresolver,
+    util,
+    isTravisBuild,
+    register,
+    config: isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml'),
+    app,
+    package,
+    _fs,
+    fs: _fs.promises,
+    f: f,
+  },
 }

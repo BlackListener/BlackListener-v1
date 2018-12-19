@@ -1,10 +1,13 @@
-
-const Discord = require('discord.js')
-const f = require('string-format')
-const { validLanguages } = require(__dirname + '/../contents')
-const argument_parser = require(__dirname + '/../argument_parser')
-const data = require(__dirname + '/../data')
-const { Command } = require('../core')
+const {
+  commons: {
+    f,
+    argsresolver: argument_parser,
+    contents: { validLanguages },
+    data,
+  },
+  Command,
+  Discord,
+} = require('../core')
 
 module.exports = class extends Command {
   constructor() {

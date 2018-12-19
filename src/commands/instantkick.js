@@ -1,5 +1,4 @@
-const Converter = require(__dirname + '/../converter.js')
-const { Command } = require('../core')
+const { Command, Converter } = require('../core')
 
 module.exports = class extends Command {
   constructor() {

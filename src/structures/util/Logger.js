@@ -1,9 +1,9 @@
-require('./yaml')
+require('../../yaml')
 const fs = require('fs')
-const config = require(__dirname +'/config.yml')
+const config = require('../../config.yml')
 const chalk = require('chalk')
 const moment = require('moment')
-const args = require(__dirname + '/argument_parser')(process.argv.slice(2))
+const args = require('../../argument_parser')(process.argv.slice(2))
 
 class Logger {
   /**
@@ -22,6 +22,7 @@ class Logger {
       this.style = 'original'
     }
     this.info('The log file has initialized.', true)
+    this.initLog = () => this
     return this
   }
 

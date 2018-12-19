@@ -1,7 +1,5 @@
-const Discord = require('discord.js')
 const randomPuppy = require('random-puppy')
-const f = require('string-format')
-const { Command } = require('../core')
+const { commons: { f }, Command, Discord } = require('../core')
 
 module.exports = class extends Command {
   constructor() {

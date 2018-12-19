@@ -1,5 +1,4 @@
-const f = require('string-format')
-const { Command } = require('../core')
+const { commons: { f }, Command } = require('../core')
 
 module.exports = class extends Command {
   constructor() {
