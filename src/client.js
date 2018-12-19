@@ -37,7 +37,7 @@ const dispatcher = require(__dirname + '/dispatcher')
 
 require(__dirname + '/register')(client)
 
-if (!isTravisBuild && s.dbl) new DBL(s.dbl, client)
+if (!isTravisBuild && s.dbl) new DBL(s.dbl, client).on('error', e => logger.warn(e))
 
 client.on('ready', async () => {
   client.user.setActivity(`${c.prefix}help | Hello @everyone!`)
