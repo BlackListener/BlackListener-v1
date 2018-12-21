@@ -9,6 +9,7 @@ const {
   isTravisBuild,
   config: c,
   register,
+  _fs,
 } = BlackListener.commons
 const { Discord, Logger } = BlackListener
 const logger = Logger.getLogger('client', 'cyan', false)
@@ -20,6 +21,7 @@ const log = require(__dirname + '/log')
 const argv = argsresolver(process.argv.slice(2))
 const sentmute = new Set()
 const dispatcher = require('./dispatcher')
+const files = _fs.readdirSync(__dirname + '/components/')
 
 if (argv.debug.perf || argv.debug.performance) {
   require(__dirname + '/performance')
@@ -33,6 +35,7 @@ if (argv.prefix) {
 logger.info(`Default prefix: ${c.prefix}`)
 
 register(client)
+for (const file of files) if (file.endsWith('.js')) (new (require(`${__dirname}/components/${file}`)))
 
 if (!isTravisBuild && c.dbl) new DBL(c.dbl, client).on('error', e => logger.warn(e))
 

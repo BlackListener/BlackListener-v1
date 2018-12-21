@@ -43,5 +43,6 @@ module.exports = {
     _fs,
     fs: _fs.promises,
     f: f,
+    commands: {},
   },
 }

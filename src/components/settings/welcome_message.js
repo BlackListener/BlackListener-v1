@@ -1,20 +1,18 @@
-const { commons: { f }, Command, Converter } = require('../core')
+const { commons: { f }, Component, Converter } = require('../../core')
 
-module.exports = class extends Command {
+module.exports = class extends Component {
   constructor() {
     const opts = {
-      args: [
-        '[channel:message] [Channel:Message]',
-      ],
+      args: ['message', 'channel'],
       permission: 8,
     }
-    super('setwelcome', opts)
+    super('welcome_message', opts)
   }
 
-  async run(msg, settings, lang, args) {
+  async _run(msg, settings, lang, args) {
     if (args[1] === 'message') {
       if (!args[2]) return msg.channel.send(lang.invalid_args)
-      const commandcut = msg.content.substr(`${settings.prefix}setwelcome message `.length)
+      const commandcut = msg.content.substr(`${settings.prefix}settings welcomeMessage message `.length)
       settings.welcome_message = commandcut
       await msg.channel.send(f(lang.setconfig, 'welcome_message'))
       msg.channel.send(lang.welcome_warning)
@@ -25,7 +23,7 @@ module.exports = class extends Command {
       await msg.channel.send(f(lang.setconfig, 'welcome_channel'))
       msg.channel.send(lang.welcome_warning)
     } else {
-      return msg.channel.send(lang.invalid_args)
+      msg.channel.send(`Your argument does not match: \`${this.args.join(', ')}\``)
     }
   }
 }

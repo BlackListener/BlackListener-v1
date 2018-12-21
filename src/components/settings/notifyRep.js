@@ -1,20 +1,11 @@
-const { commons: { f }, Command } = require('../core')
+const { commons: { f }, Component } = require('../../core')
 
-module.exports = class extends Command {
+module.exports = class extends Component {
   constructor() {
-    const opts = {
-      args: [
-        '<0...10>',
-      ],
-      alias: [
-        'notifyrep',
-      ],
-      permission: 8,
-    }
-    super('setnotifyrep', opts)
+    super('notifyRep', { permission: 8 })
   }
 
-  async run(msg, settings, lang, args) {
+  async _run(msg, settings, lang, args) {
     const n = parseInt(args[1], 10)
     const min = 0
     const max = 10

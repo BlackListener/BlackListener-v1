@@ -1,8 +1,8 @@
-const BlackListener = require('../core')
+const BlackListener = require('../../core')
 const { contents: { validLanguages }, f } = BlackListener.commons
-const { Command, Discord } = BlackListener
+const { Component, Discord } = BlackListener
 
-module.exports = class extends Command {
+module.exports = class extends Component {
   constructor() {
     const opts = {
       args: [
@@ -13,7 +13,7 @@ module.exports = class extends Command {
     super('language', opts)
   }
 
-  run(msg, settings, lang, args) {
+  _run(msg, settings, lang, args) {
     if (!args[1] || args[1] === 'help') {
       const embed = new Discord.RichEmbed()
         .setTitle(f(lang.availablelang, settings.language))

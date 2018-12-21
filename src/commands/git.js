@@ -1,7 +1,6 @@
 const git = require('simple-git/promise')()
-const { commons: { f }, Command, Logger } = require('../core')
-const { load } = require(__dirname + '/../commands')
-const logger = Logger.getLogger('commands:git', 'purple')
+const { commons: { f }, Command } = require('../core')
+const Components = require('../components')
 
 module.exports = class extends Command {
   constructor() {
@@ -12,30 +11,22 @@ module.exports = class extends Command {
   }
 
   async run(msg, settings, lang, args) {
-    const message = await msg.channel.send('Checking for version...')
     await git.fetch()
-    const status = await git.status()
-    if (args[1] === 'update') {
-      if (!status.tracking) return message.edit(`❌ Unknown branch in remote: \`${(await git.branch()).current}\``)
-      if (status.behind === 0) return message.edit('✔ Already up to date.')
-      if (!status.isClean()) return message.edit('❌ Workspace is not clean.')
-      message.edit('♻ Updating...')
-      const result = await git.pull().catch(e => {
-        message.edit(f(lang.error, e))
-        logger.error(e)
-        return false
-      })
-      if (!result) return
-      result.files.forEach(file => {
-        load(file)
-        logger.info(f(lang.load.loaded, file))
-      })
-      message.edit('✔ Updated to latest version: ' + await git.revparse(['HEAD']))
-    } else {
-      message.edit(f(lang.commit, await git.revparse(['HEAD']))
-        + (status.behind === 0 ? (status.tracking ? '(✔ Running latest version) ' : `(❓ Unknown branch in remote: \`${(await git.branch()).current})\` `) : `(${status.behind} commit(s) behind) `)
-        + (status.isClean() ? '' : '[⚠ Pending commit] ')
-        + (status.ahead === 0 ? '' : '[⚠ Pending push]'))
+    if (args[1] === 'update') return await (new Components.update()).run(msg, settings, lang)
+    else if (args[1] === 'stash') {
+      const message = await msg.channel.send(':stopwatch: Please wait...')
+      await git.stash()
+      return await message.edit(`:wastebasket: Stashed workspace. To revert: \`${settings.prefix}git pop\``)
+    } else if (args[1] === 'pop') {
+      const message = await msg.channel.send(':stopwatch: Please wait...')
+      await git.stash(['pop'])
+      return await message.edit(':white_check_mark: Popped workspace.')
     }
+    const status = await git.status()
+    const message = await msg.channel.send('Checking for version...')
+    message.edit(f(lang.commit, await git.revparse(['HEAD']))
+      + (status.behind === 0 ? (status.tracking ? '(:white_check_mark: Running latest version) ' : `(:question: Unknown branch in remote: \`${(await git.branch()).current})\` `) : `(${status.behind} commit(s) behind) `)
+      + (status.isClean() ? '' : '[:warning: Pending commit] ')
+      + (status.ahead === 0 ? '' : '[:warning: Pending push]'))
   }
 }

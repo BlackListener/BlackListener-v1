@@ -2,12 +2,10 @@ const {
   commons: {
     f,
     argsresolver: argument_parser,
-    contents: { validLanguages },
-    data,
   },
   Command,
-  Discord,
 } = require('../core')
+const Components = require('../components')
 
 module.exports = class extends Command {
   constructor() {
@@ -32,18 +30,9 @@ module.exports = class extends Command {
         msg.channel.send(':warning: User specified: ' + msg.client.users.get(opts.target).tag)
       }
     }
-    const user = await data.user(opts.target || msg.author.id)
-    if (args[1] === 'language') {
-      if (!args[2] || args[2] === 'help') {
-        const embed = new Discord.RichEmbed()
-          .setTitle(f(lang.availablelang, user.language))
-          .setDescription(validLanguages.join('\n'))
-          .setColor([0,255,0])
-        msg.channel.send(embed)
-      } else if (validLanguages.includes(args[2])) {
-        user.language = args[2]
-        await msg.channel.send(f(lang.setconfig, 'language'))
-      }
-    } else msg.channel.send(lang.invalid_args)
+    if (Object.keys(Components.user_settings).includes(args[1]))
+      return await (new Components.user_settings[args[1]]()).run(msg, settings, lang, args.slice(1))
+    else
+      return await msg.channel.send(f(lang['args_does_not_match'], Object.keys(Components.user_settings).join(', ')))
   }
 }

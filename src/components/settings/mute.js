@@ -1,17 +1,11 @@
-const { commons: { f }, Command, Discord, Converter } = require('../core')
+const { commons: { f }, Component, Discord, Converter } = require('../../core')
 
-module.exports = class extends Command {
+module.exports = class extends Component {
   constructor() {
-    const opts = {
-      args: [
-        '<User>',
-      ],
-      permission: 8,
-    }
-    super('mute', opts)
+    super('mute', { permission: 8 })
   }
 
-  run(msg, settings, lang, args) {
+  _run(msg, settings, lang, args) {
     const client = msg.client
     if (!args[1]) {
       const mutes = settings.mute.map((data) => {

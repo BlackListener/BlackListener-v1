@@ -1,17 +1,11 @@
-const { commons: { f }, Command, Converter } = require('../core')
+const { commons: { f }, Component, Converter } = require('../../core')
 
-module.exports = class extends Command {
+module.exports = class extends Component {
   constructor() {
-    const opts = {
-      alias: [
-        'log',
-      ],
-      permission: 8,
-    }
-    super('setlog', opts)
+    super('log_channel', { permission: 8 })
   }
 
-  run(msg, settings, lang, args) {
+  _run(msg, settings, lang, args) {
     const channel = Converter.toTextChannel(msg, args[1])
     if (!channel) return msg.channel.send(lang.invalid_args)
     const id = channel.id

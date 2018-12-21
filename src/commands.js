@@ -1,7 +1,7 @@
 const logger = require('./structures/util/Logger').getLogger('plugins', 'cyan')
 const fs = require('fs')
 const { Command } = require('./core')
-const commands = {}
+const { commands } = require('../config')
 
 const files = fs.readdirSync(__dirname + '/commands/')
 

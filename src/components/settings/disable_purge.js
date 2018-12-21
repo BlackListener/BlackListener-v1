@@ -1,17 +1,11 @@
-const { commons: { f }, Command } = require('../core')
+const { commons: { f }, Component } = require('../../core')
 
-module.exports = class extends Command {
+module.exports = class extends Component {
   constructor() {
-    const opts = {
-      args: [
-        '[enable/disable]',
-      ],
-      permission: 8,
-    }
-    super('togglepurge', opts)
+    super('disable_purge', { permission: 8 })
   }
 
-  async run(msg, settings, lang, args) {
+  async _run(msg, settings, lang, args) {
     if (args[1] === 'enable') {
       settings.disable_purge = false
     } else if (args[1] === 'disable') {
