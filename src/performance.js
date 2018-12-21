@@ -1,4 +1,4 @@
-const logger = require(__dirname + '/logger').getLogger('performance', 'orange')
+const logger = require('./structures/util/Logger').getLogger('performance', 'orange')
 const usage = require('usage')
 
 setInterval(() => {
