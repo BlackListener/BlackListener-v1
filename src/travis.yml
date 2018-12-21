@@ -4,3 +4,6 @@ inviteme:
 musicinvite: 
 dbl: 
 talk_apikey: 
+repl:
+  prefix: '> '
+  disable: true

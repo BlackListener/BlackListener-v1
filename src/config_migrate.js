@@ -21,5 +21,12 @@ module.exports = {
       await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
       return false
     },
+    '1.0.3-to-1.0.4': async () => {
+      config.config_version = '1.0.4'
+      delete config.logger
+      config.debug = false
+      await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
+      return false
+    },
   },
 }

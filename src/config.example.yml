@@ -10,13 +10,7 @@ patron: false
 repl:
   prefix: '> '
   disable: false
-logger:
-  debug: false
-  style: original
-  # Options:
-  # maven: Maven style
-  # npm: npm like style
-  # original(or otherize): Original BlackListeners style
+debug: false
 
 # Your bot token
 token: Your token here
@@ -43,4 +37,4 @@ patroninvite: https://discordapp.com/oauth2/authorize?client_id=4691144085015101
 youtube_apikey: Your YouTube Data API key.
 
 # DO NOT EDIT CONFIG VERSION ANYWAY.
-config_version: '1.0.3'
+config_version: '1.0.4'
