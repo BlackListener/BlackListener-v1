@@ -58,7 +58,7 @@ client.on('message', async msg => {
   user.createdTimestamp = msg.author.createdTimestamp
   if (msg.channel.id !== settings.excludeLogging) log.messageLog(msg)
 
-  const lang = languages[user.language || settings.language]
+  const lang = languages.get(user.language || settings.language)
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {

@@ -1,4 +1,4 @@
-module.exports = {
+const languages = {
   af: require(__dirname + '/lang/af.json'),
   ar: require(__dirname + '/lang/ar.json'),
   ca: require(__dirname + '/lang/ca.json'),
@@ -58,3 +58,10 @@ module.exports = {
     zh: require(__dirname + '/lang/commands/zh.json'),
   },
 }
+
+const get = (lang) => {
+  return Object.assign(languages['en'], languages[lang])
+}
+
+module.exports = languages
+module.exports.get = get
