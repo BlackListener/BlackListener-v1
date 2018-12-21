@@ -32,8 +32,9 @@ module.exports = async function(settings, msg, lang) {
       const similarCommand = commandList.map(item => ({ ...item, no: levenshtein(cmd, item.cmd) }))
       const cmds = similarCommand.sort((a, b) => a.no - b.no).filter(item => item.no <= 2)
       const list = cmds.map(item => `・\`${settings.prefix}${item.cmd} ${item.args || ''}\``)
-      msg.channel.send(f(lang.no_command, settings.prefix, cmd))
-      if (list.length) msg.channel.send(f(lang.didyoumean, list.join('\n')))
+      const nocmd = f(lang.no_command, settings.prefix, cmd)+'\n'
+      const message = await msg.channel.send(nocmd)
+      if (list.length) message.edit(nocmd + f(lang.didyoumean, list.join('\n')))
     }
   }
 }
