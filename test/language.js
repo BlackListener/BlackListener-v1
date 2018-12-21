@@ -8,9 +8,4 @@ describe('Language files', () => {
       assert.deepStrictEqual(typeof e, 'string')
     })
   })
-  it('All languages [Values]', () => {
-    Object.values(languages).forEach(e => {
-      assert.deepStrictEqual(typeof e, 'object')
-    })
-  })
 })

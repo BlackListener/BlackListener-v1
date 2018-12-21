@@ -56,7 +56,8 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   info(message, isLogger = false) {
-    return this.out(message, 'info', 'blue', isLogger)
+    this.out(message, 'info', 'blue', isLogger)
+    return this
   }
   /**
    * Outputs debug level message.
@@ -75,11 +76,12 @@ class Logger {
    */
   debug(message, isLogger = false) {
     let opt = false
-    if (config.logger.debug || args.debugg) {
+    if (config.debug || args.debugg) {
       if (args.debugg === false) return this
       opt = true
     }
-    return this.out(message, 'debug', 'cyan', isLogger, opt)
+    this.out(message, 'debug', 'cyan', isLogger, opt)
+    return this
   }
   /**
    * Outputs warn level message.
@@ -97,7 +99,8 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   warn(message, isLogger = false) {
-    return this.out(message, 'warn', 'bold.yellow', isLogger)
+    this.out(message, 'warn', 'bold.yellow', isLogger)
+    return this
   }
   /**
    * Outputs error level message.
@@ -115,7 +118,8 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   error(message, isLogger = false) {
-    return this.out(message, 'error', 'red', isLogger)
+    this.out(message, 'error', 'red', isLogger)
+    return this
   }
   /**
    * Outputs fatal level message.
@@ -133,7 +137,8 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   fatal(message, isLogger = false) {
-    return this.out(message, 'fatal', 'redBright.bold', isLogger)
+    this.out(message, 'fatal', 'redBright.bold', isLogger)
+    return this
   }
   /**
    * Outputs emerg level message.
@@ -150,7 +155,8 @@ class Logger {
    * @returns {Logger} A Logger instance
    */
   emerg(message) {
-    return this.out(message, 'emerg', 'red.bold', false)
+    this.out(message, 'emerg', 'red.bold', false)
+    return this
   }
 }
 
