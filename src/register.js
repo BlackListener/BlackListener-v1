@@ -120,6 +120,7 @@ module.exports = function(client) {
   process.on('uncaughtException', async (error = {}) => {
     logger.emerg('Oh, BlackListener has crashed!')
     const { report, file } = await makeReport(client, error, 'crash')
+    logger.emerg(report)
     _fs.writeFileSync(file, report, 'utf8')
     logger.emerg(`Crash report has writed to: ${file}`);
     (client.readyAt && c.crashes_channel) ? client.channels.get(c.crashes_channel).send(codeblock(report))
