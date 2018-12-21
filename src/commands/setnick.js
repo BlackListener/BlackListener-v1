@@ -7,6 +7,7 @@ module.exports = class extends Command {
         '<NewName> [User]',
       ],
       alias: [
+        'nickname',
         'setnickname',
         'resetnick',
         'nick',
