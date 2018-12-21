@@ -217,5 +217,6 @@
     "cannot_ban_yourself": "Can't ban yourself!",
     "cannot_ban_bot_owners": "Can't ban bot owners!"
   },
-  "args_does_not_match": "Your argument does not match, expected: `{0}`"
+  "args_does_not_match": "Your argument does not match, expected: `{0}`",
+  "cannot_resolve": "Can't resolve to {0}"
 }

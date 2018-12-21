@@ -46,7 +46,8 @@ class Converter {
     if (!msg.guild) return null
     if (msg.mentions.members.size) return msg.mentions.members.first()
     if (msg.guild.members.has(member)) return msg.client.members.get(member)
-    if (msg.guild.members.find(u => u.username === member)) return msg.client.members.find(u => u.username === member)
+    if (msg.guild.members.find(u => u.user.username === member)) return msg.client.members.find(u => u.user.username === member)
+    if (msg.guild.members.find(u => u.nickname === member)) return msg.client.members.find(u => u.nickname === member)
     if (fallback) return fallback
     return null
   }
@@ -66,11 +67,11 @@ class Converter {
    * @param {?Discord.Role} fallback The Role of fallback.
    * @returns {?Discord.Role}
    */
-  static toRole(msg, member, fallback) {
+  static toRole(msg, role, fallback) {
     if (!msg.guild) return null
     if (msg.mentions.roles.size) return msg.mentions.roles.first()
-    if (msg.guild.roles.has(member)) return msg.client.roles.get(member)
-    if (msg.guild.roles.find(r => r.username === member)) return msg.client.roles.find(r => r.username === member)
+    if (msg.guild.roles.has(role)) return msg.client.roles.get(role)
+    if (msg.guild.roles.find(r => r.name === role)) return msg.client.roles.find(r => r.name === role)
     if (fallback) return fallback
     return null
   }

@@ -1,7 +1,7 @@
 const git = require('simple-git/promise')()
-const { commons: { f }, Component, Logger } = require('../core')
+const { commons: { f }, Component, LoggerFactory } = require('../core')
 const { load } = require(__dirname + '/../commands')
-const logger = Logger.getLogger('component:git', 'purple')
+const logger = LoggerFactory.getLogger('component:git', 'purple')
 
 module.exports = class extends Component {
   constructor() {

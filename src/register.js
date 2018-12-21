@@ -1,4 +1,4 @@
-const logger = require('./structures/util/Logger').getLogger('main:event', 'purple')
+const logger = require('./structures/util/LoggerFactory').getLogger('main:event', 'purple')
 const c = require(__dirname + '/config.yml')
 const _fs = require('fs')
 const fs = _fs.promises

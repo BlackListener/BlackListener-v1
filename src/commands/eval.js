@@ -1,5 +1,5 @@
-const { commons: { f }, Logger, Command } = require('../core')
-const logger = Logger.getLogger('commands:eval', 'lightpurple')
+const { commons: { f }, LoggerFactory, Command } = require('../core')
+const logger = LoggerFactory.getLogger('commands:eval', 'lightpurple')
 
 module.exports = class extends Command {
   constructor() {

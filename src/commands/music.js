@@ -1,8 +1,8 @@
 const BlackListener = require('../core')
 const { config, f, util } = BlackListener.commons
-const { Logger, Command } = BlackListener
+const { LoggerFactory, Command } = BlackListener
 const ytdl = require('ytdl-core')
-const logger = Logger.getLogger('commands:music')
+const logger = LoggerFactory.getLogger('commands:music')
 const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
 const YouTube = require('youtube-node')
 const youtube = new YouTube()

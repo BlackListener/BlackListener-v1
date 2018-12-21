@@ -1,4 +1,4 @@
-const logger = require(__dirname + '/logger').getLogger('ShutdownPacketListener')
+const logger = require('./structures/util/LoggerFactory').getLogger('ShutdownPacketListener')
 const server = require('net').createServer()
 const client = require('./client')
 

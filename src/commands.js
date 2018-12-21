@@ -1,4 +1,4 @@
-const logger = require('./structures/util/Logger').getLogger('plugins', 'cyan')
+const logger = require('./structures/util/LoggerFactory').getLogger('plugins', 'cyan')
 const fs = require('fs')
 const { Command } = require('./core')
 const { commands } = require('../config')

@@ -1,5 +1,5 @@
-const { commons: { data }, Command, Logger, Converter } = require('../core')
-const logger = Logger.getLogger('commands:unban', 'blue')
+const { commons: { data }, Command, LoggerFactory, Converter } = require('../core')
+const logger = LoggerFactory.getLogger('commands:unban', 'blue')
 
 module.exports = class extends Command {
   constructor() {

@@ -11,8 +11,8 @@ const {
   register,
   _fs,
 } = BlackListener.commons
-const { Discord, Logger } = BlackListener
-const logger = Logger.getLogger('client', 'cyan', false)
+const { Discord, LoggerFactory } = BlackListener
+const logger = LoggerFactory.getLogger('client', 'cyan', false)
 logger.info('Initializing')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')

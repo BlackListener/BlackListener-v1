@@ -1,5 +1,5 @@
-const { Command, Logger, Converter } = require('../core')
-const logger = Logger.getLogger('commands:purge', 'lightpurple')
+const { Command, LoggerFactory, Converter } = require('../core')
+const logger = LoggerFactory.getLogger('commands:purge', 'lightpurple')
 
 module.exports = class extends Command {
   constructor() {

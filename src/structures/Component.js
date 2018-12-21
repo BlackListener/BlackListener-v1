@@ -1,4 +1,4 @@
-const logger = require('./util/Logger').getLogger('Component', 'green')
+const logger = require('./util/LoggerFactory').getLogger('Component', 'green')
 const Discord = require('discord.js')
 const { commands } = require('../../config')
 const c = process.argv.includes('--travis-build') ? require(__dirname + '/../travis.yml') : require(__dirname + '/../config.yml')

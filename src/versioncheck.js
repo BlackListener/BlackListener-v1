@@ -1,5 +1,5 @@
 const git = require('simple-git/promise')()
-const logger = require('./structures/util/Logger').getLogger('VersionCheck', 'darkgray')
+const logger = require('./structures/util/LoggerFactory').getLogger('VersionCheck', 'darkgray')
 async function check() {
   await git.fetch()
   const status = await git.status()

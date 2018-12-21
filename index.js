@@ -6,14 +6,14 @@ if (parseInt(process.versions.node.split('.')[0]) < 10) {
 require('./src/yaml')
 const BlackListener = require('./src/core')
 const {
-  Logger,
+  LoggerFactory,
 } = BlackListener
 const {
   argsresolver,
   app,
   package,
 } = BlackListener.commons
-const logger = Logger.getLogger('main', 'green')
+const logger = LoggerFactory.getLogger('main', 'green')
 const args = argsresolver(process.argv.slice(2))
 logger.info(`Starting BlackListener v${package.version}`)
 if (process.pid === 1 || args.debug.pid1) {

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const assert = require('assert').strict
-const Logger = require('../src/logger')
-const logger = Logger.getLogger('test')
+const LoggerFactory = require('../src/structures/util/LoggerFactory')
+const logger = LoggerFactory.getLogger('test')
 
 describe('Logger.js Return type', () => {
   it('debug Level', () => {

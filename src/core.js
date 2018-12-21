@@ -1,6 +1,7 @@
 const Command = require('./structures/Command')
 const Component = require('./structures/Component')
 
+const LoggerFactory = require('./structures/util/LoggerFactory')
 const Logger = require('./structures/util/Logger')
 const Converter = require('./structures/util/Converter')
 
@@ -24,6 +25,7 @@ module.exports = {
   Command,
   Component,
 
+  LoggerFactory,
   Logger,
   Converter,
 

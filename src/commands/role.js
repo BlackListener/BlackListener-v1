@@ -1,5 +1,5 @@
-const { Command, Discord, Logger, Converter } = require('../core')
-const logger = Logger.getLogger('commands:role')
+const { commons: { f }, Command, Discord, LoggerFactory, Converter } = require('../core')
+const logger = LoggerFactory.getLogger('commands:role')
 
 module.exports = class extends Command {
   constructor() {
@@ -15,6 +15,8 @@ module.exports = class extends Command {
   run(msg, settings, lang, args) {
     const role = Converter.toRole(args[1])
     const member = Converter.toMember(msg, args[2])
+    if (!role) return msg.channel.send(f(lang.cannot_resolve, 'role'))
+    if (!member) return msg.channel.send(f(lang.cannot_resolve, 'member'))
     const build = (title, message) => {
       const embed = new Discord.RichEmbed()
         .setTitle(title)
