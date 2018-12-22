@@ -24,7 +24,7 @@ module.exports = (argv) => {
     } else if (arg.startsWith('-')) { // flags
       args.args.push(arg)
       const flags = arg.replace('-', '').split('')
-      flags.forEach(_ => args['flags'] = args['flags'].add(_))
+      flags.forEach(_ => args['flags'].add(_))
     }
     if (arg === '--dryrun' || arg === '--dry-run') Object.assign(args, {'dryrun': true})
   })
