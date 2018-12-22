@@ -1,5 +1,5 @@
 const BlackListener = require('../../core')
-const { contents: { validLanguages }, data, f, argsresolver } = BlackListener.commons
+const { contents: { validLanguages }, data, f } = BlackListener.commons
 const { Component, Discord } = BlackListener
 
 module.exports = class extends Component {
@@ -13,8 +13,7 @@ module.exports = class extends Component {
     super('language', opts)
   }
 
-  async _run(msg, settings, lang, args) {
-    const opts = argsresolver(args.slice(1))
+  async _run(msg, settings, lang, args, opts) {
     const user = await data.user(opts.target || msg.author.id)
     if (!args[1] || args[1] === 'help') {
       const embed = new Discord.RichEmbed()

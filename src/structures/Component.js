@@ -27,14 +27,12 @@ class Component {
     this.name = name
     
     options = Object.assign({
-      required_args: true,
       args: ['<empty>'],
       permission: 0,
       enabled: true,
       registercmd: false,
     }, options)
 
-    this.required_args = options.required_args
     this.enabled = options.enabled
     this.permission = new Discord.Permissions(options.permission).freeze()
     this.args = options.args // define but never used in this class
@@ -64,14 +62,12 @@ class Component {
    * @param {Object} settings Settings object
    * @param {Object} lang Languages object
    * @param {Array<String>} args
-   * @throws TypeError if not defined msg, settings, lang, (args if required_args is true)
    * @returns {Promise<any>}
    */
-  async run(msg, settings, lang, args) {
-    if (!msg || !settings || !lang || (this.required_args && !args)) throw new TypeError(`Required msg, settings, lang${this.required_args ? '' : ', args'} but not defined.`)
+  async run(msg, settings, lang, args, opts) {
     if (!this.enabled) return msg.channel.send(`\`${this.name}\` component is not enabled.`)
     if (!this.isAllowed(msg, c.owners)) return msg.channel.send(lang.udonthaveperm)
-    return await this._run(msg, settings, lang, args)
+    return await this._run(msg, settings, lang, args, opts)
   }
 
   register(name, clazz) {

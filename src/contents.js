@@ -31,6 +31,7 @@ module.exports = {
     reasons: [],
     username_changes: [],
     tag: '',
+    language: null,
   },
   validLanguages: [
     'en',

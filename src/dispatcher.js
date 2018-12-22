@@ -4,14 +4,16 @@ const { commands } = require(__dirname + '/commands')
 const levenshtein = require('fast-levenshtein').get
 const isTravisBuild = process.argv.includes('--travis-build')
 const s = isTravisBuild ? require(__dirname + '/travis.yml') : require(__dirname + '/config.yml')
+const argsresolver = require('./argument_parser')
 
 async function runCommand(command, settings, msg, lang) {
   if (!command.enabled) return msg.channel.send(f(lang.disabled_command, command.name))
   if (!command.isAllowed(msg, s.owners)) return msg.channel.send(lang.udonthaveperm)
   logger.info(f(lang.issuedcmd, msg.author.tag, msg.content))
   try { // eslint-disable-line
-    const args = msg.content.replace(settings.prefix, '').replace(/\s{1,}/gm, ' ').split(' ')
-    await command.run(msg, settings, lang, args)
+    const args = msg.content.replace(settings.prefix, '').split(/\s{1,}/g)
+    const opts = argsresolver(args.slice(1))
+    await command.run(msg, settings, lang, args.filter(a => !opts.args.includes(a)), opts)
   } catch (e) {
     await msg.channel.send(f(lang.error_occurred, command.name))
     logger.info(f(lang.error_occurred, command.name))
