@@ -198,7 +198,6 @@ process.on('message', async message => {
     }, 5000)
     logger.info('Received message from main, stopping!')
     await client.destroy()
-    process.exit(0)
   }
 })
 

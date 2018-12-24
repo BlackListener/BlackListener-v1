@@ -88,7 +88,6 @@ module.exports = function(client) {
     if (count === 0)
       logger.fatal('May wrong your bot token, Is bot token has changed?')
         .info('Or are you attempted remote shutdown?')
-    process.exit()
   })
 
   client.on('reconnecting', () => {
@@ -125,7 +124,6 @@ module.exports = function(client) {
     logger.emerg(`Crash report has writed to: ${file}`);
     (client.readyAt && c.crashes_channel) ? client.channels.get(c.crashes_channel).send(codeblock(report))
       .finally(() => process.exit(1)) : process.exit(1)
-    errors++
   })
 
   process.on('message', msg => {
