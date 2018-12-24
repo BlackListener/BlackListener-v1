@@ -1,6 +1,7 @@
 const fs = require('fs').promises
 const YAML = require(__dirname + '/yaml')
 const config = require(__dirname + '/config.yml')
+const write = async _ => await fs.writeFile(__dirname + '/config.yml', YAML.stringify(_))
 
 module.exports = {
   missingno: ['1.0.2'],
@@ -9,7 +10,7 @@ module.exports = {
       config.config_version = '1.0.1'
       delete config.talk_apikey
       config.youtube_apikey = 'Your YouTube Data API key'
-      await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
+      await write(config)
       return true
     },
     '1.0.1-to-1.0.3': async () => {
@@ -18,14 +19,14 @@ module.exports = {
       config.errors_channel = null
       config.crashes_channel = null
       delete config.inviteme
-      await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
+      await write(config)
       return false
     },
     '1.0.3-to-1.0.4': async () => {
       config.config_version = '1.0.4'
       delete config.logger
       config.debug = false
-      await fs.writeFile(__dirname + '/config.yml', YAML.stringify(config))
+      await write(config)
       return false
     },
   },
