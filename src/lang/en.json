@@ -75,9 +75,11 @@
       "add": "Add Black listed regex.",
       "remove": "Remove Black listed regex.",
       "list": "Displays list of Black listed regex."
-    }
+    },
+    "limit": ":x: Blacklisted regexes are limited to {0}.",
+    "enable_first": ":x: Before using this command, please enable antispam."
   },
-  "includes_spam": ":x: Deleted spamming. (You can disable it in `{0}antispam disable`)",
+  "includes_spam": ":x: Deleted spamming. (You can disable it in `{0}settings antispam disable`)",
   "no_command": "`{0}{1}` is not BlackListener command.",
   "didyoumean": "Did you mean?\n{0}",
   "error": "Errored while processing: Error: ``{0}``",

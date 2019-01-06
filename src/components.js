@@ -8,6 +8,7 @@ const disable_purge = require('./components/settings/disable_purge')
 const excludeLogging = require('./components/settings/excludeLogging')
 const language = require('./components/settings/language')
 const mute = require('./components/settings/mute')
+const antispam = require('./components/settings/antispam')
 
 const language_user = require('./components/user_settings/language')
 
@@ -25,6 +26,7 @@ module.exports = {
     excludeLogging,
     language,
     mute,
+    antispam,
   },
   user_settings: {
     language: language_user,

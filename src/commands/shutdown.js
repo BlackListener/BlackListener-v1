@@ -32,7 +32,7 @@ module.exports = class extends Command {
     } else {
       logger.info(f(lang.success, msg.content))
       msg.channel.send(lang.bye)
-      if (!args[1].includes('-g')) return client.destroy()
+      if (args[1] && !args[1].includes('-g')) return client.destroy()
       process.send('stop')
     }
   }

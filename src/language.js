@@ -1,3 +1,5 @@
+const objectAssignDeep = require('object-assign-deep')
+
 const languages = {
   af: require(__dirname + '/lang/af.json'),
   ar: require(__dirname + '/lang/ar.json'),
@@ -60,7 +62,7 @@ const languages = {
 }
 
 const get = (lang) => {
-  return Object.assign(languages['en'], languages[lang])
+  return objectAssignDeep(languages['en'], languages[lang])
 }
 
 module.exports = languages

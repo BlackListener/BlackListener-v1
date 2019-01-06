@@ -53,15 +53,29 @@ client.on('ready', async () => {
 })
 
 client.on('message', async msg => {
-  if (!msg.guild) return
+  if (!msg.guild || msg.system || msg.author.bot) return
   const settings = await data.server(msg.guild.id)
   const user = await data.user(msg.author.id)
   user.tag = msg.author.tag
   user.bot = msg.author.bot
   user.createdTimestamp = msg.author.createdTimestamp
   if (msg.channel.id !== settings.excludeLogging) log.messageLog(msg)
-
   const lang = languages.get(user.language || settings.language)
+
+  let spam = false
+  // --- Begin of Antispam
+  if (settings.antispam && !settings.banned) {
+    !settings.blacklist.length || settings.blacklist.forEach(b => {
+      if ((new RegExp(b)).test(msg.content)) {
+        spam = true
+        if (msg.member.hasPermission(8)) return spam = false
+        msg.delete()
+        msg.channel.send(f(lang.includes_spam, settings.prefix)).then(m => m.delete(1500))
+      }
+    })
+  }
+  if (spam) return
+  // --- End of Antispam
 
   // --- Begin of Mute
   if (settings.mute.includes(msg.author.id) && !settings.banned) {
@@ -69,10 +83,10 @@ client.on('message', async msg => {
       msg.author.send(lang.youaremuted + `\nin ${msg.guild.name}[${msg.guild.id}])!`)
       sentmute.add(msg.author.id)
     }
-    msg.delete(0)
+    msg.delete()
   }
   // --- End of Mute
-  if (!msg.author.bot && !msg.system) dispatcher(settings, msg, lang)
+  dispatcher(settings, msg, lang)
 })
 
 client.on('guildMemberAdd', async member => {
