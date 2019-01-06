@@ -64,7 +64,7 @@ client.on('message', async msg => {
 
   let spam = false
   // --- Begin of Antispam
-  if (settings.antispam && !settings.banned) {
+  if (msg.channel.id !== settings.antispam_ignore && settings.antispam && !settings.banned) {
     !settings.blacklist.length || settings.blacklist.forEach(b => {
       if ((new RegExp(b)).test(msg.content)) {
         spam = true

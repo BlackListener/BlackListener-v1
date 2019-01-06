@@ -8,6 +8,7 @@ module.exports = {
     notifyRep: config.notifyRep,
     banRep: config.banRep,
     antispam: false,
+    antispam_ignore: null,
     blacklist: [],
     banned: false,
     disable_purge: true,

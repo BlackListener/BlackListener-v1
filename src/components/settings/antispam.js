@@ -3,7 +3,7 @@ const { commons: { f }, Component } = require('../../core')
 module.exports = class extends Component {
   constructor() {
     const opts = {
-      args: ['[<remove> <regex>]', '[<add> <regex>]', 'disable', 'enable', 'list', '<empty>'],
+      args: ['[<remove> <regex>]', '[<add> <regex>]', '[<ignore> <channelID or mention>]', 'disable', 'enable', 'list', '<empty>'],
       permission: 8,
     }
     super('antispam', opts)
@@ -32,6 +32,10 @@ module.exports = class extends Component {
     } else if (args[1] === 'enable') {
       settings.antispam = true
       msg.channel.send(f(lang.setconfig, 'antispam'))
+    } else if (args[1] === 'ignore') {
+      if (!msg.guild.channels.has(args[2]) && !msg.mentions.channels.first()) return msg.channel.send(lang.invalid_args)
+      settings.antispam_ignore = msg.guild.channels.has(args[2]) ? args[2] : msg.mentions.channels.first().id
+      msg.channel.send(f(lang.setconfig, 'antispam_ignore'))
     } else {
       const _ = ` (Available args: \`${this.args.join(', ')}\`)`
       if (!settings.antispam) return msg.channel.send(lang.antispam.disabled+_)
