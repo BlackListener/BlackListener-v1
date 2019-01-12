@@ -73,6 +73,14 @@ client.on('message', async msg => {
         msg.channel.send(f(lang.includes_spam, settings.prefix)).then(m => m.delete(1500))
       }
     })
+    !settings.blacklist_str.length || settings.blacklist_str.forEach(b => {
+      if (msg.content.includes(b)) {
+        spam = true
+        if (msg.member.hasPermission(8)) return spam = false
+        msg.delete()
+        msg.channel.send(f(lang.includes_spam, settings.prefix)).then(m => m.delete(1500))
+      }
+    })
   }
   if (spam) return
   // --- End of Antispam

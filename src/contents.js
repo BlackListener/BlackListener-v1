@@ -10,6 +10,7 @@ module.exports = {
     antispam: false,
     antispam_ignore: null,
     blacklist: [],
+    blacklist_str: [],
     banned: false,
     disable_purge: true,
     ignoredChannels: [],
