@@ -38,7 +38,7 @@ module.exports = class extends Component {
     } else if (args[1] === 'add') {
       if (!settings.antispam) return msg.channel.send(lang.antispam.enable_first)
       if (settings.blacklist_str.length >= this.blacklist_str_limit) return msg.channel.send(f(lang.antispam.limit, this.blacklist_str_limit.toString()))
-      if (!args[2] || args[2].length < 4) return msg.channel.send(lang.invalid_args)
+      if (!args[2] || args[2].length < 2) return msg.channel.send(lang.invalid_args)
       if (settings.blacklist_str.includes(args[2])) return msg.channel.send(f(lang.setconfig, 'blacklist_str'))
       settings.blacklist_str.push(args[2])
       msg.channel.send(f(lang.setconfig, 'blacklist_str'))
