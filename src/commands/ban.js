@@ -42,7 +42,7 @@ module.exports = class extends Command {
       if (target.id === msg.author.id) return msg.channel.send(lang.ban.cannot_ban_yourself)
       if (config.owners.includes(target.id)) return msg.channel.send(lang.ban.cannot_ban_bot_owners)
       const member = msg.guild.member(target)
-      if (!member && member.bannable) return msg.channel.send(lang.ban.cannot_ban)
+      if (!member) return msg.channel.send(lang.ban.cannot_ban)
       target_data.bannedFromServerOwner.push(msg.guild.ownerID)
       target_data.bannedFromServer.push(msg.guild.id)
       target_data.bannedFromUser.push(msg.author.id)
