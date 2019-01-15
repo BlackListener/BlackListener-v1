@@ -17,7 +17,6 @@ logger.info('Initializing')
 const client = new Discord.Client()
 const mkdirp = require('mkdirp-promise')
 const DBL = require('dblapi.js')
-const log = require(__dirname + '/log')
 const argv = argsresolver(process.argv.slice(2))
 const sentmute = new Set()
 const dispatcher = require('./dispatcher')
@@ -59,7 +58,6 @@ client.on('message', async msg => {
   user.tag = msg.author.tag
   user.bot = msg.author.bot
   user.createdTimestamp = msg.author.createdTimestamp
-  if (msg.channel.id !== settings.excludeLogging) log.messageLog(msg)
   const lang = languages.get(user.language || settings.language)
 
   let spam = false
@@ -125,15 +123,6 @@ client.on('guildMemberAdd', async member => {
     message = message.replace(/{joinedAt}/gm, member.joinedAt.toLocaleTimeString())
     message = message.replace(/{avatarURL}/gm, member.user.avatarURL)
     member.guild.channels.get(serverSetting.welcome_channel).send(message)
-  }
-})
-
-client.on('messageUpdate', async (old, msg) => {
-  const settings = await data.server(msg.guild.id)
-  if (old.content === msg.content) return
-  if (msg.channel.id !== settings.excludeLogging) {
-    await mkdirp(`${__dirname}/../data/users/${msg.author.id}`)
-    log.editedLog(old, msg)
   }
 })
 
