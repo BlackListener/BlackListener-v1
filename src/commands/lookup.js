@@ -22,7 +22,6 @@ module.exports = class extends Command {
     userConfig.createdTimestamp = user.createdTimestamp
     userConfig.bot = user.bot
     const bannedFromServer = userConfig && userConfig.bannedFromServer ? userConfig.bannedFromServer.map((server, i) => `${server} (${userConfig.bannedFromServerOwner[i]})`) : [lang.sunknown]
-    const usernameChanges = userConfig && userConfig.username_changes ? userConfig.username_changes.filter(e => e) : [lang.sunknown]
     const isBot = userConfig.bot ? lang.yes : lang.no
     const nick = (user && msg.guild.members.has(user.id)) ? msg.guild.members.get(user.id).nickname : lang.nul
     const joinedAt = user && msg.guild.members.has(user.id) && msg.guild.members.has(user.id).joinedAt ? msg.guild.members.get(user.id).joinedAt.toLocaleString() : lang.sunknown
@@ -38,7 +37,6 @@ module.exports = class extends Command {
       .addField(lang.lookup.tag, user.tag)
       .addField(lang.lookup.nickname, nick)
       .addField(lang.lookup.id, user.id)
-      .addField(lang.lookup.username_changes, usernameChanges.join('\n') || lang.no)
       .addField(lang.lookup.bot, isBot)
       .addField(lang.lookup.createdAt, user && user.createdAt ? user.createdAt.toLocaleString() : lang.sunknown)
       .addField(lang.lookup.joinedAt, joinedAt)

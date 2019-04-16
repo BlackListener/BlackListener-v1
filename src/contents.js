@@ -31,7 +31,6 @@ module.exports = {
     bannedFromUser: [],
     probes: [],
     reasons: [],
-    username_changes: [],
     tag: '',
     language: null,
   },
