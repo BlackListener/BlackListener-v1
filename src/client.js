@@ -107,6 +107,17 @@ client.on('guildMemberAdd', async member => {
     if (serverSetting.notifyRep <= userSetting.rep && serverSetting.notifyRep != 0) {
       member.guild.owner.send(f(lang.notifymsg, member.user.tag, serverSetting.notifyRep, userSetting.rep))
     }
+    if (serverSetting.banRep <= userSetting.rep && serverSetting.banRep != 0) {
+      if (member.bannable) {
+        member.ban().then(() => {
+          member.guild.owner.send(`User has banned automatically: \`${member.user.tag}\`(Reputation: ${userSetting.rep}) from your server, ${member.guild.name}.`)
+        }).catch(() => {
+          member.guild.owner.send(`Tried to ban user, \`${member.user.tag}\` but we failed due to an unknown error.`)
+        })
+      } else {
+        member.guild.owner.send(`Tried to ban user, \`${member.user.tag}\` but we failed because user is not bannable.`)
+      }
+    }
   }
   if (serverSetting.autorole) {
     const role = await member.guild.roles.get(serverSetting.autorole)

@@ -63,6 +63,7 @@ module.exports = class extends Command {
         if (banRep !== 0 && banRep <= target_data.rep) return await guild.ban(target)
         return Promise.resolve()
       }))
+      msg.guild.ban(target) // ban anyway
       logger.info(`Banned user: ${target.tag} (${target.id}) from ${msg.guild.name}(${msg.guild.id})`)
       return msg.channel.send(':white_check_mark: ' + lang.banned)
     }
