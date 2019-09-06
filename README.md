@@ -1,5 +1,11 @@
 # BlackListener [![Documentation](https://readthedocs.org/projects/rht0910-demo/badge/?version=latest)](http://docs.blacklistener.tk/) [![Travis-CI Build Status](https://travis-ci.com/BlackListener/BlackListener.svg?branch=master)](https://travis-ci.com/BlackListener/BlackListener) [![Jenkins Build Status](https://ci.rht0910.tk/view/all/job/BlackListener/badge/icon)](https://ci.rht0910.tk/view/all/job/BlackListener/)
 
+*__**This project is abandoned, don't ask me about this repository, v1. Please, please use the [BlackListener v2](https://github.com/BlackListener/BlackListener-v2) instead.**__*
+
+*(I won't give you support for this repository)*
+
+----
+
 Global Banning System for Discord.
 
 [![Discord Bots](https://discordbots.org/api/widget/456966161079205899.svg)](https://discordbots.org/bot/456966161079205899)
